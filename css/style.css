@@ -1,0 +1,101 @@
+:root {
+    --col-h1: rgba(100, 178, 163, 0.9);
+    --col-bg: #1e3040;
+    --col-text: azure;
+}
+
+body {
+    background-color: var(--col-bg);
+    color: var(--col-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100vh;
+    height: 100svh;
+    /* overflow: hidden; */
+}
+
+h1 {
+    font-size: 3rem;
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+
+a {
+    text-decoration: none;
+    color:#111d27;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: dotted;
+}
+
+.left li {
+    list-style: #111d27;
+    list-style-type: none;
+    color: #111d27;
+    border-bottom: 1px solid grey;
+    margin-bottom: 1rem;
+}
+
+.right li {
+    list-style: #aed88b;
+    list-style-type: square;
+}
+
+.right a {
+    color: #aed88b
+}
+
+.left {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: flex-start;
+    gap: 3rem;
+    width: 50vw;
+    background: url("/media/livecodingStrasbourg.jpg");
+    background: url("/media/livecodingstrasbourg.webp");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.right {
+    width: 50vw;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+
+
+.box {
+    background-color: var(--col-h1);
+    padding: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+    text-align: right;
+    border-radius: 1rem;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));;
+    grid-gap: 1rem;
+    margin-top: 2rem;
+}
+
+.photo-grid picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

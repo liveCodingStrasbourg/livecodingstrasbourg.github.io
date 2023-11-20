@@ -45,6 +45,8 @@ a {
     text-decoration: none;
     color:#111d27;
     font-weight: bold;
+    border-bottom: var(--col-h1) 0px solid;
+    transition: border-bottom 0.3s ease-in-out;
 }
 
 a:hover {
@@ -158,6 +160,7 @@ p {
     margin: 2rem;
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 2rem;
@@ -167,8 +170,14 @@ p {
     fill: var(--col-text);
 }
 
+.copyright {
+    padding: 2rem;
+    width: 100%;
+    text-align: end;
+    border-top: var(--col-h1) 1px solid;
+}
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 800px) {
     body {
         flex-direction: row;
         flex-wrap:wrap;

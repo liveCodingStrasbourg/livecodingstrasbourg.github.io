@@ -14,7 +14,6 @@ body {
     height: 100vh;
     height: 100svh;
     box-sizing: border-box;
-    scroll-behavior: smooth;
 }
 
 /* Titres  */
@@ -89,17 +88,17 @@ p {
     font-weight: normal;
 }
 
-.qui li {
+.right-container li {
     list-style: #aed88b;
     list-style-type: square;
     margin-bottom: 0.5rem;
 }
 
-.qui ul {
+.right-container ul {
     margin-left: 4rem;
 }
 
-.qui a {
+.right-container a {
     color: #aed88b;
 }
 
@@ -124,6 +123,7 @@ p {
     overflow-y: auto;
     overflow-x: hidden;
     box-shadow: -15px 0px 17px -7px rgba(0,0,0,0.75);
+    scroll-behavior: smooth;
 }
 
 
@@ -145,6 +145,7 @@ p {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));;
     grid-gap: 1rem;
     margin-top: 2rem;
+    padding: 2rem;
 }
 
 .photo-grid picture {

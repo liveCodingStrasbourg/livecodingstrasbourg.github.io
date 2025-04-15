@@ -65,6 +65,11 @@
             align-items: center;
         }
 
+        .logo img {
+            height: 40px;
+            margin-right: 0.5rem;
+        }
+
         .logo i {
             margin-right: 0.5rem;
         }
@@ -410,6 +415,110 @@
             color: var(--primary-dark);
         }
 
+        /* Friend/Collaborator Card Styles */
+        .friend-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .friend-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            color: var(--text-light);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .friend-icon {
+            background-color: var(--text-light);
+            color: var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+        }
+
+        .friend-icon i {
+            font-size: 1.5rem;
+        }
+
+        .friend-content {
+            padding: 1.5rem;
+        }
+
+        .friend-content p {
+            margin-bottom: 1rem;
+        }
+
+        .friend-actions {
+            margin-top: 1rem;
+        }
+
+        /* Media Gallery Styles */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .media-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .media-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .media-content {
+            padding: 1rem;
+        }
+
+        .media-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .media-meta {
+            display: flex;
+            margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .media-meta i {
+            margin-right: 0.25rem;
+            color: var(--primary-color);
+        }
+
+        .media-type {
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
         footer {
             background-color: var(--background-dark);
             color: var(--text-light);
@@ -500,6 +609,10 @@
             .tools-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -507,12 +620,17 @@
 <body>
     <header>
         <div class="header-container">
-            <a href="index.html" class="logo"><i class="fas fa-code"></i> Live Coding Strasbourg</a>
+            <a href="index.html" class="logo">
+                <img src="/api/placeholder/40/40" alt="Live Coding Strasbourg Logo">
+                Live Coding Strasbourg
+            </a>
             <nav>
                 <ul>
                     <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
                     <li><a href="#prochains-ateliers"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
                     <li><a href="#outils"><i class="fas fa-tools"></i> Outils</a></li>
+                    <li><a href="#amis"><i class="fas fa-handshake"></i> Amis & Collaborateurs</a></li>
+                    <li><a href="#media"><i class="fas fa-photo-video"></i> Média</a></li>
                     <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -709,117 +827,130 @@
 <section id="amis">
     <h2><i class="fas fa-handshake"></i> Nos Amis & Collaborateurs</h2>
     <div class="tools-section">
-        <h3>Collectifs et projets amis</h3>
-        <div class="tools-grid">
-            <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="tool-card">
-                <i class="fas fa-users"></i>
-                <span>Cadavre Exquis live Coding Strasbourg</span>
-            </a>
-            <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="tool-card">
-                <i class="fas fa-laptop-code"></i>
-                <span>Pierre Danger youtube</span>
-            </a>
-            <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="tool-card">
-                <i class="fas fa-music"></i>
-                <span>Byriann Parker</span>
-            </a>
-            <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="tool-card">
-                <i class="fas fa-microchip"></i>
-                <span>CrashServer</span>
-            </a>
+        <h3>Collectifs et projets avec qui nous collaborons</h3>
+        
+        <div class="friend-card">
+            <div class="friend-header">
+                <div class="friend-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Cadavre Exquis Live Coding Strasbourg</h3>
+            </div>
+            <div class="friend-content">
+                <p>Le projet Cadavre Exquis réunit plusieurs artistes qui collaborent en temps réel pour créer des performances audiovisuelles uniques. Chaque participant apporte sa propre expertise et son style, créant ainsi une fusion d'idées et de techniques.</p>
+                <p>Nous organisons régulièrement des sessions d'improvisation collaborative qui sont diffusées sur notre chaîne YouTube.</p>
+                <div class="friend-actions">
+                    <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fab fa-youtube"></i> Voir les performances</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="friend-card">
+            <div class="friend-header">
+                <div class="friend-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>Pierre Danger</h3>
+            </div>
+            <div class="friend-content">
+                <p>Pierre Danger est un artiste numérique et live coder expérimenté basé à Strasbourg. Spécialisé dans la création d'environnements sonores immersifs et de visuels générés par algorithmes, Pierre partage régulièrement ses connaissances lors de nos ateliers.</p>
+                <p>Il explore les frontières entre musique électronique, art génératif et performance live, avec un accent particulier sur les interfaces innovantes pour le live coding.</p>
+                <div class="friend-actions">
+                    <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fab fa-youtube"></i> Découvrir son travail</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="friend-card">
+            <div class="friend-header">
+                <div class="friend-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>Byriann Parker</h3>
+            </div>
+            <div class="friend-content">
+                <p>Byriann Parker est un musicien et développeur qui explore les intersections entre composition algorithmique, musique électronique et performance live. Ses créations mêlent des éléments de jazz, d'électro et de musique expérimentale, générés et manipulés en direct par code.</p>
+                <p>Byriann anime également des ateliers sur les outils comme TidalCycles et SuperCollider, rendant ces technologies accessibles aux débutants.</p>
+                <div class="friend-actions">
+                    <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fas fa-link"></i> Liens et ressources</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="friend-card">
+            <div class="friend-header">
+                <div class="friend-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3>CrashServer</h3>
+            </div>
+            <div class="friend-content">
+                <p>CrashServer est un collectif d'artistes et de développeurs dédié à l'exploration des technologies émergentes dans le contexte de la performance artistique. Ils développent des outils open-source pour le live coding et organisent des événements mêlant hackathons et performances artistiques.</p>
+                <p>Leur approche collaborative favorise l'échange de connaissances et la création d'œuvres interdisciplinaires innovantes.</p>
+                <div class="friend-actions">
+                    <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fas fa-globe"></i> Visiter leur site</a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-        <section id="faq">
-            <h2><i class="fas fa-question-circle"></i> Questions fréquentes</h2>
-            <div class="faq-section">
-                <div class="faq-item">
-                    <p class="faq-question">Qu'est-ce que le live coding ?</p>
-                    <p class="faq-answer">Le live coding est une pratique artistique qui consiste à écrire et modifier du code informatique en direct pour créer de la musique, des visuels ou d'autres formes d'expression artistique. C'est une façon de fusionner programmation et performance artistique.</p>
+<section id="media">
+    <h2><i class="fas fa-photo-video"></i> Média</h2>
+    <div class="tools-section">
+        <h3>Retrouvez nos performances et ateliers en vidéo</h3>
+        <div class="media-grid">
+            <div class="media-card">
+                <img src="/api/placeholder/400/180" alt="Atelier TidalCycles" class="media-img">
+                <div class="media-content">
+                    <h3>Initiation à TidalCycles</h3>
+                    <div class="media-meta">
+                        <span class="media-type"><i class="fas fa-video"></i> Vidéo</span>
+                        <span class="media-date"><i class="fas fa-calendar-day"></i> Mars 2025</span>
+                    </div>
+                    <p>Enregistrement complet de notre atelier d'introduction à TidalCycles, parfait pour les débutants.</p>
+                    <a href="#" class="btn btn-outline"><i class="fab fa-youtube"></i> Voir la vidéo</a>
                 </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il savoir programmer pour participer ?</p>
-                    <p class="faq-answer">Non, aucune expertise préalable en programmation n'est nécessaire. Nos ateliers sont conçus pour être accessibles à tous les niveaux, y compris aux débutants complets. Nous vous accompagnerons dans vos premiers pas.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il apporter son matériel ?</p>
-                    <p class="faq-answer">Nous vous encourageons à apporter votre ordinateur portable et un casque si vous en avez un. Cela vous permettra de pratiquer directement pendant l'atelier. Si vous n'avez pas d'ordinateur, vous pouvez toujours participer en observant ou en partageant avec d'autres participants.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Les ateliers sont-ils gratuits ?</p>
-                    <p class="faq-answer">Oui, la plupart de nos ateliers sont gratuits. Certains événements spéciaux peuvent avoir un coût modique pour couvrir la location de l'espace ou l'intervention d'artistes invités. Les détails sont toujours précisés dans l'annonce de l'atelier.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Comment être informé des prochains ateliers ?</p>
-                    <p class="faq-answer">Le meilleur moyen d'être tenu au courant est de rejoindre notre serveur Discord. Vous pouvez également nous suivre sur les réseaux sociaux ou consulter régulièrement notre site web.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-info">
-                <div class="footer-logo">Live Coding Strasbourg</div>
-                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
             </div>
             
-            <div class="footer-links">
-                <h4>Liens rapides</h4>
-                <ul>
-                    <li><a href="index.html">Accueil</a></li>
-                    <li><a href="#prochains-ateliers">Ateliers</a></li>
-                    <li><a href="#outils">Outils</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                </ul>
+            <div class="media-card">
+                <img src="/api/placeholder/400/180" alt="Performance Hydra" class="media-img">
+                <div class="media-content">
+                    <h3>Performance Hydra @ Shadok</h3>
+                    <div class="media-meta">
+                        <span class="media-type"><i class="fas fa-video"></i> Vidéo</span>
+                        <span class="media-date"><i class="fas fa-calendar-day"></i> Février 2025</span>
+                    </div>
+                    <p>Performance visuelle réalisée avec Hydra lors de notre événement mensuel au Shadok.</p>
+                    <a href="#" class="btn btn-outline"><i class="fab fa-youtube"></i> Voir la vidéo</a>
+                </div>
             </div>
             
-            <div class="footer-social">
-                <h4>Suivez-nous</h4>
-                <ul>
-                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a></li>
-                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a></li>
-                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a></li>
-                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a></li>
-                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
-                </ul>
+            <div class="media-card">
+                <img src="/api/placeholder/400/180" alt="Atelier FoxDot" class="media-img">
+                <div class="media-content">
+                    <h3>Tutoriel FoxDot</h3>
+                    <div class="media-meta">
+                        <span class="media-type"><i class="fas fa-video"></i> Vidéo</span>
+                        <span class="media-date"><i class="fas fa-calendar-day"></i> Janvier 2025</span>
+                    </div>
+                    <p>Apprenez les bases de FoxDot avec ce tutoriel complet pour débutants.</p>
+                    <a href="#" class="btn btn-outline"><i class="fab fa-youtube"></i> Voir la vidéo</a>
+                </div>
+            </div>
+            
+            <div class="media-card">
+                <img src="/api/placeholder/400/180" alt="Galerie photos" class="media-img">
+                <div class="media-content">
+                    <h3>Galerie photos - Ateliers 2024</h3>
+                    <div class="media-meta">
+                        <span class="media-type"><i class="fas fa-images"></i> Photos</span>
+                        <span class="media-date"><i class="fas fa-calendar-day"></i> 2024</span>
+                    </div>
+                    <p>Retrouvez les meilleurs moments de nos ateliers et performances de l'année dernière.</p>
+                    <a href="#" class="btn btn-outline"><i class="fas fa-images"></i> Voir la galerie</a>
+                </div>
             </div>
         </div>
-        
-        <div class="copyright">
-            © Live Coding Strasbourg - 2025 | Tous droits réservés
-        </div>
-    </footer>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Add active class to current section in nav
-        window.addEventListener('scroll', () => {
-            let scrollPosition = window.scrollY;
-            
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.add('active');
-                } else {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.remove('active');
-                }
-            });
-        });
-    </script>
-</body>
-
-</html>
+    </div>
+</section>

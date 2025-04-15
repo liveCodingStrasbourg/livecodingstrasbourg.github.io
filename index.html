@@ -69,6 +69,11 @@
             margin-right: 0.5rem;
         }
 
+        .logo img {
+            height: 40px;
+            margin-right: 0.5rem;
+        }
+
         nav ul {
             display: flex;
             list-style: none;
@@ -478,6 +483,49 @@
             font-size: 0.9rem;
         }
 
+        #amis h2 {
+            color: var(--text-light);
+        }
+
+        .friend-card {
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow);
+            background-color: var(--primary-light);
+            color: var(--text-light);
+        }
+
+        .friend-card i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .friend-card:hover i {
+            color: var(--text-light);
+        }
+        
+        .friend-card h4 {
+            margin-bottom: 0.75rem;
+        }
+        
+        .friend-card p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
@@ -507,12 +555,16 @@
 <body>
     <header>
         <div class="header-container">
-            <a href="index.html" class="logo"><i class="fas fa-code"></i> Live Coding Strasbourg</a>
+            <a href="index.html" class="logo">
+                <img src="/api/placeholder/80/40" alt="Live Coding Strasbourg Logo">
+                Live Coding Strasbourg
+            </a>
             <nav>
                 <ul>
                     <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
                     <li><a href="#prochains-ateliers"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
                     <li><a href="#outils"><i class="fas fa-tools"></i> Outils</a></li>
+                    <li><a href="#amis"><i class="fas fa-handshake"></i> Amis</a></li>
                     <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -710,23 +762,31 @@
     <h2><i class="fas fa-handshake"></i> Nos Amis & Collaborateurs</h2>
     <div class="tools-section">
         <h3>Collectifs et projets amis</h3>
-        <div class="tools-grid">
-            <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="tool-card">
+        <div class="workshop-grid">
+            <div class="friend-card">
                 <i class="fas fa-users"></i>
-                <span>Cadavre Exquis live Coding Strasbourg</span>
-            </a>
-            <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="tool-card">
+                <h4>Cadavre Exquis live Coding Strasbourg</h4>
+                <p>Collectif artistique qui explore la création collaborative à travers le live coding. Chaque artiste ajoute son code à une performance évolutive, créant des pièces musicales et visuelles uniques.</p>
+                <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur YouTube</a>
+            </div>
+            <div class="friend-card">
                 <i class="fas fa-laptop-code"></i>
-                <span>Pierre Danger youtube</span>
-            </a>
-            <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="tool-card">
+                <h4>Pierre Danger</h4>
+                <p>Artiste et développeur spécialisé dans les performances audiovisuelles génératives. Son travail mêle code créatif, musique électronique et visuels immersifs.</p>
+                <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Regarder sur YouTube</a>
+            </div>
+            <div class="friend-card">
                 <i class="fas fa-music"></i>
-                <span>Byriann Parker</span>
-            </a>
-            <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="tool-card">
+                <h4>Byriann Parker</h4>
+                <p>Musicien et live codeur expérimental qui mélange programmation et composition musicale. Ses performances explorent les frontières entre le code, le son et l'improvisation en temps réel.</p>
+                <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur Linktree</a>
+            </div>
+            <div class="friend-card">
                 <i class="fas fa-microchip"></i>
-                <span>CrashServer</span>
-            </a>
+                <h4>CrashServer</h4>
+                <p>Plateforme collaborative dédiée à l'expérimentation sonore et visuelle par le code. CrashServer propose des ressources, des événements et un espace d'échange pour les artistes numériques.</p>
+                <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Visiter le site</a>
+            </div>
         </div>
     </div>
 </section>
@@ -771,6 +831,7 @@
                     <li><a href="index.html">Accueil</a></li>
                     <li><a href="#prochains-ateliers">Ateliers</a></li>
                     <li><a href="#outils">Outils</a></li>
+                    <li><a href="#amis">Amis</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
             </div>

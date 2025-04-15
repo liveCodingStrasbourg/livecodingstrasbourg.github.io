@@ -4,210 +4,605 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Coding Strasbourg</title>
+    <title>Ateliers - Live Coding Strasbourg</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #6200ea;
+            --primary-light: #9d46ff;
+            --primary-dark: #0a00b6;
+            --secondary-color: #03dac6;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --background-light: #f5f5f5;
+            --background-dark: #121212;
+            --card-background: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 1.5rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        nav a i {
+            margin-right: 0.5rem;
+        }
+
+        nav a:hover {
+            color: var(--secondary-color);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            color: var(--text-light);
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            margin: 0.5rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button i {
+            margin-right: 0.5rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        section h2 i {
+            margin-right: 0.5rem;
+        }
+
+        .workshop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .workshop-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workshop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .workshop-header {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            color: var(--text-light);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .workshop-date {
+            background-color: var(--text-light);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 0.5rem;
+            text-align: center;
+            width: 80px;
+            margin-right: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .workshop-date .day {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .workshop-date .month {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .workshop-date .year {
+            font-size: 0.8rem;
+        }
+
+        .workshop-title {
+            flex: 1;
+        }
+
+        .workshop-title h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .workshop-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .workshop-meta {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            color: #666;
+        }
+
+        .workshop-meta span {
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .workshop-meta i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .workshop-description {
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .workshop-actions {
+            margin-top: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .workshop-card-empty {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .workshop-card-empty i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .workshop-card-empty p {
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .tools-section {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .tools-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: var(--transition);
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        header {
-            background-color: #333;
-            color: white;
-            width: 100%;
-            padding: 1rem 0;
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow);
+            background-color: var(--primary-light);
+            color: var(--text-light);
+        }
+
+        .tool-card i {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .tool-card:hover i {
+            color: var(--text-light);
+        }
+
+        .register-section {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
             text-align: center;
         }
 
-        .container {
-            width: 80%;
-            margin: 2rem 0;
+        .register-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
         }
 
-        .cta-box {
-            background-color: #444;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
+        .register-section p {
+            margin-bottom: 1.5rem;
         }
 
-        .cta-box a {
-            color: #bbb;
-            text-decoration: none;
+        .faq-section {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
         }
 
-        .cta-box a:hover {
-            color: white;
+        .faq-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
         }
 
-        nav ul {
-            list-style: none;
-            padding: 0;
+        .faq-item {
+            margin-bottom: 1.5rem;
         }
 
-        nav ul li {
-            margin: 0.5rem 0;
-        }
-
-        nav ul li a {
-            color: #333;
-            text-decoration: none;
-        }
-
-        nav ul li a:hover {
-            text-decoration: underline;
-        }
-
-        section {
-            margin-bottom: 2rem;
-        }
-
-        .workshop-cards,
-        .tools-grid,
-        .photo-grid,
-        .links-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .workshop-card,
-        .tool-card,
-        .photo-card,
-        .link-card {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            flex: 1 1 calc(33.333% - 1rem);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .workshop-card .workshop-date,
-        .photo-card .photo-overlay,
-        .link-card .link-content {
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .workshop-card .workshop-info,
-        .link-card .link-content {
-            padding: 1rem;
-        }
-
-        .workshop-card .workshop-meta {
-            display: flex;
-            justify-content: space-between;
+        .faq-question {
+            font-weight: bold;
             margin-bottom: 0.5rem;
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: auto;
-        }
-
-        .photo-card .photo-overlay {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            padding: 0.5rem;
-        }
-
-        .contact-icons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .contact-icons a {
-            color: #333;
-            text-decoration: none;
-        }
-
-        .contact-icons a:hover {
-            color: #007BFF;
+            color: var(--primary-dark);
         }
 
         footer {
-            background-color: #333;
-            color: white;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 2rem 1rem;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links, .footer-social {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links h4, .footer-social h4 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .footer-links ul, .footer-social ul {
+            list-style: none;
+        }
+
+        .footer-links li, .footer-social li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a, .footer-social a {
+            color: var(--text-light);
+            opacity: 0.8;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-links a:hover, .footer-social a:hover {
+            opacity: 1;
+            color: var(--secondary-color);
+        }
+
+        .footer-social a i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .copyright {
             text-align: center;
-            padding: 1rem 0;
-            width: 100%;
             margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            nav li {
+                margin: 0.5rem 1rem 0.5rem 0;
+            }
+            
+            .workshop-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Live Coding Strasbourg</h1>
+        <div class="header-container">
+            <a href="index.html" class="logo"><i class="fas fa-code"></i> Live Coding Strasbourg</a>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="#prochains-ateliers"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
+                    <li><a href="#outils"><i class="fas fa-tools"></i> Outils</a></li>
+                    <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+                    <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <div class="container">
-        <section class="cta-box">
-            <h3>Rejoignez-nous sur Discord</h3>
-            <p>Discutez avec notre communauté et obtenez toutes les informations sur notre <a href="https://discord.gg/2H8YcxMAWE"><i class="fab fa-discord"></i> Discord</a></p>
-        </section>
+    <section class="hero">
+        <div class="hero-content">
+            <h1><i class="fas fa-calendar-alt"></i> Ateliers Live Coding Strasbourg</h1>
+            <p>Rejoignez notre communauté créative pour explorer le live coding, la musique générative et l'art numérique dans une ambiance conviviale. Tous niveaux bienvenus !</p>
+            <a href="#prochains-ateliers" class="cta-button"><i class="fas fa-calendar-check"></i> Voir les prochains ateliers</a>
+            <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="cta-button"><i class="fab fa-discord"></i> Rejoindre notre Discord</a>
+        </div>
+    </section>
 
-        <nav>
-            <ul>
-                <li><a href="#workshops"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
-                <li><a href="#qui"><i class="fas fa-users"></i> Qui sommes-nous</a></li>
-                <li><a href="#photos"><i class="fas fa-images"></i> Photos</a></li>
-                <li><a href="#links"><i class="fas fa-link"></i> Liens</a></li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-            </ul>
-        </nav>
-
-        <section id="workshops">
-            <h2><i class="fas fa-calendar-alt"></i> Nos Ateliers</h2>
-            <div class="workshop-cards">
+    <main>
+        <section id="prochains-ateliers">
+            <h2><i class="fas fa-calendar-alt"></i> Prochains Ateliers</h2>
+            <div class="workshop-grid">
                 <div class="workshop-card">
-                    <div class="workshop-date">
-                        <span class="day">09</span>
-                        <span class="month">AVR</span>
-                        <span class="year">2025</span>
+                    <div class="workshop-header">
+                        <div class="workshop-date">
+                            <span class="day">09</span>
+                            <span class="month">AVR</span>
+                            <span class="year">2025</span>
+                        </div>
+                        <div class="workshop-title">
+                            <h3>Atelier livecoding & art numérique TOPLAP</h3>
+                        </div>
                     </div>
-                    <div class="workshop-info">
-                        <h3>Atelier livecoding & art numérique TOPLAP</h3>
+                    <div class="workshop-content">
                         <div class="workshop-meta">
                             <span><i class="fas fa-clock"></i> 18h00</span>
                             <span><i class="fas fa-map-marker-alt"></i> Shadok - Strasbourg</span>
+                            <span><i class="fas fa-users"></i> Tous niveaux</span>
+                            <span><i class="fas fa-euro-sign"></i> Gratuit</span>
                         </div>
-                        <p>Explorez le livecoding et l'art numérique lors de cet atelier organisé par TOPLAP Strasbourg.</p>
-                        <a href="https://shadok-strasbourg.eu/event/top-lap-live-coding-musique-et-programmation/" target="_blank" rel="noopener noreferrer" class="btn btn-more">En savoir plus <i class="fas fa-external-link-alt"></i></a>
+                        <div class="workshop-description">
+                            <p>Explorez le livecoding et l'art numérique lors de cet atelier organisé par TOPLAP Strasbourg. Vous découvrirez comment créer de la musique et des visuels en temps réel à l'aide de différents environnements de programmation.</p>
+                            <p>Apportez votre ordinateur portable et un casque si vous en avez un. Aucune expérience préalable en programmation n'est nécessaire !</p>
+                        </div>
+                        <div class="workshop-actions">
+                            <a href="https://shadok-strasbourg.eu/event/top-lap-live-coding-musique-et-programmation/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> S'inscrire</a>
+                            <a href="#" class="btn btn-outline"><i class="fas fa-info-circle"></i> Plus d'infos</a>
+                        </div>
                     </div>
                 </div>
-                <div class="workshop-card workshop-card-empty">
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-plus"></i>
-                        <p>Plus d'ateliers à venir bientôt</p>
-                        <a href="https://discord.gg/2H8YcxMAWE" class="btn btn-primary">Rejoignez Discord pour être informé</a>
+
+                <div class="workshop-card">
+                    <div class="workshop-header">
+                        <div class="workshop-date">
+                            <span class="day">23</span>
+                            <span class="month">AVR</span>
+                            <span class="year">2025</span>
+                        </div>
+                        <div class="workshop-title">
+                            <h3>Initiation à Sonic Pi</h3>
+                        </div>
                     </div>
+                    <div class="workshop-content">
+                        <div class="workshop-meta">
+                            <span><i class="fas fa-clock"></i> 19h00</span>
+                            <span><i class="fas fa-map-marker-alt"></i> HackStub - Strasbourg</span>
+                            <span><i class="fas fa-users"></i> Débutants</span>
+                            <span><i class="fas fa-euro-sign"></i> Gratuit</span>
+                        </div>
+                        <div class="workshop-description">
+                            <p>Atelier d'initiation au livecoding musical avec Sonic Pi. Venez découvrir comment créer facilement de la musique avec du code, même sans connaissances préalables en programmation ou en musique.</p>
+                            <p>Nous vous guiderons pas à pas pour composer vos premiers morceaux algorithmiques !</p>
+                        </div>
+                        <div class="workshop-actions">
+                            <a href="#" class="btn btn-primary"><i class="fas fa-ticket-alt"></i> S'inscrire</a>
+                            <a href="#" class="btn btn-outline"><i class="fas fa-info-circle"></i> Plus d'infos</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workshop-card-empty">
+                    <i class="fas fa-calendar-plus"></i>
+                    <p>Plus d'ateliers à venir bientôt</p>
+                    <a href="https://discord.gg/2H8YcxMAWE" class="btn btn-primary"><i class="fab fa-discord"></i> Rejoignez Discord pour être informé</a>
                 </div>
             </div>
         </section>
 
-        <section id="qui">
-            <h2><i class="fas fa-users"></i> Qui sommes-nous ?</h2>
-            <div class="content-wrapper">
-                <p>Toutes les deux semaines, la communauté Live Coding Strasbourg se réunit pour des ateliers de livecoding artistique. Que tu sois un mélomane passionné, un virtuose du code, un artiste graphique, un amateur de bidouillages numériques, ou simplement quelqu'un de curieux, viens nous rejoindre autour d'un verre.</p>
-                <p>L'objectif est de créer une synergie entre les musiciens, les programmeurs, les graphistes et les esprits créatifs, le tout dans une ambiance conviviale et ouverte. Aucune expertise préalable en programmation n'est nécessaire. Tout le monde est le bienvenu, quels que soient son niveau de compétence et ses domaines d'intérêt.</p>
-                <p>Nous abordons divers aspects du livecoding, partageons nos créations, improvisons ensemble et échangeons des idées sur des thèmes tels que la création musicale, l'interfaçage de logiciels et de machines, la conception visuelle, la composition algorithmique, etc.</p>
-                <p>Un aspect essentiel de notre démarche est l'utilisation de logiciels libres, gratuits et open-source. Cela favorise la collaboration, l'accessibilité et la créativité sans entraves. Nous encourageons les participants à apporter leur ordinateur portable et un casque s'ils en ont un, créant ainsi un environnement propice à l'expérimentation et à l'apprentissage.</p>
-                <p>En résumé, ces ateliers sont une opportunité unique de se plonger dans le monde fascinant du livecoding, d'explorer des horizons créatifs et de tisser des liens avec d'autres passionnés. Rejoins-nous pour une expérience enrichissante où la musique, le code et l'art numérique fusionnent de manière innovante.</p>
-            </div>
+        <section id="outils">
+            <h2><i class="fas fa-tools"></i> Outils Utilisés</h2>
             <div class="tools-section">
-                <h3>Nos outils</h3>
+                <h3>Nos environnements de livecoding préférés</h3>
                 <div class="tools-grid">
                     <a href="https://foxdot.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
                         <i class="fas fa-code"></i>
@@ -229,134 +624,110 @@
                         <i class="fas fa-paint-brush"></i>
                         <span>P5Js</span>
                     </a>
+                    <a href="https://tidalcycles.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-wave-square"></i>
+                        <span>TidalCycles</span>
+                    </a>
                 </div>
             </div>
         </section>
 
-        <section id="photos">
-            <h2><i class="fas fa-images"></i> Galerie</h2>
-            <div class="photo-grid">
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/chaoslab5.webp" type="image/webp">
-                        <source srcset="media/chaoslab5.jpg" type="image/jpg">
-                        <img src="media/chaoslab5.jpg" alt="Chaos Lab 5" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Chaos Lab 5</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/DSC_0174.webp" type="image/webp">
-                        <source srcset="media/DSC_0174.jpg" type="image/jpg">
-                        <img src="media/DSC_0174.jpg" alt="Live Coding with Sonic Pi" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Live Coding with SonicPi</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/DSC_0681.webp" type="image/webp">
-                        <source srcset="media/DSC_0681.jpg" type="image/jpg">
-                        <img src="media/DSC_0681.jpg" alt="On code et on boit un verre" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>On code et on boit un verre</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/WP_20180423_013.webp" type="image/webp">
-                        <source srcset="media/WP_20180423_013.jpg" type="image/jpg">
-                        <img src="media/WP_20180423_013.jpg" alt="Un groupe faisant du live coding" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Un groupe faisant du live coding</span>
-                    </div>
-                </div>
+        <section id="register">
+            <h2><i class="fas fa-user-plus"></i> Inscrivez-vous à nos ateliers</h2>
+            <div class="register-section">
+                <h3>Comment participer ?</h3>
+                <p>Nos ateliers sont ouverts à tous, débutants comme expérimentés. Pour participer, il suffit de vous inscrire via Discord ou directement auprès de nous par email.</p>
+                <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="cta-button"><i class="fab fa-discord"></i> Rejoindre notre Discord</a>
+                <a href="mailto:livecodingstrasbourg@gmail.com" class="cta-button"><i class="fas fa-envelope"></i> Nous contacter par email</a>
             </div>
         </section>
 
-        <section id="links">
-            <h2><i class="fas fa-link"></i> Communauté</h2>
-            <div class="links-grid">
-                <a href="https://livecoding.fr/" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-users"></i></div>
-                    <div class="link-content">
-                        <h3>Live Coding Fr</h3>
-                        <p>Le site des livecodeurs Français "Cookie Collective"</p>
-                    </div>
-                </a>
-                <a href="https://toplap.org/" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-globe"></i></div>
-                    <div class="link-content">
-                        <h3>Toplap</h3>
-                        <p>Le site du live coding International</p>
-                    </div>
-                </a>
-                <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-laptop-code"></i></div>
-                    <div class="link-content">
-                        <h3>Crash Server</h3>
-                        <p>Des livecodeurs Strasbourgeois</p>
-                    </div>
-                </a>
-                <a href="https://hackstub.eu/home/fr" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-wrench"></i></div>
-                    <div class="link-content">
-                        <h3>HackStub</h3>
-                        <p>Le hackerstub associatif Strasbourgeois</p>
-                    </div>
-                </a>
+        <section id="faq">
+            <h2><i class="fas fa-question-circle"></i> Questions fréquentes</h2>
+            <div class="faq-section">
+                <div class="faq-item">
+                    <p class="faq-question">Qu'est-ce que le live coding ?</p>
+                    <p class="faq-answer">Le live coding est une pratique artistique qui consiste à écrire et modifier du code informatique en direct pour créer de la musique, des visuels ou d'autres formes d'expression artistique. C'est une façon de fusionner programmation et performance artistique.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Faut-il savoir programmer pour participer ?</p>
+                    <p class="faq-answer">Non, aucune expertise préalable en programmation n'est nécessaire. Nos ateliers sont conçus pour être accessibles à tous les niveaux, y compris aux débutants complets. Nous vous accompagnerons dans vos premiers pas.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Faut-il apporter son matériel ?</p>
+                    <p class="faq-answer">Nous vous encourageons à apporter votre ordinateur portable et un casque si vous en avez un. Cela vous permettra de pratiquer directement pendant l'atelier. Si vous n'avez pas d'ordinateur, vous pouvez toujours participer en observant ou en partageant avec d'autres participants.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Les ateliers sont-ils gratuits ?</p>
+                    <p class="faq-answer">Oui, la plupart de nos ateliers sont gratuits. Certains événements spéciaux peuvent avoir un coût modique pour couvrir la location de l'espace ou l'intervention d'artistes invités. Les détails sont toujours précisés dans l'annonce de l'atelier.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Comment être informé des prochains ateliers ?</p>
+                    <p class="faq-answer">Le meilleur moyen d'être tenu au courant est de rejoindre notre serveur Discord. Vous pouvez également nous suivre sur les réseaux sociaux ou consulter régulièrement notre site web.</p>
+                </div>
             </div>
         </section>
-
-        <section id="contact">
-            <h2><i class="fas fa-envelope"></i> Nous contacter</h2>
-            <div class="content-wrapper">
-                <p>Pour toute question ou demande d'informations, vous pouvez nous envoyer un mail ou nous contacter sur les réseaux sociaux.</p>
-            </div>
-            <div class="contact-icons">
-                <a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-facebook-f"></i>
-                    <span>Facebook</span>
-                </a>
-                <a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-youtube"></i>
-                    <span>YouTube</span>
-                </a>
-                <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-discord"></i>
-                    <span>Discord</span>
-                </a>
-                <a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-github"></i>
-                    <span>GitHub</span>
-                </a>
-                <a href="mailto:livecodingstrasbourg@gmail.com" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email</span>
-                </a>
-            </div>
-        </section>
-    </div>
+    </main>
 
     <footer>
         <div class="footer-content">
-            <p>© Live Coding Strasbourg - 2025</p>
-            <p>Une communauté de passionnés de livecoding</p>
+            <div class="footer-info">
+                <div class="footer-logo">Live Coding Strasbourg</div>
+                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Liens rapides</h4>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="#prochains-ateliers">Ateliers</a></li>
+                    <li><a href="#outils">Outils</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-social">
+                <h4>Suivez-nous</h4>
+                <ul>
+                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a></li>
+                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a></li>
+                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a></li>
+                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © Live Coding Strasbourg - 2025 | Tous droits réservés
         </div>
     </footer>
 
     <script>
+        // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
                 });
+            });
+        });
+        
+        // Add active class to current section in nav
+        window.addEventListener('scroll', () => {
+            let scrollPosition = window.scrollY;
+            
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.add('active');
+                } else {
+                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.remove('active');
+                }
             });
         });
     </script>

@@ -1,282 +1,137 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Coding Strasbourg</title>
-    <link rel="stylesheet" href="./css/reset.css">
-    <link rel="stylesheet" href="./css/style.css">
+    <title>TOPLAP Strasbourg | Live Coding</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-    <div class="left-container">
-        <header>
-            <h1 class="logo">Live Coding Strasbourg</h1>
-        </header>
-        
-        <section class="cta-box">
-            <h3>Rejoignez-nous sur Discord</h3>
-            <p>Discutez avec notre communauté et obtenez toutes les informations sur notre <a href="https://discord.gg/2H8YcxMAWE" class="btn btn-discord"><i class="fab fa-discord"></i> Discord</a></p>
+    <div class="noise"></div>
+    <div class="lines"></div>
+    <div class="grid"></div>
+    
+    <header>
+        <div class="glitch-container">
+            <h1 class="glitch" data-text="TOPLAP STRASBOURG">TOPLAP STRASBOURG</h1>
+            <div class="sub-title">ATELIER LIVE CODING</div>
+            <div class="tagline">VENEZ_EXPLORER_LE_LIVE_CODING_AVEC_NOUS</div>
+            <div class="newcomers">DEBUTANTS_BIENVENUS!</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="code-terminal">
+            <pre><code>
+d1 >> <span class="code-highlight">"0 1 2 3 4 5 6 7"</span>
+d1>>.dbass(dur=174,lpf=linvar([1200,2400],32))
+# cutoff (range 300 5000 $ slow 4 $ sine)
+live_loop:drums 
+with_fx:distortion_do
+{
+}</code></pre>
+            <div class="waveform">
+                <svg viewBox="0 0 500 80" preserveAspectRatio="none">
+                    <path d="M0,40 Q25,10 50,40 T100,40 T150,40 T200,40 T250,40 T300,40 T350,40 T400,40 T450,40 T500,40" stroke="#FFDD00" fill="none" stroke-width="2"></path>
+                    <path d="M0,40 Q35,70 70,40 T140,40 T210,40 T280,40 T350,40 T420,40 T490,40" stroke="#FF00FF" fill="none" stroke-width="2"></path>
+                </svg>
+            </div>
         </section>
 
-        <nav class="main-nav">
-            <ul>
-                <li><a href="#workshops" class="nav-link"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
-                <li><a href="#qui" class="nav-link"><i class="fas fa-users"></i> Qui sommes-nous</a></li>
-                <li><a href="#photos" class="nav-link"><i class="fas fa-images"></i> Photos</a></li>
-                <li><a href="#links" class="nav-link"><i class="fas fa-link"></i> Liens</a></li>
-                <li><a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a></li>
-            </ul>
-        </nav>
+        <section class="details-box">
+            <h2>DETAILS</h2>
+            <div class="details-content">
+                <div class="detail-item">
+                    <div class="detail-label">DATE:</div>
+                    <div class="detail-value">MERCREDI 09 AVRIL, 2025 | 18:00 - 22:00</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">LIEU:</div>
+                    <div class="detail-value">25 presqu'ile André Malraux<br>STRASBOURG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">PRIX:</div>
+                    <div class="detail-value">PRIX_LIBRE</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="description-box">
+            <p>
+                Vous êtes passionné de musique, de vidéo et vous êtes 
+                curieux d'explorer l'intersection avec la programmation ?
+                Rejoignez notre atelier d'initiation au live coding et 
+                découvrez un moyen fascinant de créer de la musique et 
+                des images en direct à l'aide de code informatique !
+            </p>
+            <div class="highlight-text">AUCUNE_CONNAISSANCE<br>PREALABLE_REQUISE</div>
+        </section>
+
+        <section class="organizers">
+            <h2>PROPOSE_PAR</h2>
+            <div class="organizer-logos">
+                <div class="logo shadok">Shadok</div>
+                <div class="logo circle-logo"></div>
+                <div class="logo toplap">TOPLAP strasbourg</div>
+            </div>
+        </section>
+
+        <section class="contact-info">
+            <p>
+                Si vous pouvez ramener un ordinateur portable et un casque audio. Le cas échéant
+                Nous pouvons en fournir. N'hésitez pas à nous contacter pour toute question
+            </p>
+            <div class="email">
+                <a href="mailto:livecodingstrasbourg@gmail.com" class="glitch-link" data-text="email:livecodingstrasbourg@gmail.com">email:livecodingstrasbourg@gmail.com</a>
+            </div>
+        </section>
+
+        <section class="tags">
+            <div class="tag">JAM SESSION</div>
+            <div class="tag">ECHANGE</div>
+            <div class="tag">CODE</div>
+            <div class="tag">EXPLORATION</div>
+            <div class="tag">DIY</div>
+            <div class="tag">OPEN SOURCE</div>
+        </section>
+    </main>
+
+    <nav class="side-nav">
+        <ul>
+            <li><a href="#" class="nav-link">ATELIERS</a></li>
+            <li><a href="#" class="nav-link">OUTILS</a></li>
+            <li><a href="#" class="nav-link">GALERIE</a></li>
+            <li><a href="#" class="nav-link">COMMUNAUTÉ</a></li>
+            <li><a href="#" class="nav-link">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <div class="corner-badge">
+        <span>04.09.25</span>
     </div>
 
-    <div class="right-container">
-        <section id="workshops" class="workshops-section">
-            <h2><i class="fas fa-calendar-alt"></i> Nos Ateliers</h2>
-            
-            <div class="workshop-cards">
-                <div class="workshop-card">
-                    <div class="workshop-date">
-                        <span class="day">09</span>
-                        <span class="month">AVR</span>
-                        <span class="year">2025</span>
-                    </div>
-                    <div class="workshop-info">
-                        <h3>Atelier livecoding & art numérique TOPLAP</h3>
-                        <div class="workshop-meta">
-                            <span><i class="fas fa-clock"></i> 18h00</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Shadok - Strasbourg</span>
-                        </div>
-                        <p>Explorez le livecoding et l'art numérique lors de cet atelier organisé par TOPLAP Strasbourg.</p>
-                        <a href="https://shadok-strasbourg.eu/event/top-lap-live-coding-musique-et-programmation/" target="_blank" rel="noopener noreferrer" class="btn btn-more">En savoir plus <i class="fas fa-external-link-alt"></i></a>
-                    </div>
-                </div>
-                
-                <!-- Placeholder for future workshops -->
-                <div class="workshop-card workshop-card-empty">
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-plus"></i>
-                        <p>Plus d'ateliers à venir bientôt</p>
-                        <a href="https://discord.gg/2H8YcxMAWE" class="btn btn-primary">Rejoignez Discord pour être informé</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="qui" class="qui">
-            <h2><i class="fas fa-users"></i> Qui sommes-nous ?</h2>
-            <div class="content-wrapper">
-                <p>
-                    Toutes les deux semaines, la communauté Live Coding Strasbourg se réunit pour des ateliers de livecoding
-                    artistique. Que tu sois un mélomane passionné, un virtuose du code, un artiste graphique, un amateur de
-                    bidouillages numériques, ou simplement quelqu'un de curieux, viens nous rejoindre autour d'un verre.
-                </p>
-                <p>
-                    L'objectif est de créer une synergie entre les musiciens, les programmeurs, les graphistes et les
-                    esprits créatifs, le tout dans une ambiance conviviale et ouverte. Aucune expertise préalable en
-                    programmation n'est nécessaire. Tout le monde est le bienvenu, quels que soient son niveau de compétence
-                    et ses domaines d'intérêt.
-                </p>
-
-                <p>
-                    Nous abordons divers aspects du livecoding, partageons nos créations, improvisons ensemble et échangeons
-                    des idées sur des thèmes tels que la création musicale, l'interfaçage de logiciels et de machines, la
-                    conception visuelle, la composition algorithmique, etc.
-                </p>
-                <p>
-                    Un aspect essentiel de notre démarche est l'utilisation de logiciels libres, gratuits et open-source.
-                    Cela favorise la collaboration, l'accessibilité et la créativité sans entraves. Nous encourageons les
-                    participants à apporter leur ordinateur portable et un casque s'ils en ont un, créant ainsi un
-                    environnement propice à l'expérimentation et à l'apprentissage.
-                </p>
-                <p>
-                    En résumé, ces ateliers sont une opportunité unique de se plonger dans le monde fascinant du livecoding,
-                    d'explorer des horizons créatifs et de tisser des liens avec d'autres passionnés. Rejoins-nous pour une
-                    expérience enrichissante où la musique, le code et l'art numérique fusionnent de manière innovante.
-                </p>
-            </div>
-
-            <div class="tools-section">
-                <h3>Nos outils</h3>
-                <div class="tools-grid">
-                    <a href="https://foxdot.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
-                        <i class="fas fa-code"></i>
-                        <span>FoxDot</span>
-                    </a>
-                    <a href="https://sonic-pi.net/" target="_blank" rel="noopener noreferrer" class="tool-card">
-                        <i class="fas fa-music"></i>
-                        <span>SonicPi</span>
-                    </a>
-                    <a href="https://supercollider.github.io/" target="_blank" rel="noopener noreferrer" class="tool-card">
-                        <i class="fas fa-headphones"></i>
-                        <span>SuperCollider</span>
-                    </a>
-                    <a href="https://puredata.info/" target="_blank" rel="noopener noreferrer" class="tool-card">
-                        <i class="fas fa-project-diagram"></i>
-                        <span>Pure Data</span>
-                    </a>
-                    <a href="https://p5js.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
-                        <i class="fas fa-paint-brush"></i>
-                        <span>P5Js</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section id="photos">
-            <h2><i class="fas fa-images"></i> Galerie</h2>
-            <div class="photo-grid">
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/chaoslab5.webp" type="image/webp">
-                        <source srcset="media/chaoslab5.jpg" type="image/jpg">
-                        <img src="media/chaoslab5.jpg" alt="Chaos Lab 5" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Chaos Lab 5</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/DSC_0174.webp" type="image/webp">
-                        <source srcset="media/DSC_0174.jpg" type="image/jpg">
-                        <img src="media/DSC_0174.jpg" alt="Live Coding with Sonic Pi" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Live Coding with SonicPi</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/DSC_0681.webp" type="image/webp">
-                        <source srcset="media/DSC_0681.jpg" type="image/jpg">
-                        <img src="media/DSC_0681.jpg" alt="On code et on boit un verre" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>On code et on boit un verre</span>
-                    </div>
-                </div>
-                <div class="photo-card">
-                    <picture>
-                        <source srcset="media/WP_20180423_013.webp" type="image/webp">
-                        <source srcset="media/WP_20180423_013.jpg" type="image/jpg">
-                        <img src="media/WP_20180423_013.jpg" alt="Un groupe faisant du live coding" loading="lazy">
-                    </picture>
-                    <div class="photo-overlay">
-                        <span>Un groupe faisant du live coding</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="links">
-            <h2><i class="fas fa-link"></i> Communauté</h2>
-            <div class="links-grid">
-                <a href="https://livecoding.fr/" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-users"></i></div>
-                    <div class="link-content">
-                        <h3>Live Coding Fr</h3>
-                        <p>Le site des livecodeurs Français "Cookie Collective"</p>
-                    </div>
-                </a>
-                <a href="https://toplap.org/" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-globe"></i></div>
-                    <div class="link-content">
-                        <h3>Toplap</h3>
-                        <p>Le site du live coding International</p>
-                    </div>
-                </a>
-                <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-laptop-code"></i></div>
-                    <div class="link-content">
-                        <h3>Crash Server</h3>
-                        <p>Des livecodeurs Strasbourgeois</p>
-                    </div>
-                </a>
-                <a href="https://hackstub.eu/home/fr" target="_blank" rel="noopener noreferrer" class="link-card">
-                    <div class="link-icon"><i class="fas fa-wrench"></i></div>
-                    <div class="link-content">
-                        <h3>HackStub</h3>
-                        <p>Le hackerstub associatif Strasbourgeois</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <section id="contact">
-            <h2><i class="fas fa-envelope"></i> Nous contacter</h2>
-            <div class="content-wrapper">
-                <p>Pour toute question ou demande d'informations, vous pouvez nous envoyer un mail ou nous contacter sur
-                    les réseaux sociaux.</p>
-            </div>
-            <div class="contact-icons">
-                <a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-facebook-f"></i>
-                    <span>Facebook</span>
-                </a>
-                <a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-youtube"></i>
-                    <span>YouTube</span>
-                </a>
-                <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-discord"></i>
-                    <span>Discord</span>
-                </a>
-                <a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fab fa-github"></i>
-                    <span>GitHub</span>
-                </a>
-                <a href="mailto:livecodingstrasbourg@gmail.com" target="_blank" rel="noopener noreferrer" class="social-btn">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email</span>
-                </a>
-            </div>
-        </section>
-
-        <footer class="site-footer">
-            <div class="footer-content">
-                <p>© Live Coding Strasbourg - 2025</p>
-                <p>Une communauté de passionnés de livecoding</p>
-            </div>
-        </footer>
+    <div class="pixel-art">
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
+        <div class="pixel"></div>
     </div>
 
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Add active class to current section in nav
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        window.addEventListener('scroll', () => {
-            let current = '';
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
-                    current = section.getAttribute('id');
-                }
-            });
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').substring(1) === current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-    </script>
+    <footer>
+        <div class="social-links">
+            <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i></a>
+            <a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+            <a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div class="copyright">LIVE CODING STRASBOURG © 2025</div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
-
 </html>

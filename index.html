@@ -483,8 +483,13 @@
             font-size: 0.9rem;
         }
 
+        /* Modified for dark background on "Nos Amis & Collaborateurs" section */
         #amis h2 {
+            background-color: var(--primary-dark);
             color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            border-bottom: none;
         }
 
         .friend-card {
@@ -507,14 +512,17 @@
             color: var(--text-light);
         }
 
-        .friend-card i {
-            font-size: 2rem;
-            margin-bottom: 0.75rem;
-            color: var(--primary-color);
+        .friend-card img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            transition: var(--transition);
         }
-
-        .friend-card:hover i {
-            color: var(--text-light);
+        
+        .friend-card:hover img {
+            transform: scale(1.05);
         }
         
         .friend-card h4 {
@@ -556,7 +564,7 @@
     <header>
         <div class="header-container">
             <a href="index.html" class="logo">
-                <img src="/medias/lgo.jpg" alt="Live Coding Strasbourg Logo">
+                <img src="/api/placeholder/40/40" alt="Live Coding Strasbourg Logo">
                 Live Coding Strasbourg
             </a>
             <nav>
@@ -794,123 +802,28 @@
         <h3>Collectifs et projets amis</h3>
         <div class="workshop-grid">
             <div class="friend-card">
-                <i class="fas fa-users"></i>
+                <img src="/api/placeholder/200/150" alt="Cadavre Exquis" />
                 <h4>Cadavre Exquis live Coding Strasbourg</h4>
                 <p>Collectif artistique qui explore la création collaborative à travers le live coding. Chaque artiste ajoute son code à une performance évolutive, créant des pièces musicales et visuelles uniques.</p>
                 <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur YouTube</a>
             </div>
             <div class="friend-card">
-                <i class="fas fa-laptop-code"></i>
+                <img src="/api/placeholder/200/150" alt="Pierre Danger" />
                 <h4>Pierre Danger</h4>
                 <p>Artiste et développeur spécialisé dans les performances audiovisuelles génératives. Son travail mêle code créatif, musique électronique et visuels immersifs.</p>
                 <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Regarder sur YouTube</a>
             </div>
             <div class="friend-card">
-                <i class="fas fa-music"></i>
+                <img src="/api/placeholder/200/150" alt="Byriann Parker" />
                 <h4>Byriann Parker</h4>
                 <p>Musicien et live codeur expérimental qui mélange programmation et composition musicale. Ses performances explorent les frontières entre le code, le son et l'improvisation en temps réel.</p>
                 <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur Linktree</a>
             </div>
             <div class="friend-card">
-                <i class="fas fa-microchip"></i>
+                <img src="/api/placeholder/200/150" alt="CrashServer" />
                 <h4>CrashServer</h4>
                 <p>Plateforme collaborative dédiée à l'expérimentation sonore et visuelle par le code. CrashServer propose des ressources, des événements et un espace d'échange pour les artistes numériques.</p>
                 <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Visiter le site</a>
             </div>
         </div>
     </div>
-</section>
-
-        <section id="faq">
-            <h2><i class="fas fa-question-circle"></i> Questions fréquentes</h2>
-            <div class="faq-section">
-                <div class="faq-item">
-                    <p class="faq-question">Qu'est-ce que le live coding ?</p>
-                    <p class="faq-answer">Le live coding est une pratique artistique qui consiste à écrire et modifier du code informatique en direct pour créer de la musique, des visuels ou d'autres formes d'expression artistique. C'est une façon de fusionner programmation et performance artistique.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il savoir programmer pour participer ?</p>
-                    <p class="faq-answer">Non, aucune expertise préalable en programmation n'est nécessaire. Nos ateliers sont conçus pour être accessibles à tous les niveaux, y compris aux débutants complets. Nous vous accompagnerons dans vos premiers pas.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il apporter son matériel ?</p>
-                    <p class="faq-answer">Nous vous encourageons à apporter votre ordinateur portable et un casque si vous en avez un. Cela vous permettra de pratiquer directement pendant l'atelier. Si vous n'avez pas d'ordinateur, vous pouvez toujours participer en observant ou en partageant avec d'autres participants.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Les ateliers sont-ils gratuits ?</p>
-                    <p class="faq-answer">Nous demandons une contribution volontaire à nos participants, en fonction de leurs revenus. Il n'y a pas d'obligation mais bien sûr, contribuer aide à faire perdurer ces ateliers. </p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Comment être informé des prochains ateliers ?</p>
-                    <p class="faq-answer">Le meilleur moyen d'être tenu au courant est de rejoindre notre serveur Discord. Vous pouvez également nous suivre sur les réseaux sociaux ou consulter régulièrement notre site web.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-info">
-                <div class="footer-logo">Live Coding Strasbourg</div>
-                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
-            </div>
-            
-            <div class="footer-links">
-                <h4>Liens rapides</h4>
-                <ul>
-                    <li><a href="index.html">Accueil</a></li>
-                    <li><a href="#prochains-ateliers">Ateliers</a></li>
-                    <li><a href="#outils">Outils</a></li>
-                    <li><a href="#amis">Amis</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-social">
-                <h4>Suivez-nous</h4>
-                <ul>
-                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a></li>
-                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a></li>
-                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a></li>
-                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a></li>
-                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            © Live Coding Strasbourg - 2025 | Tous droits réservés
-        </div>
-    </footer>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Add active class to current section in nav
-        window.addEventListener('scroll', () => {
-            let scrollPosition = window.scrollY;
-            
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.add('active');
-                } else {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.remove('active');
-                }
-            });
-        });
-    </script>
-</body>
-
-</html>

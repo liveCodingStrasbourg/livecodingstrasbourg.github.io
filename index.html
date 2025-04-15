@@ -268,6 +268,8 @@
 
         .workshop-actions {
             margin-top: auto;
+            display: flex;
+            justify-content: space-between;
         }
 
         .btn {
@@ -483,8 +485,13 @@
             font-size: 0.9rem;
         }
 
-        #amis h2 {
-            color: var(--text-light);
+        .dark-section-title {
+            background-color: var(--primary-dark);
+            color: var(--text-light) !important;
+            padding: 1rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: none !important;
+            margin-bottom: 0 !important;
         }
 
         .friend-card {
@@ -526,6 +533,16 @@
             margin-bottom: 1rem;
         }
 
+        /* Styles pour les liens de ressources */
+        .resource-links {
+            margin-top: 1rem;
+        }
+        
+        .resource-links a {
+            margin: 0.25rem;
+            display: inline-block;
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
@@ -565,6 +582,8 @@
                     <li><a href="#prochains-ateliers"><i class="fas fa-calendar-alt"></i> Ateliers</a></li>
                     <li><a href="#outils"><i class="fas fa-tools"></i> Outils</a></li>
                     <li><a href="#amis"><i class="fas fa-handshake"></i> Amis</a></li>
+                    <li><a href="#chaos-lab"><i class="fas fa-flask"></i> Chaos Lab</a></li>
+                    <li><a href="#ressources"><i class="fas fa-book"></i> Ressources</a></li>
                     <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
                     <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -577,7 +596,370 @@
             <h1><i class="fas fa-calendar-alt"></i> Ateliers Live Coding Strasbourg</h1>
             <p>Rejoignez notre communauté créative pour explorer le live coding, la musique générative et l'art numérique dans une ambiance conviviale. Tous niveaux bienvenus !</p>
             <a href="#prochains-ateliers" class="cta-button"><i class="fas fa-calendar-check"></i> Voir les prochains ateliers</a>
-            <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="cta-button"><i class="fab fa-discord"></i> Rejoindre notre Discord</a>
+            <a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur YouTube</a>
+                    </div>
+                    <div class="friend-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <h4>Pierre Danger</h4>
+                        <p>Artiste et développeur spécialisé dans les performances audiovisuelles génératives. Son travail mêle code créatif, musique électronique et visuels immersifs.</p>
+                        <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Regarder sur YouTube</a>
+                    </div>
+                    <div class="friend-card">
+                        <i class="fas fa-music"></i>
+                        <h4>Byriann Parker</h4>
+                        <p>Musicien et live codeur expérimental qui mélange programmation et composition musicale. Ses performances explorent les frontières entre le code, le son et l'improvisation en temps réel.</p>
+                        <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur Linktree</a>
+                    </div>
+                    <div class="friend-card">
+                        <i class="fas fa-microchip"></i>
+                        <h4>CrashServer</h4>
+                        <p>Plateforme collaborative dédiée à l'expérimentation sonore et visuelle par le code. CrashServer propose des ressources, des événements et un espace d'échange pour les artistes numériques.</p>
+                        <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Visiter le site</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">Live Coding Strasbourg</div>
+                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Liens rapides</h4>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="#prochains-ateliers">Ateliers</a></li>
+                    <li><a href="#outils">Outils</a></li>
+                    <li><a href="#amis">Amis</a></li>
+                    <li><a href="#chaos-lab">Chaos Lab</a></li>
+                    <li><a href="#ressources">Ressources</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-social">
+                <h4>Suivez-nous</h4>
+                <ul>
+                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a></li>
+                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a></li>
+                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a></li>
+                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © Live Coding Strasbourg - 2025 | Tous droits réservés
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Add active class to current section in nav
+        window.addEventListener('scroll', () => {
+            let scrollPosition = window.scrollY;
+            
+            document.querySelectorAll('section').forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.add('active');
+                } else {
+                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+        <section id="faq">
+            <h2><i class="fas fa-question-circle"></i> Questions fréquentes</h2>
+            <div class="faq-section">
+                <div class="faq-item">
+                    <p class="faq-question">Qu'est-ce que le live coding ?</p>
+                    <p class="faq-answer">Le live coding est une pratique artistique qui consiste à écrire et modifier du code informatique en direct pour créer de la musique, des visuels ou d'autres formes d'expression artistique. C'est une façon de fusionner programmation et performance artistique.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Faut-il savoir programmer pour participer ?</p>
+                    <p class="faq-answer">Non, aucune expertise préalable en programmation n'est nécessaire. Nos ateliers sont conçus pour être accessibles à tous les niveaux, y compris aux débutants complets. Nous vous accompagnerons dans vos premiers pas.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Faut-il apporter son matériel ?</p>
+                    <p class="faq-answer">Nous vous encourageons à apporter votre ordinateur portable et un casque si vous en avez un. Cela vous permettra de pratiquer directement pendant l'atelier. Si vous n'avez pas d'ordinateur, vous pouvez toujours participer en observant ou en partageant avec d'autres participants.</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Les ateliers sont-ils gratuits ?</p>
+                    <p class="faq-answer">Nous demandons une contribution volontaire à nos participants, en fonction de leurs revenus. Il n'y a pas d'obligation mais bien sûr, contribuer aide à faire perdurer ces ateliers. </p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Comment être informé des prochains ateliers ?</p>
+                    <p class="faq-answer">Le meilleur moyen d'être tenu au courant est de rejoindre notre serveur Discord. Vous pouvez également nous suivre sur les réseaux sociaux ou consulter régulièrement notre site web.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="chaos-lab">
+            <h2 class="dark-section-title"><i class="fas fa-flask"></i> Chaos Lab</h2>
+            <div class="tools-section">
+                <h3>Archives des Chaos Labs</h3>
+                <div class="workshop-grid">
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab I</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab I. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce premier Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="ressources">
+            <h2 class="dark-section-title"><i class="fas fa-book"></i> Ressources</h2>
+            <div class="tools-section">
+                <h3>Liens et ressources utiles pour le livecoding</h3>
+                <div class="workshop-grid">
+                    <div class="friend-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h4>Tutoriels</h4>
+                        <p>Collection de tutoriels pour apprendre différents environnements de livecoding.</p>
+                        <div class="resource-links">
+                            <a href="#" class="btn btn-outline"><i class="fas fa-plus-circle"></i> Ajouter un lien</a>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-card">
+                        <i class="fas fa-file-code"></i>
+                        <h4>Code Snippets</h4>
+                        <p>Exemples de code et snippets pour différents environnements de livecoding.</p>
+                        <div class="resource-links">
+                            <a href="#" class="btn btn-outline"><i class="fas fa-plus-circle"></i> Ajouter un lien</a>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-card">
+                        <i class="fas fa-video"></i>
+                        <h4>Performances</h4>
+                        <p>Vidéos de performances de livecoding inspirantes.</p>
+                        <div class="resource-links">
+                            <a href="#" class="btn btn-outline"><i class="fas fa-plus-circle"></i> Ajouter un lien</a>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-card">
+                        <i class="fas fa-book-open"></i>
+                        <h4>Articles et publications</h4>
+                        <p>Articles, recherches et publications sur le livecoding et l'art numérique.</p>
+                        <div class="resource-links">
+                            <a href="#" class="btn btn-outline"><i class="fas fa-plus-circle"></i> Ajouter un lien</a>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-card">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <h4>Extensions et plugins</h4>
+                        <p>Extensions utiles pour différents environnements de livecoding.</p>
+                        <div class="resource-links">
+                            <a href="#" class="btn btn-outline"><i class="fas fa-plus-circle"></i> Ajouter un lien</a>
+                        </div>
+                    </div>
+                    
+                    <div class="friend-card">
+                        <i class="fas fa-globe"></i>
+                        <h4>Communautés internationales</h4>
+                        <p>Liens vers d'autres communautés de livecoding à travers le monde.</p>
+                        <div class="resource-links">
+                            <a href="https://toplap.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><i class="fas fa-external-link-alt"></i> TOPLAP.org</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+                    
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab V</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab V. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce cinquième Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab VI</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab VI. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce sixième Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab VI.5</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab VI.5. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce Chaos Lab spécial.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab II</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab II. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce deuxième Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab III</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab III. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce troisième Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <div class="workshop-date">
+                                <span class="day">--</span>
+                                <span class="month">---</span>
+                                <span class="year">----</span>
+                            </div>
+                            <div class="workshop-title">
+                                <h3>Chaos Lab IV</h3>
+                            </div>
+                        </div>
+                        <div class="workshop-content">
+                            <div class="workshop-meta">
+                                <span><i class="fas fa-user"></i> Artistes: à spécifier</span>
+                                <span><i class="fas fa-map-marker-alt"></i> Lieu: à spécifier</span>
+                            </div>
+                            <div class="workshop-description">
+                                <p>Description du Chaos Lab IV. Ajoutez ici les détails sur les performances, les artistes et le concept derrière ce quatrième Chaos Lab.</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="#" class="btn btn-outline"><i class="fas fa-photo-video"></i> Photos/Vidéos</a>
+                            </div>
+                        </div>
+                    </div>" rel="noopener noreferrer" class="cta-button"><i class="fab fa-discord"></i> Rejoindre notre Discord</a>
         </div>
     </section>
 
@@ -709,40 +1091,38 @@
                         <i class="fas fa-wave-square"></i>
                         <span>TidalCycles</span>
                     </a>
-<a href="https://www.shadertoy.com/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-desktop"></i>
-    <span>ShaderToy</span>
-</a>
-<a href="https://vvvv.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-stream"></i>
-    <span>VVVV</span>
-</a>
-<a href="https://strudel.tidalcycles.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-sliders-h"></i>
-    <span>Strudel</span>
-</a>
-<a href="https://gibber.cc/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-laptop-code"></i>
-    <span>Gibber</span>
-</a>
-                    
-<a href="https://derivative.ca/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-cube"></i>
-    <span>TouchDesigner</span>
-</a>
-<a href="https://cables.gl/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-network-wired"></i>
-    <span>Cables.gl</span>
-</a>
-<a href="https://mercury.timvideos.us/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-bolt"></i>
-    <span>Mercury</span>
-</a>
-<a href="https://hydra.ojack.xyz/" target="_blank" rel="noopener noreferrer" class="tool-card">
-    <i class="fas fa-water"></i>
-    <span>Hydra</span>
-</a>
-                    
+                    <a href="https://www.shadertoy.com/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-desktop"></i>
+                        <span>ShaderToy</span>
+                    </a>
+                    <a href="https://vvvv.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-stream"></i>
+                        <span>VVVV</span>
+                    </a>
+                    <a href="https://strudel.tidalcycles.org/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Strudel</span>
+                    </a>
+                    <a href="https://gibber.cc/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-laptop-code"></i>
+                        <span>Gibber</span>
+                    </a>
+                    <a href="https://derivative.ca/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-cube"></i>
+                        <span>TouchDesigner</span>
+                    </a>
+                    <a href="https://cables.gl/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Cables.gl</span>
+                    </a>
+                    <a href="https://mercury.timvideos.us/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-bolt"></i>
+                        <span>Mercury</span>
+                    </a>
+                    <a href="https://hydra.ojack.xyz/" target="_blank" rel="noopener noreferrer" class="tool-card">
+                        <i class="fas fa-water"></i>
+                        <span>Hydra</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -757,130 +1137,13 @@
             </div>
         </section>
 
-
-<section id="amis">
-    <h2><i class="fas fa-handshake"></i> Nos Amis & Collaborateurs</h2>
-    <div class="tools-section">
-        <h3>Collectifs et projets amis</h3>
-        <div class="workshop-grid">
-            <div class="friend-card">
-                <i class="fas fa-users"></i>
-                <h4>Cadavre Exquis live Coding Strasbourg</h4>
-                <p>Collectif artistique qui explore la création collaborative à travers le live coding. Chaque artiste ajoute son code à une performance évolutive, créant des pièces musicales et visuelles uniques.</p>
-                <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur YouTube</a>
-            </div>
-            <div class="friend-card">
-                <i class="fas fa-laptop-code"></i>
-                <h4>Pierre Danger</h4>
-                <p>Artiste et développeur spécialisé dans les performances audiovisuelles génératives. Son travail mêle code créatif, musique électronique et visuels immersifs.</p>
-                <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Regarder sur YouTube</a>
-            </div>
-            <div class="friend-card">
-                <i class="fas fa-music"></i>
-                <h4>Byriann Parker</h4>
-                <p>Musicien et live codeur expérimental qui mélange programmation et composition musicale. Ses performances explorent les frontières entre le code, le son et l'improvisation en temps réel.</p>
-                <a href="https://linktr.ee/beryann.parker" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Découvrir sur Linktree</a>
-            </div>
-            <div class="friend-card">
-                <i class="fas fa-microchip"></i>
-                <h4>CrashServer</h4>
-                <p>Plateforme collaborative dédiée à l'expérimentation sonore et visuelle par le code. CrashServer propose des ressources, des événements et un espace d'échange pour les artistes numériques.</p>
-                <a href="https://crashserver.fr" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Visiter le site</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-        <section id="faq">
-            <h2><i class="fas fa-question-circle"></i> Questions fréquentes</h2>
-            <div class="faq-section">
-                <div class="faq-item">
-                    <p class="faq-question">Qu'est-ce que le live coding ?</p>
-                    <p class="faq-answer">Le live coding est une pratique artistique qui consiste à écrire et modifier du code informatique en direct pour créer de la musique, des visuels ou d'autres formes d'expression artistique. C'est une façon de fusionner programmation et performance artistique.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il savoir programmer pour participer ?</p>
-                    <p class="faq-answer">Non, aucune expertise préalable en programmation n'est nécessaire. Nos ateliers sont conçus pour être accessibles à tous les niveaux, y compris aux débutants complets. Nous vous accompagnerons dans vos premiers pas.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Faut-il apporter son matériel ?</p>
-                    <p class="faq-answer">Nous vous encourageons à apporter votre ordinateur portable et un casque si vous en avez un. Cela vous permettra de pratiquer directement pendant l'atelier. Si vous n'avez pas d'ordinateur, vous pouvez toujours participer en observant ou en partageant avec d'autres participants.</p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Les ateliers sont-ils gratuits ?</p>
-                    <p class="faq-answer">Nous demandons une contribution volontaire à nos participants, en fonction de leurs revenus. Il n'y a pas d'obligation mais bien sûr, contribuer aide à faire perdurer ces ateliers. </p>
-                </div>
-                <div class="faq-item">
-                    <p class="faq-question">Comment être informé des prochains ateliers ?</p>
-                    <p class="faq-answer">Le meilleur moyen d'être tenu au courant est de rejoindre notre serveur Discord. Vous pouvez également nous suivre sur les réseaux sociaux ou consulter régulièrement notre site web.</p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-info">
-                <div class="footer-logo">Live Coding Strasbourg</div>
-                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
-            </div>
-            
-            <div class="footer-links">
-                <h4>Liens rapides</h4>
-                <ul>
-                    <li><a href="index.html">Accueil</a></li>
-                    <li><a href="#prochains-ateliers">Ateliers</a></li>
-                    <li><a href="#outils">Outils</a></li>
-                    <li><a href="#amis">Amis</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-social">
-                <h4>Suivez-nous</h4>
-                <ul>
-                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a></li>
-                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i> Facebook</a></li>
-                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a></li>
-                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a></li>
-                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="copyright">
-            © Live Coding Strasbourg - 2025 | Tous droits réservés
-        </div>
-    </footer>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Add active class to current section in nav
-        window.addEventListener('scroll', () => {
-            let scrollPosition = window.scrollY;
-            
-            document.querySelectorAll('section').forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                const sectionHeight = section.offsetHeight;
-                const sectionId = section.getAttribute('id');
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.add('active');
-                } else {
-                    document.querySelector(`nav a[href="#${sectionId}"]`)?.classList.remove('active');
-                }
-            });
-        });
-    </script>
-</body>
-
-</html>
+        <section id="amis">
+            <h2 class="dark-section-title"><i class="fas fa-handshake"></i> Nos Amis & Collaborateurs</h2>
+            <div class="tools-section">
+                <h3>Collectifs et projets amis</h3>
+                <div class="workshop-grid">
+                    <div class="friend-card">
+                        <i class="fas fa-users"></i>
+                        <h4>Cadavre Exquis live Coding Strasbourg</h4>
+                        <p>Collectif artistique qui explore la création collaborative à travers le live coding. Chaque artiste ajoute son code à une performance évolutive, créant des pièces musicales et visuelles uniques.</p>
+                        <a href="https://www.youtube.com/@livecodingstrasbourg8206" target="_blank

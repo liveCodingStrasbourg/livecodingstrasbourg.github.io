@@ -370,15 +370,42 @@
                     <p><span class="icon-users"></span> Accessible à tous, jauge limitée à 120 personnes</p>
                     <p><span class="icon-currency"></span> Entrée à prix libre (suggestion : 8€)</p>
                     
-                    <div class="venue-map">
-                        <p style="text-align: center; color: var(--primary-light);">
-
-
-                            <a href="https://www.openstreetmap.org/?mlat=48.5731&mlon=7.7649#map=19/48.573819/7.764003" target="_blank" style="color: var(--secondary-color); text-decoration: none; border: 1px solid var(--secondary-color); padding: 8px 16px; display: inline-block; margin-top: 10px;">
+                    <div class="venue-map" style="position: relative; height: 300px; overflow: hidden;">
+                        <!-- Embedded OpenStreetMap -->
+                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=7.761535644531251%2C48.57231119980398%2C7.766470909118653%2C48.57532650380218&amp;layer=mapnik&amp;marker=48.573819%2C7.764003" 
+                            style="border: 1px solid var(--primary-color); filter: grayscale(70%) brightness(0.8) contrast(1.2) hue-rotate(275deg);"></iframe>
+                        
+                        <!-- Map overlay with glitch effect -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; 
+                                    background-image: linear-gradient(135deg, rgba(255, 0, 255, 0.1) 0%, transparent 100%);
+                                    animation: mapGlitch 8s infinite alternate;"></div>
+                        
+                        <!-- Direct Link -->
+                        <div style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">
+                            <a href="https://www.openstreetmap.org/?mlat=48.573819&mlon=7.764003#map=19/48.573819/7.764003" target="_blank" 
+                               style="color: var(--secondary-color); text-decoration: none; border: 1px solid var(--secondary-color); 
+                                      padding: 8px 16px; display: inline-block; background-color: rgba(0, 0, 0, 0.7);">
                                 <span class="icon-location"></span> Voir sur OpenStreetMap
                             </a>
-                        </p>
+                        </div>
                     </div>
+                    
+                    <style>
+                        @keyframes mapGlitch {
+                            0%, 100% {
+                                opacity: 0.3;
+                            }
+                            33% {
+                                opacity: 0.2;
+                                background-image: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, transparent 100%);
+                            }
+                            66% {
+                                opacity: 0.4;
+                                background-image: linear-gradient(225deg, rgba(0, 255, 0, 0.1) 0%, transparent 100%);
+                            }
+                        }
+                    </style>
                 </div>
                 
                 <div class="info-card" style="margin-top: 1.5rem;">

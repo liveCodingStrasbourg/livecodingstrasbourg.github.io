@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr"> 
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAOS LAB VII - TOPLAP STRASBOURG</title>
+    <link rel="stylesheet" href="styles-glitch-standalone.css">
+    <style>
+        /* Additional styles for the event page */
+        .event-hero {
+            background: linear-gradient(135deg, rgba(15,0,40,0.95), rgba(60,0,70,0.9)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><rect x="10" y="10" width="2" height="2" fill="%23ff00ff"/><rect x="30" y="30" width="1" height="1" fill="%2300ffff"/><rect x="70" y="25" width="1" height="1" fill="%2300ff00"/><rect x="45" y="80" width="2" height="2" fill="%23ff00ff"/><rect x="90" y="60" width="1" height="1" fill="%2300ffff"/></svg>');
+            padding: 6rem 1rem;
+        }
+        
+        .event-title {
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            animation: eventTitleGlitch 8s infinite;
+        }
+        
+        @keyframes eventTitleGlitch {
+            0%, 100% {
+                text-shadow: 4px 4px 0 var(--primary-color),
+                            -4px -4px 0 var(--primary-light);
+            }
+            25% {
+                text-shadow: -4px 4px 0 var(--glitch-color-1),
+                              4px -4px 0 var(--glitch-color-2);
+            }
+            50% {
+                text-shadow: 4px -4px 0 var(--primary-dark),
+                            -4px 4px 0 var(--secondary-color);
+            }
+            75% {
+                text-shadow: -4px -4px 0 var(--secondary-color),
+                              4px 4px 0 var(--glitch-color-1);
+            }
+        }
+        
+        .chaos-section {
+            margin-bottom: 4rem;
+        }
+        
+        .event-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .event-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .event-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        .info-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--primary-color);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 0, 255, 0.1) 50%,
+                transparent 100%
+            );
+            animation: cardGlow 4s infinite;
+            pointer-events: none;
+        }
+        
+        .info-card h3 {
+            color: var(--primary-light);
+            font-family: monospace;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .info-card h3::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -0.5rem;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+        
+        .lineup {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .artist-card {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-dark);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .artist-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .artist-name {
+            font-family: monospace;
+            font-size: 1.4rem;
+            color: var(--primary-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .artist-desc {
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+        
+        .schedule-item {
+            display: flex;
+            border-left: 2px solid var(--primary-color);
+            padding: 1rem 0 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .schedule-item:hover {
+            border-left-color: var(--secondary-color);
+        }
+        
+        .schedule-item::before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            left: -6px;
+            top: 1.5rem;
+        }
+        
+        .schedule-item:hover::before {
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 10px var(--secondary-color);
+        }
+        
+        .time {
+            min-width: 90px;
+            font-family: monospace;
+            color: var(--secondary-color);
+        }
+        
+        .event-description {
+            margin-bottom: 2rem;
+        }
+        
+        .venue-map {
+            height: 300px;
+            margin-top: 1rem;
+            border: 1px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .signup-form {
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-light);
+            font-family: monospace;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-dark);
+            color: var(--text-light);
+            font-family: monospace;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index-glitch-standalone.html" class="logo">
+                <span class="glitch-text" data-text="TOPLAP_STR">TOPLAP_STR</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="index-glitch-standalone.html"><span class="icon-home"></span> Accueil</a></li>
+                    <li><a href="index-glitch-standalone.html#prochains-ateliers"><span class="icon-calendar"></span> Ateliers</a></li>
+                    <li><a href="index-glitch-standalone.html#outils"><span class="icon-tools"></span> Outils</a></li>
+                    <li><a href="index-glitch-standalone.html#amis"><span class="icon-handshake"></span>Communauté</a></li>
+                    <li><a href="index-glitch-standalone.html#faq"><span class="icon-question"></span> FAQ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="event-hero hero">
+        <div class="hero-content">
+            <p style="color: var(--secondary-color); margin-bottom: 1rem; letter-spacing: 5px; text-transform: uppercase;">TOPLAP Strasbourg présente</p>
+            <h1 class="event-title" data-text="CHAOS LAB VII">CHAOS LAB VII<span class="terminal-cursor"></span></h1>
+            <p>Une soirée de performances audiovisuelles génératives et de livecoding</p>
+            <p style="margin-top: 1rem;">21 Mai 2025 | Shadok - Strasbourg</p>
+            <a href="#registration" class="cta-button"><span class="icon-ticket"></span> Réserver une place</a>
+        </div>
+    </section>
+
+    <main>
+        <section class="chaos-section">
+            <h2><span class="icon-music"></span> À propos de l'événement<span class="terminal-cursor"></span></h2>
+            <div class="tools-section event-description">
+                <p>CHAOS LAB VII est la septième édition de notre série d'événements phares dédiés au live coding et à l'art génératif. Cette soirée exceptionnelle réunit artistes locaux et internationaux pour des performances où le code devient instrument, où l'algorithme devient expression artistique.</p>
+                
+                <p>Lancé en 2023, CHAOS LAB est devenu un rendez-vous incontournable de la scène creative coding strasbourgeoise, explorant les frontières entre programmation, musique électronique expérimentale et arts visuels.</p>
+                
+                <p>Pour cette 7ème édition, nous explorerons les thèmes de l'aléatoire contrôlé, des systèmes chaotiques et des structures émergentes à travers des performances live où le code sera projeté, permettant au public de voir la création en temps réel.</p>
+            </div>
+            
+            <div class="event-info">
+                <div class="info-card">
+                    <h3><span class="icon-users"></span> Lineup</h3>
+                    <p>Découvrez les artistes qui se produiront lors de CHAOS LAB VII :</p>
+                    
+                    <div class="lineup">
+                        <div class="artist-card">
+                            <div class="artist-name">Pierre Danger</div>
+                            <p class="artist-desc">Performance audiovisuelle générative explorant les oscilloscopes et la synthèse vectorielle.</p>
+                            <a href="#" class="btn btn-outline">En savoir plus</a>
+                        </div>
+                        
+                        <div class="artist-card">
+                            <div class="artist-name">CrashServer</div>
+                            <p class="artist-desc">Duo de live coding aux frontières de la noise, du transhumanisme et de l'IDM.</p>
+                            <a href="https://crashserver.fr" target="_blank" class="btn btn-outline">Site web</a>
+                        </div>
+                        
+                        <div class="artist-card">
+                            <div class="artist-name">ByteBeat Collective</div>
+                            <p class="artist-desc">Expérimentations sonores minimalistes basées sur des formules mathématiques compactes.</p>
+                            <a href="#" class="btn btn-outline">En savoir plus</a>
+                        </div>
+                        
+                        <div class="artist-card">
+                            <div class="artist-name">Cadavre Exquis</div>
+                            <p class="artist-desc">Performance collaborative où chaque artiste ajoute au code du précédent pour une création évolutive.</p>
+                            <a href="#" class="btn btn-outline">En savoir plus</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><span class="icon-clock"></span> Programme</h3>
+                    <p>Une soirée complète dédiée au live coding et aux performances audiovisuelles :</p>
+                    
+                    <div class="schedule">
+                        <div class="schedule-item">
+                            <div class="time">18:30</div>
+                            <div class="activity">
+                                <strong>Ouverture des portes</strong>
+                                <p>Accueil du public et installation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">19:00</div>
+                            <div class="activity">
+                                <strong>Introduction à CHAOS LAB</strong>
+                                <p>Présentation du concept et des artistes par l'équipe TOPLAP</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">19:30</div>
+                            <div class="activity">
+                                <strong>ByteBeat Collective</strong>
+                                <p>Performance d'ouverture sur la synthèse minimaliste</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">20:15</div>
+                            <div class="activity">
+                                <strong>Pierre Danger</strong>
+                                <p>Performance audiovisuelle "Vector Dreams"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">21:00</div>
+                            <div class="activity">
+                                <strong>Pause & Networking</strong>
+                                <p>Échanges entre participants et artistes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">21:30</div>
+                            <div class="activity">
+                                <strong>CrashServer</strong>
+                                <p>Live set "Digital Ruins"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">22:15</div>
+                            <div class="activity">
+                                <strong>Cadavre Exquis</strong>
+                                <p>Performance collaborative avec participation du public</p>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-item">
+                            <div class="time">23:00</div>
+                            <div class="activity">
+                                <strong>Jam Session finale</strong>
+                                <p>Performance improvisée avec tous les artistes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="chaos-section">
+            <h2><span class="icon-location"></span> Lieu et accès<span class="terminal-cursor"></span></h2>
+            <div class="tools-section">
+                <p>L'événement se déroulera au Shadok, lieu emblématique de la culture numérique à Strasbourg.</p>
+                
+                <div class="info-card" style="margin-top: 1.5rem;">
+                    <h3>Le Shadok - Fabrique du Numérique</h3>
+                    <p><span class="icon-location"></span> 25 presqu'île André Malraux, 67100 Strasbourg</p>
+                    <p><span class="icon-clock"></span> Accès de 18h30 à minuit le 21 mai 2025</p>
+                    <p><span class="icon-users"></span> Accessible à tous, jauge limitée à 120 personnes</p>
+                    <p><span class="icon-currency"></span> Entrée à prix libre (suggestion : 8€)</p>
+                    
+                    <div class="venue-map">
+                        <p style="text-align: center; color: var(--primary-light);">
+                            [CARTE INTERACTIVE DU SHADOK]<br>
+                            <span style="font-size: 0.9rem; color: var(--text-light);">Une carte sera intégrée ici</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="info-card" style="margin-top: 1.5rem;">
+                    <h3>Comment venir ?</h3>
+                    <p><span style="color: var(--primary-light);">Tram :</span> Lignes C et E, arrêt "Winston Churchill" ou "Étoile Bourse"</p>
+                    <p><span style="color: var(--primary-light);">Bus :</span> Lignes 14 et 24, arrêt "Étoile Bourse"</p>
+                    <p><span style="color: var(--primary-light);">Vélo :</span> Station Vélhop à proximité et arceaux disponibles</p>
+                    <p><span style="color: var(--primary-light);">Voiture :</span> Parking du centre commercial Rivetoile à 3 minutes à pied</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="registration" class="chaos-section">
+            <h2><span class="icon-ticket"></span> Réservez votre place<span class="terminal-cursor"></span></h2>
+            <div class="tools-section">
+                <p>Bien que l'entrée soit à prix libre, la jauge est limitée à 120 personnes. Nous vous recommandons de réserver votre place à l'avance.</p>
+                
+                <div class="info-card" style="margin-top: 1.5rem;">
+                    <h3>Formulaire de pré-inscription</h3>
+                    <p>Remplissez ce formulaire pour être assuré d'avoir une place pour l'événement. Le paiement se fera sur place.</p>
+                    
+                    <form class="signup-form">
+                        <div class="form-group">
+                            <label for="name">Nom et prénom</label>
+                            <input type="text" class="form-control" id="name" placeholder="Votre nom et prénom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Votre adresse email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="participants">Nombre de personnes</label>
+                            <select class="form-control" id="participants">
+                                <option value="1">1 personne</option>
+                                <option value="2">2 personnes</option>
+                                <option value="3">3 personnes</option>
+                                <option value="4">4 personnes</option>
+                                <option value="5">5 personnes ou plus (précisez en commentaire)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="comments">Commentaires (optionnel)</label>
+                            <textarea class="form-control" id="comments" rows="3" placeholder="Questions ou remarques particulières"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="cta-button">
+                            <span class="icon-ticket"></span> Réserver ma place
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <section class="chaos-section">
+            <h2><span class="icon-question"></span> Questions fréquentes<span class="terminal-cursor"></span></h2>
+            <div class="faq-section">
+                <div class="faq-item">
+                    <p class="faq-question">Faut-il des connaissances en programmation pour apprécier l'événement ?</p>
+                    <p class="faq-answer">Pas du tout ! L'événement est conçu pour être accessible à tous, que vous soyez programmeur ou simplement curieux de découvrir cette forme d'expression artistique. Les performances sont avant tout des expériences audiovisuelles qui peuvent être appréciées par tous.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <p class="faq-question">Est-ce que je peux participer à la performance "Cadavre Exquis" ?</p>
+                    <p class="faq-answer">Oui ! La performance "Cadavre Exquis" inclura des moments d'interaction avec le public. Si vous avez des notions de programmation, vous pourrez proposer des snippets de code. Sinon, vous pourrez suggérer des idées ou des directions que les artistes pourront implémenter en direct.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <p class="faq-question">Y aura-t-il de la nourriture ou des boissons disponibles ?</p>
+                    <p class="faq-answer">Le Shadok dispose d'un espace bar où vous pourrez acheter des boissons. Quelques snacks seront également disponibles, mais nous vous recommandons de dîner avant l'événement.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <p class="faq-question">Puis-je venir avec mon ordinateur pour coder pendant l'événement ?</p>
+                    <p class="faq-answer">Absolument ! Nous encourageons les participants à apporter leur matériel s'ils souhaitent expérimenter ou prendre des notes. Des prises électriques seront disponibles en nombre limité, pensez donc à venir avec une batterie chargée.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">Live_Coding_Strasbourg</div>
+                <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Liens rapides</h4>
+                <ul>
+                    <li><a href="index-glitch-standalone.html"><span class="icon-angle-right"></span> Accueil</a></li>
+                    <li><a href="index-glitch-standalone.html#prochains-ateliers"><span class="icon-angle-right"></span> Ateliers</a></li>
+                    <li><a href="index-glitch-standalone.html#outils"><span class="icon-angle-right"></span> Outils</a></li>
+                    <li><a href="index-glitch-standalone.html#amis"><span class="icon-angle-right"></span> Communauté</a></li>
+                    <li><a href="index-glitch-standalone.html#faq"><span class="icon-angle-right"></span> FAQ</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-social">
+                <h4>Suivez-nous</h4>
+                <ul>
+                    <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><span class="icon-discord"></span> Discord</a></li>
+                    <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><span class="icon-facebook"></span> Facebook</a></li>
+                    <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><span class="icon-youtube"></span> YouTube</a></li>
+                    <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><span class="icon-github"></span> GitHub</a></li>
+                    <li><a href="mailto:livecodingstrasbourg@gmail.com"><span class="icon-envelope"></span> Email</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            © Live_Coding_Strasbourg - 2025 | <span class="glitch-text" data-text="TOUS_DROITS_RÉSERVÉS">TOUS_DROITS_RÉSERVÉS</span>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Additional glitch effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Random glitch effect on hover for all elements with glitch-text class
+            const glitchTexts = document.querySelectorAll('.glitch-text');
+            
+            glitchTexts.forEach(text => {
+                if (!text.getAttribute('data-text')) {
+                    text.setAttribute('data-text', text.textContent);
+                }
+            });
+            
+            // Create random scanlines
+            function createScanline() {
+                const scanline = document.createElement('div');
+                scanline.className = 'scanline';
+                scanline.style.position = 'fixed';
+                scanline.style.top = Math.random() * 100 + 'vh';
+                scanline.style.left = '0';
+                scanline.style.width = '100%';
+                scanline.style.height = '1px';
+                scanline.style.backgroundColor = 'rgba(0, 255, 255, 0.5)';
+                scanline.style.zIndex = '9999';
+                scanline.style.pointerEvents = 'none';
+                
+                document.body.appendChild(scanline);
+                
+                setTimeout(() => {
+                    scanline.remove();
+                }, 500);
+            }
+            
+            // Create random noise/glitch effect
+            function createNoise() {
+                const noise = document.createElement('div');
+                noise.className = 'noise';
+                noise.style.position = 'fixed';
+                noise.style.top = Math.random() * 100 + 'vh';
+                noise.style.left = Math.random() * 100 + 'vw';
+                noise.style.width = Math.random() * 100 + 'px';
+                noise.style.height = Math.random() * 10 + 'px';
+                noise.style.backgroundColor = 'rgba(255, 0, 255, 0.2)';
+                noise.style.zIndex = '9998';
+                noise.style.pointerEvents = 'none';
+                
+                document.body.appendChild(noise);
+                
+                setTimeout(() => {
+                    noise.remove();
+                }, 200);
+            }
+            
+            // Create effects at random intervals
+            setInterval(createScanline, 5000);
+            setInterval(createNoise, 3000);
+        });
+    </script>
+</body>
+
+</html>

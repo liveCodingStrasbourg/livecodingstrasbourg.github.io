@@ -183,62 +183,35 @@
             justify-content: center;
         }
         
-        .signup-form {
+        .back-link {
+            display: inline-block;
             margin-top: 2rem;
+            color: var(--secondary-color);
+            text-decoration: none;
+            border: 1px solid var(--secondary-color);
+            padding: 0.5rem 1rem;
+            transition: var(--transition);
         }
         
-        .form-group {
-            margin-bottom: 1.5rem;
+        .back-link:hover {
+            background-color: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--primary-light);
-            font-family: monospace;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary-dark);
-            color: var(--text-light);
-            font-family: monospace;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+        .back-link i {
+            margin-right: 0.5rem;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <div class="header-container">
-            <a href="index-glitch-standalone.html" class="logo">
-                <span class="glitch-text" data-text="TOPLAP_STR">TOPLAP_STR</span>
-            </a>
-            <nav>
-                <ul>
-                    <li><a href="index-glitch-standalone.html"><span class="icon-home"></span> Accueil</a></li>
-                    <li><a href="index-glitch-standalone.html#prochains-ateliers"><span class="icon-calendar"></span> Ateliers</a></li>
-                    <li><a href="index-glitch-standalone.html#outils"><span class="icon-tools"></span> Outils</a></li>
-                    <li><a href="index-glitch-standalone.html#amis"><span class="icon-handshake"></span>Communauté</a></li>
-                    <li><a href="index-glitch-standalone.html#faq"><span class="icon-question"></span> FAQ</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
     <section class="hero">
         <div class="hero-content">
             <p style="color: var(--secondary-color); margin-bottom: 1rem; letter-spacing: 5px; text-transform: uppercase;">TOPLAP Strasbourg présente</p>
             <h1 class="event-title" data-text="CHAOS LAB VII">CHAOS LAB VII<span class="terminal-cursor"></span></h1>
             <p>Une soirée de performances audiovisuelles génératives et de livecoding</p>
             <p style="margin-top: 1rem;">21 Mai 2025 | Shadok - Strasbourg</p>
+            <a href="index-glitch-standalone.html" class="back-link"><span class="icon-home"></span> Retour à l'accueil</a>
         </div>
     </section>
 
@@ -279,11 +252,10 @@
                         
                         <div class="artist-card">
                             <div class="artist-name">Ralt144MI</div>
-                            <p class="artist-desc">144midi c'est du mix d'eurodance sur différents synthétiseurs, c'est souvent drôle, ça va vite et fort, ça change beaucoup de tempo, même des fois c'est un peu trop noise pour de l'eurodance.
-Projet "DJ" de Ralt144MI, 144midi utilise aussi du live-coding pour foutre le bordel dans tous ses synthétiseurs. 
-
-"J'ai l'impression d'entendre un concert depuis le fumoir'' - un auditeur 
-''C'est de la musique de mauvais rêve'' - au autre auditeur </p>
+                            <p class="artist-desc">144midi c'est du mix d'eurodance sur différents synthétiseurs, c'est souvent drôle, ça va vite et fort, ça change beaucoup de tempo, même des fois c'est un peu trop noise pour de l'eurodance.<br><br>
+                            Projet "DJ" de Ralt144MI, 144midi utilise aussi du live-coding pour foutre le bordel dans tous ses synthétiseurs.<br><br>
+                            "J'ai l'impression d'entendre un concert depuis le fumoir" - un auditeur<br>
+                            "C'est de la musique de mauvais rêve" - un autre auditeur</p>
                             <a href="#" class="btn btn-outline">En savoir plus</a>
                         </div>
                     </div>
@@ -321,8 +293,8 @@ Projet "DJ" de Ralt144MI, 144midi utilise aussi du live-coding pour foutre le bo
                         <div class="schedule-item">
                             <div class="time">20:15</div>
                             <div class="activity">
-                                <strong>Pierre Danger</strong>
-                                <p>Performance audiovisuelle "Vector Dreams"</p>
+                                <strong>Ralt144MI</strong>
+                                <p>Set "Eurodance Chaos"</p>
                             </div>
                         </div>
                         
@@ -337,16 +309,16 @@ Projet "DJ" de Ralt144MI, 144midi utilise aussi du live-coding pour foutre le bo
                         <div class="schedule-item">
                             <div class="time">21:30</div>
                             <div class="activity">
-                                <strong>CrashServer</strong>
-                                <p>Live set "Digital Ruins"</p>
+                                <strong>Pierre Danger</strong>
+                                <p>Performance audiovisuelle "Vector Dreams"</p>
                             </div>
                         </div>
                         
                         <div class="schedule-item">
                             <div class="time">22:15</div>
                             <div class="activity">
-                                <strong>Cadavre Exquis</strong>
-                                <p>Performance collaborative avec participation du public</p>
+                                <strong>CrashServer</strong>
+                                <p>Live set "Digital Ruins"</p>
                             </div>
                         </div>
                         

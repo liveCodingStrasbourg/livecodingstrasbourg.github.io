@@ -201,197 +201,145 @@
         .back-link i {
             margin-right: 0.5rem;
         }
-        
-        .archive-grid {
+
+        /* Archives section styles */
+        .archives-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
-        
+
         .archive-card {
-            background-color: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--primary-dark);
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
             overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
             position: relative;
-            transition: var(--transition);
         }
-        
+
         .archive-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
             border-color: var(--secondary-color);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
-        
-        .archive-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            filter: grayscale(40%) contrast(120%) brightness(0.8) hue-rotate(180deg);
-            transition: var(--transition);
-        }
-        
-        .archive-card:hover .archive-image {
-            filter: grayscale(20%) contrast(130%) brightness(1) hue-rotate(220deg);
-        }
-        
-        .archive-content {
-            padding: 1.5rem;
-        }
-        
-        .archive-title {
-            color: var(--primary-light);
-            font-family: monospace;
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .archive-date {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-        }
-        
-        .archive-description {
-            margin-bottom: 1rem;
-            font-family: monospace;
-        }
-        
-        .archive-artists {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 0, 255, 0.2);
-        }
-        
-        .archive-artists strong {
-            color: var(--primary-light);
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-        
-        .glitch-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, transparent 100%);
-            pointer-events: none;
-            mix-blend-mode: screen;
-        }
-        
-        @keyframes mapGlitch {
-            0%, 100% {
-                opacity: 0.3;
-            }
-            33% {
-                opacity: 0.2;
-                background-image: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, transparent 100%);
-            }
-            66% {
-                opacity: 0.4;
-                background-image: linear-gradient(225deg, rgba(0, 255, 0, 0.1) 0%, transparent 100%);
-            }
-        }
-    </style>
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .artist-card {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--primary-dark);
-            padding: 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-        
-        .artist-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-        }
-        
-        .artist-name {
-            font-family: monospace;
-            font-size: 1.4rem;
-            color: var(--primary-light);
-            margin-bottom: 0.5rem;
-        }
-        
-        .artist-desc {
-            margin-bottom: 1rem;
-            font-family: monospace;
-        }
-        
-        .schedule-item {
-            display: flex;
-            border-left: 2px solid var(--primary-color);
-            padding: 1rem 0 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-        
-        .schedule-item:hover {
-            border-left-color: var(--secondary-color);
-        }
-        
-        .schedule-item::before {
-            content: "";
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            left: -6px;
-            top: 1.5rem;
-        }
-        
-        .schedule-item:hover::before {
-            background-color: var(--secondary-color);
-            box-shadow: 0 0 10px var(--secondary-color);
-        }
-        
-        .time {
-            min-width: 90px;
-            font-family: monospace;
-            color: var(--secondary-color);
-        }
-        
-        .event-description {
-            margin-bottom: 2rem;
-        }
-        
-        .venue-map {
-            height: 300px;
-            margin-top: 1rem;
-            border: 1px solid var(--primary-color);
+
+        .archive-header {
+            height: 180px;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            color: var(--secondary-color);
-            text-decoration: none;
-            border: 1px solid var(--secondary-color);
-            padding: 0.5rem 1rem;
+
+        .archive-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            filter: grayscale(40%) brightness(0.7) contrast(1.2);
             transition: var(--transition);
         }
-        
-        .back-link:hover {
-            background-color: rgba(0, 255, 0, 0.1);
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+
+        .archive-card:hover .archive-img {
+            opacity: 0.9;
+            filter: grayscale(20%) brightness(0.8) contrast(1.3);
         }
-        
-        .back-link i {
-            margin-right: 0.5rem;
+
+        .archive-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0.5) 0%, 
+                rgba(var(--primary-dark-rgb), 0.7) 100%);
+            z-index: 1;
+        }
+
+        .archive-title {
+            position: relative;
+            z-index: 2;
+            color: var(--text-light);
+            text-align: center;
+            padding: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .archive-title h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-family: monospace;
+        }
+
+        .archive-title p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .archive-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .archive-details {
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+
+        .archive-details p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .archive-details span {
+            color: var(--primary-light);
+            min-width: 80px;
+            display: inline-block;
+        }
+
+        .archive-lineup {
+            margin-top: 1.5rem;
+        }
+
+        .archive-lineup h4 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+
+        .archive-lineup ul {
+            list-style: none;
+        }
+
+        .archive-lineup li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .archive-lineup li::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+        }
+
+        .archive-action {
+            margin-top: 1rem;
+            text-align: right;
+        }
+
+        :root {
+            --primary-dark-rgb: 122, 0, 182;
         }
     </style>
 </head>
@@ -585,6 +533,230 @@
                 </div>
             </div>
         </section>
+
+        <section class="chaos-section">
+            <h2><span class="icon-archive"></span> Archives des éditions précédentes<span class="terminal-cursor"></span></h2>
+            <div class="tools-section">
+                <p>Depuis sa création en 2023, la série d'événements CHAOS LAB est devenue un rendez-vous incontournable de la scène du live coding à Strasbourg. Découvrez les éditions précédentes :</p>
+                
+                <div class="archives-grid">
+                    <!-- CHAOS LAB VI.5 -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB VI.5" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB VI.5</h3>
+                                <p>Février 2025</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 12 février 2025</p>
+                                <p><span>Lieu :</span> HEAR Strasbourg</p>
+                                <p><span>Thème :</span> Édition spéciale "Emergent Systems"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>CrashServer (FR)</li>
+                                    <li>Sofia.iso (ES)</li>
+                                    <li>NdrX (FR)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB VI -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB VI" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB VI</h3>
+                                <p>Novembre 2024</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 15 novembre 2024</p>
+                                <p><span>Lieu :</span> Le Shadok</p>
+                                <p><span>Thème :</span> "Network Dynamics"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>Pierre Danger (FR)</li>
+                                    <li>AlgoBrain (DE)</li>
+                                    <li>SVDK (FR)</li>
+                                    <li>Algo4rhythm (CH)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB V -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB V" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB V</h3>
+                                <p>Mai 2024</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 22 mai 2024</p>
+                                <p><span>Lieu :</span> Le Shadok</p>
+                                <p><span>Thème :</span> "Pattern Recognition"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>Cadavre Exquis Collective (FR)</li>
+                                    <li>ミュータント (JP)</li>
+                                    <li>Algo-Rave Ensemble (UK)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB IV -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB IV" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB IV</h3>
+                                <p>Novembre 2023</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 18 novembre 2023</p>
+                                <p><span>Lieu :</span> Espace K</p>
+                                <p><span>Thème :</span> "Feedback Loops"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>404.live (FR)</li>
+                                    <li>Noisk8 (CO)</li>
+                                    <li>Pierre Danger (FR)</li>
+                                    <li>ByteShift Ensemble (DE)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB III -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB III" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB III</h3>
+                                <p>Mai 2023</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 24 mai 2023</p>
+                                <p><span>Lieu :</span> Le Shadok</p>
+                                <p><span>Thème :</span> "Algorithmic Ecosystems"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>CrashServer (FR)</li>
+                                    <li>HexaCore (DE)</li>
+                                    <li>SynthBot Collective (FR)</li>
+                                    <li>Frambyte (FR)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB II -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB II" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB II</h3>
+                                <p>Novembre 2022</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 19 novembre 2022</p>
+                                <p><span>Lieu :</span> Molodoï</p>
+                                <p><span>Thème :</span> "Recursive Patterns"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>Pierre Danger (FR)</li>
+                                    <li>B1N4RY M4G1C (UK)</li>
+                                    <li>CodexMachine (FR)</li>
+                                    <li>Toplap Strasbourg All-Stars</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHAOS LAB I -->
+                    <div class="archive-card">
+                        <div class="archive-header">
+                            <img src="/api/placeholder/600/400" alt="CHAOS LAB I" class="archive-img">
+                            <div class="archive-overlay"></div>
+                            <div class="archive-title">
+                                <h3>CHAOS LAB I</h3>
+                                <p>Mars 2022</p>
+                            </div>
+                        </div>
+                        <div class="archive-content">
+                            <div class="archive-details">
+                                <p><span>Date :</span> 15 mars 2022</p>
+                                <p><span>Lieu :</span> Le Shadok</p>
+                                <p><span>Thème :</span> "From Order to Chaos"</p>
+                            </div>
+                            <div class="archive-lineup">
+                                <h4>Lineup</h4>
+                                <ul>
+                                    <li>Pierre Danger (FR)</li>
+                                    <li>CrashServer (FR)</li>
+                                    <li>DrumCode (FR)</li>
+                                    <li>Live Code Experiment (FR)</li>
+                                </ul>
+                            </div>
+                            <div class="archive-action">
+                                <a href="#" class="btn btn-outline">Photos & Vidéos</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         
         <section class="chaos-section">
             <h2><span class="icon-question"></span> Questions fréquentes<span class="terminal-cursor"></span></h2>
@@ -607,111 +779,6 @@
                 <div class="faq-item">
                     <p class="faq-question">Puis-je venir avec mon ordinateur pour coder pendant l'événement ?</p>
                     <p class="faq-answer">Absolument ! Nous encourageons les participants à apporter leur matériel s'ils souhaitent expérimenter ou prendre des notes. Des prises électriques seront disponibles en nombre limité, pensez donc à venir avec une batterie chargée.</p>
-                </div>
-            </div>
-        </section>
-        
-        <section class="chaos-section">
-            <h2><span class="icon-history"></span> Archives des précédentes éditions<span class="terminal-cursor"></span></h2>
-            <div class="tools-section">
-                <p>Depuis sa création en 2023, CHAOS LAB s'est imposé comme un événement incontournable de la scène livecoding strasbourgeoise. Découvrez les éditions précédentes et leurs moments forts.</p>
-                
-                <div class="archive-grid">
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-vi.jpg" alt="CHAOS LAB VI" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%23ff00ff\'>CHAOS LAB VI</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB VI
-                                <span class="archive-date">Février 2025</span>
-                            </div>
-                            <p class="archive-description">Édition spéciale "Patterns Émergents" explorant les systèmes d'auto-organisation et les algoritmes génératifs.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                CrashServer, Shawn Lawson, Belisha, KodeLife Crew
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-v.jpg" alt="CHAOS LAB V" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%2300ffff\'>CHAOS LAB V</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB V
-                                <span class="archive-date">Novembre 2024</span>
-                            </div>
-                            <p class="archive-description">Une soirée autour du thème "Digital Artifacts" explorant les erreurs, glitches et imperfections dans l'art numérique.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                Pierre Danger, Yaxu (Sheffield, UK), Algorave Paris Collective
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-iv.jpg" alt="CHAOS LAB IV" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%2300ff00\'>CHAOS LAB IV</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB IV
-                                <span class="archive-date">Août 2024</span>
-                            </div>
-                            <p class="archive-description">Édition estivale en plein air avec des projections sur les façades du Shadok et des performances interactives.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                Collectif Cadavre Exquis, Ralt144MI, h3xl3r, Visual Node Crew
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-iii.jpg" alt="CHAOS LAB III" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%23ff00ff\'>CHAOS LAB III</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB III
-                                <span class="archive-date">Mars 2024</span>
-                            </div>
-                            <p class="archive-description">Exploration de la synthèse sonore et des mondes générés procéduralement. Première collaboration avec le collectif ByteBeat.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                ByteBeat Collective, Ableton Wizard, Pierre Danger
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-ii.jpg" alt="CHAOS LAB II" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%2300ffff\'>CHAOS LAB II</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB II
-                                <span class="archive-date">Octobre 2023</span>
-                            </div>
-                            <p class="archive-description">Seconde édition du CHAOS LAB, centrée sur les interactions entre le code, le son et l'image. Première apparition de CrashServer.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                CrashServer, VisualSonic, TidalCycles Workshop Group
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="archive-card">
-                        <div class="glitch-overlay"></div>
-                        <img src="images/chaos-lab-i.jpg" alt="CHAOS LAB I" class="archive-image" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'300\' height=\'200\' viewBox=\'0 0 300 200\'><rect width=\'300\' height=\'200\' fill=\'%23111\'/><text x=\'50%\' y=\'50%\' font-family=\'monospace\' font-size=\'20\' text-anchor=\'middle\' fill=\'%2300ff00\'>CHAOS LAB I</text></svg>'">
-                        <div class="archive-content">
-                            <div class="archive-title">
-                                CHAOS LAB I
-                                <span class="archive-date">Mai 2023</span>
-                            </div>
-                            <p class="archive-description">Première édition du CHAOS LAB, l'événement fondateur qui a rassemblé la scène live coding strasbourgeoise au Shadok pour une soirée expérimentale.</p>
-                            <div class="archive-artists">
-                                <strong>Artistes :</strong>
-                                Pierre Danger, Hydra Collective, Local Live Coders
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>

@@ -1,0 +1,129 @@
+<footer>
+    <div class="footer-content">
+        <div class="footer-info">
+            <div class="footer-logo">Live_Coding_Strasbourg</div>
+            <p>Une communauté de passionnés de livecoding, musique algorithmique et art numérique.</p>
+        </div>
+        
+        <div class="footer-links">
+            <h4>Liens rapides</h4>
+            <ul>
+                <li><a href="index.html"><span class="icon-angle-right"></span> Accueil</a></li>
+                <li><a href="#prochains-ateliers"><span class="icon-angle-right"></span> Ateliers</a></li>
+                <li><a href="#outils"><span class="icon-angle-right"></span> Outils</a></li>
+                <li><a href="#community"><span class="icon-angle-right"></span> Communauté</a></li>
+                <li><a href="#faq"><span class="icon-angle-right"></span> FAQ</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-social">
+            <h4>Suivez-nous</h4>
+            <ul>
+                <li><a href="https://discord.gg/2H8YcxMAWE" target="_blank" rel="noopener noreferrer"><span class="icon-discord"></span> Discord</a></li>
+                <li><a href="https://www.facebook.com/livecodingstrasbourg" target="_blank" rel="noopener noreferrer"><span class="icon-facebook"></span> Facebook</a></li>
+                <li><a href="https://www.youtube.com/channel/UCMYacbjaLCrfEmhWwWpdQDA" target="_blank" rel="noopener noreferrer"><span class="icon-youtube"></span> YouTube</a></li>
+                <li><a href="https://github.com/livecodingstrasbourg/" target="_blank" rel="noopener noreferrer"><span class="icon-github"></span> GitHub</a></li>
+                <li><a href="mailto:livecodingstrasbourg@gmail.com"><span class="icon-envelope"></span> Email</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="copyright">
+        CopyLeft TOPLAP Strasbourg | <span class="glitch-text" data-text="---">--</span>
+    </div>
+</footer>
+
+<style>
+footer {
+    background-color: var(--background-dark);
+    color: var(--text-light);
+    padding: 2rem 1rem;
+    margin-top: auto;
+    border-top: 1px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to right, rgba(255, 0, 255, 0.1), transparent 50%, rgba(0, 255, 255, 0.1)),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(20, 0, 20, 0.8));
+    z-index: 0;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    font-family: monospace;
+    color: var(--primary-color);
+    text-shadow: 2px 2px 0 var(--background-dark);
+}
+
+.footer-links, .footer-social {
+    margin-bottom: 1rem;
+}
+
+.footer-links h4, .footer-social h4 {
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.9rem;
+    font-family: monospace;
+}
+
+.footer-links ul, .footer-social ul {
+    list-style: none;
+}
+
+.footer-links li, .footer-social li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a, .footer-social a {
+    color: var(--text-light);
+    opacity: 0.8;
+    text-decoration: none;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    font-family: monospace;
+}
+
+.footer-links a:hover, .footer-social a:hover {
+    opacity: 1;
+    color: var(--secondary-color);
+    text-shadow: 0 0 5px var(--secondary-color);
+}
+
+.copyright {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    opacity: 0.7;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
+    font-family: monospace;
+}
+</style>    

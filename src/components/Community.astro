@@ -1,0 +1,27 @@
+---
+import CommunityCard from "./partials/CommunityCard.astro";
+import { getCollection } from "astro:content";
+
+const allCommunity = await getCollection("community");
+
+---
+
+<section id="community">
+    <h2><span class="icon-handshake"></span>La communauté<span class="terminal-cursor"></span></h2>
+    <div class="tools-section">
+        <h3>Projets de la communauté Toplap Strasbourg</h3>
+        <div class="workshop-grid">
+            {allCommunity.map(post => (
+                <CommunityCard post={post} />
+            ))}
+            
+        </div>
+    </div>
+</section>
+
+<style>
+
+
+
+
+</style>

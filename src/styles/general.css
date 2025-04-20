@@ -1,0 +1,399 @@
+:root {
+    /* Glitchy color palette */
+    --primary-color: #ff00ff; /* Bright magenta */
+    --primary-light: #00ffff; /* Cyan */
+    --primary-dark: #7700a6; /* Darker purple */
+    --secondary-color: #00ff00; /* Electric green */
+    --glitch-color-1: #ff0000; /* Red */
+    --glitch-color-2: #0000ff; /* Blue */
+    --text-dark: #1a1a1a;
+    --text-light: #ffffff;
+    --background-light: #0a0a0a; /* Very dark */
+    --background-dark: #000000;
+    --card-background: rgba(17, 17, 17, 0.8);
+    --border-radius: 0px; /* Sharp edges for pixelated feel */
+    --box-shadow: 0 2px 10px rgba(0, 255, 255, 0.3), 0 0 5px rgba(255, 0, 255, 0.2);
+    --transition: all 0.2s cubic-bezier(0.3, 0.1, 0.6, 1);
+    
+    /* Glitch effect variables */
+    --glitch-offset: 2px;
+    --scan-line-height: 2px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', 'Courier', monospace;
+    line-height: 1.6;
+    color: var(--text-light);
+    background-color: var(--background-light);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* CRT screen effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+/* Random scan line effect */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--scan-line-height);
+    background: rgba(255, 255, 255, 0.1);
+    animation: scanline 6s linear infinite;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+@keyframes scanline {
+    0% {
+        top: -100px;
+    }
+    80%, 100% {
+        top: 100%;
+    }
+}
+
+/* Text selection style */
+::selection {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    text-shadow: none;
+}
+
+
+
+@keyframes glitchBorder {
+    0%, 100% {
+        border-bottom-color: var(--primary-color);
+    }
+    25% {
+        border-bottom-color: var(--glitch-color-1);
+    }
+    50% {
+        border-bottom-color: var(--primary-light);
+    }
+    75% {
+        border-bottom-color: var(--glitch-color-2);
+    }
+}
+
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch-text::before {
+    color: var(--glitch-color-1);
+    z-index: -1;
+    animation: glitch-animation-1 3s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    color: var(--glitch-color-2);
+    z-index: -2;
+    animation: glitch-animation-2 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-animation-1 {
+    0%, 100% {
+        transform: translate(0);
+    }
+    33% {
+        transform: translate(calc(var(--glitch-offset) * -1), var(--glitch-offset));
+    }
+    66% {
+        transform: translate(var(--glitch-offset), calc(var(--glitch-offset) * -1));
+    }
+}
+
+@keyframes glitch-animation-2 {
+    0%, 100% {
+        transform: translate(0);
+    }
+    33% {
+        transform: translate(var(--glitch-offset), var(--glitch-offset));
+    }
+    66% {
+        transform: translate(calc(var(--glitch-offset) * -1), calc(var(--glitch-offset) * -1));
+    }
+}
+
+
+
+/* Icon replacements using Unicode */
+.icon-home::before {
+    content: "⌂ ";
+}
+
+.icon-calendar::before {
+    content: "📅 ";
+}
+
+.icon-tools::before {
+    content: "🔧 ";
+}
+
+.icon-handshake::before {
+    content: "🤝 ";
+}
+
+.icon-question::before {
+    content: "❓ ";
+}
+
+.icon-envelope::before {
+    content: "✉ ";
+}
+
+.icon-clock::before {
+    content: "⏰ ";
+}
+
+.icon-location::before {
+    content: "📍 ";
+}
+
+.icon-users::before {
+    content: "👥 ";
+}
+
+.icon-currency::before {
+    content: "💰 ";
+}
+
+.icon-link::before {
+    content: "🔗 ";
+}
+
+.icon-ticket::before {
+    content: "🎟 ";
+}
+
+.icon-discord::before {
+    content: "💬 ";
+}
+
+.icon-calendar-plus::before {
+    content: "📆 ";
+}
+
+.icon-user-plus::before {
+    content: "👤+ ";
+}
+
+.icon-code::before {
+    content: "⌨ ";
+}
+
+.icon-music::before {
+    content: "🎵 ";
+}
+
+.icon-headphones::before {
+    content: "🎧 ";
+}
+
+.icon-diagram::before {
+    content: "📊 ";
+}
+
+.icon-paint::before {
+    content: "🎨 ";
+}
+
+.icon-wave::before {
+    content: "〰 ";
+}
+
+.icon-desktop::before {
+    content: "🖥 ";
+}
+
+.icon-stream::before {
+    content: "≋ ";
+}
+
+.icon-sliders::before {
+    content: "🎚 ";
+}
+
+.icon-laptop::before {
+    content: "💻 ";
+}
+
+.icon-cube::before {
+    content: "📦 ";
+}
+
+.icon-network::before {
+    content: "🕸 ";
+}
+
+.icon-bolt::before {
+    content: "⚡ ";
+}
+
+.icon-water::before {
+    content: "💧 ";
+}
+
+.icon-microchip::before {
+    content: "🖳 ";
+}
+
+.icon-angle-right::before {
+    content: "▶ ";
+}
+
+.icon-facebook::before {
+    content: "f ";
+}
+
+.icon-youtube::before {
+    content: "▶ ";
+}
+
+.icon-github::before {
+    content: "⧉ ";
+}
+
+main {
+    flex: 1;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+section {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+section h2 {
+    font-family: monospace;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    text-shadow: 2px 2px 0 var(--background-dark);
+    animation: sectionTitleGlitch 7s infinite;
+}
+
+@keyframes sectionTitleGlitch {
+    0%, 100% {
+        text-shadow: 2px 2px 0 var(--background-dark);
+        border-bottom-color: var(--primary-light);
+    }
+    33% {
+        text-shadow: -2px 2px 0 var(--glitch-color-1);
+        border-bottom-color: var(--glitch-color-1);
+    }
+    66% {
+        text-shadow: 2px -2px 0 var(--glitch-color-2);
+        border-bottom-color: var(--glitch-color-2);
+    }
+}
+
+.workshop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Retro terminal cursor effect */
+.terminal-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background-color: var(--secondary-color);
+    animation: cursorBlink 1s infinite step-end;
+    vertical-align: middle;
+    margin-left: 2px;
+}
+
+@keyframes cursorBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {    
+    .workshop-grid {
+        grid-template-columns: 1fr;
+    }
+    
+}
+
+/* Add data-text attribute to elements with glitch-text class for the effect to work */
+[data-text] {
+    position: relative;
+}
+
+[data-text]::before,
+[data-text]::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+[data-text]::before {
+    color: var(--glitch-color-1);
+    z-index: -1;
+    animation: glitch-animation-1 3s infinite linear alternate-reverse;
+}
+
+[data-text]::after {
+    color: var(--glitch-color-2);
+    z-index: -2;
+    animation: glitch-animation-2 2s infinite linear alternate-reverse;
+}

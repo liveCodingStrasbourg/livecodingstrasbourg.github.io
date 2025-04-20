@@ -1,0 +1,109 @@
+---
+import Button2 from "./partials/Button2.astro"
+---
+
+<section class="hero">
+    <div class="hero-content">
+        <h1 data-text="Ateliers Live Coding Strasbourg"><span class="icon-calendar"></span> Ateliers Live Coding Strasbourg</h1>
+        <p>Rejoignez notre communauté créative pour explorer le live coding, la musique générative et l'art numérique dans une ambiance conviviale. Tous niveaux bienvenus !</p>
+        
+        <Button2 label=" Voir les prochains ateliers" link="#prochains-ateliers" icon="📅 " />
+        <Button2 label="Rejoindre notre Discord" link="https://discord.gg/2H8YcxMAWE" icon="💬 " />
+    </div>
+</section>
+
+<style>
+.hero {
+    background: linear-gradient(135deg, rgba(10,0,30,0.9), rgba(50,0,60,0.8)), 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="black"/><rect x="10" y="10" width="2" height="2" fill="%23ff00ff"/><rect x="30" y="30" width="1" height="1" fill="%2300ffff"/><rect x="70" y="25" width="1" height="1" fill="%2300ff00"/><rect x="45" y="80" width="2" height="2" fill="%23ff00ff"/><rect x="90" y="60" width="1" height="1" fill="%2300ffff"/></svg>');
+    color: var(--text-light);
+    padding: 4rem 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 255, 255, 0.05) 50%,
+        transparent 100%
+    );
+    z-index: 1;
+    animation: scanlineHero 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes scanlineHero {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-family: monospace;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-light);
+    text-shadow: 3px 3px 0 var(--primary-color),
+                -3px -3px 0 var(--primary-light);
+    letter-spacing: 1px;
+    animation: heroTextGlitch 10s infinite;
+}
+
+@keyframes heroTextGlitch {
+    0%, 100% {
+        text-shadow: 3px 3px 0 var(--primary-color),
+                    -3px -3px 0 var(--primary-light);
+    }
+    20%, 21% {
+        text-shadow: -3px -3px 0 var(--primary-color),
+                     3px 3px 0 var(--primary-light);
+    }
+    40%, 41% {
+        text-shadow: 3px -3px 0 var(--glitch-color-1),
+                    -3px 3px 0 var(--glitch-color-2);
+    }
+    60%, 61% {
+        text-shadow: -3px 3px 0 var(--primary-dark),
+                     3px -3px 0 var(--secondary-color);
+    }
+    80%, 81% {
+        text-shadow: 3px 3px 0 var(--secondary-color),
+                    -3px -3px 0 var(--glitch-color-1);
+    }
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: monospace;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+}
+</style>

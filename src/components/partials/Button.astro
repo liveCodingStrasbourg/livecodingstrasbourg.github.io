@@ -1,0 +1,78 @@
+---
+
+interface Props {
+  label: string;
+  link: string;
+  color: string;
+}
+
+const { label, link, color} = Astro.props;
+
+---
+
+<a href={link} target="_blank" rel="noopener noreferrer" class=`btn btn-${color}`>{label}</a>
+
+<style>
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background-color: transparent;
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+}
+
+.btn-primary:hover {
+    background-color: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.btn-primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 255, 0, 0.2) 50%,
+        transparent 100%
+    );
+    animation: btnGlow 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes btnGlow {
+    0%, 100% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+}
+
+.btn-outline {
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
+
+.btn-outline:hover {
+    background-color: rgba(255, 0, 255, 0.2);
+    color: var(--text-light);
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+</style>

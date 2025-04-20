@@ -1,0 +1,320 @@
+---
+import { Image } from 'astro:assets';
+import toplapLogo from '../assets/logo_Toplap_Strasbourg.jpg';
+
+---
+
+<header>
+    <div class="header-container">
+        <a href="/" class="logo">
+            <Image
+                src={toplapLogo}
+                alt="Logo de Toplap Strasbourg"
+                class="logo-image"
+                width={200}
+                height={200}
+                loading="lazy"
+                />
+            <span class="glitch-text" data-text="TOPLAP_STR" id="toplap-title">TOPLAP_STR</span>
+        </a>
+        <button class="burger-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav">
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+        </button>
+
+        <nav id="main-nav">
+            <ul>
+                <li><a href="/"><span class="icon-home"></span> Accueil</a></li>
+                <li><a href="/#prochains-ateliers"><span class="icon-calendar"></span> Ateliers</a></li>
+                <li><a href="/#outils"><span class="icon-tools"></span> Outils</a></li>
+                <li><a href="/#community"><span class="icon-handshake"></span>Communauté</a></li>
+                <li><a href="/#faq"><span class="icon-question"></span> FAQ</a></li>
+                <li><a href="/#register"><span class="icon-envelope"></span> Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<script>
+    // Script pour le menu burger
+    const burgerButton = document.querySelector('.burger-menu');
+    const navMenu = document.querySelector('#main-nav'); 
+    const navLinks = document.querySelectorAll('#main-nav a');
+  
+    function closeMenu() {
+        if(navMenu && burgerButton) {
+            navMenu.classList.remove('is-active');
+            burgerButton.setAttribute('aria-expanded', 'false');
+            burgerButton.classList.remove('is-active');
+        }
+    }
+
+    function toggleMenu() {
+        if (navMenu && burgerButton) {
+            const isExpanded = burgerButton.getAttribute('aria-expanded') === 'true';
+            burgerButton.setAttribute('aria-expanded', (!isExpanded).toString());
+            navMenu.classList.toggle('is-active');
+            burgerButton.classList.toggle('is-active');
+        }
+    }
+
+    if (burgerButton && navMenu) {
+      burgerButton.addEventListener('click', toggleMenu);
+      navLinks.forEach(link => {
+          link.addEventListener('click', ()=> {
+            if (navMenu.classList.contains('is-active')) {
+                closeMenu();
+            }
+          });
+      });
+    }
+</script>
+
+<style>
+/* Glitchy header */
+header {
+    background-color: var(--background-dark);
+    color: var(--text-light); 
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    border-bottom: 1px solid var(--primary-color);
+    animation: glitchBorder 5s infinite;
+}
+
+/* Styles pour le bouton Burger */
+.burger-menu {
+    display: none; /* Caché par défaut sur desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1100; /* Au-dessus du header */
+    position: relative; /* Pour le positionnement des lignes */
+    width: 40px;
+    height: 30px;
+}
+
+.burger-line {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-light);
+    margin: 5px 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animation du bouton burger quand actif */
+.burger-menu.is-active .burger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.burger-menu.is-active .burger-line:nth-child(2) {
+    opacity: 0;
+}
+.burger-menu.is-active .burger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.logo {
+    font-family: monospace;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-shadow: 2px 2px 0px var(--primary-dark), 
+                 -2px -2px 0px var(--primary-light);
+    letter-spacing: 2px;
+    position: relative;
+    /* padding: 0.5rem; */
+}
+
+.logo:hover {
+    animation: textFlicker 0.3s infinite;
+}
+
+@keyframes textFlicker {
+    0%, 100% {
+        opacity: 1;
+    }
+    20% {
+        opacity: 0.8;
+    }
+    40% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 0.9;
+    }
+    80% {
+        opacity: 0.6;
+    }
+}
+
+.logo img {
+    height: 40px;
+    margin-right: 0.5rem;
+    filter: hue-rotate(270deg) brightness(1.2) contrast(1.5);
+    animation: imageGlitch 10s infinite;
+}
+
+@keyframes imageGlitch {
+    0%, 100% {
+        filter: hue-rotate(270deg) brightness(1.2) contrast(1.5);
+    }
+    15% {
+        filter: hue-rotate(180deg) brightness(1.5) contrast(2) saturate(2);
+    }
+    20% {
+        filter: hue-rotate(270deg) brightness(1.2) contrast(1.5);
+    }
+    35% {
+        filter: hue-rotate(90deg) brightness(1.7) saturate(1.5);
+    }
+    40% {
+        filter: hue-rotate(270deg) brightness(1.2) contrast(1.5);
+    }
+    65% {
+        filter: hue-rotate(0deg) brightness(1.8) contrast(1.8) saturate(0.8);
+    }
+    70% {
+        filter: hue-rotate(270deg) brightness(1.2) contrast(1.5);
+    }
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    flex-wrap: wrap;
+}
+
+nav li {
+    margin-left: 1.5rem;
+}
+
+nav a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid transparent;
+}
+
+nav a:hover {
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    text-shadow: 0 0 8px var(--secondary-color);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    animation: navGlitch 2s infinite;
+}
+
+@keyframes navGlitch {
+    0%, 100% {
+        transform: translate(0);
+        text-shadow: 0 0 8px var(--secondary-color);
+    }
+    10% {
+        transform: translate(-2px, 2px);
+        text-shadow: 0 0 8px var(--glitch-color-1);
+    }
+    20% {
+        transform: translate(0);
+    }
+    30% {
+        transform: translate(2px, -2px);
+        text-shadow: 0 0 8px var(--primary-color);
+    }
+    40% {
+        transform: translate(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: row; /* Garder en ligne */
+        justify-content: space-between; /* Espace entre logo et burger */
+        align-items: center; /* Centrer verticalement */
+    }
+
+    .burger-menu {
+        display: block; /* Afficher le burger sur mobile */
+    }
+
+    nav {
+        /* Styles pour le menu déroulant */
+        position: absolute;
+        top: 100%; /* Juste en dessous du header */
+        left: 0;
+        width: 100%;
+        background-color: var(--background-dark); /* Même fond que le header */
+        border-top: 1px solid var(--primary-color);
+        max-height: 0; /* Caché par défaut */
+        overflow: hidden;
+        transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1); /* Transition douce */
+        z-index: 1050; /* En dessous du burger mais au-dessus du reste */
+    }
+
+    nav.is-active {
+            max-height: 500px; /* Hauteur suffisante pour afficher les liens */
+            /* Ou utiliser 'height: auto;' si la transition n'est pas critique */
+    }
+
+    #toplap-title {
+        display: none;;
+    }
+
+    nav ul {
+        flex-direction: column; /* Liens en colonne */
+        align-items: center; /* Centrer les liens */
+        padding: 1rem 0; /* Espacement intérieur */
+        margin-top: 0; /* Reset margin */
+    }
+
+    nav li {
+        margin: 0; /* Reset margin */
+        width: 100%; /* Prend toute la largeur */
+        text-align: center; /* Centrer le texte */
+    }
+
+    nav a {
+        padding: 1rem; /* Plus d'espace cliquable */
+        border: none; /* Enlever la bordure par défaut */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Séparateur léger */
+        display: block; /* Pour que le padding s'applique correctement */
+        width: 100%;
+    }
+
+    nav li:last-child a {
+        border-bottom: none; /* Pas de bordure pour le dernier élément */
+    }
+
+    nav a:hover {
+        background-color: rgba(0, 255, 0, 0.1); /* Feedback au survol */
+        border-color: transparent; /* Enlever la bordure au survol */
+        box-shadow: none; /* Enlever l'ombre au survol */
+        animation: none; /* Désactiver l'animation glitch sur mobile */
+    }
+
+}
+
+</style>
+

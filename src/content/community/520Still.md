@@ -1,8 +1,8 @@
 ---
-title: "520"
+title: "520STill"
 icon: "💻 "
-link: "https://www.youtube.com/watch?v=ht_VgKwVqdQ"
-link_label: "Regarder sur YouTube"
+link: ""
+link_label: "-"
 ---
 
-Artiste et développeur spécialisé dans les performances audiovisuelles génératives. Son travail mêle code créatif, musique électronique et visuels immersifs.
+Artiste, graphiste, spécialisé dans le creative coding, le live coding visuel entre autre avec p5js.

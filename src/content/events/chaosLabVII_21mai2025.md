@@ -4,9 +4,13 @@ date: "2025-05-21"
 heure: "Infos à venir"
 lieu: "Shadok - Strasbourg"
 audience: "Tous publics"
-prix: "Infos à venir"
-lien: ""
+prix: "Prix libre (conseillé 8 €)"
+lien: "/chaoslab"
 ---
 
-Programmation en cours de création pour le concert de TOPLAP Strasbourg : CHAOS LAB VII.
 
+Pierre Danger
+Kitty Clock
+Crash Server
+Blaž Pavlica
+Ralt144MI

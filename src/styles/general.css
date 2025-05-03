@@ -26,6 +26,10 @@
     box-sizing: border-box;
 }
 
+html, body {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Courier New', 'Courier', monospace;
     line-height: 1.6;
@@ -163,7 +167,7 @@ body::after {
 }
 
 .icon-calendar::before {
-    content: "📅 ";
+    content: "🗓️ ";
 }
 
 .icon-tools::before {
@@ -349,7 +353,7 @@ section h2 {
     width: 8px;
     height: 16px;
     background-color: var(--secondary-color);
-    animation: cursorBlink 1s infinite step-end;
+    animation: cursorBlink 0.5s infinite step-end;
     vertical-align: middle;
     margin-left: 2px;
 }

@@ -9,8 +9,8 @@ lien: "/chaoslab"
 ---
 
 
-Pierre Danger
-Kitty Clock
-Crash Server
-Blaž Pavlica
-Ralt144MI
+- Pierre Danger
+- Kitty Clock
+- Crash Server
+- Blaž Pavlica
+- Ralt144MI

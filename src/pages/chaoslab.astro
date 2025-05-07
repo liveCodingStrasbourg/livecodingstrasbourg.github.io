@@ -1,8 +1,22 @@
 ---
 import Global from "../layouts/Global.astro"
+import {Image} from "astro:assets"
+import cl7 from "../assets/media/cl7.webp" 
 ---
 
 <Global title="Toplap Strasbourg - Chaoslab">
+
+    <section class="hero">
+        <div class="info-card" style="margin-top: 1.5rem;">
+            <h3>Préventes</h3>
+            <p><span style="color: var(--primary-light);">PREVENTES :</span> Vous pouvez acheter une prévente, prix libre à partir de 5 € (recommandé 8 €)</p>
+            <p><a href="https://my.weezevent.com/chaos-lab-vii">Achat billet sur Weezevent</a></p>
+           
+        </div>
+
+
+
+    </section>
  
     <section class="hero">
         <div class="hero-content">
@@ -24,6 +38,8 @@ import Global from "../layouts/Global.astro"
                 
                 <p>Pour cette 7ème édition, nous explorerons les thèmes de l'aléatoire contrôlé, des systèmes chaotiques et des structures émergentes à travers des performances live où le code sera projeté, permettant au public de voir la création en temps réel.</p>
             </div>
+
+            <Image src={cl7} alt="Chaos lab VII affiche" />
             
             <div class="event-info">
                 <!-- MERGED SCHEDULE & LINEUP SECTION -->
@@ -67,7 +83,7 @@ import Global from "../layouts/Global.astro"
                                         Projet "DJ" de Ralt144MI, 144midi utilise aussi du live-coding pour foutre le bordel dans tous ses synthétiseurs.<br><br>
                                         "J'ai l'impression d'entendre un concert depuis le fumoir" - un auditeur<br>
                                         "C'est de la musique de mauvais rêve" - un autre auditeur</p>
-                                        <a href="#" class="btn btn-outline"></a>
+                                        <a href="https://ralt144mi.remigeorges.fr/" class="btn btn-outline">SITE INTERNET</a>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +113,7 @@ import Global from "../layouts/Global.astro"
                                         <p>Post-mayem live-coding</p>
                                     </div>
                                     <div class="artist-info">
-                                        <p class="artist-desc">Duo de live coding aux frontières de la noise, du transhumanisme et de l'IDM.</p>
+                                        <p class="artist-desc">Crash Server est un duo de live coding de Strasbourg qui crée musique et visuels en direct à l'aide de code. Leurs performances mélangent sons organiques et algorithmiques. Ils utilisent des logiciels comme FoxDot et SuperCollider pour composer en temps réel. </p>
                                         <a href="https://crashserver.fr" target="_blank" class="btn btn-outline">Site internet</a>
                                     </div>
                                 </div>
@@ -107,12 +123,12 @@ import Global from "../layouts/Global.astro"
                                 <div class="time-block"></div>
                                 <div class="event-block artist-event">
                                     <div class="event-content">
-                                        <h3>Blaz Pavlica</h3>
+                                        <h3>Blaž Pavlica</h3>
                                         <p>Breakbeat & Bass</p>
                                     </div>
                                     <div class="artist-info">
                                         <p class="artist-desc">Artiste audio-visuel, ingénieur du son, DJ et programmeur slovène originaire de Ljubljana et basé à Utrecht. Diplômé en informatique et mathématiques, il fusionne technologies et créativité dans ses œuvres sonores. Membre du collectif Cosmic Sex, il explore les frontières entre musique électronique expérimentale et programmation générative, créant des compositions qui traversent les univers club et avant-garde.</p>
-                                        <a href="https://crashserver.fr" target="_blank" class="btn btn-outline"></a>
+                                        <a href="https://soundcloud.com/blaz-pavlica" target="_blank" class="btn btn-outline"></a>
                                     </div>
                                 </div>
                             </div>

@@ -7,7 +7,11 @@ import { getCollection } from "astro:content";
 const allEvents = await getCollection("events");
 // Filtrer les événements passés et futurs
 const currentDate = new Date();
-const upcomingEvents = allEvents.filter((event) => event.data.date >= currentDate);
+currentDate.setHours(0, 0, 0, 0);
+const upcomingEvents = allEvents.filter((event) => {
+  const eventDate = new Date(event.data.date);
+  return eventDate >= currentDate;
+});
 ---
 
 <section id="prochains-ateliers">

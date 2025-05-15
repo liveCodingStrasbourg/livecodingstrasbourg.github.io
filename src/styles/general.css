@@ -282,6 +282,10 @@ body::after {
     content: "🖳 ";
 }
 
+.icon-supermarket::before {
+    content: "🛒 ";
+}
+
 .icon-angle-right::before {
     content: "▶ ";
 }

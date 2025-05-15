@@ -1,0 +1,162 @@
+<!-- index.html - Main HTML file for the CONSUME Soundscape Generator -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONSUME: Soundscape of Capitalism</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <link rel="stylesheet" href="supermarket/_consume-style.css">
+</head>
+<body>
+  <div class="flicker-container">
+    <h1 class="neon-title">🛒 <span class="consume-text">CONSUME</span>: Soundscape of Capitalism 💰</h1>
+  </div>
+
+  <div id="editor-container">
+    <textarea id="editor">// Example commands:
+// Try these one line at a time!
+my cart has square wheels
+my cart has broken wheels
+my cart has premium wheels
+my cart has defective wheels
+my cart has no wheels
+add beer
+add fresh salad
+add old ham
+add strong old beer
+add flavorless old beer
+add cheap milk
+add expensive chips
+add processed pizza
+add industrial oil
+add overpriced wine
+add artificial soda
+add artisanal bread
+add beer nutriscore A
+add ham shelflife week
+add milk open
+add old beer nutriscore C shelflife month open
+add bargain cereal
+add luxury chocolate
+add mass-produced candy
+add addictive energy_drink
+discount mode on
+discount mode off
+inflation mode on
+inflation mode off
+consumerism mode on
+black_friday mode on
+aisle_7 ambience on
+fluorescent_lights flicker on</textarea>
+  </div>
+
+  <div class="control-panel">
+    <button id="run-all" class="neon-button green">Run All</button>
+    <button id="run-line" class="neon-button blue">Run Current Line</button>
+    <button id="stop" class="neon-button red">Stop All</button>
+    <button id="randomize" class="neon-button yellow">🎲 Random Command</button>
+  </div>
+
+  <div id="visualization-container">
+    <h2 class="section-title">Active Products <span class="blink-slow">BUY NOW</span></h2>
+    <div id="active-synths" class="synth-grid"></div>
+  </div>
+
+  <div id="output-container">
+    <div id="output">Abandoned supermarket awaiting your commands... The products are calling to you...</div>
+  </div>
+
+  <div id="aisle-container">
+    <div class="aisle-shelf top-shelf"></div>
+    <div class="aisle-shelf middle-shelf"></div>
+    <div class="aisle-shelf bottom-shelf"></div>
+    <div class="floor-tiles"></div>
+  </div>
+
+  <!-- Overlays for atmosphere -->
+  <div id="horror-elements"></div>
+  <div id="neon-flicker"></div>
+  <div class="noise-overlay"></div>
+  <div class="vignette-overlay"></div>
+
+  <!-- Sound permissions overlay -->
+  <div id="sound-permission" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px;">
+    <h2>Enable Sound</h2>
+    <p>This experience requires sound. Click the button below to enable audio.</p>
+    <button id="enable-sound" style="padding: 15px 30px; background: #ff2a6d; color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin-top: 20px;">Enable Sound</button>
+  </div>
+
+  <!-- Sound initialization script -->
+  <script>
+    // Add audio debug logging (set to true for debugging)
+    window.enableAudioDebug = false;
+    
+    // Sound initialization handler
+    document.addEventListener('DOMContentLoaded', function() {
+  // Get the sound permission button
+  const enableSoundBtn = document.getElementById('enable-sound');
+  const soundPermission = document.getElementById('sound-permission');
+  
+  if (enableSoundBtn && soundPermission) {
+    enableSoundBtn.addEventListener('click', async function() {
+      console.log("User clicked enable sound button");
+      
+      try {
+        // SIMPLER APPROACH: Create an oscillator and immediately stop it
+        // This is more reliable across browsers than the buffer approach
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        oscillator.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.001);
+        
+        // Wait a moment to make sure the oscillator has been processed
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Now try to start Tone.js
+        console.log("Starting Tone.js...");
+        await Tone.start();
+        console.log("Tone.js started, state:", Tone.context.state);
+        
+        // Hide the permission overlay
+        soundPermission.style.display = 'none';
+        
+        // Initialize the app with a delay to ensure everything is ready
+        setTimeout(() => {
+          if (window.initializeApplication) {
+            window.initializeApplication();
+          } else {
+            console.error("initializeApplication function not found!");
+          }
+        }, 200);
+      } catch (error) {
+        console.error("Error initializing audio:", error);
+        alert("There was an error enabling audio. Please refresh the page and try again.");
+      }
+    });
+  } else {
+    console.error("Sound permission elements not found!");
+  }
+});
+  </script>
+  
+  <!-- Load JavaScript modules in the correct order -->
+  <script src="supermarket/config.js"></script>
+  <script src="supermarket/command-parser.js"></script>
+  <script src="supermarket/product-types.js"></script>
+  <script src="supermarket/audio-engine.js"></script>
+  <script src="supermarket/cart-wheels.js"></script>
+  <script src="supermarket/product-manager.js"></script>
+  <script src="supermarket/mode-manager.js"></script>
+  <script src="supermarket/visualization.js"></script>
+  <script src="supermarket/ui-effects.js"></script>
+  <script src="supermarket/ui-handlers.js"></script>
+  
+  <!-- Audio debugging utility - optional, can be removed in production -->
+  <script src="supermarket/audio-debug-utility.js"></script>
+  
+  <!-- Load main.js last -->
+  <script src="supermarket/main.js"></script>
+</body>
+</html>

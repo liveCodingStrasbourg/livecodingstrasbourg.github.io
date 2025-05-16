@@ -76,6 +76,64 @@ const cartWheelPatterns = {
     { time: "0:2:2", note: "hihat" },
     { time: "0:3:1", note: "hihat" },
     { time: "0:3:3", note: "hihat" }
+  ],
+  
+  // Heavy wheels - Techno beat pattern with emphasis on kick
+  heavy: [
+    { time: "0:0", note: "kick" },
+    { time: "0:0:2", note: "kick" },
+    { time: "0:1", note: "snare" },
+    { time: "0:1:2", note: "kick" },
+    { time: "0:2", note: "kick" },
+    { time: "0:2:2", note: "kick" },
+    { time: "0:3", note: "snare" },
+    { time: "0:3:2", note: "kick" },
+    { time: "0:0:1", note: "hihat" },
+    { time: "0:0:3", note: "hihat" },
+    { time: "0:1:1", note: "hihat" },
+    { time: "0:1:3", note: "hihat" },
+    { time: "0:2:1", note: "hihat" },
+    { time: "0:2:3", note: "hihat" },
+    { time: "0:3:1", note: "hihat" },
+    { time: "0:3:3", note: "hihat" }
+  ],
+  
+  // Iron wheels - Industrial pattern with metallic sounds
+  iron: [
+    { time: "0:0", note: "kick" },
+    { time: "0:0:3", note: "kick" },
+    { time: "0:1:1", note: "snare" },
+    { time: "0:2", note: "kick" },
+    { time: "0:2:3", note: "kick" },
+    { time: "0:3:1", note: "snare" },
+    { time: "0:0:1", note: "hihat" },
+    { time: "0:0:2", note: "hihat" },
+    { time: "0:1:0", note: "hihat" },
+    { time: "0:1:2", note: "hihat" },
+    { time: "0:2:1", note: "hihat" },
+    { time: "0:2:2", note: "hihat" },
+    { time: "0:3:0", note: "hihat" },
+    { time: "0:3:2", note: "hihat" }
+  ],
+  
+  // Steel wheels - Hard industrial pattern with heavy kicks and accents
+  steel: [
+    { time: "0:0", note: "kick" },
+    { time: "0:0:2", note: "kick" },
+    { time: "0:1", note: "snare" },
+    { time: "0:1:3", note: "kick" },
+    { time: "0:2", note: "kick" },
+    { time: "0:2:2", note: "snare" },
+    { time: "0:3", note: "kick" },
+    { time: "0:3:2", note: "snare" },
+    { time: "0:0:1", note: "hihat" },
+    { time: "0:0:3", note: "hihat" },
+    { time: "0:1:1", note: "hihat" },
+    { time: "0:1:2", note: "hihat" },
+    { time: "0:2:1", note: "hihat" },
+    { time: "0:2:3", note: "hihat" },
+    { time: "0:3:1", note: "hihat" },
+    { time: "0:3:3", note: "hihat" }
   ]
 };
 
@@ -89,26 +147,43 @@ window.cartWheels = {
   snareSynth: null,
   hihatSynth: null,
   
+  // Wheel attributes
+  attributes: {
+    material: null, // iron, steel, heavy or null
+    type: null      // square, broken, premium, etc.
+  },
+  
   // Set cart wheel type
-  setWheels: function(wheelType) {
+  setWheels: function(wheelType, wheelAttributes = {}) {
     // Stop and dispose of any existing sequencer
     this.cleanup();
     
-    // Update state
-    window.state.cart.wheels = wheelType;
+    // Parse the wheel type and attributes
+    const { type, attributes } = this.parseWheelInput(wheelType);
+    
+    // Store attributes for later reference
+    this.attributes = attributes;
+    
+    // Update state with the primary wheel type
+    window.state.cart.wheels = type;
     
     // Return early if setting to none
-    if (wheelType === "none") {
+    if (type === "none") {
       window.log("Your cart has no wheels (silence...)");
       return;
     }
     
     try {
       // Create appropriate rhythm based on cart wheel type
-      let pattern = cartWheelPatterns[wheelType] || cartWheelPatterns.square;
+      let pattern = cartWheelPatterns[type] || cartWheelPatterns.square;
+      
+      // If we have a material attribute, it overrides the basic pattern
+      if (attributes.material && cartWheelPatterns[attributes.material]) {
+        pattern = cartWheelPatterns[attributes.material];
+      }
       
       // Create the drum set sounds
-      this.createDrumSounds(wheelType);
+      this.createDrumSounds(type, attributes);
       
       // Create a sequence for the wheels
       this.sequencer = new Tone.Part((time, event) => {
@@ -132,20 +207,8 @@ window.cartWheels = {
       // Start the sequence
       this.sequencer.start(0);
       
-      // Log the change to the user
-      if (wheelType === "square") {
-        window.log("Your cart now has square wheels (basic rhythm...)");
-      } else if (wheelType === "broken") {
-        window.log("Your cart now has broken wheels (irregular rhythm...)");
-      } else if (wheelType === "premium") {
-        window.log("Your cart now has premium wheels (tight, consistent rhythm...)");
-      } else if (wheelType === "defective") {
-        window.log("Your cart now has defective wheels (glitchy rhythm...)");
-      } else if (wheelType === "bargain") {
-        window.log("Your cart now has bargain wheels (fast but inconsistent...)");
-      } else if (wheelType === "luxury") {
-        window.log("Your cart now has luxury wheels (precise rhythm with subtle variations...)");
-      }
+      // Generate the log message
+      this.logWheelChange(type, attributes);
       
       // Start the transport if it's not already started and we have wheels
       if (Tone.Transport.state !== "started") {
@@ -157,8 +220,103 @@ window.cartWheels = {
     }
   },
   
-  // Create drum sounds based on wheel type
-  createDrumSounds: function(wheelType) {
+  // Parse wheel input to extract type and attributes
+  parseWheelInput: function(wheelInput) {
+    // Default result
+    const result = {
+      type: "square",  // Default wheel type
+      attributes: {
+        material: null
+      }
+    };
+    
+    // If input is a simple string, it's just the wheel type
+    if (typeof wheelInput === 'string') {
+      result.type = wheelInput;
+      return result;
+    }
+    
+    // Check if it's "no wheels"
+    if (wheelInput.toLowerCase().includes("no wheels")) {
+      result.type = "none";
+      return result;
+    }
+    
+    // Parse the input to extract wheel type and attributes
+    const parts = wheelInput.toLowerCase().split(" ");
+    
+    // Find material attributes
+    const materialTypes = ['heavy', 'iron', 'steel'];
+    for (const material of materialTypes) {
+      if (parts.includes(material)) {
+        result.attributes.material = material;
+        // Remove this attribute from parts
+        const index = parts.indexOf(material);
+        if (index !== -1) {
+          parts.splice(index, 1);
+        }
+      }
+    }
+    
+    // Find wheel type (square, broken, premium, etc.)
+    const wheelTypes = ["square", "broken", "premium", "defective", "bargain", "luxury"];
+    for (const type of wheelTypes) {
+      if (parts.includes(type)) {
+        result.type = type;
+        break;
+      }
+    }
+    
+    return result;
+  },
+  
+  // Log wheel change with appropriate message
+  logWheelChange: function(type, attributes) {
+    let message = "";
+    
+    // Build a descriptive message based on wheel type and attributes
+    if (attributes.material) {
+      switch(attributes.material) {
+        case "heavy":
+          message = `Your cart now has heavy ${type} wheels (aggressive techno rhythm...)`;
+          break;
+        case "iron":
+          message = `Your cart now has iron ${type} wheels (metallic industrial beat...)`;
+          break;
+        case "steel":
+          message = `Your cart now has steel ${type} wheels (hard industrial rhythm...)`;
+          break;
+      }
+    } else {
+      // Standard messages for regular wheel types
+      switch(type) {
+        case "square":
+          message = "Your cart now has square wheels (basic rhythm...)";
+          break;
+        case "broken":
+          message = "Your cart now has broken wheels (irregular rhythm...)";
+          break;
+        case "premium":
+          message = "Your cart now has premium wheels (tight, consistent rhythm...)";
+          break;
+        case "defective":
+          message = "Your cart now has defective wheels (glitchy rhythm...)";
+          break;
+        case "bargain":
+          message = "Your cart now has bargain wheels (fast but inconsistent...)";
+          break;
+        case "luxury":
+          message = "Your cart now has luxury wheels (precise rhythm with subtle variations...)";
+          break;
+      }
+    }
+    
+    // Log the message
+    window.log(message);
+  },
+  
+  // Create drum sounds based on wheel type and attributes
+  createDrumSounds: function(wheelType, attributes) {
     try {
       // Create kick drum (bass drum)
       this.kickSynth = new Tone.MembraneSynth({
@@ -212,49 +370,90 @@ window.cartWheels = {
       }).toDestination();
       this.hihatSynth.volume.value = -20;
       
-      // Modify sounds based on wheel type
+      // Apply material-specific modifications first
+      if (attributes.material) {
+        switch(attributes.material) {
+          case "heavy":
+            // Stronger kick, heavier snare, faster hihat
+            this.kickSynth.volume.value = -4;
+            this.kickSynth.envelope.decay = 0.3;
+            this.kickSynth.envelope.sustain = 0.05;
+            this.snareSynth.volume.value = -8;
+            this.snareSynth.envelope.decay = 0.25;
+            this.hihatSynth.volume.value = -18;
+            this.hihatSynth.envelope.decay = 0.04;
+            // Increase BPM for techno feel
+            Tone.Transport.bpm.value = Math.min(200, Tone.Transport.bpm.value * 1.2);
+            break;
+            
+          case "iron":
+            // Metallic sounds with industrial character
+            this.kickSynth.volume.value = -6;
+            this.kickSynth.envelope.decay = 0.15;
+            this.snareSynth.volume.value = -9;
+            this.snareFilter.frequency.value = 1500;
+            this.hihatSynth.volume.value = -15;
+            this.hihatSynth.frequency = 300;
+            this.hihatSynth.resonance = 6000;
+            break;
+            
+          case "steel":
+            // Hard industrial sound with metallic accents
+            this.kickSynth.volume.value = -5;
+            this.kickSynth.envelope.decay = 0.1;
+            this.kickSynth.octaves = 4;
+            this.snareSynth.volume.value = -8;
+            this.snareSynth.envelope.decay = 0.15;
+            this.hihatSynth.volume.value = -14;
+            this.hihatSynth.frequency = 350;
+            this.hihatSynth.resonance = 8000;
+            break;
+        }
+      }
+      
+      // Then apply wheel type specific modifications
       switch(wheelType) {
         case "broken":
           // Make sounds more distorted and irregular
-          this.kickSynth.envelope.decay = 0.4;
-          this.snareSynth.envelope.decay = 0.3;
-          this.hihatSynth.envelope.decay = 0.05;
+          this.kickSynth.envelope.decay = Math.max(0.4, this.kickSynth.envelope.decay);
+          this.snareSynth.envelope.decay = Math.max(0.3, this.snareSynth.envelope.decay);
+          this.hihatSynth.envelope.decay = Math.min(0.05, this.hihatSynth.envelope.decay);
           break;
           
         case "premium":
           // Make sounds cleaner and more precise
-          this.kickSynth.envelope.decay = 0.1;
-          this.snareSynth.envelope.decay = 0.1;
-          this.hihatSynth.envelope.decay = 0.05;
-          this.kickSynth.volume.value = -6;
-          this.snareSynth.volume.value = -10;
-          this.hihatSynth.volume.value = -18;
+          this.kickSynth.envelope.decay = Math.min(0.1, this.kickSynth.envelope.decay);
+          this.snareSynth.envelope.decay = Math.min(0.1, this.snareSynth.envelope.decay);
+          this.hihatSynth.envelope.decay = Math.min(0.05, this.hihatSynth.envelope.decay);
+          this.kickSynth.volume.value = Math.max(-6, this.kickSynth.volume.value);
+          this.snareSynth.volume.value = Math.max(-10, this.snareSynth.volume.value);
+          this.hihatSynth.volume.value = Math.max(-18, this.hihatSynth.volume.value);
           break;
           
         case "defective":
           // Make sounds more erratic
-          this.kickSynth.envelope.decay = 0.3;
-          this.kickSynth.envelope.release = 0.5;
-          this.snareSynth.envelope.attack = 0.01;
-          this.hihatSynth.envelope.decay = 0.08;
+          this.kickSynth.envelope.decay = Math.max(0.3, this.kickSynth.envelope.decay);
+          this.kickSynth.envelope.release = Math.max(0.5, this.kickSynth.envelope.release);
+          this.snareSynth.envelope.attack = Math.max(0.01, this.snareSynth.envelope.attack);
+          this.hihatSynth.envelope.decay = Math.max(0.08, this.hihatSynth.envelope.decay);
           break;
           
         case "bargain":
           // Make sounds cheaper and tinnier
-          this.kickSynth.envelope.decay = 0.1;
+          this.kickSynth.envelope.decay = Math.min(0.1, this.kickSynth.envelope.decay);
           this.snareSynth.noise.type = "pink";
-          this.hihatSynth.frequency = 300;
+          this.hihatSynth.frequency = Math.max(300, this.hihatSynth.frequency);
           break;
           
         case "luxury":
           // Make sounds fuller and richer
-          this.kickSynth.envelope.decay = 0.15;
-          this.kickSynth.envelope.release = 1.0;
-          this.snareSynth.envelope.decay = 0.15;
-          this.hihatSynth.envelope.decay = 0.07;
-          this.kickSynth.volume.value = -5;
-          this.snareSynth.volume.value = -8;
-          this.hihatSynth.volume.value = -15;
+          this.kickSynth.envelope.decay = Math.max(0.15, this.kickSynth.envelope.decay);
+          this.kickSynth.envelope.release = Math.max(1.0, this.kickSynth.envelope.release);
+          this.snareSynth.envelope.decay = Math.max(0.15, this.snareSynth.envelope.decay);
+          this.hihatSynth.envelope.decay = Math.max(0.07, this.hihatSynth.envelope.decay);
+          this.kickSynth.volume.value = Math.max(-5, this.kickSynth.volume.value);
+          this.snareSynth.volume.value = Math.max(-8, this.snareSynth.volume.value);
+          this.hihatSynth.volume.value = Math.max(-15, this.hihatSynth.volume.value);
           break;
           
         case "square":

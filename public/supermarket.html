@@ -1,16 +1,64 @@
-<!-- index.html - Main HTML file for the CONSUME Soundscape Generator -->
+<!-- index.html - Main HTML file for the Audio Generator -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CONSUME: Soundscape of Capitalism</title>
+  <title>Retail Therapy: Market Soundscape</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-  <link rel="stylesheet" href="supermarket/_consume-style.css">
+  <link rel="stylesheet" href="supermarketjs/_consume-style.css">
 </head>
 <body>
-  <div class="flicker-container">
-    <h1 class="neon-title">🛒 <span class="consume-text">CONSUME</span>: Soundscape of Capitalism 💰</h1>
+  <div class="header-container">
+    <h1 class="title">🛒 Retail Therapy: Market Soundscape 💰</h1>
+    <div class="alpha-notice">Alpha Version - Expect occasional bugs</div>
+  </div>
+
+  <div class="quick-ref">
+    <div class="ref-section">
+      <h3>Products</h3>
+      <div class="ref-list">
+        beer, salad, ham, milk, chips, pizza, oil, wine, soda, bread, cereal, chocolate, candy, energy_drink
+      </div>
+    </div>
+    <div class="ref-section">
+      <h3>Modifiers</h3>
+      <div class="ref-list">
+        fresh, old, strong, flavorless, cheap, expensive, processed, industrial, overpriced, vomit, artisanal, bargain, luxury, artificial, mass-produced, addictive
+      </div>
+    </div>
+    <div class="ref-section">
+      <h3>Parameters</h3>
+      <div class="ref-list">
+        <p>nutriscore (A-E), shelflife (today, week, month, year, decade, forever), open</p>
+        <p>usage : add nutriscore A | after a product to play it in A key.
+        you can also : add shelflife month ---- to set the duration of a sound. </p>
+        <p>you can add open : this makes the product hazardeous, it will only play about 60% of the time</p>
+      </div>
+    </div>
+    <div class="ref-section">
+      <h3>Modes</h3>
+      <div class="ref-list">
+        discount (detunes everything), inflation (pitch shift everything), consumerism (adds delays), black_friday (chaotic distortion)
+        Usage : inflation mode on (stops automatically after a set duration)
+
+
+
+      </div>
+    </div>
+    <div class="ref-section">
+      <h3>Example Command</h3>
+      <div class="ref-list">
+        <code>add processed industrial beer nutriscore E shelflife week open</code><br>
+        <small style="color: #aaa; font-style: italic;">
+          [command] [modifiers] [product] [parameters]<br>
+          • modifiers affect sound quality (up to 3)<br>
+          • nutriscore (A-E) changes key<br>
+          • shelflife changes repetition speed<br>
+          • open makes product behavior unpredictable
+        </small>
+      </div>
+    </div>
   </div>
 
   <div id="editor-container">
@@ -24,18 +72,6 @@ my cart has no wheels
 add beer
 add fresh salad
 add old ham
-add strong old beer
-add flavorless old beer
-add cheap milk
-add expensive chips
-add processed pizza
-add industrial oil
-add overpriced wine
-add artificial soda
-add artisanal bread
-add beer nutriscore A
-add ham shelflife week
-add milk open
 add old beer nutriscore C shelflife month open
 add bargain cereal
 add luxury chocolate
@@ -46,25 +82,31 @@ discount mode off
 inflation mode on
 inflation mode off
 consumerism mode on
-black_friday mode on
-aisle_7 ambience on
-fluorescent_lights flicker on</textarea>
+</textarea>
   </div>
 
   <div class="control-panel">
-    <button id="run-all" class="neon-button green">Run All</button>
-    <button id="run-line" class="neon-button blue">Run Current Line</button>
-    <button id="stop" class="neon-button red">Stop All</button>
-    <button id="randomize" class="neon-button yellow">🎲 Random Command</button>
+    <button id="run-all" class="control-button green">Run All</button>
+    <button id="run-line" class="control-button blue">Run Current Line</button>
+    <button id="stop" class="control-button red">Stop All</button>
+    <button id="randomize" class="control-button yellow">🎲 Random Command</button>
   </div>
 
   <div id="visualization-container">
-    <h2 class="section-title">Active Products <span class="blink-slow">BUY NOW</span></h2>
+    <h2 class="section-title">Active Products</h2>
     <div id="active-synths" class="synth-grid"></div>
   </div>
 
   <div id="output-container">
     <div id="output">Abandoned supermarket awaiting your commands... The products are calling to you...</div>
+  </div>
+
+  <div class="footer">
+    <div class="links">
+      <a href="https://livecodingstrasbourg.github.io" target="_blank">Live Coding Strasbourg</a> |
+      <a href="supdoc/en.html" target="_blank">Documentation (EN)</a> |
+      <a href="supdoc/fr.html" target="_blank">Documentation (FR)</a>
+    </div>
   </div>
 
   <div id="aisle-container">
@@ -84,7 +126,7 @@ fluorescent_lights flicker on</textarea>
   <div id="sound-permission" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px;">
     <h2>Enable Sound</h2>
     <p>This experience requires sound. Click the button below to enable audio.</p>
-    <button id="enable-sound" style="padding: 15px 30px; background: #ff2a6d; color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin-top: 20px;">Enable Sound</button>
+    <button id="enable-sound" style="padding: 15px 30px; background: #666; color: white; border: none; border-radius: 5px; font-size: 18px; cursor: pointer; margin-top: 20px;">Enable Sound</button>
   </div>
 
   <!-- Sound initialization script -->
@@ -142,21 +184,21 @@ fluorescent_lights flicker on</textarea>
   </script>
   
   <!-- Load JavaScript modules in the correct order -->
-  <script src="supermarket/config.js"></script>
-  <script src="supermarket/command-parser.js"></script>
-  <script src="supermarket/product-types.js"></script>
-  <script src="supermarket/audio-engine.js"></script>
-  <script src="supermarket/cart-wheels.js"></script>
-  <script src="supermarket/product-manager.js"></script>
-  <script src="supermarket/mode-manager.js"></script>
-  <script src="supermarket/visualization.js"></script>
-  <script src="supermarket/ui-effects.js"></script>
-  <script src="supermarket/ui-handlers.js"></script>
+  <script src="supermarketjs/config.js"></script>
+  <script src="supermarketjs/command-parser.js"></script>
+  <script src="supermarketjs/product-types.js"></script>
+  <script src="supermarketjs/audio-engine.js"></script>
+  <script src="supermarketjs/cart-wheels.js"></script>
+  <script src="supermarketjs/product-manager.js"></script>
+  <script src="supermarketjs/mode-manager.js"></script>
+  <script src="supermarketjs/visualization.js"></script>
+  <script src="supermarketjs/ui-effects.js"></script>
+  <script src="supermarketjs/ui-handlers.js"></script>
   
   <!-- Audio debugging utility - optional, can be removed in production -->
-  <script src="supermarket/audio-debug-utility.js"></script>
+  <script src="supermarketjs/audio-debug-utility.js"></script>
   
   <!-- Load main.js last -->
-  <script src="supermarket/main.js"></script>
+  <script src="supermarketjs/main.js"></script>
 </body>
 </html>

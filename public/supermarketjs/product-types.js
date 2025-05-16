@@ -1,4 +1,4 @@
-// product-types.js - Defines all synth products available in the CONSUME soundscape
+// product-types.js - Complete file
 
 // Product definitions (synths) - Make this globally available
 window.productTypes = {
@@ -31,8 +31,12 @@ window.productTypes = {
       luxury: { effect: "reverb", settings: { decay: 8, wet: 0.8 } },
       artificial: { effect: "vibrato", settings: { frequency: 5, depth: 0.5, wet: 0.6 } },
       "mass-produced": { effect: "bitcrusher", settings: { bits: 3, wet: 0.7 } },
-      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.25, feedback: 0.6, wet: 0.3 } }
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.25, feedback: 0.6, wet: 0.3 } },
+      // New effects
+      packaged: { effect: "packaged", settings: { frequency: 8, depth: 0.8, wet: 0.7 } },
+      glass: { effect: "glass", settings: { delayTime: 0.2, feedback: 0.4, wet: 0.6 } }
     },
+    
     
     salad: {
       create: () => new Tone.AMSynth({
@@ -123,15 +127,15 @@ window.productTypes = {
     },
     
     chips: {
-      create: () => new Tone.NoiseSynth({
-        noise: { type: "white" },
-        envelope: { attack: 0.001, decay: 0.2, sustain: 0.1, release: 0.3 },
-      }).toDestination(),
-      note: "C3", // For compatibility, not actually used
-      pattern: "16t",
-      color: "#ffd700", // Gold
-      description: "White noise synth",
-      category: "snack",
+  create: () => new Tone.NoiseSynth({
+    noise: { type: "pink" }, // Changed from "white" to "pink" (softer)
+    envelope: { attack: 0.01, decay: 0.15, sustain: 0.05, release: 0.2 }, // Softer envelope
+  }).toDestination(),
+  note: "C3", // For compatibility, not actually used
+  pattern: "16t",
+  color: "#ffd700", // Gold
+  description: "Pink noise synth", // Updated description
+  category: "snack",
       // Modifiers
       fresh: { octave: 0, filter: "bandpass" },
       old: { octave: 0, filter: "lowpass" },
@@ -367,7 +371,10 @@ window.productTypes = {
       luxury: { effect: "reverb", settings: { decay: 6, wet: 0.8 } },
       artificial: { effect: "vibrato", settings: { frequency: 4, depth: 0.4, wet: 0.5 } },
       "mass-produced": { effect: "bitcrusher", settings: { bits: 3, wet: 0.6 } },
-      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.18, feedback: 0.6, wet: 0.3 } }
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.18, feedback: 0.6, wet: 0.3 } },
+      // New effects - perfect for chocolate's smooth character
+      packaged: { effect: "packaged", settings: { frequency: 7, depth: 0.6, wet: 0.5 } },
+      glass: { effect: "glass", settings: { delayTime: 0.2, feedback: 0.35, wet: 0.45 } }
     },
     
     candy: {
@@ -401,19 +408,19 @@ window.productTypes = {
       addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.05, feedback: 0.9, wet: 0.5 } }
     },
     
-    energy_drink: {
+energy_drink: {
       create: () => new Tone.MetalSynth({
-        frequency: 200,
-        envelope: { attack: 0.001, decay: 0.2, release: 0.2 },
-        harmonicity: 5.1,
-        modulationIndex: 32,
-        resonance: 4000,
-        octaves: 1.5
+        frequency: 150, // Lower frequency (was 200)
+        envelope: { attack: 0.005, decay: 0.1, release: 0.1 }, // Shorter decay
+        harmonicity: 3.1, // Less harsh harmonicity (was 5.1)
+        modulationIndex: 16, // Lower modulation (was 32)
+        resonance: 2000, // Less resonant (was 4000)
+        octaves: 1 // Smaller range (was 1.5)
       }).toDestination(),
       note: "C4", // Not used for MetalSynth, but needed for compatibility
       pattern: "16t",
       color: "#39ff14", // Neon Green
-      description: "Energetic metallic synth",
+      description: "Softer metallic synth", // Updated description
       category: "beverage",
       // Modifiers
       fresh: { octave: 1, filter: "bandpass" },
@@ -431,6 +438,9 @@ window.productTypes = {
       luxury: { effect: "reverb", settings: { decay: 5, wet: 0.7 } },
       artificial: { effect: "vibrato", settings: { frequency: 10, depth: 1, wet: 0.9 } },
       "mass-produced": { effect: "bitcrusher", settings: { bits: 1, wet: 1 } },
-      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.05, feedback: 0.95, wet: 0.6 } }
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.05, feedback: 0.95, wet: 0.6 } },
+      // New effects - perfect for energy drink's intense character
+      packaged: { effect: "packaged", settings: { frequency: 16, depth: 1, wet: 0.9 } },
+      glass: { effect: "glass", settings: { delayTime: 0.06, feedback: 0.9, wet: 0.6 } }
     }
   };

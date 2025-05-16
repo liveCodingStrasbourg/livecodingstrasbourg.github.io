@@ -1,4 +1,4 @@
-// visualization.js - Handles visualization of active synths and audio
+// visualization.js - Handles visualization of active synths and audio with fade-out animation
 
 // Main visualization module functionality
 window.visualization = {
@@ -7,6 +7,9 @@ window.visualization = {
     
     // Animation frame request ID
     animationFrameId: null,
+    
+    // Fade-out duration in milliseconds
+    fadeOutDuration: 3000,
     
     // Initialize visualization system
     init: function() {
@@ -55,20 +58,54 @@ window.visualization = {
       
       // Add click handler to remove product
       visualizerEl.addEventListener('click', () => {
+        // Start fade-out animation
+        this.startFadeOut(productId);
+        
+        // Actual removal happens after the fade-out in removeProductVisualizer
         window.productManager.removeProductById(productId);
-        window.log(`Removed ${product.name} by clicking its visualizer.`);
+        window.log(`Removing ${product.name}...`);
       });
+      
+      // Apply initial fade-in animation
+      visualizerEl.style.opacity = "0";
+      visualizerEl.style.transform = "scale(0.95)";
+      visualizerEl.style.transition = `opacity 0.5s ease-in, transform 0.5s ease-in`;
       
       // Add to container
       container.appendChild(visualizerEl);
+      
+      // Trigger a reflow to ensure the transition works
+      visualizerEl.offsetHeight;
+      
+      // Fade in
+      visualizerEl.style.opacity = "1";
+      visualizerEl.style.transform = "scale(1)";
       
       // Store reference
       this.visualizers[productId] = {
         element: visualizerEl,
         barElement: document.getElementById(`bar-${productId}`),
         lastUpdate: Date.now(),
-        amplitude: 0
+        amplitude: 0,
+        isRemovePending: false
       };
+    },
+    
+    // Start fade-out animation for a product visualizer
+    startFadeOut: function(productId) {
+      const visualizer = this.visualizers[productId];
+      if (!visualizer || visualizer.isRemovePending) return;
+      
+      // Mark as pending removal
+      visualizer.isRemovePending = true;
+      
+      // Apply fade out style
+      if (visualizer.element) {
+        // Add transition style for smooth fade-out
+        visualizer.element.style.transition = `opacity ${this.fadeOutDuration/1000}s ease-out, transform ${this.fadeOutDuration/1000}s ease-out`;
+        visualizer.element.style.opacity = "0";
+        visualizer.element.style.transform = "scale(0.8)";
+      }
     },
     
     // Remove a product visualizer
@@ -76,13 +113,20 @@ window.visualization = {
       const visualizer = this.visualizers[productId];
       if (!visualizer) return;
       
-      // Remove element
-      if (visualizer.element) {
-        visualizer.element.remove();
+      // Start fade-out if not already pending removal
+      if (!visualizer.isRemovePending) {
+        this.startFadeOut(productId);
       }
       
-      // Remove reference
-      delete this.visualizers[productId];
+      // Schedule actual DOM removal after fade-out completes
+      setTimeout(() => {
+        if (visualizer.element) {
+          visualizer.element.remove();
+        }
+        
+        // Remove reference
+        delete this.visualizers[productId];
+      }, this.fadeOutDuration);
     },
     
     // Format product properties for display
@@ -137,6 +181,9 @@ window.visualization = {
         
         if (!product || !visualizer || !visualizer.barElement) return;
         
+        // Skip updating for elements that are being removed
+        if (visualizer.isRemovePending) return;
+        
         // Calculate time since last trigger
         const timeSinceLastTrigger = now - product.lastTriggerTime;
         
@@ -182,24 +229,21 @@ window.visualization = {
         }
         
         if (window.state.modes.consumerism) {
-          // Make bars more colorful
-          const hue = (now / 50) % 360;
-          visualizer.barElement.style.background = `linear-gradient(to top, hsl(${hue}, 100%, 50%), hsl(${hue + 60}, 100%, 70%))`;
+          // Make bars more colorful but subtly
+          visualizer.barElement.style.background = `linear-gradient(to top, #607d8b, #78909c)`;
         }
         
         if (window.state.modes.black_friday) {
-          // Chaotic flashing
-          visualizer.barElement.style.opacity = Math.random() > 0.2 ? 1 : 0.3;
-          visualizer.barElement.style.background = Math.random() > 0.5 ? 
-            'linear-gradient(to top, #ff0000, #ff6600)' : 
-            'linear-gradient(to top, #000000, #ff0000)';
+          // More intense
+          visualizer.barElement.style.opacity = Math.random() > 0.2 ? 1 : 0.6;
+          visualizer.barElement.style.background = 'linear-gradient(to top, #455a64, #607d8b)';
         }
         
         if (window.state.modes.apocalypse) {
-          // Glitchy behavior
+          // Random behavior
           visualizer.barElement.style.height = `${Math.random() * 100}%`;
-          visualizer.barElement.style.width = `${70 + Math.random() * 30}%`;
-          visualizer.barElement.style.left = `${Math.random() * 30}%`;
+          visualizer.barElement.style.width = `${80 + Math.random() * 20}%`;
+          visualizer.barElement.style.left = `${Math.random() * 20}%`;
         }
       });
     },

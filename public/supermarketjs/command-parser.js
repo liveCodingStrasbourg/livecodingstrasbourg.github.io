@@ -18,6 +18,15 @@
           console.log(`Command: ${cmd}`);
         }
         
+        // Time commands
+        if (this.isClosingTimeCommand(cmd)) {
+          return this.handleClosingTimeCommand(cmd);
+        }
+        
+        if (this.isOpeningTimeCommand(cmd)) {
+          return this.handleOpeningTimeCommand(cmd);
+        }
+        
         // Cart wheels commands (rhythm section)
         if (cmd.startsWith("my cart has")) {
           return this.handleCartWheelsCommand(cmd);
@@ -74,27 +83,50 @@
       handleCartWheelsCommand: function(cmd) {
         const wheelText = cmd.replace("my cart has", "").trim();
         
-        // Extract the wheel type from the text
-        let wheelType;
-        
-        // Check for specific wheel types in any order
-        if (wheelText.includes("square")) wheelType = "square";
-        else if (wheelText.includes("broken")) wheelType = "broken";
-        else if (wheelText.includes("premium")) wheelType = "premium";
-        else if (wheelText.includes("defective")) wheelType = "defective";
-        else if (wheelText.includes("bargain")) wheelType = "bargain";
-        else if (wheelText.includes("luxury")) wheelType = "luxury";
-        else if (wheelText.includes("no wheels")) wheelType = "none";
-        else wheelType = wheelText; // fallback
-        
-        // Set cart wheels if the function exists
+        // Check for new material attributes (heavy, iron, steel) combined with wheel types
         if (window.cartWheels && window.cartWheels.setWheels) {
-          window.cartWheels.setWheels(wheelType);
+          window.cartWheels.setWheels(wheelText);
         } else {
           console.log("Cart wheels handler not loaded");
           if (window.log) window.log("Cart wheels system not available yet.");
         }
         return true;
+      },
+      
+      // Check for "it's closing time" command
+      isClosingTimeCommand: function(cmd) {
+        return cmd === "it's closing time" || cmd === "its closing time";
+      },
+      
+      // Handle "it's closing time" command
+      handleClosingTimeCommand: function(cmd) {
+        if (window.audioEngine && window.audioEngine.changeBPM) {
+          window.audioEngine.changeBPM(10); // Increase BPM by 10
+          window.log("It's closing time! The music speeds up as customers rush to finish shopping...");
+          return true;
+        } else {
+          console.log("Audio engine not loaded");
+          if (window.log) window.log("Audio engine not available yet.");
+          return false;
+        }
+      },
+      
+      // Check for "it's opening time" command
+      isOpeningTimeCommand: function(cmd) {
+        return cmd === "it's opening time" || cmd === "its opening time";
+      },
+      
+      // Handle "it's opening time" command
+      handleOpeningTimeCommand: function(cmd) {
+        if (window.audioEngine && window.audioEngine.changeBPM) {
+          window.audioEngine.changeBPM(-10); // Decrease BPM by 10
+          window.log("It's opening time! The music slows down as the day begins calmly...");
+          return true;
+        } else {
+          console.log("Audio engine not loaded");
+          if (window.log) window.log("Audio engine not available yet.");
+          return false;
+        }
       },
       
       // Handle add product command
@@ -323,7 +355,8 @@
           'cart_wheels',
           'add_product',
           'remove_product',
-          'toggle_mode'
+          'toggle_mode',
+          'time_command'
         ];
         
         // Pick a random category
@@ -338,6 +371,8 @@
             return this.generateRandomRemoveProductCommand();
           case 'toggle_mode':
             return this.generateRandomModeCommand();
+          case 'time_command':
+            return this.generateRandomTimeCommand();
           default:
             return "add beer"; // Fallback
         }
@@ -346,8 +381,18 @@
       // Generate random cart wheels command
       generateRandomCartWheelsCommand: function() {
         const wheelTypes = ["square", "broken", "premium", "defective", "bargain", "luxury"];
+        const wheelMaterials = ["", "heavy ", "iron ", "steel "];
+        
         const randomType = wheelTypes[Math.floor(Math.random() * wheelTypes.length)];
-        return `my cart has ${randomType} wheels`;
+        const randomMaterial = wheelMaterials[Math.floor(Math.random() * wheelMaterials.length)];
+        
+        return `my cart has ${randomMaterial}${randomType} wheels`;
+      },
+      
+      // Generate random time command
+      generateRandomTimeCommand: function() {
+        const timeCommands = ["it's closing time", "it's opening time"];
+        return timeCommands[Math.floor(Math.random() * timeCommands.length)];
       },
       
       // Generate random add product command
@@ -371,7 +416,8 @@
           "fresh", "old", "strong", "flavorless", 
           "cheap", "expensive", "processed", "industrial", 
           "overpriced", "vomit", "artisanal", "bargain",
-          "luxury", "artificial", "mass-produced", "addictive"
+          "luxury", "artificial", "mass-produced", "addictive",
+          "packaged", "glass" // New modifiers
         ];
         
         // Select 1-2 modifiers

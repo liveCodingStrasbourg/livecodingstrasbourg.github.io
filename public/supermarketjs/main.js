@@ -27,7 +27,7 @@ window.state = {
 
 // Main initialization function
 function initializeApplication() {
-  console.log("Initializing CONSUME Soundscape Generator...");
+  console.log("Initializing Retail Therapy: Market Soundscape...");
   
   try {
     // Set up global audio effects

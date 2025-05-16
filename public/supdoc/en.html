@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIVE MARKET CODING - Documentation EN</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background-color: #1a1a1a;
+      color: #cccccc;
+      line-height: 1.6;
+      margin: 0;
+      padding: 2rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #ff2a6d;
+      padding-bottom: 1rem;
+    }
+    
+    h1 {
+      color: #ff2a6d;
+      font-family: 'Arial Black', Impact, sans-serif;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      margin: 0;
+      text-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
+    }
+    
+    h2 {
+      color: #05d9e8;
+      font-size: 1.8rem;
+      border-bottom: 1px solid #05d9e8;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+    
+    h3 {
+      color: #39ff14;
+      font-size: 1.4rem;
+      margin-top: 1.5rem;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .section {
+      margin-bottom: 2rem;
+    }
+    
+    code {
+      background-color: #121212;
+      color: #39ff14;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    pre {
+      background-color: #121212;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      border-left: 4px solid #05d9e8;
+    }
+    
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+    
+    .important {
+      border-left: 4px solid #ff2a6d;
+      padding-left: 1rem;
+      font-weight: bold;
+    }
+    
+    a {
+      color: #05d9e8;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+      text-shadow: 0 0 8px rgba(5, 217, 232, 0.5);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+    }
+    
+    th, td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+    
+    th {
+      background-color: #222;
+      color: #05d9e8;
+    }
+    
+    tr:hover {
+      background-color: #222;
+    }
+    
+    .back-button {
+      display: inline-block;
+      background-color: #ff2a6d;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-top: 2rem;
+      transition: all 0.3s;
+    }
+    
+    .back-button:hover {
+      background-color: #ff6b9d;
+      text-decoration: none;
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid #333;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>LIVE MARKET CODING</h1>
+      <p>English Documentation</p>
+    </header>
+    
+    <div class="section">
+      <h2>Introduction</h2>
+      <p>LIVE MARKET CODING is a sound generation environment based on the theme of a capitalist supermarket. 
+      Use text commands to create a live sound composition by manipulating your cart and adding products with 
+      different attributes. This sonic experience provides a playful critique of consumerism and capitalism, 
+      transforming the act of shopping into musical creation.</p>
+      
+      <div class="important">
+        <p>⚠️ WARNING: This is an alpha version. Bugs may occur, especially in special modes.</p>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Basic Commands</h2>
+      
+      <h3>Cart Manipulation</h3>
+      <p>The cart represents the rhythm section of your composition. Different wheel types produce different rhythms.</p>
+      <pre><code>my cart has square wheels    // Basic square rhythm
+my cart has broken wheels   // Irregular rhythm
+my cart has premium wheels  // Precise, consistent rhythm
+my cart has defective wheels // Glitchy rhythm
+my cart has bargain wheels  // Fast but inconsistent
+my cart has luxury wheels   // Precise with subtle variations
+my cart has no wheels       // Silence</code></pre>
+      
+      <h3>Adding Products</h3>
+      <p>Products are synths that create the melody and sound textures. Each product has its own distinctive sound.</p>
+      <pre><code>add beer                    // Adds a beer (FM synth with harmonics)
+add salad                   // Adds a salad (square wave AM synth)
+add ham                     // Adds ham (sawtooth mono synth)
+add milk                    // Adds milk (plucked string synth)
+add chips                   // Adds chips (white noise synth)
+// etc.</code></pre>
+      
+      <h3>Special Modes</h3>
+      <p>Modes affect the overall sound and ambiance.</p>
+      <pre><code>discount mode on            // Discount mode - random detuning
+inflation mode on           // Inflation mode - gradually increasing pitch
+consumerism mode on         // Consumerism mode - product enhancement
+black_friday mode on        // Black Friday mode - total chaos
+aisle_7 ambience on         // Aisle 7 mode - eerie reverb
+fluorescent_lights flicker on // Flicker mode - subtle tremolo</code></pre>
+      <p>All modes can be deactivated by replacing <code>on</code> with <code>off</code>.</p>
+    </div>
+    
+    <div class="section">
+      <h2>Product Modifiers</h2>
+      <p>Modifiers change the sound characteristics of products. Add them before the product name.</p>
+      
+      <h3>Pitch Modifiers</h3>
+      <table>
+        <tr>
+          <th>Modifier</th>
+          <th>Effect</th>
+        </tr>
+        <tr>
+          <td><code>fresh</code></td>
+          <td>Increases pitch by one octave</td>
+        </tr>
+        <tr>
+          <td><code>old</code></td>
+          <td>Decreases pitch by one octave</td>
+        </tr>
+      </table>
+      
+      <h3>Filter Modifiers</h3>
+      <table>
+        <tr>
+          <th>Modifier</th>
+          <th>Effect</th>
+        </tr>
+        <tr>
+          <td><code>strong</code></td>
+          <td>Low-pass filter, emphasizes bass</td>
+        </tr>
+        <tr>
+          <td><code>flavorless</code></td>
+          <td>High-pass filter, emphasizes treble</td>
+        </tr>
+      </table>
+      
+      <h3>Effect Modifiers</h3>
+      <table>
+        <tr>
+          <th>Modifier</th>
+          <th>Effect</th>
+        </tr>
+        <tr>
+          <td><code>cheap</code></td>
+          <td>Bitcrusher effect, quality reduction</td>
+        </tr>
+        <tr>
+          <td><code>expensive</code></td>
+          <td>Reverb, more spacious sound</td>
+        </tr>
+        <tr>
+          <td><code>processed</code></td>
+          <td>Chorus, thicker sound</td>
+        </tr>
+        <tr>
+          <td><code>industrial</code></td>
+          <td>Distortion, dirty sound</td>
+        </tr>
+        <tr>
+          <td><code>overpriced</code></td>
+          <td>Phaser, sweeping sound</td>
+        </tr>
+        <tr>
+          <td><code>vomit</code></td>
+          <td>Chebyshev, extreme distortion</td>
+        </tr>
+        <tr>
+          <td><code>artisanal</code></td>
+          <td>Tremolo, undulating volume</td>
+        </tr>
+        <tr>
+          <td><code>bargain</code></td>
+          <td>Delay with moderate feedback</td>
+        </tr>
+        <tr>
+          <td><code>luxury</code></td>
+          <td>Significant reverb</td>
+        </tr>
+        <tr>
+          <td><code>artificial</code></td>
+          <td>Vibrato, undulating pitch</td>
+        </tr>
+        <tr>
+          <td><code>mass-produced</code></td>
+          <td>Intensive bitcrusher</td>
+        </tr>
+        <tr>
+          <td><code>addictive</code></td>
+          <td>Ping-pong delay, stereo repetitions</td>
+        </tr>
+      </table>
+      
+      <h3>Combined Examples</h3>
+      <pre><code>add fresh strong beer        // Fresh, strong beer
+add old flavorless expensive milk // Old, flavorless, expensive milk
+add cheap processed industrial ham // Cheap, processed, industrial ham</code></pre>
+    </div>
+    
+    <div class="section">
+      <h2>Special Parameters</h2>
+      <p>These parameters add specific characteristics to products.</p>
+      
+      <h3>Nutriscore</h3>
+      <p>Modifies the key of the product.</p>
+      <pre><code>add beer nutriscore A       // Beer in A key
+add ham nutriscore C        // Ham in C key</code></pre>
+      
+      <h3>Shelf Life</h3>
+      <p>Sets the repetition frequency of the product.</p>
+      <pre><code>add milk shelflife today    // Very fast repetition
+add wine shelflife decade   // Very slow repetition</code></pre>
+      <p>Options: <code>today</code>, <code>week</code>, <code>month</code>, <code>year</code>, <code>decade</code>, <code>forever</code></p>
+      
+      <h3>Product State</h3>
+      <pre><code>add beer open              // Open product, unpredictable behavior</code></pre>
+      
+      <h3>Complex Combinations</h3>
+      <pre><code>add old beer nutriscore C shelflife month open</code></pre>
+    </div>
+    
+    <div class="section">
+      <h2>Keyboard Shortcuts</h2>
+      <table>
+        <tr>
+          <th>Shortcut</th>
+          <th>Action</th>
+        </tr>
+        <tr>
+          <td><code>Ctrl + Enter</code></td>
+          <td>Execute current line</td>
+        </tr>
+        <tr>
+          <td><code>Ctrl + Shift + Enter</code></td>
+          <td>Execute all lines</td>
+        </tr>
+        <tr>
+          <td><code>Ctrl + R</code></td>
+          <td>Generate a random command</td>
+        </tr>
+        <tr>
+          <td><code>Escape</code></td>
+          <td>Stop everything</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="section">
+      <h2>Practical Tips</h2>
+      <ul>
+        <li>Start by setting your cart wheels to establish a basic rhythm.</li>
+        <li>Add products one by one to understand their specific sound.</li>
+        <li>Experiment with different modifiers to create interesting sound textures.</li>
+        <li>Special modes can create powerful effects but are also more unstable.</li>
+        <li>Use the random command generation to discover new combinations.</li>
+        <li>If the sound becomes too chaotic, use the "Stop All" button and start over.</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <h2>About</h2>
+      <p>LIVE MARKET CODING is a livecoding art project developed by TOPLAP Strasbourg. It is part of a critical approach to capitalism and consumerism through an interactive sound experience.</p>
+      <p>For more information about TOPLAP Strasbourg and livecoding events, visit 
+      <a href="https://livecodingstrasbourg.github.io" target="_blank">livecodingstrasbourg.github.io</a></p>
+    </div>
+    
+    <a href="javascript:history.back()" class="back-button">Back to Application</a>
+    
+    <footer>
+      <p>© 2025 TOPLAP Strasbourg | Alpha Version</p>
+    </footer>
+  </div>
+</body>
+</html>

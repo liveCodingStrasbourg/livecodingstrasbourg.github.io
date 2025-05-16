@@ -1,4 +1,4 @@
-// audio-engine.js - Core audio functionality - Minimal fix version
+// audio-engine.js - Core audio functionality - Modified with new effects
 
 // Define the shelf life mappings for product repetition rate
 window.shelfLifeDurations = {
@@ -89,6 +89,80 @@ function createEffect(effectType, settings = {}) {
           depth: settings.depth || 0.5,
           wet: settings.wet || 0.5
         });
+        break;
+        
+      // New "glass" effect - a specialized echo effect
+      case "glass":
+        // Create a custom echo effect using multiple delays for a shimmering glass sound
+        const delay1 = new Tone.FeedbackDelay({
+          delayTime: settings.delayTime || 0.2,
+          feedback: settings.feedback || 0.3,
+          wet: 0.7
+        });
+        
+        const filter = new Tone.Filter({
+          frequency: settings.filterFreq || 3000,
+          type: "highpass",
+          Q: 1
+        });
+        
+        const delay2 = new Tone.FeedbackDelay({
+          delayTime: (settings.delayTime || 0.2) * 1.5, // Slightly offset
+          feedback: (settings.feedback || 0.3) * 0.7,
+          wet: 0.5
+        });
+        
+        // Connect the effects in series
+        delay1.connect(filter);
+        filter.connect(delay2);
+        
+        // Return the first element in the chain
+        effect = delay1;
+        
+        // Store the chain so we don't lose references (prevents garbage collection)
+        effect._chain = {filter, delay2};
+        
+        if (settings.wet !== undefined) effect.wet.value = settings.wet;
+        break;
+        
+      // New "packaged" effect - an arpeggiator-like effect
+      case "packaged":
+        // For the packaged effect, we'll create a tremolo with a filter
+        // that simulates the rhythmic pattern of an arpeggiator
+        const tremolo = new Tone.Tremolo({
+          frequency: settings.frequency || 8, // Fast rhythmic pattern
+          depth: settings.depth || 0.9,      // Deep modulation
+          wet: 0.8
+        }).start();
+        
+        const filterMod = new Tone.Filter({
+          frequency: settings.filterFreq || 1000,
+          type: "bandpass",
+          Q: 2
+        });
+        
+        // Connect tremolo to filter
+        tremolo.connect(filterMod);
+        
+        // Create an automation for the filter frequency
+        if (Tone.Transport.state === "started") {
+          const autoFilter = new Tone.AutoFilter({
+            frequency: settings.modFrequency || 0.5,
+            depth: 0.6,
+            baseFrequency: 400,
+            octaves: 3,
+            wet: 0.5
+          }).start();
+          
+          filterMod.connect(autoFilter);
+          effect = tremolo;
+          effect._chain = {filterMod, autoFilter};
+        } else {
+          effect = tremolo;
+          effect._chain = {filterMod};
+        }
+        
+        if (settings.wet !== undefined) effect.wet.value = settings.wet;
         break;
         
       default:
@@ -232,7 +306,10 @@ window.audioEngine = {
       luxury: "unnecessarily extravagant...",
       artificial: "synthesized in a lab...",
       "mass-produced": "identical to millions of others...",
-      addictive: "you'll keep coming back for more..."
+      addictive: "you'll keep coming back for more...",
+      // New effect descriptions
+      "packaged": "wrapped in layer upon layer of plastic...",
+      "glass": "fragile and transparent, the contents shimmer..."
     };
     
     return descriptions[effectName] || "altered in some way...";
@@ -384,6 +461,26 @@ window.audioEngine = {
       window.log("Everything stopped. The supermarket is silent again... for now.");
     } catch (error) {
       console.error("Error stopping audio:", error);
+    }
+  },
+  
+  // Change BPM by a specified amount
+  changeBPM: function(amount) {
+    try {
+      const currentBPM = Tone.Transport.bpm.value;
+      const newBPM = Math.max(20, Math.min(500, currentBPM + amount)); // Limit between 20-500 BPM
+      
+      // Apply the change
+      Tone.Transport.bpm.rampTo(newBPM, 2); // Gradually change over 2 seconds
+      
+      // Log the change
+      window.log(`BPM changing from ${currentBPM} to ${newBPM}...`);
+      console.log(`BPM changed: ${currentBPM} -> ${newBPM}`);
+      
+      return newBPM;
+    } catch (error) {
+      console.error("Error changing BPM:", error);
+      return null;
     }
   }
 };

@@ -1,9 +1,5 @@
 // product-manager.js - Manages the addition, modification, and removal of products
 
-// Define the shelf life mappings for product repetition rate - REMOVED DUPLICATE DEFINITION
-// Use the one from audio-engine.js instead
-// const shelfLifeDurations = {...} - REMOVED
-
 // Main product manager module functionality
 window.productManager = {
   // Add a product with optional modifiers
@@ -203,7 +199,7 @@ window.productManager = {
     
     const product = window.state.products[id];
     
-    // Remove from visualization
+    // Remove from visualization with fade out animation
     if (window.visualization && window.visualization.removeProductVisualizer) {
       window.visualization.removeProductVisualizer(id);
     }
@@ -215,23 +211,33 @@ window.productManager = {
         product.loop.dispose();
       }
       
-      // Dispose the synth
+      // Fade out volume and then dispose the synth
       if (product.synth) {
-        product.synth.dispose();
+        // Ramp down volume over 3 seconds before disposing
+        product.synth.volume.rampTo(-60, 3);
+        
+        // Schedule disposal after fade-out completes
+        setTimeout(() => {
+          if (product.synth) {
+            product.synth.dispose();
+          }
+          
+          // Dispose the filter if it exists
+          if (product.filter) {
+            product.filter.dispose();
+          }
+          
+          // Dispose the effect if it exists
+          if (product.effect) {
+            product.effect.dispose();
+          }
+          
+          // Remove from state after the fade-out
+          if (window.state.products[id]) {
+            delete window.state.products[id];
+          }
+        }, 3000); // Wait for 3 seconds to match the volume ramp time
       }
-      
-      // Dispose the filter if it exists
-      if (product.filter) {
-        product.filter.dispose();
-      }
-      
-      // Dispose the effect if it exists
-      if (product.effect) {
-        product.effect.dispose();
-      }
-      
-      // Remove from state
-      delete window.state.products[id];
     } catch (error) {
       console.error("Error removing product:", error);
     }

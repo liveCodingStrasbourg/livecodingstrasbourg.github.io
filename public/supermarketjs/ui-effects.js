@@ -1,41 +1,41 @@
 // ui-effects.js - Handles visual effects and UI animations
 
-// Spooky messages for random appearance
+// Subtle messages for random appearance
 const spookyMessages = [
-    "The expired products are watching you...",
-    "Something is crawling in aisle 7...",
-    "Did that can just move on its own?",
-    "The milk spoiled decades ago...",
-    "The checkout attendant has been missing since 1983...",
-    "Price check on a soul... price check...",
-    "The meat doesn't come from animals...",
-    "Listen closely to the scanner beeps... they're saying something...",
-    "That's not ketchup on the floor...",
-    "The store never closes. The store never opened.",
-    "Every product has an expiration date. Even you.",
-    "The cart wheels squeak in harmony with the screams.",
-    "The store manager will see you... soon.",
-    "Buy more to fill the void inside...",
-    "Your receipt is longer than your life expectancy...",
-    "Retail therapy won't cure what you have...",
-    "The rewards program costs more than points...",
-    "Your loyalty card has been rejected...",
-    "Products vanish when you're not looking...",
-    "Items in your cart may be closer than they appear..."
+    "Something doesn't feel right in aisle 7...",
+    "That product wasn't there a moment ago...",
+    "Did you hear that scanner beep?",
+    "The milk expired long ago...",
+    "The checkout attendant hasn't been seen today...",
+    "There's an unusual silence in the frozen section...",
+    "The meat department is closed indefinitely...",
+    "The scanner sounds are becoming rhythmic...",
+    "There's a stain on the floor near the checkout...",
+    "The store never seems to close...",
+    "Every product has an expiration date...",
+    "The cart wheels need maintenance...",
+    "The manager's office has been vacant for weeks...",
+    "The store loyalty card feels heavier today...",
+    "Your receipt seems longer than usual...",
+    "The shopping list keeps growing...",
+    "Your membership has been flagged for review...",
+    "Items shift positions when not observed...",
+    "The products in your cart have changed...",
+    "The store layout is different today..."
   ];
   
   // Consumerism messages for ads
   const consumerismMessages = [
-    "CONSUME MORE",
-    "YOU NEED THIS",
-    "BUY BUY BUY",
-    "DON'T THINK, JUST BUY",
-    "FULFILLMENT THROUGH PURCHASE",
-    "HAPPINESS = CONSUMPTION",
-    "MORE IS BETTER",
-    "EMPTY INSIDE? FILL WITH PRODUCTS",
-    "YOUR WORTH IS WHAT YOU OWN",
-    "SHOP UNTIL THE PAIN STOPS"
+    "Limited Time Offer",
+    "Member Exclusive",
+    "You Deserve This",
+    "Special Deal Today",
+    "Trending Product",
+    "Top Seller",
+    "Exclusive Collection",
+    "Value Purchase",
+    "Premium Selection",
+    "Recommended For You"
   ];
   
   // Main UI effects module functionality
@@ -51,19 +51,19 @@ const spookyMessages = [
     
     // Initialize UI effects
     init: function() {
-      // Create initial horror elements
-      this.addHorrorElements();
+      // Create initial subtle elements
+      this.addAtmosphericElements();
       
-      // Set up periodic spooky messages
+      // Set up periodic ambient messages
       this.setupPeriodicMessages();
     },
     
-    // Add horror visual elements (blood stains, mold, etc.)
-    addHorrorElements: function() {
+    // Add atmospheric visual elements
+    addAtmosphericElements: function() {
       // Clear previous elements
       this.elements.horrorElements.innerHTML = '';
       
-      // Add blood stains
+      // Add subtle stains
       for (let i = 0; i < CONFIG.ui.maxBloodstains; i++) {
         const stain = document.createElement("div");
         stain.className = "bloodstain";
@@ -74,7 +74,7 @@ const spookyMessages = [
         this.elements.horrorElements.appendChild(stain);
       }
       
-      // Add mold spots
+      // Add subtle spots
       for (let i = 0; i < CONFIG.ui.maxMoldSpots; i++) {
         const mold = document.createElement("div");
         mold.className = "mold-spot";
@@ -97,26 +97,26 @@ const spookyMessages = [
       }
     },
     
-    // Set up periodic spooky messages
+    // Set up periodic ambient messages
     setupPeriodicMessages: function() {
       // Show messages periodically
       setInterval(() => {
         if (Math.random() < 0.2) { // 20% chance each interval
-          this.showRandomSpookyMessage();
+          this.showRandomAmbientMessage();
         }
       }, CONFIG.ui.spookyMessageInterval);
     },
     
-    // Show a random spooky message
-    showRandomSpookyMessage: function() {
+    // Show a random ambient message
+    showRandomAmbientMessage: function() {
       if (spookyMessages.length === 0) return;
       
       const message = spookyMessages[Math.floor(Math.random() * spookyMessages.length)];
-      this.showCustomSpookyMessage(message);
+      this.showCustomAmbientMessage(message);
     },
     
-    // Show a custom spooky message
-    showCustomSpookyMessage: function(message) {
+    // Show a custom ambient message
+    showCustomAmbientMessage: function(message) {
       // Create message element
       const messageEl = document.createElement("div");
       messageEl.className = "spooky-message";
@@ -131,8 +131,8 @@ const spookyMessages = [
       }, 5000);
     },
     
-    // Show a random consumerism message
-    showRandomConsumerismMessage: function() {
+    // Show a random marketing message
+    showRandomMarketingMessage: function() {
       if (consumerismMessages.length === 0) return;
       
       // Get a random message
@@ -152,17 +152,9 @@ const spookyMessages = [
       }, 4000);
     },
     
-    // Intensify flickering effect
+    // Intensify lighting effect
     intensifyFlicker: function() {
-      this.flickerIntensity = 3.0;
-      
-      // Increase animation speed of all flicker animations
-      document.documentElement.style.setProperty('--flicker-speed', '0.5s');
-      
-      // Add flicker class to more elements
-      document.querySelectorAll('.neon-title, .synth-item, .neon-button').forEach(el => {
-        el.classList.add('flicker-fast');
-      });
+      this.flickerIntensity = 2.0;
       
       // Make neon flicker more visible
       if (this.elements.neonFlicker) {
@@ -170,17 +162,9 @@ const spookyMessages = [
       }
     },
     
-    // Reset flickering effect
+    // Reset lighting effect
     resetFlicker: function() {
       this.flickerIntensity = 1.0;
-      
-      // Reset animation speed
-      document.documentElement.style.setProperty('--flicker-speed', '8s');
-      
-      // Remove flicker class from elements
-      document.querySelectorAll('.flicker-fast').forEach(el => {
-        el.classList.remove('flicker-fast');
-      });
       
       // Reset neon flicker opacity
       if (this.elements.neonFlicker) {
@@ -205,56 +189,40 @@ const spookyMessages = [
       document.body.appendChild(shortcutInfo);
     },
     
-    // Shake effect for the screen
+    // Screen effect for feedback
     shakeScreen: function(intensity = 1.0) {
-      document.body.classList.add('shake-effect');
+      document.body.style.transition = "transform 0.1s";
+      document.body.style.transform = `translateX(${(Math.random() * 2 - 1) * intensity * 3}px)`;
       
-      // Adjust the intensity based on parameter
-      document.documentElement.style.setProperty('--shake-intensity', `${intensity * 5}px`);
-      
-      // Remove after a short time
+      // Reset after a short time
       setTimeout(() => {
-        document.body.classList.remove('shake-effect');
-      }, 500);
+        document.body.style.transform = "translateX(0)";
+      }, 100);
     },
     
     // Flash effect for success feedback
     flashSuccess: function(element) {
       if (!element) return;
       
-      // Add success flash class
-      element.classList.add('success-flash');
+      const originalBg = element.style.backgroundColor;
+      element.style.backgroundColor = "rgba(102, 187, 106, 0.3)";
       
-      // Remove after animation completes
+      // Reset after a short time
       setTimeout(() => {
-        element.classList.remove('success-flash');
-      }, 500);
+        element.style.backgroundColor = originalBg;
+      }, 300);
     },
     
     // Flash effect for error feedback
     flashError: function(element) {
       if (!element) return;
       
-      // Add error flash class
-      element.classList.add('error-flash');
+      const originalBg = element.style.backgroundColor;
+      element.style.backgroundColor = "rgba(239, 83, 80, 0.3)";
       
-      // Remove after animation completes
+      // Reset after a short time
       setTimeout(() => {
-        element.classList.remove('error-flash');
-      }, 500);
-    },
-    
-    // Add dynamic blood drips
-    addBloodDrip: function() {
-      // Create blood drip element
-      const drip = document.createElement("div");
-      drip.className = "blood-drip";
-      drip.style.left = `${Math.random() * 100}%`;
-      document.body.appendChild(drip);
-      
-      // Remove after animation completes
-      setTimeout(() => {
-        drip.remove();
-      }, 3000);
+        element.style.backgroundColor = originalBg;
+      }, 300);
     }
   };

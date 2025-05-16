@@ -26,9 +26,9 @@ window.uiHandlers = {
     }
     
     // Log initial messages
-    window.log("Welcome to the CONSUME Soundscape Generator!");
-    window.log("The products await your commands... your wallet is already open...");
-    window.log("💸 TIP: Use Ctrl+Enter to execute current line, Ctrl+Shift+Enter to execute all");
+    window.log("Welcome to Retail Therapy: Market Soundscape - Alpha Version");
+    window.log("The system is ready for your commands...");
+    window.log("💡 TIP: Use Ctrl+Enter to execute current line, Ctrl+Shift+Enter to execute all");
   },
   
   // Locate UI elements (in case they weren't found during initial load)

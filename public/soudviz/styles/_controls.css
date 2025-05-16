@@ -1,33 +1,37 @@
-/* controls.css - Control panel styles */
+/* controls.css - Updated sleek control panel styles */
 
 .controls {
     background-color: var(--panel-color);
-    border-radius: 8px;
-    padding: 10px;  /* Réduit de 15px */
+    border-radius: var(--border-radius-md);
+    padding: 12px;
     overflow-y: auto;
     box-shadow: var(--panel-shadow);
-    max-height: calc(100vh - 90px);  /* Limiter la hauteur */
+    max-height: calc(100vh - 90px);
+    border: 1px solid rgba(108, 92, 231, 0.15);
 }
 
 .control-group {
-    margin-bottom: 10px;  /* Réduit de 15px */
-    border-bottom: 1px solid #333;
-    padding-bottom: 10px;  /* Réduit de 15px */
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(108, 92, 231, 0.15);
+    padding-bottom: 12px;
 }
 
 .control-group:last-child {
     border-bottom: none;
+    margin-bottom: 0;
 }
 
 .control-group h3 {
     margin-top: 0;
-    color: var(--secondary-color);
-    font-size: 0.9rem;  /* Réduit de 1.1rem */
-    margin-bottom: 8px;  /* Réduit de 12px */
+    color: var(--accent-color);
+    font-size: var(--font-size-md);
+    margin-bottom: 8px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .control-item {
-    margin-bottom: 6px;  /* Réduit de 10px */
+    margin-bottom: 8px;
 }
 
 .control-item:last-child {
@@ -36,47 +40,72 @@
 
 .range-value {
     float: right;
-    font-size: 0.75rem;  /* Réduit de 0.8rem */
-    color: var(--secondary-color);
+    font-size: var(--font-size-xs);
+    color: var(--accent-color);
+    font-weight: 500;
+    padding: 0 3px;
+    border-radius: 3px;
+    background-color: rgba(0, 206, 201, 0.1);
 }
 
 .connection-status {
-    height: 8px;  /* Réduit de 10px */
-    width: 8px;  /* Réduit de 10px */
+    height: 8px;
+    width: 8px;
     border-radius: 50%;
-    background-color: #cc0000;
+    background-color: #ff5252;
     display: inline-block;
-    margin-right: 6px;  /* Réduit de 8px */
+    margin-right: 6px;
+    transition: background-color var(--transition-time);
 }
 
 .connected {
     background-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(0, 206, 201, 0.5);
 }
 
 /* Tap BPM button specific styles */
 #tapBpm {
-    width: 100%;
-    margin-bottom: 6px;  /* Réduit de 8px */
-    background: linear-gradient(to right, #8e44ad, #9b59b6);
-    font-weight: bold;
+width: 100%;
+margin-bottom: 6px;
+background: linear-gradient(135deg, #fd79a8, #e84393);
+font-weight: bold;
+letter-spacing: 0.5px;
+}
+
+#tapBpm:hover {
+background: linear-gradient(135deg, #e84393, #fd79a8);
 }
 
 #tapBpm:active {
-    transform: scale(0.95);
-    background: linear-gradient(to right, #9b59b6, #8e44ad);
+transform: scale(0.95);
 }
 
 #manualBpmValue {
-    font-size: 1.1rem;  /* Réduit de 1.2rem */
-    color: var(--accent-color);
-    font-weight: bold;
+font-size: var(--font-size-lg);
+color: #fd79a8;
+font-weight: bold;
 }
 
 /* Signal mapping control styles */
 #abstractMappingControls {
-    display: none; /* Initially hidden, shown when abstract visualization is selected */
+display: none; /* Initially hidden, shown when abstract visualization is selected */
 }
 
 #abstractMappingControls select {
-    margin-bottom: 8px;  /* Réduit de 12px */
+margin-bottom: 8px;
+border-color: rgba(253, 121, 168, 0.3);
+}
+
+/* Add subtle hover effects to all controls */
+.control-item select:hover,
+.control-item input[type="range"]:hover {
+    border-color: var(--accent-color);
+}
+
+/* Style for active control groups */
+.control-group.active {
+    background-color: rgba(108, 92, 231, 0.1);
+    border-radius: var(--border-radius-sm);
+    padding: 8px;
+    margin: -8px -8px 8px -8px;
 }

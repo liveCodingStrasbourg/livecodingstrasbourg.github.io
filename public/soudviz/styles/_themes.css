@@ -1,28 +1,50 @@
-/* themes.css - Color themes and variables */
+/* themes.css - Modern sleek color themes and variables */
 
 :root {
-    --primary-color: #2a2a72;
-    --secondary-color: #009ffd;
-    --accent-color: #32cd32;
-    --background-color: #121212;
-    --text-color: #e0e0e0;
-    --panel-color: rgba(30, 30, 45, 0.8);
-    --highlight-color: rgba(0, 159, 253, 0.5);
-    
-    /* Frequency band colors */
-    --bass-color: rgb(231, 76, 60);
-    --mid-color: rgb(46, 204, 113);
-    --treble-color: rgb(52, 152, 219);
-    
-    /* Abstract art colors */
-    --mondrian-red: #d40000;
-    --mondrian-blue: #002fa7;
-    --mondrian-yellow: #ffdc00;
-    
-    /* Shadows and effects */
-    --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    
+    /* Primary color palette - modern, sleek gradient */
+    --primary-color: #1e1e2f;
+    --secondary-color: #6c5ce7;
+    --accent-color: #00cec9;
+    --background-color: #0f0f17;
+    --text-color: #f5f5f7;
+    --panel-color: rgba(26, 26, 38, 0.85);
+    --highlight-color: rgba(108, 92, 231, 0.5);
+
+    /* Refined UI gradient */
+    --ui-gradient: linear-gradient(135deg, #6c5ce7, #00cec9);
+    --ui-gradient-hover: linear-gradient(135deg, #5d4de0, #00b5b1);
+
+    /* Frequency band colors - vibrant but cohesive */
+    --bass-color: #ff7675;
+    --mid-color: #55efc4;
+    --treble-color: #74b9ff;
+
+    /* Beat detection highlight */
+    --beat-color: #fd79a8;
+    --beat-glow: 0 0 15px rgba(253, 121, 168, 0.6);
+
+    /* Abstract art colors - refined palette */
+    --mondrian-red: #ff7675;
+    --mondrian-blue: #74b9ff;
+    --mondrian-yellow: #ffeaa7;
+
+    /* Shadows and effects - subtle depth */
+    --panel-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    --control-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
     /* Animation times */
-    --transition-time: 0.2s;
+    --transition-time: 0.25s;
+
+    /* Border radiuses for consistency */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+
+    /* Font sizes */
+    --font-size-xs: 0.7rem;
+    --font-size-sm: 0.8rem;
+    --font-size-md: 0.9rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.2rem;
 }

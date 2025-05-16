@@ -1,96 +1,133 @@
-/* visualizations.css - Visualization container styles */
+/* visualizations.css - Updated sleek visualization container styles */
 
 .visualization-container {
     display: grid;
     grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr);
-    gap: 15px; /* Réduit de 20px */
+    gap: 15px;
 }
 
 .viz-panel {
     background-color: var(--panel-color);
-    border-radius: 8px;
-    padding: 10px; /* Réduit de 15px */
+    border-radius: var(--border-radius-md);
+    padding: 12px;
     position: relative;
     box-shadow: var(--panel-shadow);
-    min-height: 200px; /* Assurez-vous que la hauteur minimale est définie */
-    max-height: calc(50vh - 70px); /* Hauteur maximale limitée */
+    min-height: 200px;
+    max-height: calc(50vh - 70px);
+    border: 1px solid rgba(108, 92, 231, 0.15);
+    transition: transform var(--transition-time), box-shadow var(--transition-time);
+}
+
+.viz-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--panel-shadow), 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .viz-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px; /* Réduit de 10px */
+    margin-bottom: 10px;
 }
 
 .viz-title {
-    color: var(--secondary-color);
+    color: var(--accent-color);
     margin: 0;
-    font-size: 1rem; /* Réduit de 1.2rem */
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .info-button {
     background: none;
-    border: 1px solid var(--secondary-color);
+    border: 1px solid var(--accent-color);
     border-radius: 50%;
-    width: 20px; /* Réduit de 25px */
-    height: 20px; /* Réduit de 25px */
-    color: var(--secondary-color);
+    width: 20px;
+    height: 20px;
+    color: var(--accent-color);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.75rem; /* Taille réduite */
+    font-size: var(--font-size-xs);
+    transition: all var(--transition-time);
+}
+
+.info-button:hover {
+    background-color: var(--accent-color);
+    color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 206, 201, 0.5);
+    transform: none;
 }
 
 canvas {
     width: 100%;
-    height: calc(100% - 30px); /* Réduit de 40px */
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+    height: calc(100% - 45px);
+    background-color: rgba(15, 15, 23, 0.7);
+    border-radius: var(--border-radius-sm);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(108, 92, 231, 0.1);
 }
 
 .metrics-display {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px; /* Réduit de 10px */
-    margin-top: 10px; /* Réduit de 15px */
+    gap: 8px;
+    margin-top: 10px;
+    transition: box-shadow 0.1s;
 }
 
 .metric-box {
-    background-color: rgba(40, 40, 60, 0.6);
-    border-radius: 4px;
-    padding: 6px; /* Réduit de 8px */
+    background-color: rgba(26, 26, 38, 0.7);
+    border-radius: var(--border-radius-sm);
+    padding: 6px;
     text-align: center;
+    border: 1px solid rgba(108, 92, 231, 0.1);
+    transition: transform var(--transition-time), background-color var(--transition-time);
+}
+
+.metric-box:hover {
+    background-color: rgba(36, 36, 52, 0.8);
+    transform: translateY(-1px);
 }
 
 .metric-label {
-    font-size: 0.7rem; /* Réduit de 0.8rem */
-    color: #aaa;
+    font-size: var(--font-size-xs);
+    color: rgba(245, 245, 247, 0.7);
+    margin-bottom: 2px;
 }
 
 .metric-value {
-    font-size: 1rem; /* Réduit de 1.2rem */
+    font-size: var(--font-size-lg);
     color: var(--accent-color);
     font-weight: bold;
-    transition: color 0.3s;
+    transition: color 0.3s, text-shadow 0.3s;
 }
 
 /* Specific styles for different visualizations */
 .bass-highlight {
     color: var(--bass-color) !important;
+    text-shadow: 0 0 8px rgba(255, 118, 117, 0.5);
 }
 
 .mid-highlight {
     color: var(--mid-color) !important;
+    text-shadow: 0 0 8px rgba(85, 239, 196, 0.5);
 }
 
 .treble-highlight {
     color: var(--treble-color) !important;
+    text-shadow: 0 0 8px rgba(116, 185, 255, 0.5);
 }
 
 /* Beat Detection Visual Feedback */
 .beat-active {
-    box-shadow: 0 0 15px var(--accent-color);
+    box-shadow: var(--beat-glow);
     transition: box-shadow 0.1s;
+}
+
+/* Add glowing effect to panels when active */
+.viz-panel.active canvas {
+    border-color: var(--accent-color);
+    box-shadow: inset 0 0 15px rgba(0, 206, 201, 0.2);
 }

@@ -1,0 +1,96 @@
+/* visualizations.css - Visualization container styles */
+
+.visualization-container {
+    display: grid;
+    grid-template-rows: minmax(200px, 1fr) minmax(200px, 1fr);
+    gap: 15px; /* Réduit de 20px */
+}
+
+.viz-panel {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 10px; /* Réduit de 15px */
+    position: relative;
+    box-shadow: var(--panel-shadow);
+    min-height: 200px; /* Assurez-vous que la hauteur minimale est définie */
+    max-height: calc(50vh - 70px); /* Hauteur maximale limitée */
+}
+
+.viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px; /* Réduit de 10px */
+}
+
+.viz-title {
+    color: var(--secondary-color);
+    margin: 0;
+    font-size: 1rem; /* Réduit de 1.2rem */
+}
+
+.info-button {
+    background: none;
+    border: 1px solid var(--secondary-color);
+    border-radius: 50%;
+    width: 20px; /* Réduit de 25px */
+    height: 20px; /* Réduit de 25px */
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem; /* Taille réduite */
+}
+
+canvas {
+    width: 100%;
+    height: calc(100% - 30px); /* Réduit de 40px */
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.metrics-display {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px; /* Réduit de 10px */
+    margin-top: 10px; /* Réduit de 15px */
+}
+
+.metric-box {
+    background-color: rgba(40, 40, 60, 0.6);
+    border-radius: 4px;
+    padding: 6px; /* Réduit de 8px */
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.7rem; /* Réduit de 0.8rem */
+    color: #aaa;
+}
+
+.metric-value {
+    font-size: 1rem; /* Réduit de 1.2rem */
+    color: var(--accent-color);
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+/* Specific styles for different visualizations */
+.bass-highlight {
+    color: var(--bass-color) !important;
+}
+
+.mid-highlight {
+    color: var(--mid-color) !important;
+}
+
+.treble-highlight {
+    color: var(--treble-color) !important;
+}
+
+/* Beat Detection Visual Feedback */
+.beat-active {
+    box-shadow: 0 0 15px var(--accent-color);
+    transition: box-shadow 0.1s;
+}

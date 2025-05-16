@@ -1,272 +1,25 @@
-<!-- audio-visualizer.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toplap Strasbourg - Atelier de Visualisation Audio</title>
-    <style>
-        :root {
-            --primary-color: #2a2a72;
-            --secondary-color: #009ffd;
-            --accent-color: #32cd32;
-            --background-color: #121212;
-            --text-color: #e0e0e0;
-            --panel-color: rgba(30, 30, 45, 0.8);
-            --highlight-color: rgba(0, 159, 253, 0.5);
-        }
-
-        body {
-            font-family: 'Roboto Mono', monospace;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        header {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-            margin: 0;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
-            padding: 20px;
-            height: calc(100vh - 100px);
-        }
-
-        .controls {
-            background-color: var(--panel-color);
-            border-radius: 8px;
-            padding: 15px;
-            overflow-y: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .control-group {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-        }
-
-        .control-group h3 {
-            margin-top: 0;
-            color: var(--secondary-color);
-            font-size: 1.1rem;
-        }
-
-        .control-item {
-            margin-bottom: 10px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 8px;
-            background-color: #2a2a3a;
-            border: 1px solid #444;
-            color: var(--text-color);
-            border-radius: 4px;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            height: 5px;
-            background: #333;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: var(--secondary-color);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        button {
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Roboto Mono', monospace;
-            transition: transform 0.1s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        .visualization-container {
-            display: grid;
-            grid-template-rows: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .viz-panel {
-            background-color: var(--panel-color);
-            border-radius: 8px;
-            padding: 15px;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .viz-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .viz-title {
-            color: var(--secondary-color);
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .info-button {
-            background: none;
-            border: 1px solid var(--secondary-color);
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            color: var(--secondary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        canvas {
-            width: 100%;
-            height: calc(100% - 40px);
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-        }
-
-        .info-panel {
-            position: absolute;
-            top: 40px;
-            right: 15px;
-            background: rgba(20, 20, 30, 0.95);
-            border: 1px solid var(--secondary-color);
-            border-radius: 8px;
-            padding: 15px;
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 10;
-            display: none;
-        }
-
-        .info-panel h4 {
-            color: var(--secondary-color);
-            margin-top: 0;
-        }
-
-        .info-panel p {
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        .info-panel code {
-            background-color: #2a2a3a;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .metrics-display {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .metric-box {
-            background-color: rgba(40, 40, 60, 0.6);
-            border-radius: 4px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .metric-label {
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-
-        .metric-value {
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .range-value {
-            float: right;
-            font-size: 0.8rem;
-            color: var(--secondary-color);
-        }
-
-        .connection-status {
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            background-color: #cc0000;
-            display: inline-block;
-            margin-right: 8px;
-        }
-
-        .connected {
-            background-color: var(--accent-color);
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.8rem;
-            color: #777;
-        }
-
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 0.5s;
-        }
-    </style>
+    
+    <!-- Styles -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="soudviz/styles/_main.css">
+    <link rel="stylesheet" href="soudviz/styles/_controls.css">
+    <link rel="stylesheet" href="soudviz/styles/_visualizations.css">
+    <link rel="stylesheet" href="soudviz/styles/_info-panels.css">
+    <link rel="stylesheet" href="soudviz/styles/_themes.css">
 </head>
 <body>
     <header>
         <h1>TOPLAP STRASBOURG - ATELIER DE VISUALISATION AUDIO</h1>
-        <p>Exploration interactive des algorithmes d'analyse audio</p>
+        <p>version alpha !!! TOPLAP STRASBOURG -- SUPPORT pour l'atelier'</p>
+        <p>Refonte en cours --- réécriture & améliorations des modules et de l'ui</p>
+
+
     </header>
 
     <div class="container">
@@ -320,6 +73,12 @@
                     <label for="beatThreshold">Seuil: <span class="range-value" id="beatThresholdValue">0.15</span></label>
                     <input type="range" id="beatThreshold" min="0.05" max="0.5" value="0.15" step="0.01">
                 </div>
+                <div class="control-item">
+                    <button id="tapBpm">Tap BPM</button>
+                    <div>
+                        <label>BPM manuel: <span id="manualBpmValue">0</span></label>
+                    </div>
+                </div>
             </div>
 
             <div class="control-group">
@@ -331,6 +90,8 @@
                         <option value="waveform">Forme d'Onde</option>
                         <option value="spectralFlux">Flux Spectral</option>
                         <option value="spectrogram">Spectrogramme</option>
+                        <option value="centroidVisualizer">Centroïde Spectral</option>
+                        <option value="abstractArt">Art Abstrait</option>
                     </select>
                 </div>
                 <div class="control-item">
@@ -340,7 +101,77 @@
                         <option value="frequencyBars">Spectre de Fréquences (Barres)</option>
                         <option value="bpmTracker">Analyseur de BPM</option>
                         <option value="energyCircle">Cercle Énergétique</option>
+                        <option value="centroidVisualizer">Centroïde Spectral</option>
+                        <option value="abstractArt">Art Abstrait</option>
                     </select>
+                </div>
+            </div>
+
+            <div class="control-group" id="abstractMappingControls">
+                <h3>Mapping Signaux-Paramètres</h3>
+                <div class="control-item">
+                    <label for="colorMapping">Couleur contrôlée par:</label>
+                    <select id="colorMapping">
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="centroid">Centroïde Spectral</option>
+                        <option value="energy">Énergie Totale</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticColorControl" style="display: none;">
+                    <label for="staticColorValue">Valeur de Couleur: <span class="range-value" id="staticColorValueValue">0.50</span></label>
+                    <input type="range" id="staticColorValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="sizeMapping">Taille contrôlée par:</label>
+                    <select id="sizeMapping">
+                        <option value="energy">Énergie Totale</option>
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="flux">Flux Spectral</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticSizeControl" style="display: none;">
+                    <label for="staticSizeValue">Valeur de Taille: <span class="range-value" id="staticSizeValueValue">0.50</span></label>
+                    <input type="range" id="staticSizeValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="positionMapping">Position contrôlée par:</label>
+                    <select id="positionMapping">
+                        <option value="flux">Flux Spectral</option>
+                        <option value="centroid">Centroïde Spectral</option>
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticPositionControl" style="display: none;">
+                    <label for="staticPositionXValue">Position X: <span class="range-value" id="staticPositionXValueValue">0.50</span></label>
+                    <input type="range" id="staticPositionXValue" min="0" max="1" value="0.5" step="0.01">
+                    <label for="staticPositionYValue">Position Y: <span class="range-value" id="staticPositionYValueValue">0.50</span></label>
+                    <input type="range" id="staticPositionYValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="styleMapping">Style Visuel:</label>
+                    <select id="styleMapping">
+                        <option value="mondrian">Mondrian</option>
+                        <option value="kandinsky">Kandinsky</option>
+                        <option value="minimal">Minimaliste</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="reactivityFactor">Réactivité: <span class="range-value" id="reactivityFactorValue">2.0</span></label>
+                    <input type="range" id="reactivityFactor" min="0.1" max="5" value="2.0" step="0.1">
+                </div>
+                <div class="control-item">
+                    <label for="cpuSensitivity">Usage CPU: <span class="range-value" id="cpuSensitivityValue">0.7</span></label>
+                    <input type="range" id="cpuSensitivity" min="0.1" max="1.0" value="0.7" step="0.1">
+                    <small>Réduire pour améliorer les performances</small>
                 </div>
             </div>
         </div>
@@ -352,11 +183,7 @@
                     <button class="info-button" id="info1Button">?</button>
                 </div>
                 <div class="info-panel" id="info1Panel">
-                    <h4>Spectre de Fréquences (FFT)</h4>
-                    <p>La Transformée de Fourier Rapide (FFT) décompose un signal sonore en ses fréquences constitutives, permettant de visualiser la distribution énergétique du son à travers le spectre audible (20Hz - 20kHz).</p>
-                    <p>Algorithme : Nous échantillonnons le signal audio puis appliquons la FFT pour obtenir l'amplitude de chaque bande de fréquence.</p>
-                    <p><code>X(k) = ∑[n=0 to N-1] x(n)e^(-j2πkn/N)</code></p>
-                    <p>Où <code>x(n)</code> est le signal d'entrée, <code>N</code> est le nombre d'échantillons, et <code>X(k)</code> représente l'amplitude de la fréquence <code>k</code>.</p>
+                    <!-- Content will be added via JavaScript -->
                 </div>
                 <canvas id="visualization1"></canvas>
                 <div class="metrics-display" id="metrics1">
@@ -381,10 +208,7 @@
                     <button class="info-button" id="info2Button">?</button>
                 </div>
                 <div class="info-panel" id="info2Panel">
-                    <h4>Forme d'Onde</h4>
-                    <p>La forme d'onde représente l'amplitude du signal audio au fil du temps, montrant directement les variations de pression acoustique captées par le microphone.</p>
-                    <p>C'est la représentation la plus fondamentale du signal sonore, permettant d'observer les motifs temporels et l'enveloppe du son.</p>
-                    <p>Le tracé montre l'amplitude normalisée (entre -1 et 1) sur l'axe Y et le temps sur l'axe X.</p>
+                    <!-- Content will be added via JavaScript -->
                 </div>
                 <canvas id="visualization2"></canvas>
                 <div class="metrics-display" id="metrics2">
@@ -409,1013 +233,30 @@
         TOPLAP Strasbourg &copy; 2025 - Atelier de Visualisation Audio
     </footer>
 
-    <script>
-        // AudioVisualizer.js - Le cœur de notre application de visualisation
-        
-        // Variables globales pour l'analyse audio
-        let audioContext;
-        let analyser;
-        let microphone;
-        let audioSource;
-        let isAudioInitialized = false;
-        let animationFrameId;
-        
-        // Variables pour les différentes visualisations
-        const canvas1 = document.getElementById('visualization1');
-        const canvas2 = document.getElementById('visualization2');
-        const ctx1 = canvas1.getContext('2d');
-        const ctx2 = canvas2.getContext('2d');
-        
-        // Tableaux pour stocker les données d'analyse
-        let frequencyData;
-        let timeData;
-        let spectralFluxData = [];
-        let beatDetectionData = {
-            energyHistory: [],
-            beatTimes: [],
-            lastBeatTime: 0,
-            threshold: 0.15,
-            sensitivity: 1.5,
-            decay: 0.98,
-            bpm: 0,
-            bpmConfidence: 0
-        };
-        
-        // Préparation des visualisations
-        function setupCanvas() {
-            // Ajustement des dimensions des canvas pour qu'ils correspondent à leur affichage réel
-            canvas1.width = canvas1.offsetWidth * window.devicePixelRatio;
-            canvas1.height = canvas1.offsetHeight * window.devicePixelRatio;
-            canvas2.width = canvas2.offsetWidth * window.devicePixelRatio;
-            canvas2.height = canvas2.offsetHeight * window.devicePixelRatio;
-            
-            // Ajustement des contextes 2D pour la densité de pixels
-            ctx1.scale(window.devicePixelRatio, window.devicePixelRatio);
-            ctx2.scale(window.devicePixelRatio, window.devicePixelRatio);
-        }
-        
-        // Initialisation de l'audio
-        async function initAudio() {
-            try {
-                // Demande d'accès au microphone
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                
-                // Création du contexte audio
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Création d'un nœud d'analyse
-                analyser = audioContext.createAnalyser();
-                
-                // Configuration de l'analyseur FFT
-                updateFFTSettings();
-                
-                // Création de la source audio à partir du microphone
-                audioSource = audioContext.createMediaStreamSource(stream);
-                audioSource.connect(analyser);
-                
-                // Pas de connexion à la destination pour éviter l'effet larsen
-                // audioSource.connect(audioContext.destination);
-                
-                // Création des tableaux pour stocker les données d'analyse
-                frequencyData = new Uint8Array(analyser.frequencyBinCount);
-                timeData = new Uint8Array(analyser.fftSize);
-                
-                // Indication que l'audio est initialisé
-                isAudioInitialized = true;
-                document.getElementById('micStatus').classList.add('connected');
-                document.getElementById('startAudio').textContent = 'Microphone Actif';
-                
-                // Démarrage de la boucle d'animation
-                visualize();
-                
-                console.log('Audio initialized with FFT size:', analyser.fftSize);
-            } catch (error) {
-                console.error('Error initializing audio:', error);
-                alert('Erreur lors de l\'accès au microphone. Veuillez autoriser l\'accès au microphone et réessayer.');
-            }
-        }
-        
-        // Mise à jour des paramètres FFT
-        function updateFFTSettings() {
-            if (!analyser) return;
-            
-            // Mise à jour de la taille FFT (doit être une puissance de 2)
-            const fftSizeExp = parseInt(document.getElementById('fftSize').value);
-            const fftSize = Math.pow(2, fftSizeExp);
-            analyser.fftSize = fftSize;
-            
-            // Mise à jour du lissage temporel
-            const smoothing = parseFloat(document.getElementById('smoothingTimeConstant').value);
-            analyser.smoothingTimeConstant = smoothing;
-            
-            // Mise à jour des tableaux de données
-            frequencyData = new Uint8Array(analyser.frequencyBinCount);
-            timeData = new Uint8Array(analyser.fftSize);
-            
-            console.log('FFT settings updated:', {
-                fftSize,
-                bins: analyser.frequencyBinCount,
-                smoothing
-            });
-        }
-        
-        // Fonction principale de visualisation
-        function visualize() {
-            if (!isAudioInitialized) return;
-            
-            // Récupération des données audio
-            analyser.getByteFrequencyData(frequencyData);
-            analyser.getByteTimeDomainData(timeData);
-            
-            // Analyse des données
-            analyzeAudioData();
-            
-            // Mise à jour des visualisations
-            updateVisualization1();
-            updateVisualization2();
-            
-            // Mise à jour des métriques affichées
-            updateMetrics();
-            
-            // Boucle d'animation
-            animationFrameId = requestAnimationFrame(visualize);
-        }
-        
-        // Analyse des données audio pour en extraire des métriques
-        function analyzeAudioData() {
-            // Calcul des énergies par bande de fréquence
-            const bassEnergy = calculateBandEnergy(0, 0.08);  // ~20-250Hz
-            const lowMidEnergy = calculateBandEnergy(0.08, 0.15);  // ~250-500Hz
-            const midEnergy = calculateBandEnergy(0.15, 0.4);  // ~500-2000Hz
-            const highMidEnergy = calculateBandEnergy(0.4, 0.7);  // ~2000-4000Hz
-            const trebleEnergy = calculateBandEnergy(0.7, 1.0);  // ~4000-20000Hz
-            
-            // Application des facteurs d'échelle
-            const bassScale = parseFloat(document.getElementById('bassScale').value);
-            const trebleScale = parseFloat(document.getElementById('trebleScale').value);
-            
-            const scaledBassEnergy = Math.min(1, bassEnergy * bassScale);
-            const scaledTrebleEnergy = Math.min(1, trebleEnergy * trebleScale);
-            
-            // Calcul du flux spectral (changement dans le spectre au fil du temps)
-            if (spectralFluxData.length > 0) {
-                const lastSpectrum = spectralFluxData[spectralFluxData.length - 1].spectrum;
-                let flux = 0;
-                
-                for (let i = 0; i < frequencyData.length; i++) {
-                    const diff = (frequencyData[i] / 255) - (lastSpectrum[i] / 255);
-                    // On ne compte que les augmentations d'énergie (changements positifs)
-                    flux += diff > 0 ? diff : 0;
-                }
-                
-                // Normalisation du flux
-                flux = flux / frequencyData.length;
-                
-                spectralFluxData.push({
-                    time: audioContext.currentTime,
-                    value: flux,
-                    spectrum: [...frequencyData]
-                });
-            } else {
-                // Premier spectre
-                spectralFluxData.push({
-                    time: audioContext.currentTime,
-                    value: 0,
-                    spectrum: [...frequencyData]
-                });
-            }
-            
-            // Nettoyage des anciennes données
-            const maxHistoryLength = 100;
-            if (spectralFluxData.length > maxHistoryLength) {
-                spectralFluxData.shift();
-            }
-            
-            // Détection de battement
-            detectBeat(scaledBassEnergy);
-            
-            // Stockage des résultats d'analyse pour utilisation dans les visualisations
-            return {
-                bassEnergy: scaledBassEnergy,
-                lowMidEnergy,
-                midEnergy,
-                highMidEnergy,
-                trebleEnergy: scaledTrebleEnergy,
-                totalEnergy: (scaledBassEnergy + midEnergy + scaledTrebleEnergy) / 3
-            };
-        }
-        
-        // Calcul de l'énergie pour une bande de fréquence spécifique
-        function calculateBandEnergy(startPerc, endPerc) {
-            const start = Math.floor(frequencyData.length * startPerc);
-            const end = Math.floor(frequencyData.length * endPerc);
-            let total = 0;
-            
-            for (let i = start; i < end; i++) {
-                total += frequencyData[i] / 255; // Normalisation entre 0 et 1
-            }
-            
-            // Moyenne normalisée
-            return total / (end - start);
-        }
-        
-        // Détection de battement avec calcul de BPM
-        function detectBeat(energy) {
-            const now = audioContext.currentTime * 1000; // temps en millisecondes
-            const beatThreshold = parseFloat(document.getElementById('beatThreshold').value);
-            const sensitivity = parseFloat(document.getElementById('beatSensitivity').value);
-            const decay = parseFloat(document.getElementById('beatDecay').value);
-            
-            // Mise à jour des paramètres de détection
-            beatDetectionData.threshold = beatThreshold;
-            beatDetectionData.sensitivity = sensitivity;
-            beatDetectionData.decay = decay;
-            
-            // Ajout de l'énergie actuelle à l'historique
-            beatDetectionData.energyHistory.push(energy);
-            
-            // Limitation de la taille de l'historique
-            const historySize = 43; // ~1 seconde à 60fps
-            if (beatDetectionData.energyHistory.length > historySize) {
-                beatDetectionData.energyHistory.shift();
-            }
-            
-            // Calcul de la moyenne locale
-            const localAvg = beatDetectionData.energyHistory.reduce((a, b) => a + b, 0) / 
-                            beatDetectionData.energyHistory.length;
-            
-            // Calcul de la variance
-            const variance = beatDetectionData.energyHistory.reduce((a, b) => a + Math.pow(b - localAvg, 2), 0) / 
-                            beatDetectionData.energyHistory.length;
-            
-            // Seuil dynamique basé sur la moyenne, la variance et la sensibilité
-            const dynamicThreshold = localAvg + (Math.sqrt(variance) * sensitivity);
-            
-            // Intervalle minimum entre battements (limite le BPM maximum)
-            const MIN_BEAT_INTERVAL = 250; // 250ms -> Max 240 BPM
-            
-            // Détection de battement
-            const timeSinceLastBeat = now - beatDetectionData.lastBeatTime;
-            const energyOverThreshold = energy > Math.max(beatThreshold, dynamicThreshold);
-            const timingOK = timeSinceLastBeat > MIN_BEAT_INTERVAL;
-            
-            // Le battement doit être un pic local
-            let isPeak = false;
-            if (beatDetectionData.energyHistory.length >= 3) {
-                const current = energy;
-                const prev1 = beatDetectionData.energyHistory[beatDetectionData.energyHistory.length - 2];
-                const prev2 = beatDetectionData.energyHistory[beatDetectionData.energyHistory.length - 3];
-                
-                isPeak = current > prev1 && current > prev2;
-            }
-            
-            // Calcul de la confiance du battement
-            beatDetectionData.beatConfidence = 
-                (energyOverThreshold ? 0.6 : 0) + 
-                (isPeak ? 0.3 : 0) + 
-                (timingOK ? 0.1 : 0);
-            
-            // Si toutes les conditions sont remplies, on a un battement
-            if (energyOverThreshold && timingOK && isPeak) {
-                beatDetectionData.beatTimes.push(now);
-                beatDetectionData.lastBeatTime = now;
-                
-                // Animation pulse
-                document.getElementById('energyLevel').classList.add('pulse');
-                setTimeout(() => {
-                    document.getElementById('energyLevel').classList.remove('pulse');
-                }, 200);
-                
-                // Limitation de la taille de l'historique des battements
-                const MAX_BEAT_HISTORY = 24; // Pour calculer le BPM
-                if (beatDetectionData.beatTimes.length > MAX_BEAT_HISTORY) {
-                    beatDetectionData.beatTimes.shift();
-                }
-                
-                // Calcul du BPM
-                calculateBPM();
-                
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // Calcul du BPM à partir de l'historique des battements
-        function calculateBPM() {
-            if (beatDetectionData.beatTimes.length < 4) return;
-            
-            // Calcul des intervalles entre battements
-            const intervals = [];
-            for (let i = 1; i < beatDetectionData.beatTimes.length; i++) {
-                const interval = beatDetectionData.beatTimes[i] - beatDetectionData.beatTimes[i-1];
-                
-                // Conversion en BPM instantané
-                const instantBPM = 60000 / interval;
-                
-                // Filtrage des BPM dans une plage raisonnable
-                if (instantBPM >= 60 && instantBPM <= 200) {
-                    intervals.push(interval);
-                }
-            }
-            
-            if (intervals.length > 0) {
-                // Tri des intervalles pour calcul de la médiane
-                intervals.sort((a, b) => a - b);
-                const medianInterval = intervals[Math.floor(intervals.length / 2)];
-                
-                // Conversion de l'intervalle médian en BPM
-                const medianBPM = Math.round(60000 / medianInterval);
-                
-                // Si le nouveau BPM est très différent, on le lisse pour éviter les sauts brusques
-                if (beatDetectionData.bpm === 0) {
-                    beatDetectionData.bpm = medianBPM;
-                } else if (Math.abs(beatDetectionData.bpm - medianBPM) < 10) {
-                    // Lissage du BPM - moyenne pondérée
-                    beatDetectionData.bpm = Math.round(
-                        beatDetectionData.bpm * 0.7 + medianBPM * 0.3
-                    );
-                } else if (Math.abs(beatDetectionData.bpm - medianBPM) < 20) {
-                    // Changement plus important mais toujours filtré
-                    beatDetectionData.bpm = Math.round(
-                        beatDetectionData.bpm * 0.5 + medianBPM * 0.5
-                    );
-                } else {
-                    // Changement radical, on accepte la nouvelle valeur
-                    beatDetectionData.bpm = medianBPM;
-                }
-                
-                // Confiance BPM basée sur la cohérence des intervalles
-                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-                let variance = 0;
-                for (let i = 0; i < intervals.length; i++) {
-                    variance += Math.pow(intervals[i] - avgInterval, 2);
-                }
-                variance /= intervals.length;
-                const stdDev = Math.sqrt(variance);
-                
-                // Coefficient de variation (plus il est bas, plus les battements sont réguliers)
-                const cv = stdDev / avgInterval;
-                
-                // Conversion en pourcentage de confiance (inversement proportionnel au coefficient de variation)
-                beatDetectionData.bpmConfidence = Math.min(100, Math.round((1 - Math.min(cv, 0.5) * 2) * 100));
-            }
-        }
-        
-        // Mise à jour de la première visualisation
-        function updateVisualization1() {
-            const visType = document.getElementById('visualizationType1').value;
-            const width = canvas1.width / window.devicePixelRatio;
-            const height = canvas1.height / window.devicePixelRatio;
-            
-            // Effacement du canvas
-            ctx1.clearRect(0, 0, width, height);
-            
-            // Sélection de la visualisation appropriée
-            switch (visType) {
-                case 'frequencyBars':
-                    drawFrequencyBars(ctx1, width, height);
-                    break;
-                case 'waveform':
-                    drawWaveform(ctx1, width, height);
-                    break;
-                case 'spectralFlux':
-                    drawSpectralFlux(ctx1, width, height);
-                    break;
-                case 'spectrogram':
-                    drawSpectrogram(ctx1, width, height);
-                    break;
-                default:
-                    drawFrequencyBars(ctx1, width, height);
-            }
-        }
-        
-        // Mise à jour de la seconde visualisation
-        function updateVisualization2() {
-            const visType = document.getElementById('visualizationType2').value;
-            const width = canvas2.width / window.devicePixelRatio;
-            const height = canvas2.height / window.devicePixelRatio;
-            
-            // Effacement du canvas
-            ctx2.clearRect(0, 0, width, height);
-            
-            // Sélection de la visualisation appropriée
-            switch (visType) {
-                case 'waveform':
-                    drawWaveform(ctx2, width, height);
-                    break;
-                case 'frequencyBars':
-                    drawFrequencyBars(ctx2, width, height);
-                    break;
-                case 'bpmTracker':
-                    drawBPMTracker(ctx2, width, height);
-                    break;
-                case 'energyCircle':
-                    drawEnergyCircle(ctx2, width, height);
-                    break;
-                default:
-                    drawWaveform(ctx2, width, height);
-            }
-        }
-        
-        // Dessin du spectre de fréquences sous forme de barres
-        function drawFrequencyBars(ctx, width, height) {
-            // Configuration du style
-            const barWidth = width / (analyser.frequencyBinCount / 4); // Divise par 4 pour limiter aux fréquences audibles pertinentes
-            const barSpacing = 1;
-            const maxBarHeight = height - 30; // Espace pour les étiquettes
-            
-            // Coloration par bandes de fréquences
-            const bassColor = 'rgb(32, 147, 255)';
-            const midColor = 'rgb(46, 204, 113)';
-            const trebleColor = 'rgb(241, 196, 15)';
-            
-            // Échelle logarithmique pour les fréquences
-            const logBase = 1.02;
-            
-            for (let i = 0; i < analyser.frequencyBinCount / 4; i++) {
-                // Calcul de la position logarithmique pour mieux voir les basses fréquences
-                const logIndex = Math.round((Math.pow(logBase, i) - 1) / (Math.pow(logBase, analyser.frequencyBinCount / 4) - 1) * (analyser.frequencyBinCount / 4));
-                
-                // Hauteur de la barre normalisée
-                const value = frequencyData[logIndex] / 255;
-                const barHeight = value * maxBarHeight;
-                
-                // Position X
-                const x = i * (barWidth + barSpacing);
-                
-                // Détermination de la couleur en fonction de la plage de fréquence
-                let barColor;
-                if (i < analyser.frequencyBinCount / 4 * 0.08) {
-                    barColor = bassColor;
-                } else if (i < analyser.frequencyBinCount / 4 * 0.4) {
-                    barColor = midColor;
-                } else {
-                    barColor = trebleColor;
-                }
-                
-                // Dessin de la barre avec un dégradé
-                const gradient = ctx.createLinearGradient(0, height - barHeight, 0, height);
-                gradient.addColorStop(0, barColor);
-                gradient.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
-                
-                ctx.fillStyle = gradient;
-                ctx.fillRect(x, height - barHeight, barWidth, barHeight);
-            }
-            
-            // Ajout de légendes de fréquence
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.font = '10px Roboto Mono';
-            ctx.textAlign = 'center';
-            
-            const sampleRate = audioContext ? audioContext.sampleRate : 44100;
-            const nyquist = sampleRate / 2;
-            
-            // Fréquences à marquer
-            const frequencies = [50, 100, 250, 500, 1000, 2500, 5000, 10000, 20000];
-            
-            for (const freq of frequencies) {
-                if (freq <= nyquist) {
-                    // Position normalisée sur l'axe des X
-                    const normPosition = Math.log(freq / 20) / Math.log(nyquist / 20);
-                    const x = normPosition * width;
-                    
-                    // Dessin du marqueur
-                    ctx.fillRect(x, height - 15, 1, 5);
-                    
-                    // Formatage du texte de fréquence
-                    let label = freq < 1000 ? freq : (freq / 1000) + 'k';
-                    ctx.fillText(label, x, height - 2);
-                }
-            }
-        }
-        
-        // Dessin de la forme d'onde (domaine temporel)
-        function drawWaveform(ctx, width, height) {
-            // Configuration du style
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgb(46, 204, 113)';
-            
-            // Position centrale
-            const center = height / 2;
-            
-            // Tracé de la forme d'onde
-            ctx.beginPath();
-            
-            // Ligne du milieu (zéro)
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-            ctx.beginPath();
-            ctx.moveTo(0, center);
-            ctx.lineTo(width, center);
-            ctx.stroke();
-            
-            // Forme d'onde
-            ctx.strokeStyle = 'rgb(46, 204, 113)';
-            ctx.beginPath();
-            
-            const sliceWidth = width / timeData.length;
-            let x = 0;
-            
-            for (let i = 0; i < timeData.length; i++) {
-                const v = (timeData[i] / 128.0) - 1.0; // Conversion en -1 à 1
-                const y = (v * center) + center;
-                
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-                
-                x += sliceWidth;
-            }
-            
-            ctx.stroke();
-            
-            // Ajout d'une étiquette
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.font = '10px Roboto Mono';
-            ctx.textAlign = 'right';
-            ctx.fillText('Temps →', width - 10, height - 10);
-            ctx.textAlign = 'left';
-            ctx.fillText('Amplitude', 10, 15);
-        }
-        
-        // Dessin du flux spectral
-        function drawSpectralFlux(ctx, width, height) {
-            if (spectralFluxData.length < 2) return;
-            
-            // Configuration du style
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgb(155, 89, 182)';
-            
-            // Tracé de la courbe de flux spectral
-            ctx.beginPath();
-            
-            const step = width / (spectralFluxData.length - 1);
-            let x = 0;
-            
-            // Normalisation
-            const maxFlux = Math.max(...spectralFluxData.map(d => d.value), 0.1);
-            
-            for (let i = 0; i < spectralFluxData.length; i++) {
-                const flux = spectralFluxData[i].value;
-                const y = height - (flux / maxFlux) * (height - 30);
-                
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-                
-                x += step;
-            }
-            
-            ctx.stroke();
-            
-            // Ajout d'explications
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-            ctx.font = '12px Roboto Mono';
-            ctx.textAlign = 'left';
-            ctx.fillText(`Flux Spectral: ${spectralFluxData[spectralFluxData.length-1].value.toFixed(3)}`, 10, 20);
-            ctx.font = '10px Roboto Mono';
-            ctx.fillText('Mesure les changements de spectre dans le temps', 10, 40);
-            ctx.fillText('Pics = transitions sonores importantes', 10, 55);
-        }
-        
-        // Dessin d'un spectrogramme
-        function drawSpectrogram(ctx, width, height) {
-            // Configuration
-            const binCount = analyser.frequencyBinCount / 4; // On limite aux fréquences pertinentes
-            
-            // Décalage du spectrogramme existant vers la gauche
-            const imageData = ctx.getImageData(1, 0, width - 1, height);
-            ctx.putImageData(imageData, 0, 0);
-            
-            // Effacement de la colonne la plus à droite
-            ctx.clearRect(width - 1, 0, 1, height);
-            
-            // Tracé du nouveau spectre
-            for (let i = 0; i < binCount; i++) {
-                // Position Y avec échelle logarithmique pour les fréquences
-                const freqRatio = i / binCount;
-                // Transformation logarithmique pour mieux représenter les basses fréquences
-                const logIndex = Math.round(Math.pow(10, freqRatio * Math.log10(binCount)) - 1);
-                const y = height - (logIndex / binCount * height);
-                
-                // Valeur de fréquence normalisée
-                const value = frequencyData[i] / 255;
-                
-                // Couleur HSL basée sur l'amplitude
-                // Hue: 240 (bleu) à 0 (rouge) pour l'intensité croissante
-                const hue = 240 - value * 240;
-                // Saturation: 50% à 100% pour l'intensité croissante
-                const saturation = 50 + value * 50;
-                // Luminosité: 20% à 60% pour l'intensité croissante
-                const lightness = 20 + value * 40;
-                
-                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-                ctx.fillRect(width - 1, y, 1, 2); // Léger chevauchement pour éviter les trous
-            }
-            
-            // Ajout d'étiquettes de fréquence
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-            ctx.font = '10px Roboto Mono';
-            ctx.textAlign = 'right';
-            
-            const frequencies = [20, 100, 1000, 10000, 20000];
-            
-            for (const freq of frequencies) {
-                // Position Y logarithmique
-                const logPos = Math.log10(freq / 20) / Math.log10(20000 / 20);
-                const y = height - (logPos * height);
-                
-                if (y >= 0 && y <= height) {
-                    // Formatage du texte de fréquence
-                    let label = freq < 1000 ? freq : (freq / 1000) + 'k';
-                    ctx.fillText(label + ' Hz', width - 5, y + 3);
-                }
-            }
-        }
-        
-        // Dessin du tracker de BPM
-        function drawBPMTracker(ctx, width, height) {
-            // Configuration du style
-            ctx.fillStyle = 'rgba(41, 128, 185, 0.1)';
-            ctx.fillRect(0, 0, width, height);
-            
-            // Dessin des battements récents
-            const maxAge = 2000; // 2 secondes
-            const now = audioContext ? audioContext.currentTime * 1000 : performance.now();
-            
-            // Dessin des battements détectés
-            beatDetectionData.beatTimes.forEach((time, index) => {
-                const age = now - time;
-                
-                if (age < maxAge) {
-                    // Position X en fonction du temps
-                    const x = width - (age / maxAge) * width;
-                    
-                    // Opacité basée sur l'âge
-                    const opacity = 1 - (age / maxAge);
-                    
-                    // Taille basée sur la récence
-                    const size = 20 - (age / maxAge) * 15;
-                    
-                    // Dessin du battement
-                    ctx.fillStyle = `rgba(41, 128, 185, ${opacity})`;
-                    ctx.beginPath();
-                    ctx.arc(x, height / 2, size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-            
-            // Affichage du BPM et de la confiance
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = 'bold 36px Roboto Mono';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${beatDetectionData.bpm} BPM`, width / 2, height / 2 - 10);
-            
-            ctx.font = '14px Roboto Mono';
-            ctx.fillText(`Confiance: ${beatDetectionData.bpmConfidence}%`, width / 2, height / 2 + 20);
-            
-            // Explication de l'algorithme
-            ctx.font = '12px Roboto Mono';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.fillText('Algorithme: détection de pics énergétiques + analyse des intervalles', width / 2, height - 40);
-            ctx.fillText(`Seuil: ${beatDetectionData.threshold.toFixed(2)} | Sensibilité: ${beatDetectionData.sensitivity.toFixed(1)}`, width / 2, height - 20);
-        }
-        
-        // Dessin du cercle énergétique
-        function drawEnergyCircle(ctx, width, height) {
-            // Calcul des énergies par bande de fréquence
-            const bassEnergy = calculateBandEnergy(0, 0.08);
-            const midEnergy = calculateBandEnergy(0.15, 0.4);
-            const trebleEnergy = calculateBandEnergy(0.7, 1.0);
-            
-            // Centre du cercle
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const maxRadius = Math.min(width, height) * 0.4;
-            
-            // Fond sombre
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-            ctx.fillRect(0, 0, width, height);
-            
-            // Dessin des cercles concentriques
-            for (let i = 5; i > 0; i--) {
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, maxRadius * (i/5), 0, Math.PI * 2);
-                ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * i})`;
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            }
-            
-            // Cercle principal représentant l'énergie totale
-            const totalEnergy = (bassEnergy + midEnergy + trebleEnergy) / 3;
-            const mainRadius = maxRadius * (0.2 + totalEnergy * 0.8);
-            
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, mainRadius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(41, 128, 185, ${0.3 + totalEnergy * 0.7})`;
-            ctx.fill();
-            
-            // Tracé de cercles pour les différentes bandes de fréquence
-            // Basses (rouge)
-            drawFrequencyCircle(ctx, centerX, centerY, maxRadius * 0.7, bassEnergy, 
-                               'rgba(231, 76, 60, 0.7)', 0);
-            
-            // Médiums (vert)
-            drawFrequencyCircle(ctx, centerX, centerY, maxRadius * 0.7, midEnergy, 
-                               'rgba(46, 204, 113, 0.7)', Math.PI * 2/3);
-            
-            // Aigus (bleu)
-            drawFrequencyCircle(ctx, centerX, centerY, maxRadius * 0.7, trebleEnergy, 
-                               'rgba(52, 152, 219, 0.7)', Math.PI * 4/3);
-            
-            // Légendes
-            ctx.font = '12px Roboto Mono';
-            ctx.textAlign = 'center';
-            
-            // Graves
-            ctx.fillStyle = 'rgba(231, 76, 60, 0.9)';
-            ctx.fillText('Graves', centerX + Math.cos(0) * (maxRadius * 0.85), 
-                       centerY + Math.sin(0) * (maxRadius * 0.85));
-            
-            // Médiums
-            ctx.fillStyle = 'rgba(46, 204, 113, 0.9)';
-            ctx.fillText('Médiums', centerX + Math.cos(Math.PI * 2/3) * (maxRadius * 0.85), 
-                       centerY + Math.sin(Math.PI * 2/3) * (maxRadius * 0.85));
-            
-            // Aigus
-            ctx.fillStyle = 'rgba(52, 152, 219, 0.9)';
-            ctx.fillText('Aigus', centerX + Math.cos(Math.PI * 4/3) * (maxRadius * 0.85), 
-                       centerY + Math.sin(Math.PI * 4/3) * (maxRadius * 0.85));
-            
-            // Énergie totale
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.font = 'bold 24px Roboto Mono';
-            ctx.fillText(`${Math.round(totalEnergy * 100)}%`, centerX, centerY + 8);
-            
-            // Représentation du battement
-            if (audioContext) {
-                const timeSinceLastBeat = (audioContext.currentTime * 1000) - beatDetectionData.lastBeatTime;
-                if (timeSinceLastBeat < 200) {
-                    const pulseSize = 1 - (timeSinceLastBeat / 200); // De 1 à 0
-                    ctx.beginPath();
-                    ctx.arc(centerX, centerY, maxRadius * (1 + pulseSize * 0.2), 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${pulseSize * 0.8})`;
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                }
-            }
-        }
-        
-        // Fonction auxiliaire pour dessiner les cercles de fréquence
-        function drawFrequencyCircle(ctx, centerX, centerY, maxRadius, energy, color, angle) {
-            const radius = maxRadius * energy;
-            const distance = maxRadius * 0.5; // Distance du centre
-            
-            // Position basée sur l'angle
-            const x = centerX + Math.cos(angle) * distance;
-            const y = centerY + Math.sin(angle) * distance;
-            
-            // Cercle
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = color;
-            ctx.fill();
-            
-            // Ligne reliant au centre
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(x, y);
-            ctx.strokeStyle = color.replace('0.7', '0.3');
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
-        
-        // Mise à jour des métriques affichées
-        function updateMetrics() {
-            // Calcul des énergies
-            const bassEnergy = calculateBandEnergy(0, 0.08);
-            const lowMidEnergy = calculateBandEnergy(0.08, 0.15);
-            const midEnergy = calculateBandEnergy(0.15, 0.4);
-            const highMidEnergy = calculateBandEnergy(0.4, 0.7);
-            const trebleEnergy = calculateBandEnergy(0.7, 1.0);
-            
-            // Mise à jour des valeurs affichées
-            document.getElementById('bassEnergy').textContent = bassEnergy.toFixed(2);
-            document.getElementById('midEnergy').textContent = ((lowMidEnergy + midEnergy + highMidEnergy) / 3).toFixed(2);
-            document.getElementById('trebleEnergy').textContent = trebleEnergy.toFixed(2);
-            
-            document.getElementById('bpmValue').textContent = beatDetectionData.bpm || '-';
-            document.getElementById('bpmConfidence').textContent = `${beatDetectionData.bpmConfidence}%`;
-            document.getElementById('energyLevel').textContent = ((bassEnergy + midEnergy + trebleEnergy) / 3).toFixed(2);
-        }
-        
-        // Gestionnaires d'événements
-        document.addEventListener('DOMContentLoaded', () => {
-            // Ajustement des canvas
-            setupCanvas();
-            
-            // Événement pour le bouton d'initialisation audio
-            document.getElementById('startAudio').addEventListener('click', () => {
-                if (!isAudioInitialized) {
-                    initAudio();
-                }
-            });
-            
-            // Événement pour les menus déroulants de visualisation
-            document.getElementById('visualizationType1').addEventListener('change', (e) => {
-                const type = e.target.value;
-                document.getElementById('viz1Title').textContent = getVisualizationTitle(type);
-                updateInfoPanel('info1Panel', type);
-            });
-            
-            document.getElementById('visualizationType2').addEventListener('change', (e) => {
-                const type = e.target.value;
-                document.getElementById('viz2Title').textContent = getVisualizationTitle(type);
-                updateInfoPanel('info2Panel', type);
-            });
-            
-            // Événements pour les boutons d'information
-            document.getElementById('info1Button').addEventListener('click', () => {
-                const panel = document.getElementById('info1Panel');
-                panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
-            });
-            
-            document.getElementById('info2Button').addEventListener('click', () => {
-                const panel = document.getElementById('info2Panel');
-                panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
-            });
-            
-            // Événements pour les contrôles FFT
-            document.getElementById('fftSize').addEventListener('input', (e) => {
-                const fftSizeExp = parseInt(e.target.value);
-                const fftSize = Math.pow(2, fftSizeExp);
-                document.getElementById('fftSizeValue').textContent = fftSize;
-                updateFFTSettings();
-            });
-            
-            document.getElementById('smoothingTimeConstant').addEventListener('input', (e) => {
-                const smoothing = parseFloat(e.target.value);
-                document.getElementById('smoothingValue').textContent = smoothing.toFixed(2);
-                updateFFTSettings();
-            });
-            
-            // Événements pour les contrôles de sensibilité de battement
-            document.getElementById('beatSensitivity').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('beatSensitivityValue').textContent = value.toFixed(1);
-            });
-            
-            document.getElementById('beatDecay').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('beatDecayValue').textContent = value.toFixed(3);
-            });
-            
-            document.getElementById('beatThreshold').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('beatThresholdValue').textContent = value.toFixed(2);
-            });
-            
-            // Événements pour les contrôles de scaling
-            document.getElementById('bassScale').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('bassScaleValue').textContent = value.toFixed(1);
-            });
-            
-            document.getElementById('trebleScale').addEventListener('input', (e) => {
-                const value = parseFloat(e.target.value);
-                document.getElementById('trebleScaleValue').textContent = value.toFixed(1);
-            });
-            
-            // Initialisation des panneaux d'information
-            updateInfoPanel('info1Panel', document.getElementById('visualizationType1').value);
-            updateInfoPanel('info2Panel', document.getElementById('visualizationType2').value);
-            
-            // Redimensionnement des canvas lors du redimensionnement de la fenêtre
-            window.addEventListener('resize', () => {
-                setupCanvas();
-            });
-        });
-        
-        // Fonction pour obtenir le titre de la visualisation
-        function getVisualizationTitle(type) {
-            switch (type) {
-                case 'frequencyBars':
-                    return 'Spectre de Fréquences';
-                case 'waveform':
-                    return 'Forme d\'Onde';
-                case 'spectralFlux':
-                    return 'Flux Spectral';
-                case 'spectrogram':
-                    return 'Spectrogramme';
-                case 'bpmTracker':
-                    return 'Analyseur de BPM';
-                case 'energyCircle':
-                    return 'Énergie Audio';
-                default:
-                    return 'Visualisation Audio';
-            }
-        }
-        
-        // Mise à jour des panneaux d'information
-        function updateInfoPanel(panelId, visualizationType) {
-            const panel = document.getElementById(panelId);
-            const info = getVisualizationInfo(visualizationType);
-            
-            if (panel && info) {
-                panel.innerHTML = info;
-            }
-        }
-        
-        // Obtenir les informations sur la visualisation
-        function getVisualizationInfo(type) {
-            switch (type) {
-                case 'frequencyBars':
-                    return `
-                        <h4>Spectre de Fréquences (FFT)</h4>
-                        <p>La Transformée de Fourier Rapide (FFT) décompose un signal sonore en ses fréquences constitutives, 
-                        permettant de visualiser la distribution énergétique du son à travers le spectre audible (20Hz - 20kHz).</p>
-                        <p>Algorithme : Nous échantillonnons le signal audio puis appliquons la FFT pour obtenir l'amplitude de chaque 
-                        bande de fréquence.</p>
-                        <p><code>X(k) = ∑[n=0 to N-1] x(n)e^(-j2πkn/N)</code></p>
-                        <p>Où <code>x(n)</code> est le signal d'entrée, <code>N</code> est le nombre d'échantillons, et <code>X(k)</code> 
-                        représente l'amplitude de la fréquence <code>k</code>.</p>
-                    `;
-                case 'waveform':
-                    return `
-                        <h4>Forme d'Onde</h4>
-                        <p>La forme d'onde représente l'amplitude du signal audio au fil du temps, montrant directement 
-                        les variations de pression acoustique captées par le microphone.</p>
-                        <p>C'est la représentation la plus fondamentale du signal sonore, permettant d'observer les motifs temporels 
-                        et l'enveloppe du son.</p>
-                        <p>Le tracé montre l'amplitude normalisée (entre -1 et 1) sur l'axe Y et le temps sur l'axe X.</p>
-                    `;
-                case 'spectralFlux':
-                    return `
-                        <h4>Flux Spectral</h4>
-                        <p>Le flux spectral mesure la vitesse de changement du spectre de fréquences au fil du temps. 
-                        C'est un excellent indicateur des transitions sonores et des changements dans le contenu audio.</p>
-                        <p>Algorithme : On calcule la différence entre les spectres de fréquence consécutifs, en ne conservant 
-                        que les changements positifs (augmentations d'énergie).</p>
-                        <p><code>flux = ∑ max(|X_t[k] - X_{t-1}[k]|, 0)</code></p>
-                        <p>Où <code>X_t[k]</code> est l'amplitude de la fréquence <code>k</code> au temps <code>t</code>.</p>
-                        <p>Les pics dans le flux spectral indiquent souvent des attaques percussives ou des changements brusques 
-                        dans la musique.</p>
-                    `;
-                case 'spectrogram':
-                    return `
-                        <h4>Spectrogramme</h4>
-                        <p>Le spectrogramme est une représentation visuelle tridimensionnelle du signal sonore, montrant 
-                        l'évolution du spectre de fréquences au fil du temps.</p>
-                        <p>L'axe vertical représente la fréquence (de bas en haut), l'axe horizontal représente le temps 
-                        (de gauche à droite), et la couleur représente l'intensité (bleu = faible, rouge = élevée).</p>
-                        <p>Cette visualisation permet d'identifier des motifs harmoniques, des formants vocaux, des instruments, 
-                        et la structure temporelle du son.</p>
-                        <p>L'échelle de fréquence est logarithmique pour mieux représenter la perception humaine des hauteurs.</p>
-                    `;
-                case 'bpmTracker':
-                    return `
-                        <h4>Analyseur de BPM</h4>
-                        <p>Le BPM (Battements Par Minute) mesure le tempo d'un morceau musical. Notre algorithme détecte les pics 
-                        d'énergie qui correspondent aux battements.</p>
-                        <p>Algorithme de détection :</p>
-                        <ol>
-                            <li>Extraction de l'énergie dans les basses fréquences (20-250Hz)</li>
-                            <li>Détection des pics locaux dépassant un seuil adaptatif basé sur l'énergie moyenne</li>
-                            <li>Filtrage temporel pour éviter les faux positifs</li>
-                            <li>Calcul des intervalles entre battements consécutifs</li>
-                            <li>Conversion des intervalles médians en BPM (60000/intervalle_ms)</li>
-                            <li>Lissage temporel pour stabiliser l'affichage</li>
-                        </ol>
-                        <p>La confiance indique la régularité des battements détectés.</p>
-                    `;
-                case 'energyCircle':
-                    return `
-                        <h4>Cercle Énergétique</h4>
-                        <p>Cette visualisation représente l'énergie audio sous forme de cercles interactifs, permettant de 
-                        comparer facilement l'équilibre entre les graves, médiums et aigus.</p>
-                        <p>Le cercle principal au centre représente l'énergie totale, tandis que les trois cercles 
-                        satellites représentent respectivement :</p>
-                        <ul>
-                            <li>Rouge : Graves (20-250Hz)</li>
-                            <li>Vert : Médiums (250-2000Hz)</li>
-                            <li>Bleu : Aigus (2000-20000Hz)</li>
-                        </ul>
-                        <p>La taille de chaque cercle est proportionnelle à l'énergie dans la bande correspondante, 
-                        et un effet de pulsation est visible lors de la détection d'un battement.</p>
-                    `;
-                default:
-                    return `
-                        <h4>Visualisation Audio</h4>
-                        <p>Cette visualisation représente les propriétés du signal audio capté par votre microphone.</p>
-                        <p>Utilisez les contrôles pour ajuster les paramètres et explorer différentes façons de 
-                        représenter le son.</p>
-                    `;
-            }
-        }
-    </script>
+    <!-- Scripts - Ordre important pour les dépendances -->
+    <!-- Chargement des classes de base en premier -->
+    <script src="soudviz/js/visualization/visualizer.js"></script>
+    <script src="soudviz/js/audio/analyzer.js"></script>
+    <script src="soudviz/js/audio/processor.js"></script>
+    <script src="soudviz/js/audio/bpm-detector.js"></script>
+    
+    <!-- Visualisations -->
+    <script src="soudviz/js/visualization/frequency-bars.js"></script>
+    <script src="soudviz/js/visualization/waveform.js"></script>
+    <script src="soudviz/js/visualization/spectral-flux.js"></script>
+    <script src="soudviz/js/visualization/spectrogram.js"></script>
+    <script src="soudviz/js/visualization/bpm-tracker.js"></script>
+    <script src="soudviz/js/visualization/energy-circle.js"></script>
+    <script src="soudviz/js/visualization/abstract-art.js"></script>
+    <script src="soudviz/js/visualization/centroid-visualizer.js"></script>
+    
+    <!-- UI et contrôles -->
+    <script src="soudviz/js/ui/controls.js"></script>
+    <script src="soudviz/js/ui/mapping-ui.js"></script>
+    <script src="soudviz/js/ui/info-panels.js"></script>
+    <script src="soudviz/js/ui/manual-bpm.js"></script>
+    
+    <!-- Point d'entrée chargé en dernier -->
+    <script src="soudviz/js/main.js"></script>
 </body>
 </html>

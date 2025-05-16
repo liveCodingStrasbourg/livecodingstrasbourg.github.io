@@ -1,0 +1,129 @@
+/* main.css - Base styles and layout */
+
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+header {
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    padding: 0.8rem;  /* Réduit de 1.5rem */
+    text-align: center;
+    box-shadow: var(--header-shadow);
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 2px;
+    font-size: 1.3rem;  /* Réduit de 1.5rem environ */
+}
+
+header p {
+    margin-top: 0.3rem;  /* Réduit de 0.5rem */
+    opacity: 0.9;
+    font-size: 0.8rem;  /* Taille réduite */
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 280px 1fr;  /* Réduit de 300px */
+    gap: 15px;  /* Réduit de 20px */
+    padding: 15px;  /* Réduit de 20px */
+    height: calc(100vh - 90px);  /* Ajusté pour le header plus petit */
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.visualization-container {
+    overflow-y: auto;
+    max-height: calc(100vh - 90px);  /* Limiter la hauteur pour éviter le défilement sur la page entière */
+}
+
+button {
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    padding: 8px 12px;  /* Réduit de 10px 15px */
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Roboto Mono', monospace;
+    transition: transform var(--transition-time);
+    font-size: 0.9rem;  /* Taille réduite */
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+select, input {
+    width: 100%;
+    padding: 6px;  /* Réduit de 8px */
+    background-color: #2a2a3a;
+    border: 1px solid #444;
+    color: var(--text-color);
+    border-radius: 4px;
+    font-size: 0.9rem;  /* Taille réduite */
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 4px;  /* Réduit de 5px */
+    background: #333;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;  /* Réduit de 15px */
+    height: 12px;  /* Réduit de 15px */
+    background: var(--secondary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+label {
+    display: block;
+    margin-bottom: 3px;  /* Réduit de 5px */
+    font-size: 0.8rem;  /* Réduit de 0.9rem */
+}
+
+small {
+    color: #999;
+    font-size: 0.7rem;  /* Taille réduite de 0.8rem */
+}
+
+footer {
+    text-align: center;
+    padding: 10px;  /* Réduit de 15px */
+    font-size: 0.7rem;  /* Taille réduite de 0.8rem */
+    color: #777;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 0.5s;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    
+    .controls {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+}

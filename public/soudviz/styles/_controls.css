@@ -1,0 +1,82 @@
+/* controls.css - Control panel styles */
+
+.controls {
+    background-color: var(--panel-color);
+    border-radius: 8px;
+    padding: 10px;  /* Réduit de 15px */
+    overflow-y: auto;
+    box-shadow: var(--panel-shadow);
+    max-height: calc(100vh - 90px);  /* Limiter la hauteur */
+}
+
+.control-group {
+    margin-bottom: 10px;  /* Réduit de 15px */
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;  /* Réduit de 15px */
+}
+
+.control-group:last-child {
+    border-bottom: none;
+}
+
+.control-group h3 {
+    margin-top: 0;
+    color: var(--secondary-color);
+    font-size: 0.9rem;  /* Réduit de 1.1rem */
+    margin-bottom: 8px;  /* Réduit de 12px */
+}
+
+.control-item {
+    margin-bottom: 6px;  /* Réduit de 10px */
+}
+
+.control-item:last-child {
+    margin-bottom: 0;
+}
+
+.range-value {
+    float: right;
+    font-size: 0.75rem;  /* Réduit de 0.8rem */
+    color: var(--secondary-color);
+}
+
+.connection-status {
+    height: 8px;  /* Réduit de 10px */
+    width: 8px;  /* Réduit de 10px */
+    border-radius: 50%;
+    background-color: #cc0000;
+    display: inline-block;
+    margin-right: 6px;  /* Réduit de 8px */
+}
+
+.connected {
+    background-color: var(--accent-color);
+}
+
+/* Tap BPM button specific styles */
+#tapBpm {
+    width: 100%;
+    margin-bottom: 6px;  /* Réduit de 8px */
+    background: linear-gradient(to right, #8e44ad, #9b59b6);
+    font-weight: bold;
+}
+
+#tapBpm:active {
+    transform: scale(0.95);
+    background: linear-gradient(to right, #9b59b6, #8e44ad);
+}
+
+#manualBpmValue {
+    font-size: 1.1rem;  /* Réduit de 1.2rem */
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+/* Signal mapping control styles */
+#abstractMappingControls {
+    display: none; /* Initially hidden, shown when abstract visualization is selected */
+}
+
+#abstractMappingControls select {
+    margin-bottom: 8px;  /* Réduit de 12px */
+}

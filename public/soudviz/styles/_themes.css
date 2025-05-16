@@ -1,0 +1,28 @@
+/* themes.css - Color themes and variables */
+
+:root {
+    --primary-color: #2a2a72;
+    --secondary-color: #009ffd;
+    --accent-color: #32cd32;
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --panel-color: rgba(30, 30, 45, 0.8);
+    --highlight-color: rgba(0, 159, 253, 0.5);
+    
+    /* Frequency band colors */
+    --bass-color: rgb(231, 76, 60);
+    --mid-color: rgb(46, 204, 113);
+    --treble-color: rgb(52, 152, 219);
+    
+    /* Abstract art colors */
+    --mondrian-red: #d40000;
+    --mondrian-blue: #002fa7;
+    --mondrian-yellow: #ffdc00;
+    
+    /* Shadows and effects */
+    --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    
+    /* Animation times */
+    --transition-time: 0.2s;
+}

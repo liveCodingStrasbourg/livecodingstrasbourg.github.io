@@ -1,0 +1,530 @@
+---
+import Global from "../layouts/Global.astro"
+import {Image} from "astro:assets"
+---
+
+<Global title="Toplap Strasbourg - Ateliers Documentation">
+
+    <section class="hero">
+        <div class="hero-content">
+            <p style="color: var(--secondary-color); margin-bottom: 1rem; letter-spacing: 5px; text-transform: uppercase;">TOPLAP Strasbourg présente</p>
+            <h1 class="event-title" data-text="ATELIERS DOCS">ATELIERS DOCS<span class="terminal-cursor"></span></h1>
+            <p>Documentation et ressources des ateliers de livecoding à Strasbourg</p>
+            <a href="index.html" class="back-link"><span class="icon-home"></span> Retour à l'accueil</a>
+        </div>
+    </section>
+
+    <main>
+        <section class="docs-section">
+            <h2><span class="icon-book"></span> Documentation des Ateliers<span class="terminal-cursor"></span></h2>
+            <div class="tools-section">
+                <p>Cette page centralise les connaissances, expériences et ressources accumulées lors de nos différents ateliers de livecoding. Vous y trouverez des résumés, des liens vers des ressources spécifiques et notre savoir collectif sur différentes pratiques de livecoding. La page est tout neuve il faudra un peu de temps pour y mettre des ateliers plus anciens</p>
+            </div>
+
+            <div class="workshop-container">
+                <!-- Workshop Navigation -->
+                <div class="workshop-nav">
+                    <h3>Ateliers</h3>
+                    <ul>
+                        <li><a href="#audioreactif" class="workshop-nav-link">Visual Audio Réactif 14/05/2025</a></li>
+
+
+                    </ul>
+                </div>
+
+                <!-- Workshop Content -->
+                <div class="workshop-content">
+                    <div id="audioreactif" class="workshop-card">
+                        <div class="workshop-header">
+                            <h3>Visual Audio Réactif 14/05/2025</h3>
+                            <div class="workshop-badges">
+                                <span class="badge audio">shadok</span>
+                                <span class="badge javascript">p5js</span>
+                                <span class="badge python">FoxDot</span>
+                                <span class="badge javascript">Hydra</span>
+
+                            </div>
+                        </div>
+
+                        <div class="workshop-body">
+                            <p>Atelier qui se déroula au Shadok à Strasbourg centré sur l'interaction audiovisuelle.    </p>
+
+                            <div class="subsection">
+                                <h4>Résumé de l'atelier</h4>
+                                <ul class="workshop-list">
+                                    <li>
+                                        <span class="workshop-date">Les signaux</span>
+                                        <div class="workshop-details">
+                                            <h5>Discussion et introductions à propos des signaux sonores</h5>
+                                            <p>Support de discussion, application développée en interne</p>
+                                            <a href="http://localhost:4321/audio-visualizer.html" class="resource-link">Version 0.1 de l'application de Toplap Strasbourg pour visualiser le son</a>
+                                    </li>
+                                    <li>
+                                        <span class="workshop-date">Découverte de p5js</span>
+                                        <div class="workshop-details">
+                                            <h5>Introduction par 520Still de p5js</h5>
+                                            <p>Avec une approche sur l'audioréactivité en p5js. Decouverte du langage, des fonctions audios, des fft en p5js, des lissages, coordonnées et itérations </p>
+                                        </div>
+                                    </li>
+                                     <li>
+                                        <span class="workshop-date">Jam Session</span>
+                                        <div class="workshop-details">
+                                            <h5>exploration de hydra et de Foxdot via un nouvel outil</h5>
+                                            <p>developpé par ZBMD, jam collaborative</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="subsection">
+                                <h4>Ressources</h4>
+                                <div class="resources-grid">
+                                    <a href="https://editor.p5js.com" class="resource-card">
+                                        <div class="resource-icon"><span class="icon-link"></span></div>
+                                        <div class="resource-info">
+                                            <h5>Editeur P5js</h5>
+                                            <p>editor.p5js.com</p>
+                                        </div>
+                                    </a>
+                                    <a href="https://livecodingstrasbourg.github.io/audio-visualizer.html" class="resource-card">
+                                        <div class="resource-icon"><span class="icon-link"></span></div>
+                                        <div class="resource-info">
+                                            <h5>Toplap audio visual tool</h5>
+                                            <p></p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="subsection">
+                                <h4>Retours/remarques</h4>
+                                <div class="troubleshooting">
+                                    <div class="problem-solution">
+                                        <div class="problem">Déroulé de l'atelier</div>
+                                        <div class="solution">Laisser un temps plus long après les présentations des intervenants pour laisser place à de la pratique.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+ 
+
+                    
+        <section class="docs-section">
+            <h2><span class="icon-bulb"></span> Expériences collectives<span class="terminal-cursor"></span></h2>
+            <div class="exp-container">
+                <div class="exp-card">
+                    <div class="exp-header">
+                        <h3>Cadavre Exquis</h3>
+                        <span class="exp-date">03/2024</span>
+                    </div>
+                    <div class="exp-content">
+                        <p>Un création collective en suivant les règles  cadavre exquis</p>
+                        <a href="https://www.youtube.com/@livecodingstrasbourg8206" class="btn-outline">dispo sur youtube</a>
+                    </div>
+                </div>
+
+                <div class="exp-card">
+                    <div class="exp-header">
+                        <h3>Chaos Labs</h3>
+                        <span class="exp-date">12/2023</span>
+                    </div>
+                    <div class="exp-content">
+                        <p>Des évènements dans la sphère strasbourgeoise autour du live coding..</p>
+                        <a href="https://livecodingstrasbourg.github.io/chaoslab/" class="btn-outline">Page chaos lab</a>
+                    </div>
+                </div>
+
+                
+            </div>
+        </section>
+    </main>
+</Global>
+
+<style>
+    /* Additional styles for the workshops documentation page */
+    .docs-section {
+        margin-bottom: 4rem;
+    }
+
+    .event-title {
+        font-size: 3.5rem;
+        letter-spacing: 3px;
+        animation: eventTitleGlitch 8s infinite;
+    }
+
+    @keyframes eventTitleGlitch {
+        0%, 100% {
+            text-shadow: 4px 4px 0 var(--primary-color),
+                        -4px -4px 0 var(--primary-light);
+        }
+        25% {
+            text-shadow: -4px 4px 0 var(--glitch-color-1),
+                          4px -4px 0 var(--glitch-color-2);
+        }
+        50% {
+            text-shadow: 4px -4px 0 var(--primary-dark),
+                        -4px 4px 0 var(--secondary-color);
+        }
+        75% {
+            text-shadow: -4px -4px 0 var(--secondary-color),
+                          4px 4px 0 var(--glitch-color-1);
+        }
+    }
+
+    /* Workshop Container Layout */
+    .workshop-container {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .workshop-nav {
+        flex: 0 0 200px;
+    }
+
+    .workshop-content {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        .workshop-container {
+            flex-direction: column;
+        }
+
+        .workshop-nav {
+            flex: 0 0 auto;
+        }
+    }
+
+    /* Workshop Navigation */
+    .workshop-nav h3 {
+        color: var(--primary-light);
+        font-family: monospace;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .workshop-nav ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .workshop-nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    .workshop-nav-link {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: var(--text-light);
+        font-family: monospace;
+        border-left: 2px solid var(--primary-dark);
+        transition: all 0.3s ease;
+    }
+
+    .workshop-nav-link:hover {
+        color: var(--secondary-color);
+        border-left-color: var(--secondary-color);
+        background-color: rgba(0, 255, 0, 0.05);
+        transform: translateX(3px);
+    }
+
+    /* Workshop Cards */
+    .workshop-card {
+        margin-bottom: 3rem;
+        border: 1px solid var(--primary-color);
+        background-color: var(--card-background);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .workshop-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom,
+            var(--primary-color) 0%,
+            var(--secondary-color) 50%,
+            var(--primary-color) 100%);
+    }
+
+    .workshop-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid var(--primary-dark);
+    }
+
+    .workshop-header h3 {
+        font-family: monospace;
+        font-size: 1.8rem;
+        color: var(--primary-light);
+        margin: 0;
+    }
+
+    .workshop-badges {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.8rem;
+        font-family: monospace;
+        border-radius: 3px;
+    }
+
+    .badge.audio {
+        background-color: rgba(255, 0, 255, 0.2);
+        border: 1px solid var(--primary-color);
+    }
+
+    .badge.visual {
+        background-color: rgba(0, 255, 255, 0.2);
+        border: 1px solid var(--secondary-color);
+    }
+
+    .badge.python, .badge.ruby, .badge.javascript, .badge.haskell, .badge.sclang {
+        background-color: rgba(255, 255, 0, 0.1);
+        border: 1px solid rgba(255, 255, 0, 0.5);
+    }
+
+    .workshop-body {
+        padding: 1.5rem;
+    }
+
+    .subsection {
+        margin: 2rem 0;
+    }
+
+    .subsection:first-child {
+        margin-top: 0;
+    }
+
+    .subsection h4 {
+        color: var(--secondary-color);
+        font-family: monospace;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .subsection h4::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        background-color: var(--secondary-color);
+    }
+
+    /* Workshop List */
+    .workshop-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .workshop-list li {
+        display: flex;
+        margin-bottom: 1.5rem;
+        gap: 1rem;
+    }
+
+    .workshop-date {
+        flex: 0 0 80px;
+        color: var(--primary-light);
+        font-family: monospace;
+        font-size: 0.9rem;
+        padding-top: 0.2rem;
+    }
+
+    .workshop-details {
+        flex: 1;
+    }
+
+    .workshop-details h5 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-light);
+        font-size: 1rem;
+    }
+
+    .workshop-details p {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .resource-link {
+        display: inline-block;
+        font-size: 0.85rem;
+        color: var(--secondary-color);
+        text-decoration: none;
+        border-bottom: 1px dotted var(--secondary-color);
+        transition: all 0.3s ease;
+    }
+
+    .resource-link:hover {
+        color: var(--text-light);
+        border-bottom-style: solid;
+    }
+
+    /* Resources Grid */
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .resource-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--primary-dark);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .resource-card:hover {
+        border-color: var(--secondary-color);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 0, 0.2);
+    }
+
+    .resource-icon {
+        flex: 0 0 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 255, 0, 0.1);
+        border-radius: 5px;
+        color: var(--secondary-color);
+    }
+
+    .resource-info h5 {
+        margin: 0 0 0.25rem 0;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    .resource-info p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--primary-light);
+    }
+
+    /* Troubleshooting */
+    .troubleshooting {
+        background-color: rgba(0, 0, 0, 0.2);
+        border: 1px dashed var(--primary-dark);
+        padding: 1rem;
+    }
+
+    .problem-solution {
+        margin-bottom: 1rem;
+    }
+
+    .problem-solution:last-child {
+        margin-bottom: 0;
+    }
+
+    .problem {
+        font-weight: bold;
+        color: var(--primary-light);
+        margin-bottom: 0.25rem;
+        font-family: monospace;
+    }
+
+    .solution {
+        font-size: 0.9rem;
+    }
+
+    .solution code {
+        background-color: rgba(0, 0, 0, 0.4);
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+        font-family: monospace;
+        color: var(--secondary-color);
+    }
+
+    /* Experiences Section */
+    .exp-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .exp-card {
+        border: 1px solid var(--primary-color);
+        background-color: var(--card-background);
+        transition: all 0.3s ease;
+    }
+
+    .exp-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--secondary-color);
+        box-shadow: 0 10px 20px rgba(0, 255, 0, 0.1);
+    }
+
+    .exp-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid var(--primary-dark);
+    }
+
+    .exp-header h3 {
+        font-family: monospace;
+        font-size: 1.2rem;
+        color: var(--primary-light);
+        margin: 0;
+    }
+
+    .exp-date {
+        font-size: 0.8rem;
+        color: var(--secondary-color);
+        font-family: monospace;
+    }
+
+    .exp-content {
+        padding: 1.5rem;
+    }
+
+    .exp-content p {
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-outline {
+        display: inline-block;
+        border: 1px solid var(--primary-color);
+        padding: 0.5rem 1rem;
+        color: var(--text-light);
+        text-decoration: none;
+        font-family: monospace;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+        border-color: var(--secondary-color);
+        color: var(--secondary-color);
+        background-color: rgba(0, 255, 0, 0.1);
+    }
+</style>

@@ -75,10 +75,10 @@ const tools = [
         url: "https://livecodingstrasbourg.github.io/supermarket.html",
         icon: "icon-supermarket"
     },
-        {
+    {
         name: "AudioViz*",
         url: "https://livecodingstrasbourg.github.io/audio-visualizer.html",
-        icon: "icon-sound"
+        icon: "icon-music"
     }
 
 ];
@@ -89,6 +89,7 @@ const tools = [
     <h2><span class="icon-tools"></span> Outils Utilisés<span class="terminal-cursor"></span></h2>
     <div class="tools-section">
         <h3>Nos environnements de livecoding préférés, liste non exhaustive !</h3>
+
         <div class="tools-grid">
             {tools.map(tool => (
                 <a href={tool.url} target="_blank" rel="noopener noreferrer" class="tool-card">

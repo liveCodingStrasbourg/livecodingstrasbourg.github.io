@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Autorisation d'Utilisation de l'Image et de la Voix</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    label { display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 4px; }
+    .checkboxes { margin-top: 10px; }
+    .submit-btn { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h1>Formulaire d'Autorisation d’Utilisation de l’Image et de la Voix</h1>
+  <form action="mailto:svdkwast@gmail.com" method="post" enctype="text/plain">
+    <label>Nom :
+      <input type="text" name="nom" required>
+    </label>
+    <label>Prénom :
+      <input type="text" name="prenom" required>
+    </label>
+    <label>Date de naissance :
+      <input type="date" name="date_naissance" required>
+    </label>
+    <label>Adresse :
+      <input type="text" name="adresse" required>
+    </label>
+    <label>Téléphone :
+      <input type="tel" name="telephone" required>
+    </label>
+    <label>Email :
+      <input type="email" name="email" required>
+    </label>
+
+    <div class="checkboxes">
+      <p><strong>J’autorise la publication des éléments suivants :</strong></p>
+      <label><input type="checkbox" name="publication[]" value="site_web" checked> Sur le site internet et les réseaux sociaux de CRASH SERVER</label>
+      <label><input type="checkbox" name="publication[]" value="promotion" checked> Sur tout support promotionnel (brochures, flyers, vidéos...)</label>
+      <label><input type="checkbox" name="publication[]" value="reportages" checked> Dans des reportages diffusés à la télévision, à la radio ou en presse écrite</label>
+    </div>
+
+    <p><strong>Engagements et Conditions :</strong></p>
+    <ul>
+      <li>Pas d'atteinte à la vie privée ou à la réputation.</li>
+      <li>Pas d'exploitation commerciale sans accord écrit.</li>
+      <li>Validité : 2 ans, sans limite de territoire.</li>
+      <li>Aucune rémunération pour l'utilisation de l'image ou de la voix.</li>
+      <li>Données traitées selon le RGPD. Contact : nils.bronner@gmail.com</li>
+    </ul>
+
+    <label>📍 Lieu :
+      <input type="text" name="lieu" value="Strasbourg centre" required>
+    </label>
+    <label>📅 Date :
+      <input type="date" name="date" value="2025-03-21" required>
+    </label>
+
+    <label>✍ Signature (précédée de "Lu et approuvé") :
+      <textarea name="signature" rows="3" required></textarea>
+    </label>
+
+    <button type="submit" class="submit-btn">Envoyer</button>
+  </form>
+</body>
+</html>

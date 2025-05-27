@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interface Politique Interactive</title>
+  <link rel="stylesheet" href="politis/css/_style.css">
+</head>
+<body>
+  <div class="container">
+    <div id="audio-warning" class="audio-warning">
+      <p><strong>Note:</strong> Cliquez pour démarrer le plateau TV.</p>
+    </div>
+    
+    <div class="politician-interface">
+      <div class="interface-header">
+        <div class="system-info">
+          <div class="system-status">BOLLORE TV</div>
+          <div class="system-time" id="system-time">00:00:00</div>
+        </div>
+        <h2 class="header-title">CONFÉRENCE DE PRESSE</h2>
+        <div class="system-info">
+          <div class="system-warning">AVERTISSEMENT: VOLATILITÉ DÉTECTÉE</div>
+          <div class="system-code">CODE: OVERTON</div>
+        </div>
+      </div>
+      
+      <div class="politicians-grid" id="politicians-grid">
+        <!-- Politicians will be inserted here by JavaScript -->
+        <div class="grid-overlay"></div>
+      </div>
+      
+      <div class="data-metrics">
+        <div class="metric">
+          <span class="metric-label">Véracité</span>
+          <div class="metric-bar">
+            <div class="metric-value" style="width: 23%"></div>
+          </div>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Transpiration</span>
+          <div class="metric-bar">
+            <div class="metric-value" style="width: 17%"></div>
+          </div>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Foutage de gueule</span>
+          <div class="metric-bar">
+            <div class="metric-value" style="width: 65%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="audience-meter">
+        <div class="audience-stat">
+          <div class="stat-value" id="outrage-value">12%</div>
+          <div class="stat-label">Indignation</div>
+          <div class="stat-trend trend-down">▼</div>
+        </div>
+        <div class="audience-stat">
+          <div class="stat-value" id="support-value">34%</div>
+          <div class="stat-label">Audience</div>
+          <div class="stat-trend trend-down">▼</div>
+        </div>
+        <div class="audience-stat">
+          <div class="stat-value" id="skepticism-value">54%</div>
+          <div class="stat-label">haine</div>
+          <div class="stat-trend trend-up">▲</div>
+        </div>
+        <div class="audience-stat">
+          <div class="stat-value" id="engagement-value">23%</div>
+          <div class="stat-label">Engagement</div>
+          <div class="stat-trend trend-down">▼</div>
+        </div>
+      </div>
+      
+      <div class="coding-area">
+        <h3>Questions du Journaliste</h3>
+        
+        <div class="question-selector">          
+          <div class="custom-question">
+            <label for="custom-question-input">Écrivez votre question :</label>
+            <input
+              id="custom-question-input"
+              type="text"
+              placeholder="Tapez votre question ici..."
+              class="question-input"
+            />
+          </div>
+        </div>
+        
+        <div class="question-metrics">
+          <div class="hash-value" id="question-hash">Valeur de question: 0000</div>
+          <div class="melody-preview" id="melody-preview">Mélodie: ...</div>
+        </div>
+        
+        <div class="terminal-box" id="terminal-box">
+          <div class="terminal-line">> Système initialisé...</div>
+          <div class="terminal-line">> Chargement des profils politiques...</div>
+          <div class="terminal-line">> Système de réaction en ligne.</div>
+          <div class="terminal-line">> Conférence de presse prête.</div>
+          <div class="terminal-line">> <span class="cursor"></span></div>
+        </div>
+        
+        <div class="controls">
+          <button id="run-button" class="run-button">Poser la Question</button>
+          <div class="output" id="output"></div>
+        </div>
+        
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Chargement des modules JavaScript -->
+  <script src="js/config.js"></script>
+  <script src="js/audio-manager.js"></script>
+  <script src="js/hash-generator.js"></script>
+  <script src="js/ui-manager.js"></script>
+  <script src="js/chaos-mode.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

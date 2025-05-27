@@ -1,0 +1,666 @@
+/* Styles généraux */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    color: #ff3333;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .audio-warning {
+    background-color: #ff3333;
+    color: white;
+    padding: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    display: none;
+  }
+  
+  /* Animations */
+  @keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+  
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.6); }
+    50% { box-shadow: 0 0 16px rgba(255, 0, 0, 0.8); }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-3px) rotate(-1deg); }
+    75% { transform: translateX(3px) rotate(1deg); }
+  }
+  
+  @keyframes scan-bar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  /* Interface principale */
+  .politician-interface {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #0a0a0a;
+    color: #ff3333;
+    font-family: 'Courier New', monospace;
+    padding: 20px;
+    border: 2px solid #ff3333;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .politician-interface::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 51, 51, 0.5);
+    animation: scanline 5s linear infinite;
+    z-index: 999;
+    pointer-events: none;
+  }
+  
+  .politician-interface::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      transparent 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+  }
+  
+  /* En-tête de l'interface */
+  .interface-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.4);
+    padding-bottom: 10px;
+  }
+  
+  .system-info {
+    font-size: 12px;
+    color: rgba(255, 51, 51, 0.8);
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .system-status, .system-warning, .system-code, .system-time {
+    background-color: rgba(10, 10, 10, 0.8);
+    padding: 3px 6px;
+    border: 1px solid rgba(255, 51, 51, 0.4);
+    position: relative;
+  }
+  
+  .system-warning {
+    color: #ffcc00;
+    animation: blink 2s infinite;
+  }
+  
+  .header-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #ff3333;
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    letter-spacing: 2px;
+    font-weight: bold;
+    position: relative;
+  }
+  
+  .header-title::before,
+  .header-title::after {
+    content: "//";
+    color: rgba(255, 51, 51, 0.5);
+    margin: 0 10px;
+    font-size: 20px;
+  }
+  
+  /* Grille des politiciens */
+  .politicians-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 15px;
+    margin-bottom: 25px;
+    position: relative;
+  }
+  
+  .grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(rgba(255, 51, 51, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 51, 51, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .politician-face {
+    background-color: #1a1a1a;
+    border: 1px solid #ff3333;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3);
+    animation: pulse 4s infinite;
+  }
+  
+  .politician-face::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      45deg,
+      rgba(255, 0, 0, 0.05) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(255, 0, 0, 0.05) 100%
+    );
+  }
+  
+  .politician-face.animate {
+    animation: shake 0.2s ease-in-out infinite, 
+               glitch 0.3s ease-in-out infinite,
+               pulse 1s infinite;
+  }
+  
+  .name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ff6666;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .name::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: -5%;
+    width: 110%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 102, 102, 0.8),
+      transparent
+    );
+  }
+  
+  .ascii-face {
+    font-size: 24px;
+    line-height: 1.5;
+    color: #ffffff;
+    animation: blink 5s infinite;
+    position: relative;
+    z-index: 10;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Réponses des politiciens */
+  .response {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ff9999;
+    font-weight: bold;
+    background-color: rgba(50, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 3px;
+    position: relative;
+  }
+  
+  .response::before {
+    content: "<";
+    margin-right: 4px;
+  }
+  
+  .response::after {
+    content: ">";
+    margin-left: 4px;
+  }
+  
+  .response.screaming {
+    color: #ff3333;
+    animation: glitch 0.2s infinite;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .response.shouting {
+    color: #ff9933;
+    animation: glitch 0.3s infinite;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  
+  .response.sweating {
+    color: #33ccff;
+    animation: pulse 1s infinite;
+    font-style: italic;
+    font-size: 12px;
+  }
+  
+  /* Métriques */
+  .data-metrics {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: rgba(10, 10, 10, 0.8);
+    border: 1px solid rgba(255, 51, 51, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .metric {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .metric-label {
+    width: 100px;
+    font-size: 12px;
+    color: #cccccc;
+  }
+  
+  .metric-bar {
+    flex-grow: 1;
+    height: 10px;
+    background-color: rgba(50, 50, 50, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .metric-value {
+    height: 100%;
+    background-color: rgba(255, 51, 51, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: width 0.5s ease;
+  }
+  
+  .metric-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.1) 50%, 
+      transparent 100%);
+    animation: scan-bar 2s linear infinite;
+  }
+  
+  /* Métriques d'audience */
+  .audience-meter {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 51, 51, 0.4);
+  }
+  
+  .audience-stat {
+    text-align: center;
+    position: relative;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff3333;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
+  
+  .stat-label {
+    font-size: 10px;
+    color: #aaaaaa;
+    text-transform: uppercase;
+  }
+  
+  .stat-trend {
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    right: -15px;
+  }
+  
+  .trend-up {
+    color: #ff3333;
+  }
+  
+  .trend-down {
+    color: #33ccff;
+  }
+  
+  /* Zone de codage */
+  .coding-area {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border: 1px solid #ff3333;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+    margin-top: 20px;
+  }
+  
+  .coding-area::before {
+    content: "/* TERMINAL ACCESS */";
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background-color: #0a0a0a;
+    padding: 0 10px;
+    font-size: 12px;
+    color: #ff3333;
+  }
+  
+  .coding-area h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+    padding-bottom: 5px;
+    color: #ff5555;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
+  
+  /* Question du journaliste */
+  .question-selector {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .custom-question {
+    margin-top: 10px;
+  }
+  
+  .question-input {
+    background-color: #0a0a0a;
+    color: #ff6666;
+    border: 1px solid rgba(255, 51, 51, 0.6);
+    padding: 8px;
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    margin-top: 5px;
+  }
+  
+  .question-input:focus {
+    outline: none;
+    border-color: #ff3333;
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+  }
+  
+  /* Métriques de question */
+  .question-metrics {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 8px;
+    background-color: rgba(10, 10, 10, 0.8);
+    border: 1px solid rgba(255, 51, 51, 0.4);
+    font-size: 12px;
+  }
+  
+  .hash-value, .melody-preview {
+    color: #66ff66;
+    font-family: 'Courier New', monospace;
+  }
+  
+  /* Terminal */
+  .terminal-box {
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(102, 255, 102, 0.3);
+    padding: 10px;
+    margin-top: 15px;
+    max-height: 100px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    position: relative;
+  }
+  
+  .terminal-box::before {
+    content: "JOURNAL SYSTÈME";
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background-color: #0a0a0a;
+    padding: 0 5px;
+    font-size: 10px;
+    color: rgba(102, 255, 102, 0.8);
+  }
+  
+  .terminal-line {
+    color: rgba(102, 255, 102, 0.8);
+    font-size: 12px;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 3px;
+    opacity: 0.8;
+  }
+  
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background-color: rgba(102, 255, 102, 0.8);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+  
+  /* Contrôles */
+  .controls {
+    display: flex;
+    margin-top: 15px;
+    align-items: center;
+  }
+  
+  .run-button {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #ffffff;
+    border: none;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    transition: all 0.3s;
+  }
+  
+  .run-button::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transform: rotate(45deg);
+    transition: all 0.3s;
+  }
+  
+  .run-button:hover {
+    background-color: rgba(255, 30, 30, 0.9);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+  }
+  
+  .run-button:hover::before {
+    left: 100%;
+  }
+  
+  .output {
+    margin-left: 15px;
+    color: #66ff66;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+    font-style: italic;
+  }
+  
+  /* Exemples */
+  .examples {
+    margin-top: 15px;
+    font-size: 12px;
+    border-top: 1px solid rgba(255, 51, 51, 0.3);
+    padding-top: 10px;
+  }
+  
+  .examples ul {
+    list-style-type: none;
+    padding-left: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .examples li {
+    margin-bottom: 5px;
+    color: #cccccc;
+    flex: 1 0 45%;
+  }
+  
+  .emotion-screaming {
+    color: #ff3333;
+    font-weight: bold;
+  }
+  
+  .emotion-shouting {
+    color: #ff9933;
+    font-weight: bold;
+  }
+  
+  .emotion-sweating {
+    color: #33ccff;
+    font-weight: bold;
+  }
+  
+  .emotion-idle {
+    color: #aaaaaa;
+  }
+  
+  /* Styles du mode chaos */
+  .chaos-mode .politician-interface {
+    animation: glitch-background 0.5s infinite;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+  }
+  
+  @keyframes glitch-background {
+    0%, 100% { background-color: #0a0a0a; }
+    50% { background-color: #1a0000; }
+    75% { background-color: #200505; }
+  }
+  
+  .chaos-mode .header-title {
+    animation: chaos-text 1s infinite;
+    color: #ff0000;
+    text-shadow: 0 0 15px rgba(255, 0, 0, 0.9);
+  }
+  
+  @keyframes chaos-text {
+    0%, 100% { transform: translate(0); }
+    10% { transform: translate(-5px, 2px); }
+    20% { transform: translate(3px, -5px); }
+    30% { transform: translate(2px, 3px); }
+    40% { transform: translate(-3px, -2px); }
+    50% { transform: translate(0); }
+    60% { transform: translate(4px, 5px); }
+    70% { transform: translate(-4px, -1px); }
+    80% { transform: translate(2px, -4px); }
+    90% { transform: translate(-3px, 3px); }
+  }
+  
+  .chaos-mode .system-warning,
+  .chaos-mode .system-status,
+  .chaos-mode .system-code {
+    color: #ff0000;
+    animation: blink 0.5s step-end infinite;
+  }
+  
+  .chaos-mode .politician-face.chaos-animate {
+    animation: shake 0.1s ease-in-out infinite, 
+              glitch 0.1s ease-in-out infinite,
+              pulse 0.5s infinite;
+    background-color: rgba(50, 0, 0, 0.5);
+  }
+  
+  .chaos-mode .response.screaming {
+    color: #ff0000;
+    font-size: 16px;
+    animation: glitch 0.1s infinite;
+  }
+  
+  .chaos-mode .metric-bar {
+    animation: pulse 0.5s infinite;
+  }
+  
+  .terminal-line.error {
+    color: #ff3333;
+    font-weight: bold;
+    animation: blink 0.5s infinite;
+  }
+  
+  .chaos-mode .grid-overlay {
+    background-image: 
+      linear-gradient(rgba(255, 0, 0, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.15) 1px, transparent 1px);
+  }

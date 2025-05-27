@@ -49,15 +49,6 @@ const ChaosManager = {
       // Modifier l'interface
       UIManager.setChaosMode(true);
       
-      document.querySelectorAll('.politician-face').forEach(face => {
-        face.style.animation = 'shake 0.1s infinite, glitch 0.1s infinite';
-        face.style.filter = 'hue-rotate(' + (Math.random() * 360) + 'deg)';
-      });
-
-      const originalVolume = AudioManager.audioContext.createGain();
-originalVolume.gain.value = 1.0;
-AudioManager.audioContext.destination.connect(originalVolume);
-
       // Afficher des messages d'alerte
       UIManager.addTerminalLine(CONFIG.terminalMessages.chaosMode.warning, true);
       UIManager.addTerminalLine(CONFIG.terminalMessages.chaosMode.activated, true);

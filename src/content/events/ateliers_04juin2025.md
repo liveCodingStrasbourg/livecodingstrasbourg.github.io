@@ -9,8 +9,8 @@ lien: ""
 ---
 
 
-## Thème : encore à définir
-### détails à venir.
+## Thème : La synthèse sonore
+### Créer du son en partant de la base
 
 Explorez le livecoding et l'art numérique lors de cet atelier organisé par TOPLAP Strasbourg. Vous découvrirez comment créer de la musique et des visuels en temps réel à l'aide de différents environnements de programmation.
 

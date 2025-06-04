@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOPLAP Synthexplorer - TOPLAP Strasbourg</title>
+    <link rel="stylesheet" href="toplapsound/css/_styles.css">
+</head>
+<body>
+    <!-- Overlay d'initialisation audio -->
+    <div id="audio-init-overlay" class="init-overlay">
+        <div class="init-content">
+            <h1 class="init-title">TOPLAP Synthexplorer</h1>
+            <p class="init-subtitle"><a href="https://livecodingstrasbourg.github.io" target="_blank">TOPLAP STRASBOURG</a></p>
+            <button id="init-audio-btn" class="init-button">Initialiser Audio</button>
+        </div>
+    </div>
+
+    <!-- Header principal -->
+    <header class="main-header">
+        <h1 class="main-title">TOPLAP Synthexplorer</h1>
+        <p class="main-subtitle">Apprentissage interactif de la synthèse audio</p>
+    </header>
+
+    <!-- Navigation par onglets -->
+    <nav class="tab-navigation">
+        <button class="tab-btn active" data-tab="fondamentaux">Fondamentaux & Oscillateurs</button>
+        <button class="tab-btn" data-tab="modulation">Modulation</button>
+        <button class="tab-btn" data-tab="filtres">Filtres</button>
+        <button class="tab-btn" data-tab="enveloppes">Enveloppes</button>
+        <button class="tab-btn" data-tab="soustractive">Synthèse Soustractive</button>
+        <button class="tab-btn" data-tab="fm">Synthèse FM</button>
+        <button class="tab-btn" data-tab="additive">Synthèse Additive</button>
+        <button class="tab-btn" data-tab="wavetables">Wavetables</button>
+        <button class="tab-btn" data-tab="classiques">Synthés Classiques</button>
+        <button class="tab-btn" data-tab="tb303">TB-303</button>
+        <button class="tab-btn" data-tab="avancees">Techniques Avancées</button>
+    </nav>
+
+    <!-- Conteneur principal des onglets -->
+    <main class="tab-container">
+        
+        <!-- ONGLET 1: FONDAMENTAUX & OSCILLATEURS -->
+        <section id="tab-fondamentaux" class="tab-content active">
+            <div class="tab-text">
+                <h2>Fondamentaux du Signal Audio</h2>
+                <p>Explorez les bases de la synthèse audio : oscillateurs et générateurs de bruit. Chaque forme d'onde possède des caractéristiques harmoniques uniques qui déterminent le timbre du son.</p>
+            </div>
+
+            <div class="controls-section">
+                <!-- Sélection du type de source -->
+                <div class="source-type-selector">
+                    <h3>Type de Source</h3>
+                    <div class="button-group">
+                        <button class="source-type-btn active" data-type="oscillator">Oscillateurs</button>
+                        <button class="source-type-btn" data-type="noise">Bruits</button>
+                    </div>
+                </div>
+
+                <!-- Sélection des formes d'onde (oscillateurs) -->
+                <div id="oscillator-section" class="source-section">
+                    <div class="waveform-selector">
+                        <h3>Formes d'onde</h3>
+                        <div class="waveform-cards">
+                            <div class="waveform-card active" data-waveform="sine">
+                                <h4>Sine</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>Pure, harmonique fondamentale uniquement</p>
+                            </div>
+                            <div class="waveform-card" data-waveform="square">
+                                <h4>Square</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>Harmoniques impaires, son 8-bit</p>
+                            </div>
+                            <div class="waveform-card" data-waveform="sawtooth">
+                                <h4>Sawtooth</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>Toutes harmoniques, son brillant</p>
+                            </div>
+                            <div class="waveform-card" data-waveform="triangle">
+                                <h4>Triangle</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>Harmoniques impaires, son doux</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sélection des bruits -->
+                <div id="noise-section" class="source-section" style="display: none;">
+                    <div class="noise-selector">
+                        <h3>Types de bruit</h3>
+                        <div class="noise-cards">
+                            <div class="noise-card" data-noise="white">
+                                <h4>Blanc</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>Spectre plat, son de pluie</p>
+                            </div>
+                            <div class="noise-card" data-noise="pink">
+                                <h4>Rose</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>-3dB/octave, plus naturel</p>
+                            </div>
+                            <div class="noise-card" data-noise="brown">
+                                <h4>Brun</h4>
+                                <canvas width="120" height="60"></canvas>
+                                <p>-6dB/octave, son grave</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contrôles communs -->
+                <div class="common-controls">
+                    <div class="control-group">
+                        <label for="fund-freq">Fréquence</label>
+                        <input type="range" id="fund-freq" min="80" max="2000" value="440" class="slider">
+                        <span id="fund-freq-value">440 Hz</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="fund-amp">Volume</label>
+                        <input type="range" id="fund-amp" min="0" max="100" value="50" class="slider">
+                        <span id="fund-amp-value">50%</span>
+                    </div>
+
+                    <div class="button-group">
+                        <button id="fund-play" class="control-btn">Play</button>
+                        <button id="fund-stop" class="control-btn">Stop</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualisation unique -->
+            <div class="visualization-section">
+                <h3>Visualisation</h3>
+                <canvas id="main-visualization-canvas" width="600" height="300"></canvas>
+                <p id="viz-description">Sélectionnez une source pour voir sa visualisation</p>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie & Bases</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Onde_sonore" target="_blank" class="wiki-link"><span class="link-icon"></span>Onde sonore (Wikipédia)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Oscillateur" target="_blank" class="wiki-link"><span class="link-icon"></span>Oscillateurs (Wikipédia)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Fréquence_fondamentale" target="_blank" class="wiki-link"><span class="link-icon"></span>Fréquence fondamentale</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Harmonique_(musique)" target="_blank" class="wiki-link"><span class="link-icon"></span>Harmoniques</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Outils Open Source</h4>
+                        <ul class="link-list">
+                            <li><a href="https://web.tonejs.org/" target="_blank" class="tool-link"><span class="link-icon"></span>Tone.js (Bibliothèque utilisée ici)</a></li>
+                            <li><a href="https://audacity.fr/" target="_blank" class="tool-link"><span class="link-icon"></span>Audacity (Éditeur audio)</a></li>
+                            <li><a href="https://supercollider.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>SuperCollider</a></li>
+                            <li><a href="https://puredata.info/" target="_blank" class="tool-link"><span class="link-icon"></span>Pure Data</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Cours & Formations</h4>
+                        <ul class="link-list">
+                            <li><a href="https://learningmusic.ableton.com/" target="_blank" class="course-link"><span class="link-icon"></span>Ableton Learning Music</a></li>
+                            <li><a href="https://www.freecodecamp.org/news/the-web-audio-api-tutorial/" target="_blank" class="course-link"><span class="link-icon"></span>Web Audio API Tutorial</a></li>
+                            <li><a href="https://www.soundonsound.com/series/synth-secrets" target="_blank" class="doc-link"><span class="link-icon"></span>Sound on Sound - Synth Secrets</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ONGLET 3: MODULATION -->
+        <section id="tab-modulation" class="tab-content">
+            <div class="tab-text">
+                <h2>Modulation</h2>
+                <p>La modulation utilise un signal de contrôle pour faire varier les paramètres d'un autre signal. Le LFO (Low Frequency Oscillator) génère des signaux à basse fréquence (0.1-20Hz) pour moduler d'autres paramètres.</p>
+                
+                <h3>Types de modulation :</h3>
+                <ul>
+                    <li><strong>Vibrato :</strong> Modulation de fréquence (FM) - variation de hauteur</li>
+                    <li><strong>Trémolo :</strong> Modulation d'amplitude (AM) - variation de volume</li>
+                    <li><strong>Modulation de filtre :</strong> Variation du cutoff pour effets de balayage</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="oscillator-controls">
+                    <h3>Oscillateur Principal</h3>
+                    <div class="button-group">
+                        <button class="wave-btn active" data-wave="sine">Sine</button>
+                        <button class="wave-btn" data-wave="square">Square</button>
+                        <button class="wave-btn" data-wave="sawtooth">Saw</button>
+                        <button class="wave-btn" data-wave="triangle">Triangle</button>
+                    </div>
+                    <div class="control-group">
+                        <label for="mod-carrier-freq">Fréquence</label>
+                        <input type="range" id="mod-carrier-freq" min="80" max="2000" value="440" class="slider">
+                        <span id="mod-carrier-freq-value">440 Hz</span>
+                    </div>
+                </div>
+
+                <div class="lfo-controls">
+                    <h3>LFO</h3>
+                    <div class="control-group">
+                        <label for="mod-lfo-rate">Rate</label>
+                        <input type="range" id="mod-lfo-rate" min="0.1" max="20" step="0.1" value="2" class="slider">
+                        <span id="mod-lfo-rate-value">2.0 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="mod-lfo-depth">Depth</label>
+                        <input type="range" id="mod-lfo-depth" min="0" max="50" value="10" class="slider">
+                        <span id="mod-lfo-depth-value">10</span>
+                    </div>
+                    <div class="button-group">
+                        <button class="mod-type-btn active" data-type="frequency">Fréquence (Vibrato)</button>
+                        <button class="mod-type-btn" data-type="amplitude">Amplitude (Trémolo)</button>
+                    </div>
+                    <div class="button-group">
+                        <button class="lfo-wave-btn active" data-wave="sine">Sine</button>
+                        <button class="lfo-wave-btn" data-wave="triangle">Triangle</button>
+                        <button class="lfo-wave-btn" data-wave="square">Square</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="mod-play" class="control-btn">Play</button>
+                    <button id="mod-stop" class="control-btn">Stop</button>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="mod-canvas" width="600" height="300"></canvas>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie Modulation</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Modulation_d%27amplitude" target="_blank" class="wiki-link"><span class="link-icon"></span>Modulation d'amplitude</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Modulation_de_fréquence" target="_blank" class="wiki-link"><span class="link-icon"></span>Modulation de fréquence</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Oscillateur_basse_fréquence" target="_blank" class="wiki-link"><span class="link-icon"></span>LFO (Low Frequency Oscillator)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Vibrato" target="_blank" class="wiki-link"><span class="link-icon"></span>Vibrato</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Documentation</h4>
+                        <ul class="link-list">
+                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode" target="_blank" class="doc-link"><span class="link-icon"></span>MDN - OscillatorNode</a></li>
+                            <li><a href="https://www.soundonsound.com/techniques/modulation" target="_blank" class="doc-link"><span class="link-icon"></span>Sound on Sound - Modulation</a></li>
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/LFO" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js LFO Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Ressources Pratiques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://www.musicradar.com/tuition/tech/the-ultimate-guide-to-lfo-synthesis-609806" target="_blank" class="course-link"><span class="link-icon"></span>Guide LFO MusicRadar</a></li>
+                            <li><a href="https://patches.zone/" target="_blank" class="tool-link"><span class="link-icon"></span>Patches.zone (Communauté)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 4: FILTRES -->
+        <section id="tab-filtres" class="tab-content">
+            <div class="tab-text">
+                <h2>Filtres</h2>
+                <p>Les filtres sculptent le spectre fréquentiel d'un son. Essentiels en synthèse soustractive pour créer des timbres variés à partir d'ondes riches harmoniquement.</p>
+                
+                <h3>Types de filtres :</h3>
+                <ul>
+                    <li><strong>Passe-bas :</strong> Laisse passer les basses, coupe les aigus</li>
+                    <li><strong>Passe-haut :</strong> Laisse passer les aigus, coupe les basses</li>
+                    <li><strong>Passe-bande :</strong> Laisse passer une bande de fréquences</li>
+                    <li><strong>Coupe-bande :</strong> Coupe une bande spécifique</li>
+                </ul>
+                
+                <h3>Paramètres clés :</h3>
+                <ul>
+                    <li><strong>Fréquence de coupure :</strong> Point où le filtre commence à agir</li>
+                    <li><strong>Résonance (Q) :</strong> Amplification autour de la fréquence de coupure</li>
+                    <li><strong>Pente :</strong> Rapidité de coupure (6dB, 12dB, 24dB par octave)</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="filter-type-controls">
+                    <h3>Type de Filtre</h3>
+                    <div class="button-group">
+                        <button class="filter-btn active" data-type="lowpass">Passe-bas</button>
+                        <button class="filter-btn" data-type="highpass">Passe-haut</button>
+                        <button class="filter-btn" data-type="bandpass">Passe-bande</button>
+                        <button class="filter-btn" data-type="notch">Coupe-bande</button>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <div class="control-group">
+                        <label for="filter-cutoff">Cutoff</label>
+                        <input type="range" id="filter-cutoff" min="100" max="5000" value="1200" class="slider">
+                        <span id="filter-cutoff-value">1200 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="filter-resonance">Résonance</label>
+                        <input type="range" id="filter-resonance" min="0.5" max="30" step="0.1" value="1" class="slider">
+                        <span id="filter-resonance-value">1.0</span>
+                    </div>
+                </div>
+
+                <div class="source-controls">
+                    <h3>Source</h3>
+                    <div class="button-group">
+                        <button class="source-btn active" data-source="sawtooth">Saw</button>
+                        <button class="source-btn" data-source="square">Square</button>
+                        <button class="source-btn" data-source="whitenoise">White Noise</button>
+                        <button class="source-btn" data-source="pinknoise">Pink Noise</button>
+                    </div>
+                    <div class="control-group">
+                        <label for="filter-source-freq">Fréquence Source</label>
+                        <input type="range" id="filter-source-freq" min="80" max="800" value="220" class="slider">
+                        <span id="filter-source-freq-value">220 Hz</span>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="filter-play" class="control-btn">Play</button>
+                    <button id="filter-stop" class="control-btn">Stop</button>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="filter-response-canvas" width="600" height="200"></canvas>
+                <canvas id="filter-spectrum-canvas" width="600" height="200"></canvas>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie des Filtres</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Filtre_passe-bas" target="_blank" class="wiki-link"><span class="link-icon"></span>Filtre passe-bas</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Filtre_passe-haut" target="_blank" class="wiki-link"><span class="link-icon"></span>Filtre passe-haut</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Filtre_passe-bande" target="_blank" class="wiki-link"><span class="link-icon"></span>Filtre passe-bande</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Résonance" target="_blank" class="wiki-link"><span class="link-icon"></span>Résonance</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Audio Processing</h4>
+                        <ul class="link-list">
+                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode" target="_blank" class="doc-link"><span class="link-icon"></span>MDN - BiquadFilterNode</a></li>
+                            <li><a href="https://www.dspguide.com/ch19.htm" target="_blank" class="doc-link"><span class="link-icon"></span>DSP Guide - Filters</a></li>
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/Filter" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js Filter Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Pratique & Tutorials</h4>
+                        <ul class="link-list">
+                            <li><a href="https://www.musicradar.com/tuition/tech/filter-guide-part-1-resonance-and-self-oscillation-214789" target="_blank" class="course-link"><span class="link-icon"></span>Guide Filtres MusicRadar</a></li>
+                            <li><a href="https://en.wikibooks.org/wiki/Sound_Synthesis_Theory" target="_blank" class="doc-link"><span class="link-icon"></span>Wikibooks - Sound Synthesis</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 5: ENVELOPPES -->
+        <section id="tab-enveloppes" class="tab-content">
+            <div class="tab-text">
+                <h2>Enveloppes ADSR</h2>
+                <p>L'enveloppe ADSR contrôle l'évolution temporelle de l'amplitude d'un son, imitant le comportement naturel des instruments acoustiques.</p>
+                
+                <h3>Phases ADSR :</h3>
+                <ul>
+                    <li><strong>Attack :</strong> Temps pour atteindre le niveau maximum</li>
+                    <li><strong>Decay :</strong> Temps pour descendre au niveau de sustain</li>
+                    <li><strong>Sustain :</strong> Niveau maintenu tant que la note est pressée</li>
+                    <li><strong>Release :</strong> Temps pour revenir à zéro après relâchement</li>
+                </ul>
+                
+                <h3>Applications :</h3>
+                <ul>
+                    <li><strong>VCA :</strong> Contrôle d'amplitude</li>
+                    <li><strong>VCF :</strong> Modulation du filtre</li>
+                    <li><strong>VCO :</strong> Modulation de pitch pour effets d'attaque</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="adsr-controls">
+                    <h3>Paramètres ADSR</h3>
+                    <div class="control-group">
+                        <label for="env-attack">Attack</label>
+                        <input type="range" id="env-attack" min="0.01" max="2" step="0.01" value="0.1" class="slider">
+                        <span id="env-attack-value">0.10s</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="env-decay">Decay</label>
+                        <input type="range" id="env-decay" min="0.01" max="2" step="0.01" value="0.3" class="slider">
+                        <span id="env-decay-value">0.30s</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="env-sustain">Sustain</label>
+                        <input type="range" id="env-sustain" min="0" max="100" value="70" class="slider">
+                        <span id="env-sustain-value">70%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="env-release">Release</label>
+                        <input type="range" id="env-release" min="0.01" max="3" step="0.01" value="0.5" class="slider">
+                        <span id="env-release-value">0.50s</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="adsr-canvas" width="600" height="300"></canvas>
+            </div>
+
+            <div class="keyboard-section">
+                <h3>Clavier Virtuel</h3>
+                <div class="virtual-keyboard">
+                    <div class="key white-key" data-note="C4">C4</div>
+                    <div class="key black-key" data-note="C#4">C#</div>
+                    <div class="key white-key" data-note="D4">D4</div>
+                    <div class="key black-key" data-note="D#4">D#</div>
+                    <div class="key white-key" data-note="E4">E4</div>
+                    <div class="key white-key" data-note="F4">F4</div>
+                    <div class="key black-key" data-note="F#4">F#</div>
+                    <div class="key white-key" data-note="G4">G4</div>
+                    <div class="key black-key" data-note="G#4">G#</div>
+                    <div class="key white-key" data-note="A4">A4</div>
+                    <div class="key black-key" data-note="A#4">A#</div>
+                    <div class="key white-key" data-note="B4">B4</div>
+                </div>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie ADSR</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Enveloppe_ADSR" target="_blank" class="wiki-link"><span class="link-icon"></span>Enveloppe ADSR</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Générateur_d%27enveloppe" target="_blank" class="wiki-link"><span class="link-icon"></span>Générateur d'enveloppe</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/VCA" target="_blank" class="wiki-link"><span class="link-icon"></span>VCA (Voltage Controlled Amplifier)</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Documentation Technique</h4>
+                        <ul class="link-list">
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/Envelope" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js Envelope</a></li>
+                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioParam" target="_blank" class="doc-link"><span class="link-icon"></span>MDN - AudioParam</a></li>
+                            <li><a href="https://www.soundonsound.com/techniques/adsr-envelopes" target="_blank" class="doc-link"><span class="link-icon"></span>Sound on Sound - ADSR</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Applications Pratiques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://www.musicradar.com/tuition/tech/synthesizer-school-envelope-generators-217541" target="_blank" class="course-link"><span class="link-icon"></span>MusicRadar - Envelopes</a></li>
+                            <li><a href="https://learningsynths.ableton.com/en/envelopes/what-is-an-envelope" target="_blank" class="course-link"><span class="link-icon"></span>Ableton - Envelopes</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 6: SYNTHÈSE SOUSTRACTIVE -->
+        <section id="tab-soustractive" class="tab-content">
+            <div class="tab-text">
+                <h2>Synthèse Soustractive</h2>
+                <p>La synthèse soustractive part d'un signal riche harmoniquement et utilise des filtres pour "soustraire" des fréquences et sculpter le timbre.</p>
+                
+                <h3>Chaîne de traitement typique :</h3>
+                <p><strong>VCO → Mixer → VCF → VCA → Sortie</strong><br>
+                Avec enveloppes et LFO pour moduler les paramètres</p>
+                
+                <h3>Composants principaux :</h3>
+                <ul>
+                    <li><strong>VCO (Voltage Controlled Oscillator) :</strong> Génère les formes d'ondes de base</li>
+                    <li><strong>Mixer :</strong> Mélange plusieurs oscillateurs</li>
+                    <li><strong>VCF (Voltage Controlled Filter) :</strong> Filtre les fréquences</li>
+                    <li><strong>VCA (Voltage Controlled Amplifier) :</strong> Contrôle l'amplitude finale</li>
+                    <li><strong>Enveloppes :</strong> Modulent les paramètres dans le temps</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <!-- Section Oscillateur 1 -->
+                <div class="oscillator-section">
+                    <h3>Oscillateur 1 (VCO1)</h3>
+                    
+                    <div class="control-group">
+                        <label>Forme d'onde</label>
+                        <div class="button-group">
+                            <button class="osc1-wave-btn active" data-wave="sawtooth">Saw</button>
+                            <button class="osc1-wave-btn" data-wave="square">Square</button>
+                            <button class="osc1-wave-btn" data-wave="triangle">Triangle</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-osc1-note">Note Base</label>
+                        <select id="sub-osc1-note">
+                            <option value="C4">C4 (261.6Hz)</option>
+                            <option value="D4">D4 (293.7Hz)</option>
+                            <option value="E4">E4 (329.6Hz)</option>
+                            <option value="F4">F4 (349.2Hz)</option>
+                            <option value="G4">G4 (392.0Hz)</option>
+                            <option value="A4" selected>A4 (440.0Hz)</option>
+                            <option value="B4">B4 (493.9Hz)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-osc1-detune">Détune</label>
+                        <input type="range" id="sub-osc1-detune" min="-2" max="2" step="0.1" value="0" class="slider">
+                        <span id="sub-osc1-detune-value">0.0 oct</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-osc1-level">Niveau</label>
+                        <input type="range" id="sub-osc1-level" min="0" max="100" value="80" class="slider">
+                        <span id="sub-osc1-level-value">80%</span>
+                    </div>
+                </div>
+
+                <!-- Section Oscillateur 2 -->
+                <div class="oscillator-section">
+                    <h3>Oscillateur 2 (VCO2)</h3>
+                    
+                    <div class="control-group">
+                        <label>Forme d'onde</label>
+                        <div class="button-group">
+                            <button class="osc2-wave-btn" data-wave="sawtooth">Saw</button>
+                            <button class="osc2-wave-btn active" data-wave="square">Square</button>
+                            <button class="osc2-wave-btn" data-wave="triangle">Triangle</button>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-osc2-detune">Détune</label>
+                        <input type="range" id="sub-osc2-detune" min="-2" max="2" step="0.1" value="-1.0" class="slider">
+                        <span id="sub-osc2-detune-value">-1.0 oct</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-osc2-level">Niveau</label>
+                        <input type="range" id="sub-osc2-level" min="0" max="100" value="60" class="slider">
+                        <span id="sub-osc2-level-value">60%</span>
+                    </div>
+                </div>
+
+                <!-- Section Filtre -->
+                <div class="filter-section">
+                    <h3>Filtre (VCF)</h3>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-cutoff">Cutoff</label>
+                        <input type="range" id="sub-filter-cutoff" min="100" max="5000" value="1200" class="slider">
+                        <span id="sub-filter-cutoff-value">1200 Hz</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-resonance">Résonance</label>
+                        <input type="range" id="sub-filter-resonance" min="0" max="20" step="0.1" value="5" class="slider">
+                        <span id="sub-filter-resonance-value">5.0</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-env-amount">Env Amount</label>
+                        <input type="range" id="sub-filter-env-amount" min="-100" max="100" value="50" class="slider">
+                        <span id="sub-filter-env-amount-value">50%</span>
+                    </div>
+                </div>
+
+                <!-- Section Enveloppe Filtre -->
+                <div class="envelope-section">
+                    <h3>Enveloppe Filtre</h3>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-attack">Attack</label>
+                        <input type="range" id="sub-filter-attack" min="0.01" max="2" step="0.01" value="0.1" class="slider">
+                        <span id="sub-filter-attack-value">0.10s</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-decay">Decay</label>
+                        <input type="range" id="sub-filter-decay" min="0.01" max="2" step="0.01" value="0.3" class="slider">
+                        <span id="sub-filter-decay-value">0.30s</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-sustain">Sustain</label>
+                        <input type="range" id="sub-filter-sustain" min="0" max="100" value="10" class="slider">
+                        <span id="sub-filter-sustain-value">10%</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-filter-release">Release</label>
+                        <input type="range" id="sub-filter-release" min="0.01" max="3" step="0.01" value="0.5" class="slider">
+                        <span id="sub-filter-release-value">0.50s</span>
+                    </div>
+                </div>
+
+                <!-- Section Enveloppe Amplitude -->
+                <div class="envelope-section">
+                    <h3>Enveloppe Amplitude</h3>
+                    
+                    <div class="control-group">
+                        <label for="sub-amp-attack">Attack</label>
+                        <input type="range" id="sub-amp-attack" min="0.01" max="2" step="0.01" value="0.1" class="slider">
+                        <span id="sub-amp-attack-value">0.10s</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-amp-decay">Decay</label>
+                        <input type="range" id="sub-amp-decay" min="0.01" max="2" step="0.01" value="0.3" class="slider">
+                        <span id="sub-amp-decay-value">0.30s</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-amp-sustain">Sustain</label>
+                        <input type="range" id="sub-amp-sustain" min="0" max="100" value="70" class="slider">
+                        <span id="sub-amp-sustain-value">70%</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="sub-amp-release">Release</label>
+                        <input type="range" id="sub-amp-release" min="0.01" max="3" step="0.01" value="0.5" class="slider">
+                        <span id="sub-amp-release-value">0.50s</span>
+                    </div>
+                </div>
+
+                <!-- Presets -->
+                <div class="preset-controls">
+                    <h3>Presets</h3>
+                    <div class="button-group">
+                        <button class="preset-btn" data-preset="classic-lead">Classic Lead</button>
+                        <button class="preset-btn" data-preset="fat-bass">Fat Bass</button>
+                        <button class="preset-btn" data-preset="string-pad">String Pad</button>
+                        <button class="preset-btn" data-preset="acid-squelch">Acid Squelch</button>
+                    </div>
+                </div>
+
+                <!-- Contrôles de lecture -->
+                <div class="button-group">
+                    <button id="sub-play" class="control-btn">Play</button>
+                    <button id="sub-stop" class="control-btn">Stop</button>
+                </div>
+            </div>
+
+            <!-- Clavier virtuel -->
+            <div class="keyboard-section">
+                <h3>Clavier Virtuel</h3>
+                <div class="virtual-keyboard">
+                    <div class="key white-key" data-note="C4">C4</div>
+                    <div class="key black-key" data-note="C#4">C#</div>
+                    <div class="key white-key" data-note="D4">D4</div>
+                    <div class="key black-key" data-note="D#4">D#</div>
+                    <div class="key white-key" data-note="E4">E4</div>
+                    <div class="key white-key" data-note="F4">F4</div>
+                    <div class="key black-key" data-note="F#4">F#</div>
+                    <div class="key white-key" data-note="G4">G4</div>
+                    <div class="key black-key" data-note="G#4">G#</div>
+                    <div class="key white-key" data-note="A4">A4</div>
+                    <div class="key black-key" data-note="A#4">A#</div>
+                    <div class="key white-key" data-note="B4">B4</div>
+                </div>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Synthèse Soustractive</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Synthèse_soustractive" target="_blank" class="wiki-link"><span class="link-icon"></span>Synthèse soustractive</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Synthétiseur_analogique" target="_blank" class="wiki-link"><span class="link-icon"></span>Synthétiseur analogique</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/VCO" target="_blank" class="wiki-link"><span class="link-icon"></span>VCO (Voltage Controlled Oscillator)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/VCF" target="_blank" class="wiki-link"><span class="link-icon"></span>VCF (Voltage Controlled Filter)</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Instruments Légendaires</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Moog" target="_blank" class="wiki-link"><span class="link-icon"></span>Moog Synthesizer</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/ARP_Odyssey" target="_blank" class="wiki-link"><span class="link-icon"></span>ARP Odyssey</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Sequential_Circuits_Prophet-5" target="_blank" class="wiki-link"><span class="link-icon"></span>Prophet-5</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Ressources Pratiques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://learningsynths.ableton.com/en/playground" target="_blank" class="course-link"><span class="link-icon"></span>Ableton Learning Synths</a></li>
+                            <li><a href="https://www.musicradar.com/tuition/tech/synthesizer-school-part-1-what-is-a-synthesizer-217522" target="_blank" class="course-link"><span class="link-icon"></span>MusicRadar - Synth School</a></li>
+                            <li><a href="https://surge-synthesizer.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>Surge (Synthé Open Source)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 7: SYNTHÈSE FM -->
+        <section id="tab-fm" class="tab-content">
+            <div class="tab-text">
+                <h2>Synthèse FM</h2>
+                <p>La synthèse FM utilise un oscillateur (modulateur) pour faire varier la fréquence d'un autre (porteur), créant des harmoniques complexes.</p>
+                
+                <h3>Principe mathématique :</h3>
+                <p>Sortie = sin(2π × fc × t + I × sin(2π × fm × t))</p>
+                
+                <p><strong>Où :</strong></p>
+                <ul>
+                    <li><strong>fc :</strong> Fréquence porteuse</li>
+                    <li><strong>fm :</strong> Fréquence modulatrice</li>
+                    <li><strong>I :</strong> Index de modulation (profondeur)</li>
+                </ul>
+                
+                <h3>Caractéristiques :</h3>
+                <ul>
+                    <li><strong>Ratio entier :</strong> Harmoniques musicales (1:1, 2:1, 3:2...)</li>
+                    <li><strong>Ratio non-entier :</strong> Timbres inharmoniques, métalliques</li>
+                    <li><strong>Index élevé :</strong> Plus d'harmoniques, son plus complexe</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="carrier-controls">
+                    <h3>Porteur</h3>
+                    <div class="control-group">
+                        <label for="fm-carrier-note">Note</label>
+                        <select id="fm-carrier-note">
+                            <option value="C4">C4 (261.6Hz)</option>
+                            <option value="D4">D4 (293.7Hz)</option>
+                            <option value="E4">E4 (329.6Hz)</option>
+                            <option value="F4">F4 (349.2Hz)</option>
+                            <option value="G4">G4 (392.0Hz)</option>
+                            <option value="A4" selected>A4 (440.0Hz)</option>
+                            <option value="B4">B4 (493.9Hz)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="fm-carrier-freq">Fréquence</label>
+                        <input type="range" id="fm-carrier-freq" min="100" max="1000" value="440" class="slider">
+                        <span id="fm-carrier-freq-value">440 Hz</span>
+                    </div>
+                </div>
+
+                <div class="modulator-controls">
+                    <h3>Modulateur</h3>
+                    <div class="control-group">
+                        <label for="fm-ratio">Ratio</label>
+                        <select id="fm-ratio">
+                            <option value="0.5">0.5</option>
+                            <option value="1" selected>1</option>
+                            <option value="1.5">1.5</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5.1">5.1</option>
+                            <option value="7.3">7.3</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="fm-index">Index</label>
+                        <input type="range" id="fm-index" min="0" max="20" step="0.1" value="5.0" class="slider">
+                        <span id="fm-index-value">5.0</span>
+                    </div>
+                </div>
+
+                <div class="mod-envelope-controls">
+                    <h3>Enveloppe Modulateur</h3>
+                    <div class="control-group">
+                        <label for="fm-mod-attack">Attack</label>
+                        <input type="range" id="fm-mod-attack" min="0.01" max="2" step="0.01" value="0.01" class="slider">
+                        <span id="fm-mod-attack-value">0.01s</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="fm-mod-decay">Decay</label>
+                        <input type="range" id="fm-mod-decay" min="0.01" max="2" step="0.01" value="0.8" class="slider">
+                        <span id="fm-mod-decay-value">0.80s</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="fm-mod-sustain">Sustain</label>
+                        <input type="range" id="fm-mod-sustain" min="0" max="100" value="20" class="slider">
+                        <span id="fm-mod-sustain-value">20%</span>
+                    </div>
+                </div>
+
+                <div class="preset-controls">
+                    <h3>Presets</h3>
+                    <div class="button-group">
+                        <button class="preset-btn" data-preset="bell">Cloche</button>
+                        <button class="preset-btn" data-preset="bass">Basse</button>
+                        <button class="preset-btn" data-preset="metallic">Métallique</button>
+                        <button class="preset-btn" data-preset="epiano">Piano Électrique</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="fm-waveform-canvas" width="600" height="200"></canvas>
+                <canvas id="fm-spectrum-canvas" width="600" height="200"></canvas>
+            </div>
+
+            <div class="keyboard-section">
+                <h3>Clavier Test</h3>
+                <div class="virtual-keyboard">
+                    <div class="key white-key" data-note="C4">C4</div>
+                    <div class="key black-key" data-note="C#4">C#</div>
+                    <div class="key white-key" data-note="D4">D4</div>
+                    <div class="key black-key" data-note="D#4">D#</div>
+                    <div class="key white-key" data-note="E4">E4</div>
+                    <div class="key white-key" data-note="F4">F4</div>
+                    <div class="key black-key" data-note="F#4">F#</div>
+                    <div class="key white-key" data-note="G4">G4</div>
+                    <div class="key black-key" data-note="G#4">G#</div>
+                    <div class="key white-key" data-note="A4">A4</div>
+                    <div class="key black-key" data-note="A#4">A#</div>
+                    <div class="key white-key" data-note="B4">B4</div>
+                </div>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie FM</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Synth%C3%A8se_FM" target="_blank" class="wiki-link"><span class="link-icon"></span>Synthèse FM (Wikipedia FR)</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Frequency_modulation_synthesis" target="_blank" class="wiki-link"><span class="link-icon"></span>FM Synthesis (Wikipedia EN)</a></li>
+                            <li><a href="https://www.soundonsound.com/techniques/more-fm" target="_blank" class="doc-link"><span class="link-icon"></span>More About FM (Sound on Sound)</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Outils et Logiciels</h4>
+                        <ul class="link-list">
+                            <li><a href="https://dexed.digitalsuburban.com/" target="_blank" class="tool-link"><span class="link-icon"></span>Dexed - Émulateur DX7 gratuit</a></li>
+                            <li><a href="https://github.com/asb2m10/dexed" target="_blank" class="tool-link"><span class="link-icon"></span>Dexed sur GitHub</a></li>
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/FMSynth" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js FMSynth Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Ressources Historiques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Yamaha_DX7" target="_blank" class="wiki-link"><span class="link-icon"></span>Yamaha DX7 (Wikipedia)</a></li>
+                            <li><a href="https://www.soundonsound.com/reviews/yamaha-dx7" target="_blank" class="doc-link"><span class="link-icon"></span>DX7 Review (Sound on Sound)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 8: SYNTHÈSE ADDITIVE -->
+        <section id="tab-additive" class="tab-content">
+            <div class="tab-text">
+                <h2>Synthèse Additive</h2>
+                <p>La synthèse additive construit des sons complexes en additionnant plusieurs ondes sinusoïdales (harmoniques). Contrôle précis du spectre harmonique.</p>
+                
+                <h3>Principe :</h3>
+                <p>Son Final = Σ(Amplitude_n × sin(2π × n × f × t + Phase_n))</p>
+                
+                <h3>Avantages :</h3>
+                <ul>
+                    <li><strong>Contrôle précis :</strong> de chaque harmonique</li>
+                    <li><strong>Timbres organiques :</strong> reproductibles</li>
+                    <li><strong>Évolution temporelle :</strong> par harmonique</li>
+                    <li><strong>Sons impossibles :</strong> avec spectres non-naturels</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="harmonics-controls">
+                    <h3>Harmoniques</h3>
+                    <div class="harmonics-grid">
+                        <div class="harmonic-control">
+                            <label for="add-h1">H1</label>
+                            <input type="range" id="add-h1" min="0" max="100" value="100" class="slider">
+                            <span id="add-h1-value">100%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h2">H2</label>
+                            <input type="range" id="add-h2" min="0" max="100" value="50" class="slider">
+                            <span id="add-h2-value">50%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h3">H3</label>
+                            <input type="range" id="add-h3" min="0" max="100" value="33" class="slider">
+                            <span id="add-h3-value">33%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h4">H4</label>
+                            <input type="range" id="add-h4" min="0" max="100" value="25" class="slider">
+                            <span id="add-h4-value">25%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h5">H5</label>
+                            <input type="range" id="add-h5" min="0" max="100" value="20" class="slider">
+                            <span id="add-h5-value">20%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h6">H6</label>
+                            <input type="range" id="add-h6" min="0" max="100" value="17" class="slider">
+                            <span id="add-h6-value">17%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h7">H7</label>
+                            <input type="range" id="add-h7" min="0" max="100" value="14" class="slider">
+                            <span id="add-h7-value">14%</span>
+                        </div>
+                        <div class="harmonic-control">
+                            <label for="add-h8">H8</label>
+                            <input type="range" id="add-h8" min="0" max="100" value="12" class="slider">
+                            <span id="add-h8-value">12%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="global-controls">
+                    <div class="control-group">
+                        <label for="add-base-freq">Fréquence Base</label>
+                        <input type="range" id="add-base-freq" min="80" max="800" value="220" class="slider">
+                        <span id="add-base-freq-value">220 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="add-volume">Volume Global</label>
+                        <input type="range" id="add-volume" min="0" max="100" value="30" class="slider">
+                        <span id="add-volume-value">30%</span>
+                    </div>
+                </div>
+
+                <div class="preset-controls">
+                    <h3>Presets</h3>
+                    <div class="button-group">
+                        <button class="add-preset-btn" data-preset="saw">Saw</button>
+                        <button class="add-preset-btn" data-preset="square">Square</button>
+                        <button class="add-preset-btn" data-preset="organ">Orgue</button>
+                        <button class="add-preset-btn" data-preset="flute">Flûte</button>
+                        <button class="add-preset-btn" data-preset="violin">Violon</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="add-play" class="control-btn">Play</button>
+                    <button id="add-stop" class="control-btn">Stop</button>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="add-waveform-canvas" width="600" height="200"></canvas>
+                <canvas id="add-spectrum-canvas" width="600" height="200"></canvas>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie Additive</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Synth%C3%A8se_additive" target="_blank" class="wiki-link"><span class="link-icon"></span>Synthèse Additive (Wikipedia FR)</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Additive_synthesis" target="_blank" class="wiki-link"><span class="link-icon"></span>Additive Synthesis (Wikipedia EN)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/S%C3%A9rie_de_Fourier" target="_blank" class="wiki-link"><span class="link-icon"></span>Série de Fourier (Wikipedia)</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Outils et Logiciels</h4>
+                        <ul class="link-list">
+                            <li><a href="https://surge-synthesizer.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>Surge XT - Synthé open source</a></li>
+                            <li><a href="https://vital.audio/" target="_blank" class="tool-link"><span class="link-icon"></span>Vital - Synthé wavetable gratuit</a></li>
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/OmniOscillator" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js OmniOscillator</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Tutoriels</h4>
+                        <ul class="link-list">
+                            <li><a href="https://www.soundonsound.com/techniques/additive-synthesis" target="_blank" class="course-link"><span class="link-icon"></span>Additive Synthesis Explained</a></li>
+                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API" target="_blank" class="doc-link"><span class="link-icon"></span>Web Audio API Guide (MDN)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 9: WAVETABLES -->
+        <section id="tab-wavetables" class="tab-content">
+            <div class="tab-text">
+                <h2>Wavetables</h2>
+                <p>La synthèse par wavetables utilise des échantillons pré-calculés de formes d'ondes complexes. Morphing entre différentes tables pour évolution timbrale.</p>
+                
+                <h3>Avantages :</h3>
+                <ul>
+                    <li><strong>Qualité audio :</strong> Formes d'ondes complexes précalculées</li>
+                    <li><strong>Morphing :</strong> Transition fluide entre formes</li>
+                    <li><strong>Efficacité CPU :</strong> Moins de calculs temps réel</li>
+                    <li><strong>Contrôle temporel :</strong> Évolution du timbre dans le temps</li>
+                </ul>
+                
+                <h3>Technique :</h3>
+                <ul>
+                    <li><strong>Taille :</strong> 256-1024 échantillons par cycle</li>
+                    <li><strong>Interpolation :</strong> Linéaire/cubique entre échantillons</li>
+                    <li><strong>Anti-aliasing :</strong> Tables multiples selon fréquence</li>
+                    <li><strong>Morphing :</strong> Interpolation entre tables adjacentes</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="wavetable-selector">
+                    <h3>Sélection Wavetables</h3>
+                    <div class="wavetable-cards">
+                        <div class="wavetable-card active" data-wavetable="basic">
+                            <h4>Basic</h4>
+                            <p>Transition sine → square</p>
+                        </div>
+                        <div class="wavetable-card" data-wavetable="harmonics">
+                            <h4>Harmonics</h4>
+                            <p>Ajout progressif harmoniques</p>
+                        </div>
+                        <div class="wavetable-card" data-wavetable="evolving">
+                            <h4>Evolving</h4>
+                            <p>Évolution complexe 3ème/5ème harmoniques</p>
+                        </div>
+                        <div class="wavetable-card" data-wavetable="digital">
+                            <h4>Digital</h4>
+                            <p>Réduction bits progressive</p>
+                        </div>
+                        <div class="wavetable-card" data-wavetable="organic">
+                            <h4>Organic</h4>
+                            <p>Harmoniques non-entières organic</p>
+                        </div>
+                        <div class="wavetable-card" data-wavetable="metallic">
+                            <h4>Metallic</h4>
+                            <p>Harmoniques inharmoniques metalliques</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wavetable-controls">
+                    <div class="control-group">
+                        <label for="wav-position">Position</label>
+                        <input type="range" id="wav-position" min="0" max="100" value="0" class="slider">
+                        <span id="wav-position-value">0%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="wav-frequency">Fréquence</label>
+                        <input type="range" id="wav-frequency" min="80" max="800" value="220" class="slider">
+                        <span id="wav-frequency-value">220 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="wav-mod-depth">Modulation Depth</label>
+                        <input type="range" id="wav-mod-depth" min="0" max="50" value="0" class="slider">
+                        <span id="wav-mod-depth-value">0%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="wav-mod-speed">Vitesse Modulation</label>
+                        <input type="range" id="wav-mod-speed" min="0.1" max="10" step="0.1" value="2" class="slider">
+                        <span id="wav-mod-speed-value">2.0 Hz</span>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="wav-play" class="control-btn">Play</button>
+                    <button id="wav-stop" class="control-btn">Stop</button>
+                </div>
+            </div>
+
+            <div class="visualization-section">
+                <canvas id="wav-canvas" width="600" height="300"></canvas>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Théorie Wavetable</h4>
+                        <ul class="link-list">
+                            <li><a href="https://en.wikipedia.org/wiki/Wavetable_synthesis" target="_blank" class="wiki-link"><span class="link-icon"></span>Wavetable Synthesis (Wikipedia)</a></li>
+                            <li><a href="https://www.soundonsound.com/techniques/wavetable-synthesis" target="_blank" class="doc-link"><span class="link-icon"></span>Wavetable Synthesis (Sound on Sound)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/Table_d%27onde" target="_blank" class="wiki-link"><span class="link-icon"></span>Table d'onde (Wikipedia FR)</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Outils et Logiciels</h4>
+                        <ul class="link-list">
+                            <li><a href="https://vital.audio/" target="_blank" class="tool-link"><span class="link-icon"></span>Vital - Synthé wavetable gratuit</a></li>
+                            <li><a href="https://surge-synthesizer.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>Surge XT - Wavetables incluses</a></li>
+                            <li><a href="https://github.com/surge-synthesizer/surge" target="_blank" class="tool-link"><span class="link-icon"></span>Surge sur GitHub</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Ressources Techniques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/Player" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js Player Documentation</a></li>
+                            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer" target="_blank" class="doc-link"><span class="link-icon"></span>AudioBuffer API (MDN)</a></li>
+                            <li><a href="https://www.adventurekid.se/akrt/waveforms/adventure-kid-waveforms/" target="_blank" class="tool-link"><span class="link-icon"></span>Adventure Kid Waveforms</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 10: SYNTHÉS CLASSIQUES -->
+        <section id="tab-classiques" class="tab-content">
+            <div class="tab-text">
+                <h2>Synthétiseurs Classiques</h2>
+                <p>Les synthétiseurs analogiques classiques ont défini le son de la musique électronique.</p>
+                
+                <h3>Moog Minimoog Model D (1970) :</h3>
+                <p><strong>VCO 1 → Mixer → Ladder Filter → VCA → Output</strong><br>
+                VCO 2 → ↑<br>
+                VCO 3 → ↑<br>
+                Noise → ↑</p>
+                <ul>
+                    <li>Filtre Ladder 4 pôles (-24dB/octave), saturation douce</li>
+                    <li>3 VCO avec réglage fin, sync, modulation FM</li>
+                    <li>Circuit analogique à composants discrets</li>
+                    <li>Enveloppe ADS (pas de Release séparé)</li>
+                </ul>
+                
+                <h3>ARP Odyssey (1972) :</h3>
+                <ul>
+                    <li>Filtre variable 2/4 pôles commutable</li>
+                    <li>Sample & Hold pour séquences aléatoires</li>
+                    <li>Ring Modulator pour sons métalliques</li>
+                    <li>Proportional Pitch Control</li>
+                </ul>
+                
+                <h3>Sequential Prophet-5 (1978) :</h3>
+                <ul>
+                    <li>Premier polyphonique programmable (5 voix)</li>
+                    <li>Mémoire de patches (40 presets)</li>
+                    <li>2 VCO par voix pour sons épais</li>
+                    <li>Curtis chips VCO et VCF intégrés</li>
+                </ul>
+            </div>
+
+            <div class="controls-section">
+                <div class="moog-simulation">
+                    <h3>Simulation Moog</h3>
+                    <div class="control-group">
+                        <label for="moog-vco-mix">VCO Mix</label>
+                        <input type="range" id="moog-vco-mix" min="0" max="100" value="50" class="slider">
+                        <span id="moog-vco-mix-value">50%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="moog-filter">Ladder Filter</label>
+                        <input type="range" id="moog-filter" min="100" max="5000" value="1200" class="slider">
+                        <span id="moog-filter-value">1200 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="moog-resonance">Resonance</label>
+                        <input type="range" id="moog-resonance" min="0" max="25" value="5" class="slider">
+                        <span id="moog-resonance-value">5</span>
+                    </div>
+                    <div class="button-group">
+                        <button id="moog-play" class="control-btn">Play</button>
+                        <button id="moog-stop" class="control-btn">Stop</button>
+                    </div>
+                </div>
+
+                <div class="arp-simulation">
+                    <h3>Simulation ARP</h3>
+                    <div class="control-group">
+                        <label for="arp-ring-mod">Ring Modulation</label>
+                        <input type="range" id="arp-ring-mod" min="0" max="100" value="0" class="slider">
+                        <span id="arp-ring-mod-value">0%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="arp-sh-rate">Sample & Hold Rate</label>
+                        <input type="range" id="arp-sh-rate" min="0.5" max="20" step="0.1" value="2" class="slider">
+                        <span id="arp-sh-rate-value">2.0 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="arp-filter-type">Filter Type</label>
+                        <select id="arp-filter-type">
+                            <option value="2pole">2 Pole</option>
+                            <option value="4pole" selected>4 Pole</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button id="arp-play" class="control-btn">Play</button>
+                        <button id="arp-stop" class="control-btn">Stop</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liens éducatifs -->
+            <div class="educational-links">
+                <h3>Approfondir ses Connaissances</h3>
+                <div class="links-grid">
+                    <div class="link-category">
+                        <h4>Synthétiseurs Historiques</h4>
+                        <ul class="link-list">
+                            <li><a href="https://fr.wikipedia.org/wiki/Moog_synthesizer" target="_blank" class="wiki-link"><span class="link-icon"></span>Moog Synthesizer (Wikipedia)</a></li>
+                            <li><a href="https://fr.wikipedia.org/wiki/ARP_2600" target="_blank" class="wiki-link"><span class="link-icon"></span>ARP 2600 (Wikipedia)</a></li>
+                            <li><a href="https://en.wikipedia.org/wiki/Oberheim_OB-6" target="_blank" class="wiki-link"><span class="link-icon"></span>Oberheim Synthesizers</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Émulations Libres</h4>
+                        <ul class="link-list">
+                            <li><a href="https://helm.matt-tytel.com/" target="_blank" class="tool-link"><span class="link-icon"></span>Helm - Synthé open source</a></li>
+                            <li><a href="https://surge-synthesizer.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>Surge XT - Synthé vintage</a></li>
+                            <li><a href="https://github.com/mtytel/helm" target="_blank" class="tool-link"><span class="link-icon"></span>Helm sur GitHub</a></li>
+                        </ul>
+                    </div>
+                    <div class="link-category">
+                        <h4>Documentation Technique</h4>
+                        <ul class="link-list">
+                            <li><a href="https://www.soundonsound.com/series/synth-secrets" target="_blank" class="course-link"><span class="link-icon"></span>Synth Secrets (Sound on Sound)</a></li>
+                            <li><a href="https://tonejs.github.io/docs/14.7.77/PolySynth" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js PolySynth</a></li>
+                            <li><a href="https://www.soundonsound.com/techniques/synthesizer-technique" target="_blank" class="course-link"><span class="link-icon"></span>Synthesizer Technique</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ONGLET 11: TB-303 -->
+        <section id="tab-tb303" class="tab-content">
+            <div class="tab-text">
+                <h2>Roland TB-303</h2>
+                <p>Le Roland TB-303, conçu pour accompagner les guitaristes, est devenu l'icône de l'acid house. Son filtre résonnant et ses glissements créent le son acid unique.</p>
+                
+                <h3>Caractéristiques techniques :</h3>
+                <ul>
+                    <li><strong>VCO :</strong> Dents de scie uniquement, glissements (slides)</li>
+                    <li><strong>Filtre :</strong> Passe-bas 18dB/octave avec résonance élevée</li>
+                    <li><strong>Enveloppe :</strong> Générateur simple pour filter et amplitude</li>
+                    <li><strong>Accent :</strong> Accentuation dynamique des notes</li>
+                    <li><strong>Séquenceur :</strong> 16 pas avec slides et accents</li>
+                </ul>
+                
+                <h3>Chaîne signal :</h3>
+                <p><strong>VCO Saw → 18dB Filter → VCA → Distortion</strong><br>
+                Env Gen → Filter Cutoff<br>
+                Accent → Env Amount</p>
+            </div>
+
+            <div class="controls-section">
+                <div class="vco-controls">
+                    <h3>VCO</h3>
+                    <div class="control-group">
+                        <label for="tb-tuning">Tuning</label>
+                        <input type="range" id="tb-tuning" min="50" max="200" value="100" class="slider">
+                        <span id="tb-tuning-value">100%</span>
+                    </div>
+                    <div class="button-group">
+                        <button class="tb-wave-btn active" data-wave="sawtooth">Sawtooth</button>
+                        <button class="tb-wave-btn" data-wave="square">Square</button>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <h3>Filtre</h3>
+                    <div class="control-group">
+                        <label for="tb-cutoff">Cutoff</label>
+                        <input type="range" id="tb-cutoff" min="200" max="2000" value="800" class="slider">
+                        <span id="tb-cutoff-value">800 Hz</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="tb-resonance">Resonance</label>
+                        <input type="range" id="tb-resonance" min="0" max="15" value="8" class="slider">
+                        <span id="tb-resonance-value">8</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="tb-env-mod">Env Mod</label>
+                        <input type="range" id="tb-env-mod" min="0" max="100" value="50" class="slider">
+                        <span id="tb-env-mod-value">50%</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="tb-decay">Decay</label>
+                        <input type="range" id="tb-decay" min="0.1" max="2" step="0.1" value="0.5" class="slider">
+                        <span id="tb-decay-value">0.5s</span>
+                    </div>
+                </div>
+
+                <div class="sequencer-controls">
+                    <h3>Séquenceur</h3>
+                    <div class="seq-transport">
+                        <button id="tb-seq-play" class="control-btn">Play</button>
+                        <button id="tb-seq-stop" class="control-btn">Stop</button>
+                        <button id="tb-seq-clear" class="control-btn">Clear</button>
+                        <button id="tb-test" class="control-btn">Test TB303</button>
+                    </div>
+                    <div class="control-group">
+                        <label for="tb-tempo">Tempo</label>
+                        <input type="range" id="tb-tempo" min="80" max="160" value="120" class="slider">
+                        <span id="tb-tempo-value">120 BPM</span>
+                    </div>
+                </div>
+
+                <div class="pattern-presets">
+                    <h3>Patterns Prédéfinis</h3>
+                    <div class="button-group">
+                        <button class="pattern-btn" data-pattern="classic1">Classic 1</button>
+                        <button class="pattern-btn" data-pattern="classic2">Classic 2</button>
+                        <button class="pattern-btn" data-pattern="acid1">Acid 1</button>
+                        <button class="pattern-btn" data-pattern="acid2">Acid 2</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="piano-roll-section">
+                <h3>Piano Roll (Clic = Note, Shift+Clic = Accent, Alt+Clic = Slide)</h3>
+                <div class="piano-roll">
+                    <!-- 8 rows for notes, 16 columns for steps -->
+                    <div class="piano-roll-grid">
+                        <div class="note-labels">
+                            <div class="note-label">C4</div>
+                            <div class="note-label">B3</div>
+                            <div class="note-label">A3</div>
+                            <div class="note-label">G3</div>
+                            <div class="note-label">F3</div>
+                            <div class="note-label">E3</div>
+                            <div class="note-label">D3</div>
+                            <div class="note-label">C3</div>
+                        </div>
+                        <div class="step-grid">
+                            <!-- Step numbers header -->
+                            <div class="step-numbers">
+                                <div class="step-number">1</div>
+                                <div class="step-number">2</div>
+                                <div class="step-number">3</div>
+                                <div class="step-number">4</div>
+                                <div class="step-number">5</div>
+                                <div class="step-number">6</div>
+                                <div class="step-number">7</div>
+                                <div class="step-number">8</div>
+                                <div class="step-number">9</div>
+                                <div class="step-number">10</div>
+                                <div class="step-number">11</div>
+                                <div class="step-number">12</div>
+                                <div class="step-number">13</div>
+                                <div class="step-number">14</div>
+                                <div class="step-number">15</div>
+                                <div class="step-number">16</div>
+                            </div>
+                            <!-- Note grid -->
+                            <div class="note-grid">
+                                <div class="note-row" data-note="C4">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="B3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="A3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="G3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="F3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="E3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="D3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                                <div class="note-row" data-note="C3">
+                                    <div class="step-cell" data-step="0"></div>
+                                    <div class="step-cell" data-step="1"></div>
+                                    <div class="step-cell" data-step="2"></div>
+                                    <div class="step-cell" data-step="3"></div>
+                                    <div class="step-cell" data-step="4"></div>
+                                    <div class="step-cell" data-step="5"></div>
+                                    <div class="step-cell" data-step="6"></div>
+                                    <div class="step-cell" data-step="7"></div>
+                                    <div class="step-cell" data-step="8"></div>
+                                    <div class="step-cell" data-step="9"></div>
+                                    <div class="step-cell" data-step="10"></div>
+                                    <div class="step-cell" data-step="11"></div>
+                                    <div class="step-cell" data-step="12"></div>
+                                    <div class="step-cell" data-step="13"></div>
+                                    <div class="step-cell" data-step="14"></div>
+                                    <div class="step-cell" data-step="15"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Virtual Keyboard for TB-303 -->
+                    <div class="keyboard-section">
+                        <h3>Clavier de Test</h3>
+                        <div class="virtual-keyboard">
+                            <div class="key white-key" data-note="C3">C3</div>
+                            <div class="key black-key" data-note="C#3">C#</div>
+                            <div class="key white-key" data-note="D3">D3</div>
+                            <div class="key black-key" data-note="D#3">D#</div>
+                            <div class="key white-key" data-note="E3">E3</div>
+                            <div class="key white-key" data-note="F3">F3</div>
+                            <div class="key black-key" data-note="F#3">F#</div>
+                            <div class="key white-key" data-note="G3">G3</div>
+                            <div class="key black-key" data-note="G#3">G#</div>
+                            <div class="key white-key" data-note="A3">A3</div>
+                            <div class="key black-key" data-note="A#3">A#</div>
+                            <div class="key white-key" data-note="B3">B3</div>
+                            <div class="key white-key" data-note="C4">C4</div>
+                        </div>
+                    </div>
+                    
+                    <!-- TB-303 Visualizations -->
+                    <div class="visualization-section">
+                        <h3>Visualisations TB-303</h3>
+                        <div class="canvas-container">
+                            <canvas id="tb303-waveform-canvas" width="600" height="150"></canvas>
+                            <p>Forme d'onde TB-303</p>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="tb303-filter-canvas" width="600" height="150"></canvas>
+                            <p>Réponse du filtre (Cutoff & Resonance)</p>
+                        </div>
+                    </div>
+
+                    <!-- Liens éducatifs -->
+                    <div class="educational-links">
+                        <h3>Approfondir ses Connaissances</h3>
+                        <div class="links-grid">
+                            <div class="link-category">
+                                <h4>Roland TB-303</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://fr.wikipedia.org/wiki/Roland_TB-303" target="_blank" class="wiki-link"><span class="link-icon"></span>Roland TB-303 (Wikipedia)</a></li>
+                                    <li><a href="https://en.wikipedia.org/wiki/Acid_house" target="_blank" class="wiki-link"><span class="link-icon"></span>Acid House (Wikipedia)</a></li>
+                                    <li><a href="https://www.soundonsound.com/reviews/roland-tb303" target="_blank" class="doc-link"><span class="link-icon"></span>TB-303 Review (Sound on Sound)</a></li>
+                                </ul>
+                            </div>
+                            <div class="link-category">
+                                <h4>Émulations Open Source</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://github.com/denisecase/acid-machine" target="_blank" class="tool-link"><span class="link-icon"></span>Acid Machine (GitHub)</a></li>
+                                    <li><a href="https://github.com/artificial-brain/acidmachine" target="_blank" class="tool-link"><span class="link-icon"></span>Web TB-303 Emulator</a></li>
+                                    <li><a href="https://www.reaper.fm/sdk/js/" target="_blank" class="tool-link"><span class="link-icon"></span>JSFX TB-303 Emulations</a></li>
+                                </ul>
+                            </div>
+                            <div class="link-category">
+                                <h4>Culture Acid</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://fr.wikipedia.org/wiki/Acid_techno" target="_blank" class="wiki-link"><span class="link-icon"></span>Acid Techno (Wikipedia)</a></li>
+                                    <li><a href="https://www.soundonsound.com/techniques/programming-perfect-acid-bassline" target="_blank" class="course-link"><span class="link-icon"></span>Programming Acid Basslines</a></li>
+                                    <li><a href="https://tonejs.github.io/docs/14.7.77/Filter" target="_blank" class="doc-link"><span class="link-icon"></span>Tone.js Filter Documentation</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ONGLET 12: TECHNIQUES AVANCÉES -->
+                <section id="tab-avancees" class="tab-content">
+                    <div class="tab-text">
+                        <h2>Techniques Avancées</h2>
+                        <p>Explorez les techniques expérimentales de synthèse audio moderne qui repoussent les limites de la création sonore traditionnelle.</p>
+                    </div>
+
+                    <div class="advanced-techniques">
+                        <!-- Synthèse Granulaire -->
+                        <div class="technique-section">
+                            <h3>Synthèse Granulaire</h3>
+                            <p>Décompose le son en microscopiques "grains" de 1-100ms manipulables individuellement. Crée des textures impossibles avec méthodes traditionnelles.</p>
+                            
+                            <h4>Paramètres :</h4>
+                            <ul>
+                                <li><strong>Taille grain :</strong> Durée de chaque micro-échantillon</li>
+                                <li><strong>Densité :</strong> Nombre de grains par seconde</li>
+                                <li><strong>Dispersion temporelle :</strong> Variation aléatoire du timing</li>
+                                <li><strong>Dispersion pitch :</strong> Variation de hauteur entre grains</li>
+                            </ul>
+
+                            <div class="granular-controls">
+                                <div class="control-group">
+                                    <label for="gran-note">Note Base</label>
+                                    <select id="gran-note">
+                                        <option value="C4">C4</option>
+                                        <option value="G4">G4</option>
+                                        <option value="A4" selected>A4</option>
+                                        <option value="C5">C5</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gran-size">Taille Grain</label>
+                                    <input type="range" id="gran-size" min="5" max="200" value="50" class="slider">
+                                    <span id="gran-size-value">50 ms</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gran-density">Densité</label>
+                                    <input type="range" id="gran-density" min="1" max="100" value="20" class="slider">
+                                    <span id="gran-density-value">20 grains/s</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gran-pitch">Pitch Spread</label>
+                                    <input type="range" id="gran-pitch" min="0" max="1200" value="200" class="slider">
+                                    <span id="gran-pitch-value">200 cents</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gran-time">Time Spread</label>
+                                    <input type="range" id="gran-time" min="0" max="100" value="10" class="slider">
+                                    <span id="gran-time-value">10 ms</span>
+                                </div>
+                                <div class="button-group">
+                                    <button id="gran-play" class="control-btn">Play</button>
+                                    <button id="gran-stop" class="control-btn">Stop</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Synthèse Gendy -->
+                        <div class="technique-section">
+                            <h3>Synthèse Gendy (Xenakis)</h3>
+                            <p>Génération stochastique de formes d'ondes par marche aléatoire des points de contrôle d'amplitude et de durée.</p>
+
+                            <div class="gendy-controls">
+                                <div class="control-group">
+                                    <label for="gendy-amp">Amplitude Variation</label>
+                                    <input type="range" id="gendy-amp" min="0" max="1" step="0.01" value="0.3" class="slider">
+                                    <span id="gendy-amp-value">0.30</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gendy-dur">Duration Variation</label>
+                                    <input type="range" id="gendy-dur" min="0" max="1" step="0.01" value="0.3" class="slider">
+                                    <span id="gendy-dur-value">0.30</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gendy-points">Points</label>
+                                    <input type="range" id="gendy-points" min="3" max="20" value="8" class="slider">
+                                    <span id="gendy-points-value">8</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="gendy-freq">Frequency</label>
+                                    <input type="range" id="gendy-freq" min="80" max="800" value="220" class="slider">
+                                    <span id="gendy-freq-value">220 Hz</span>
+                                </div>
+                                <div class="button-group">
+                                    <button id="gendy-play" class="control-btn">Play</button>
+                                    <button id="gendy-stop" class="control-btn">Stop</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Synthèse Chaotique -->
+                        <div class="technique-section">
+                            <h3>Synthèse Chaotique</h3>
+                            <p>Utilise des systèmes dynamiques chaotiques pour générer des signaux audio complexes et imprévisibles.</p>
+
+                            <div class="chaos-controls">
+                                <div class="control-group">
+                                    <label for="chaos-type">Type</label>
+                                    <select id="chaos-type">
+                                        <option value="lorenz" selected>Lorenz</option>
+                                        <option value="chua">Chua</option>
+                                        <option value="duffing">Duffing</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label for="chaos-factor">Factor</label>
+                                    <input type="range" id="chaos-factor" min="0.1" max="10" step="0.1" value="1.0" class="slider">
+                                    <span id="chaos-factor-value">1.0</span>
+                                </div>
+                                <div class="control-group">
+                                    <label for="chaos-speed">Speed</label>
+                                    <input type="range" id="chaos-speed" min="0.1" max="10" step="0.1" value="1.0" class="slider">
+                                    <span id="chaos-speed-value">1.0 Hz</span>
+                                </div>
+                                <div class="button-group">
+                                    <button id="chaos-play" class="control-btn">Play</button>
+                                    <button id="chaos-stop" class="control-btn">Stop</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="visualization-section">
+                        <canvas id="advanced-canvas" width="600" height="300"></canvas>
+                    </div>
+
+                    <!-- Liens éducatifs -->
+                    <div class="educational-links">
+                        <h3>Approfondir ses Connaissances</h3>
+                        <div class="links-grid">
+                            <div class="link-category">
+                                <h4>Synthèse Granulaire</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://en.wikipedia.org/wiki/Granular_synthesis" target="_blank" class="wiki-link"><span class="link-icon"></span>Granular Synthesis (Wikipedia)</a></li>
+                                    <li><a href="https://fr.wikipedia.org/wiki/Synth%C3%A8se_granulaire" target="_blank" class="wiki-link"><span class="link-icon"></span>Synthèse Granulaire (Wikipedia FR)</a></li>
+                                    <li><a href="https://www.soundonsound.com/techniques/granular-synthesis" target="_blank" class="doc-link"><span class="link-icon"></span>Granular Synthesis Explained</a></li>
+                                </ul>
+                            </div>
+                            <div class="link-category">
+                                <h4>Outils Expérimentaux</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://supercollider.github.io/" target="_blank" class="tool-link"><span class="link-icon"></span>SuperCollider - Langage audio</a></li>
+                                    <li><a href="https://puredata.info/" target="_blank" class="tool-link"><span class="link-icon"></span>Pure Data - Programmation visuelle</a></li>
+                                    <li><a href="https://github.com/Tonejs/Tone.js" target="_blank" class="tool-link"><span class="link-icon"></span>Tone.js sur GitHub</a></li>
+                                </ul>
+                            </div>
+                            <div class="link-category">
+                                <h4>Techniques Avancées</h4>
+                                <ul class="link-list">
+                                    <li><a href="https://en.wikipedia.org/wiki/Physical_modelling_synthesis" target="_blank" class="wiki-link"><span class="link-icon"></span>Physical Modeling</a></li>
+                                    <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API" target="_blank" class="doc-link"><span class="link-icon"></span>Web Audio API (MDN)</a></li>
+                                    <li><a href="https://www.soundonsound.com/techniques/chaos-synthesis" target="_blank" class="course-link"><span class="link-icon"></span>Chaos Synthesis</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Scripts dans l'ordre spécifié -->
+        <!-- Librairie externe -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+
+        <!-- Core modules -->
+        <script src="toplapsound/js/core/AudioManager.js"></script>
+        <script src="toplapsound/js/core/WaveformRenderer.js"></script>
+        <script src="toplapsound/js/core/UIController.js"></script>
+
+        <!-- Synthesizers -->
+        <script src="toplapsound/js/synthesizers/BasicSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/ModulatedSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/FilteredSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/SubtractiveSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/FMSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/AdditiveSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/WavetableSynth.js"></script>
+        <script src="toplapsound/js/synthesizers/TB303Synth.js"></script>
+        <script src="toplapsound/js/synthesizers/AdvancedSynth.js"></script>
+
+        <!-- UI modules -->
+        <script src="toplapsound/js/ui/TabManager.js"></script>
+        <script src="toplapsound/js/ui/ControlHandler.js"></script>
+        <script src="toplapsound/js/ui/KeyboardHandler.js"></script>
+
+        <!-- Initialisation -->
+        <script src="toplapsound/js/main.js"></script>
+    </body>
+</html>

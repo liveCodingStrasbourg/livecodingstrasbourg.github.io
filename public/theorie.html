@@ -1,0 +1,4863 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Théorie musicale, toplap Strasbourg</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1em;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #333;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-switch::after {
+            content: 'FR';
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            width: 25px;
+            height: 25px;
+            background-color: #00ff88;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.en::after {
+            content: 'EN';
+            transform: translateX(30px) translateY(-50%);
+            background-color: #00aaff;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #2a2a2a;
+            border: none;
+            border-radius: 5px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .tab:hover {
+            background-color: #3a3a3a;
+            color: #fff;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .content {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            min-height: 500px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .theory-card {
+            background-color: #2a2a2a;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .theory-card h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .formula-box {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #00aaff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .interval-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #2a2a2a;
+        }
+
+        .interval-table th,
+        .interval-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .interval-table th {
+            background-color: #333;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .interval-table tr:hover {
+            background-color: #333;
+        }
+
+        .piano-keyboard {
+            display: flex;
+            position: relative;
+            margin: 20px 0;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .key {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .white-key {
+            width: 40px;
+            height: 150px;
+            background-color: #fff;
+            border: 1px solid #000;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .black-key {
+            width: 30px;
+            height: 100px;
+            background-color: #000;
+            position: absolute;
+            top: 0;
+            margin-left: -15px;
+            z-index: 2;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .key:hover {
+            background-color: #00ff88 !important;
+        }
+
+        .key.active {
+            background-color: #00aaff !important;
+        }
+
+        .key-label {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #000;
+        }
+
+        .black-key .key-label {
+            color: #fff;
+            bottom: 5px;
+        }
+
+        .code-example {
+            background-color: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-example pre {
+            margin: 0;
+            color: #00ff88;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #333;
+            border: none;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #444;
+        }
+
+        .platform-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .platform-btn {
+            padding: 5px 15px;
+            background-color: #2a2a2a;
+            border: none;
+            border-radius: 5px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .platform-btn.active {
+            background-color: #00ff88;
+            color: #000;
+        }
+
+        .circle-diagram {
+            width: 500px;
+            height: 500px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .circle-note {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #3a3a3a;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .circle-note:hover {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            transform: scale(1.2);
+        }
+
+        .circle-note.active {
+            border-color: #00ff88;
+            background-color: #2a2a2a;
+        }
+
+        .circle-note small {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .mode-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mode-card {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,255,136,0.3);
+        }
+
+        .mode-card.active {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+        }
+
+        .scale-display {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .scale-note {
+            width: 50px;
+            height: 50px;
+            background-color: #3a3a3a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .scale-note.root {
+            background-color: #00ff88;
+            color: #000;
+        }
+
+        .scale-note.active {
+            background-color: #00aaff;
+            color: #000;
+        }
+
+        .degree-label {
+            position: absolute;
+            top: -20px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .chord-progression {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .chord-block {
+            min-width: 100px;
+            padding: 20px;
+            background-color: #3a3a3a;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chord-block:hover {
+            background: linear-gradient(135deg, #00ff88, #00aaff);
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .chord-roman {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .chord-function {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .info-box {
+            background-color: rgba(0, 255, 136, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #00ff88;
+        }
+
+        .warning-box {
+            background-color: rgba(255, 170, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffaa00;
+        }
+
+        .exercise-box {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #00aaff;
+        }
+
+        .exercise-box h4 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .analysis-card {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .notation-staff {
+            background-color: #fff;
+            height: 100px;
+            margin: 20px 0;
+            border-radius: 5px;
+            position: relative;
+            background-image: repeating-linear-gradient(
+                0deg,
+                #000,
+                #000 1px,
+                transparent 1px,
+                transparent 20px
+            );
+        }
+
+        .note-on-staff {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #000;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .rhythm-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 2px;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .rhythm-cell {
+            height: 40px;
+            background-color: #3a3a3a;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rhythm-cell:hover {
+            background-color: #4a4a4a;
+        }
+
+        .rhythm-cell.active {
+            background-color: #00ff88;
+        }
+
+        .rhythm-cell.accent {
+            background-color: #00aaff;
+        }
+
+        .harmonic-function {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 5px;
+            background-color: #3a3a3a;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .harmonic-function.tonic {
+            background-color: #00ff88;
+            color: #000;
+        }
+
+        .harmonic-function.subdominant {
+            background-color: #ffaa00;
+            color: #000;
+        }
+
+        .harmonic-function.dominant {
+            background-color: #ff5555;
+            color: #fff;
+        }
+
+        .voicing-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .voice-line {
+            display: flex;
+            gap: 30px;
+            margin: 10px 0;
+        }
+
+        .voice-note {
+            width: 60px;
+            height: 40px;
+            background-color: #3a3a3a;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .voice-label {
+            width: 80px;
+            text-align: right;
+            padding-right: 10px;
+            color: #888;
+        }
+
+        .counterpoint-rules {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .rule-item {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .rule-item::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <span>Français</span>
+        <div class="toggle-switch" id="langToggle"></div>
+        <span>English</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Théorie musicale, toplap Strasbourg</h1>
+            <p class="subtitle">Version alpha/WIP - Sera améliorée prochainement</p>
+            <p class="subtitle"><a href="https://livecodingstrasbourg.github.io" style="color: #00aaff; text-decoration: none;">livecodingstrasbourg.github.io</a></p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" data-section="fundamentals">📐 Fondamentaux</button>
+            <button class="tab" data-section="intervals">🎵 Intervalles</button>
+            <button class="tab" data-section="scales">🎹 Gammes & Modes</button>
+            <button class="tab" data-section="chords">🎸 Accords</button>
+            <button class="tab" data-section="harmony">🎼 Harmonie</button>
+            <button class="tab" data-section="rhythm">🥁 Rythme</button>
+            <button class="tab" data-section="counterpoint">🎻 Contrepoint</button>
+            <button class="tab" data-section="form">🏛️ Forme</button>
+            <button class="tab" data-section="analysis">🔍 Analyse</button>
+            <button class="tab" data-section="songs">🎵 Morceaux Connus</button>
+        </div>
+
+        <div class="content">
+            <!-- Section Fondamentaux -->
+            <div class="section active" id="fundamentals">
+                <h2>Fondamentaux de la Théorie Musicale</h2>
+
+                <div class="theory-card">
+                    <h3>Le Son et la Physique Musicale</h3>
+                    <p>Le son est une vibration qui se propage dans l'air. La musique organise ces vibrations selon des rapports mathématiques précis.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Fréquence d'une note :</strong><br>
+                        f(n) = 440 × 2^((n-69)/12) Hz<br>
+                        où n = numéro MIDI (60 = Do central)
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Série harmonique :</strong> Tout son musical contient des harmoniques qui sont des multiples entiers de la fréquence fondamentale.
+                        <br>Fondamentale (f), Octave (2f), Quinte (3f), Double octave (4f), Tierce majeure (5f)...
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Le Système Tempéré</h3>
+                    <p>Le tempérament égal divise l'octave en 12 demi-tons égaux.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Rapport entre demi-tons :</strong><br>
+                        ¹²√2 ≈ 1.05946<br>
+                        Chaque demi-ton multiplie la fréquence par ce facteur
+                    </div>
+
+                    <div class="piano-keyboard" id="pianoKeyboard">
+                        <!-- Keyboard will be generated by JavaScript -->
+                    </div>
+
+                    <div class="platform-selector">
+                        <button class="platform-btn active" data-platform="foxdot">FoxDot</button>
+                        <button class="platform-btn" data-platform="sonicpi">Sonic Pi</button>
+                        <button class="platform-btn" data-platform="supercollider">SuperCollider</button>
+                    </div>
+
+                    <div class="code-example" id="temperamentCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Explorer le tempérament
+# Jouer tous les demi-tons d'une octave
+p1 >> pluck(range(12), dur=0.5)
+
+# Comparer tempérament égal vs. juste intonation
+# Tierce majeure tempérée (400 cents) vs. pure (386 cents)
+p2 >> sine([0, 4], dur=4)  # Tempéré
+p3 >> sine([0, 0+4.86], dur=4)  # Juste (5/4)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Notation et Transposition</h3>
+                    
+                    <table class="interval-table">
+                        <thead>
+                            <tr>
+                                <th>Français</th>
+                                <th>Anglais</th>
+                                <th>Degré</th>
+                                <th>Fréquence (La=440)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Do</td>
+                                <td>C</td>
+                                <td>0</td>
+                                <td>261.63 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>Ré</td>
+                                <td>D</td>
+                                <td>2</td>
+                                <td>293.66 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>Mi</td>
+                                <td>E</td>
+                                <td>4</td>
+                                <td>329.63 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>Fa</td>
+                                <td>F</td>
+                                <td>5</td>
+                                <td>349.23 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>Sol</td>
+                                <td>G</td>
+                                <td>7</td>
+                                <td>392.00 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>La</td>
+                                <td>A</td>
+                                <td>9</td>
+                                <td>440.00 Hz</td>
+                            </tr>
+                            <tr>
+                                <td>Si</td>
+                                <td>B</td>
+                                <td>11</td>
+                                <td>493.88 Hz</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Exploration des octaves</h4>
+                    <p>1. Jouez la même note sur différentes octaves et observez le rapport de fréquence (×2)</p>
+                    <p>2. Créez une mélodie qui utilise au moins 3 octaves différentes</p>
+                    <p>3. Expérimentez avec la microtonalité en ajoutant des fractions aux degrés</p>
+                </div>
+            </div>
+
+            <!-- Section Intervalles -->
+            <div class="section" id="intervals">
+                <h2>Les Intervalles - Base de l'Harmonie</h2>
+
+                <div class="theory-card">
+                    <h3>Classification des Intervalles</h3>
+                    <p>Un intervalle est la distance entre deux notes. Il se définit par sa taille (nombre de degrés) et sa qualité (majeur, mineur, juste, augmenté, diminué).</p>
+
+                    <table class="interval-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Demi-tons</th>
+                                <th>Rapport</th>
+                                <th>Qualité sonore</th>
+                                <th>Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unisson</td>
+                                <td>0</td>
+                                <td>1:1</td>
+                                <td>Parfait</td>
+                                <td>P1</td>
+                            </tr>
+                            <tr>
+                                <td>Seconde mineure</td>
+                                <td>1</td>
+                                <td>16:15</td>
+                                <td>Dissonant</td>
+                                <td>m2</td>
+                            </tr>
+                            <tr>
+                                <td>Seconde majeure</td>
+                                <td>2</td>
+                                <td>9:8</td>
+                                <td>Légèrement dissonant</td>
+                                <td>M2</td>
+                            </tr>
+                            <tr>
+                                <td>Tierce mineure</td>
+                                <td>3</td>
+                                <td>6:5</td>
+                                <td>Consonant, triste</td>
+                                <td>m3</td>
+                            </tr>
+                            <tr>
+                                <td>Tierce majeure</td>
+                                <td>4</td>
+                                <td>5:4</td>
+                                <td>Consonant, joyeux</td>
+                                <td>M3</td>
+                            </tr>
+                            <tr>
+                                <td>Quarte juste</td>
+                                <td>5</td>
+                                <td>4:3</td>
+                                <td>Parfait/Suspendu</td>
+                                <td>P4</td>
+                            </tr>
+                            <tr>
+                                <td>Triton</td>
+                                <td>6</td>
+                                <td>√2:1</td>
+                                <td>Très dissonant</td>
+                                <td>A4/d5</td>
+                            </tr>
+                            <tr>
+                                <td>Quinte juste</td>
+                                <td>7</td>
+                                <td>3:2</td>
+                                <td>Parfait</td>
+                                <td>P5</td>
+                            </tr>
+                            <tr>
+                                <td>Sixte mineure</td>
+                                <td>8</td>
+                                <td>8:5</td>
+                                <td>Consonant</td>
+                                <td>m6</td>
+                            </tr>
+                            <tr>
+                                <td>Sixte majeure</td>
+                                <td>9</td>
+                                <td>5:3</td>
+                                <td>Consonant</td>
+                                <td>M6</td>
+                            </tr>
+                            <tr>
+                                <td>Septième mineure</td>
+                                <td>10</td>
+                                <td>16:9</td>
+                                <td>Dissonant</td>
+                                <td>m7</td>
+                            </tr>
+                            <tr>
+                                <td>Septième majeure</td>
+                                <td>11</td>
+                                <td>15:8</td>
+                                <td>Très dissonant</td>
+                                <td>M7</td>
+                            </tr>
+                            <tr>
+                                <td>Octave</td>
+                                <td>12</td>
+                                <td>2:1</td>
+                                <td>Parfait</td>
+                                <td>P8</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Consonance et Dissonance</h3>
+                    
+                    <div class="info-box">
+                        <strong>Intervalles parfaits :</strong> Unisson, Quarte, Quinte, Octave<br>
+                        <strong>Consonants imparfaits :</strong> Tierces et Sixtes<br>
+                        <strong>Dissonants :</strong> Secondes, Septièmes, Triton
+                    </div>
+
+                    <div class="code-example" id="intervalCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Explorer les intervalles
+# Jouer tous les intervalles depuis Do
+root = 0
+p1 >> pluck([root, root+i] for i in range(13), dur=1)
+
+# Consonance vs Dissonance
+# Intervalles consonants
+p2 >> keys([(0,4), (0,7), (0,12)], dur=2)  # Tierce maj, Quinte, Octave
+
+# Intervalles dissonants
+p3 >> keys([(0,1), (0,6), (0,11)], dur=2)  # m2, Triton, M7
+
+# Résolution des dissonances
+p4 >> keys([(0,11), (0,12)], dur=[1,3])  # 7M → Octave</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Renversement des Intervalles</h3>
+                    <p>Quand on inverse un intervalle (la note grave devient aiguë), on obtient son complément à l'octave.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Règle de renversement :</strong><br>
+                        Intervalle + Renversement = 9<br>
+                        Majeur ↔ Mineur<br>
+                        Augmenté ↔ Diminué<br>
+                        Juste → Juste
+                    </div>
+
+                    <div class="code-example" id="inversionCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Renversements d'intervalles
+# Tierce majeure (4 demi-tons) → Sixte mineure (8 demi-tons)
+p1 >> pluck([(0,4), (4,12)], dur=2)
+
+# Quinte juste (7) → Quarte juste (5)
+p2 >> pluck([(0,7), (7,12)], dur=2)
+
+# Démonstration avec mouvement contraire
+melody = [0, 2, 4, 5, 7]
+p3 >> pluck(melody, dur=0.5)
+p4 >> pluck([12-n for n in melody], dur=0.5)  # Inversion</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Maîtrise des intervalles</h4>
+                    <p>1. Créez une mélodie utilisant uniquement des intervalles consonants</p>
+                    <p>2. Ajoutez progressivement des dissonances et résolvez-les</p>
+                    <p>3. Composez un motif basé sur un intervalle spécifique (ex: que des quartes)</p>
+                </div>
+            </div>
+
+            <!-- Section Gammes et Modes -->
+            <div class="section" id="scales">
+                <h2>Gammes et Modes - Les Couleurs Musicales</h2>
+
+                <div class="theory-card">
+                    <h3>Construction des Gammes</h3>
+                    <p>Une gamme est une succession de notes organisées selon un pattern d'intervalles spécifique.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Formules des gammes principales :</strong><br>
+                        Majeure : T-T-S-T-T-T-S (T=Ton, S=Demi-ton)<br>
+                        Mineure naturelle : T-S-T-T-S-T-T<br>
+                        Mineure harmonique : T-S-T-T-S-(1.5T)-S<br>
+                        Mineure mélodique : T-S-T-T-T-T-S (montante)
+                    </div>
+
+                    <div class="scale-display" id="scaleDisplay">
+                        <!-- Scale visualization will be generated -->
+                    </div>
+
+                    <div class="code-example" id="scalesCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Gammes fondamentales
+# Gamme majeure
+Scale.default = "major"
+p1 >> pluck(P[:8], dur=0.5)
+
+# Comparaison des mineures
+p2 >> pluck([0,2,3,5,7,8,10,12], dur=0.5)  # Naturelle
+p3 >> pluck([0,2,3,5,7,8,11,12], dur=0.5)  # Harmonique
+p4 >> pluck([0,2,3,5,7,9,11,12], dur=0.5)  # Mélodique
+
+# Gammes exotiques
+Scale.default = "phrygian"  # Mode phrygien (flamenco)
+p5 >> pluck(P[:8].mirror(), dur=0.25)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Les Modes Grecs</h3>
+                    <p>Les modes sont des variations de la gamme majeure commençant sur différents degrés.</p>
+                    
+                    <div class="mode-display">
+                        <div class="mode-card" data-mode="ionian">
+                            <h4>I - Ionien</h4>
+                            <p>Do Ré Mi Fa Sol La Si</p>
+                            <small>Majeur classique</small>
+                        </div>
+                        <div class="mode-card" data-mode="dorian">
+                            <h4>II - Dorien</h4>
+                            <p>Ré Mi Fa Sol La Si Do</p>
+                            <small>Mineur avec 6te majeure</small>
+                        </div>
+                        <div class="mode-card" data-mode="phrygian">
+                            <h4>III - Phrygien</h4>
+                            <p>Mi Fa Sol La Si Do Ré</p>
+                            <small>Couleur espagnole</small>
+                        </div>
+                        <div class="mode-card" data-mode="lydian">
+                            <h4>IV - Lydien</h4>
+                            <p>Fa Sol La Si Do Ré Mi</p>
+                            <small>Majeur avec #4</small>
+                        </div>
+                        <div class="mode-card" data-mode="mixolydian">
+                            <h4>V - Mixolydien</h4>
+                            <p>Sol La Si Do Ré Mi Fa</p>
+                            <small>Majeur avec 7b</small>
+                        </div>
+                        <div class="mode-card" data-mode="aeolian">
+                            <h4>VI - Éolien</h4>
+                            <p>La Si Do Ré Mi Fa Sol</p>
+                            <small>Mineur naturel</small>
+                        </div>
+                        <div class="mode-card" data-mode="locrian">
+                            <h4>VII - Locrien</h4>
+                            <p>Si Do Ré Mi Fa Sol La</p>
+                            <small>Diminué, instable</small>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="modesCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Explorer les modes
+# Jouer tous les modes depuis la même fondamentale
+modes = ["ionian", "dorian", "phrygian", "lydian", 
+         "mixolydian", "aeolian", "locrian"]
+
+for i, mode in enumerate(modes):
+    Scale.default = mode
+    Clock.future(i*4, lambda m=mode: p1 >> pluck(P[:8], dur=0.5))
+    
+# Progression modale en Dorien
+Scale.default = "dorian"
+p2 >> keys([P(0,2,4), P(1,3,5), P(6,1,3), P(0,2,4)], dur=2)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Gammes Pentatoniques et Blues</h3>
+                    
+                    <div class="info-box">
+                        <strong>Pentatonique majeure :</strong> 1, 2, 3, 5, 6 (Do, Ré, Mi, Sol, La)<br>
+                        <strong>Pentatonique mineure :</strong> 1, ♭3, 4, 5, ♭7 (La, Do, Ré, Mi, Sol)<br>
+                        <strong>Blues :</strong> 1, ♭3, 4, ♭5, 5, ♭7 (avec blue note)
+                    </div>
+
+                    <div class="code-example" id="pentatonicCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Gammes pentatoniques et blues
+# Pentatonique majeure - parfaite pour l'improvisation
+Scale.default = Scale.major.pentatonic
+p1 >> pluck(PRand(0,5)[:16], dur=0.25)
+
+# Blues avec bending de la blue note
+p2 >> pluck([0, 3, 5, 6, 7, 10], dur=0.5, bend=P[0,0,0,0.25,0,0])
+
+# Riff de blues classique
+p3 >> bass([0, 0, 3, 0, 5, 3, 0, 0], dur=0.5, lpf=800)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Gammes du Monde</h3>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4>Gamme Arabe (Hijaz)</h4>
+                            <p>1, ♭2, 3, 4, 5, ♭6, 7</p>
+                            <small>Intervalle augmenté caractéristique</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Gamme Japonaise (Hirajoshi)</h4>
+                            <p>1, 2, ♭3, 5, ♭6</p>
+                            <small>Pentatonique sans 4te ni 7me</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Gamme Tzigane</h4>
+                            <p>1, 2, ♭3, #4, 5, ♭6, 7</p>
+                            <small>Double intervalle augmenté</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Gamme par Tons</h4>
+                            <p>1, 2, 3, #4, #5, #6</p>
+                            <small>Que des tons entiers</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Exploration modale</h4>
+                    <p>1. Composez une mélodie dans chaque mode et notez leur caractère émotionnel</p>
+                    <p>2. Créez une progression d'accords qui met en valeur un mode spécifique</p>
+                    <p>3. Mélangez deux modes dans une même composition (polymodalité)</p>
+                </div>
+            </div>
+
+            <!-- Section Accords -->
+            <div class="section" id="chords">
+                <h2>Construction et Théorie des Accords</h2>
+
+                <div class="theory-card">
+                    <h3>Types d'Accords</h3>
+                    <p>Un accord est un ensemble d'au moins trois notes jouées simultanément, construites par superposition de tierces.</p>
+                    
+                    <table class="interval-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Formule</th>
+                                <th>Intervalles</th>
+                                <th>Notation</th>
+                                <th>Sonorité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Majeur</td>
+                                <td>1-3-5</td>
+                                <td>M3 + m3</td>
+                                <td>C, CM, Cmaj</td>
+                                <td>Joyeux, stable</td>
+                            </tr>
+                            <tr>
+                                <td>Mineur</td>
+                                <td>1-♭3-5</td>
+                                <td>m3 + M3</td>
+                                <td>Cm, Cmin, C-</td>
+                                <td>Triste, mélancolique</td>
+                            </tr>
+                            <tr>
+                                <td>Diminué</td>
+                                <td>1-♭3-♭5</td>
+                                <td>m3 + m3</td>
+                                <td>C°, Cdim</td>
+                                <td>Tendu, instable</td>
+                            </tr>
+                            <tr>
+                                <td>Augmenté</td>
+                                <td>1-3-#5</td>
+                                <td>M3 + M3</td>
+                                <td>C+, Caug</td>
+                                <td>Mystérieux, ambigu</td>
+                            </tr>
+                            <tr>
+                                <td>Sus2</td>
+                                <td>1-2-5</td>
+                                <td>M2 + P4</td>
+                                <td>Csus2</td>
+                                <td>Ouvert, moderne</td>
+                            </tr>
+                            <tr>
+                                <td>Sus4</td>
+                                <td>1-4-5</td>
+                                <td>P4 + M2</td>
+                                <td>Csus4</td>
+                                <td>Suspendu, attente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Extensions d'Accords</h3>
+                    <p>Les accords peuvent être enrichis avec des notes supplémentaires au-delà de la triade.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Extensions courantes :</strong><br>
+                        7e : ajoute la 7e (majeure ou mineure)<br>
+                        9e : 7e + 9e (= 2e à l'octave)<br>
+                        11e : 9e + 11e (= 4te à l'octave)<br>
+                        13e : 11e + 13e (= 6te à l'octave)
+                    </div>
+
+                    <div class="code-example" id="extensionsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Extensions d'accords
+# Progression jazz avec extensions
+p1 >> keys([
+    (0, 4, 7, 11),      # CM7
+    (2, 5, 9, 0),       # Dm7
+    (4, 7, 11, 2),      # Em7
+    (5, 9, 0, 4)        # FM7
+], dur=2)
+
+# Accords de 9e
+p2 >> keys([
+    (0, 4, 7, 11, 2),   # CM9
+    (5, 9, 0, 4, 7)     # FM9
+], dur=4)
+
+# Voicings sophistiqués
+p3 >> piano([
+    (0, 7, 11, 2, 5),   # CM9 sans tierce
+    (5, 0, 4, 7, 9)     # FM6/9
+], dur=4, sus=3)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Renversements et Voicings</h3>
+                    <p>Un renversement change la note de basse de l'accord. Le voicing détermine comment les notes sont distribuées.</p>
+                    
+                    <div class="voicing-display">
+                        <div class="voice-line">
+                            <span class="voice-label">Position fond.:</span>
+                            <div class="voice-note">Do</div>
+                            <div class="voice-note">Mi</div>
+                            <div class="voice-note">Sol</div>
+                        </div>
+                        <div class="voice-line">
+                            <span class="voice-label">1er renvers.:</span>
+                            <div class="voice-note">Mi</div>
+                            <div class="voice-note">Sol</div>
+                            <div class="voice-note">Do</div>
+                        </div>
+                        <div class="voice-line">
+                            <span class="voice-label">2e renvers.:</span>
+                            <div class="voice-note">Sol</div>
+                            <div class="voice-note">Do</div>
+                            <div class="voice-note">Mi</div>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="voicingsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Renversements et voicings
+# Même accord, différents renversements
+p1 >> keys([
+    (0, 4, 7),      # Do majeur - position fondamentale
+    (4, 7, 12),     # 1er renversement (Mi à la basse)
+    (7, 12, 16)     # 2e renversement (Sol à la basse)
+], dur=2)
+
+# Voice leading fluide
+p2 >> keys([
+    (0, 4, 7, 11),     # CM7
+    (2, 5, 9, 11),     # Dm7 (Do reste)
+    (4, 7, 11, 14),    # Em7 (Sol reste)
+    (5, 9, 12, 16)     # FM7
+], dur=2)
+
+# Drop 2 voicing (jazz)
+p3 >> keys([(11, 0, 4, 7)], oct=4, dur=4)  # CM7 drop 2</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Accords Altérés et Substitutions</h3>
+                    
+                    <div class="info-box">
+                        <strong>Altérations courantes :</strong><br>
+                        ♭5 / #5 : Modifie la quinte<br>
+                        ♭9 / #9 : Ajoute tension (jazz)<br>
+                        #11 : Couleur lydienne<br>
+                        ♭13 : Tension supplémentaire
+                    </div>
+
+                    <div class="code-example" id="alteredCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Accords altérés
+# Dominant altéré (V7alt)
+p1 >> keys([(7, 11, 1, 4, 6)], dur=2)  # G7♭9♭13
+
+# Substitution tritonique
+# G7 → D♭7 (même triton)
+p2 >> keys([
+    (7, 11, 2, 5),     # G7
+    (1, 5, 8, 11)      # D♭7
+], dur=2)
+
+# Accords de couleur
+p3 >> keys([
+    (0, 4, 6, 11),     # CM7♭5
+    (0, 3, 6, 9)       # C°7
+], dur=2)</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Maîtrise des accords</h4>
+                    <p>1. Construisez tous les accords diatoniques dans une tonalité</p>
+                    <p>2. Créez une progression utilisant uniquement des accords de 7e</p>
+                    <p>3. Expérimentez avec des voicings pour créer un mouvement fluide</p>
+                    <p>4. Composez en utilisant des accords altérés pour créer de la tension</p>
+                </div>
+            </div>
+
+            <!-- Section Harmonie -->
+            <div class="section" id="harmony">
+                <h2>Harmonie Fonctionnelle et Progressions</h2>
+
+                <div class="theory-card">
+                    <h3>Les Fonctions Harmoniques</h3>
+                    <p>En harmonie tonale, chaque accord a une fonction qui détermine son rôle dans la progression.</p>
+                    
+                    <div class="chord-progression">
+                        <div class="chord-block">
+                            <div class="chord-roman">I</div>
+                            <div class="chord-function">Tonique</div>
+                            <span class="harmonic-function tonic">Repos</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">ii</div>
+                            <div class="chord-function">Sous-dominante</div>
+                            <span class="harmonic-function subdominant">Éloignement</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">iii</div>
+                            <div class="chord-function">Tonique</div>
+                            <span class="harmonic-function tonic">Substitut</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">IV</div>
+                            <div class="chord-function">Sous-dominante</div>
+                            <span class="harmonic-function subdominant">Principal</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">V</div>
+                            <div class="chord-function">Dominante</div>
+                            <span class="harmonic-function dominant">Tension</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">vi</div>
+                            <div class="chord-function">Tonique</div>
+                            <span class="harmonic-function tonic">Relatif</span>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">vii°</div>
+                            <div class="chord-function">Dominante</div>
+                            <span class="harmonic-function dominant">Substitut</span>
+                        </div>
+                    </div>
+
+                    <div class="formula-box">
+                        <strong>Mouvement des fondamentales :</strong><br>
+                        Quinte descendante : Très fort (V→I)<br>
+                        Quarte ascendante : Fort (I→IV)<br>
+                        Tierce : Faible mais fluide<br>
+                        Seconde : Linéaire
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Cadences</h3>
+                    <p>Les cadences sont des formules harmoniques qui ponctuent le discours musical.</p>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4>Cadence Parfaite</h4>
+                            <p>V → I</p>
+                            <small>Conclusion définitive</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Cadence Plagale</h4>
+                            <p>IV → I</p>
+                            <small>"Amen", douce</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Demi-cadence</h4>
+                            <p>? → V</p>
+                            <small>Suspensive</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Cadence Rompue</h4>
+                            <p>V → vi</p>
+                            <small>Surprise</small>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="cadencesCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Cadences
+# Cadence parfaite (V7 → I)
+p1 >> keys([(7,11,2,5), (0,4,7)], dur=[1,3])
+
+# Cadence plagale (IV → I)
+p2 >> keys([(5,9,0), (0,4,7)], dur=[2,2])
+
+# Cadence rompue (V → vi)
+p3 >> keys([(7,11,2), (9,0,4)], dur=[2,2])
+
+# ii-V-I (jazz)
+p4 >> keys([
+    (2,5,9,0),    # Dm7
+    (7,11,2,5),   # G7
+    (0,4,7,11)    # CM7
+], dur=[1,1,2])</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Progressions Harmoniques Classiques</h3>
+                    
+                    <table class="interval-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Progression</th>
+                                <th>Exemple en Do</th>
+                                <th>Style</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Anatole</td>
+                                <td>I-vi-ii-V</td>
+                                <td>C-Am-Dm-G</td>
+                                <td>Jazz standard</td>
+                            </tr>
+                            <tr>
+                                <td>Blues 12 mesures</td>
+                                <td>I-I-I-I-IV-IV-I-I-V-IV-I-I</td>
+                                <td>C-C-C-C-F-F-C-C-G-F-C-C</td>
+                                <td>Blues</td>
+                            </tr>
+                            <tr>
+                                <td>Progression pop</td>
+                                <td>I-V-vi-IV</td>
+                                <td>C-G-Am-F</td>
+                                <td>Pop moderne</td>
+                            </tr>
+                            <tr>
+                                <td>Pachelbel</td>
+                                <td>I-V-vi-iii-IV-I-IV-V</td>
+                                <td>C-G-Am-Em-F-C-F-G</td>
+                                <td>Baroque</td>
+                            </tr>
+                            <tr>
+                                <td>Cercle des quintes</td>
+                                <td>I-IV-vii°-iii-vi-ii-V-I</td>
+                                <td>C-F-B°-Em-Am-Dm-G-C</td>
+                                <td>Classique</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="code-example" id="progressionsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Progressions classiques
+# Anatole (Rhythm Changes)
+rhythm_changes = [(0,4,7), (9,0,4), (2,5,9), (7,11,2)]
+p1 >> keys(rhythm_changes, dur=1)
+
+# Blues 12 bars
+blues = [0,0,0,0, 5,5,0,0, 7,5,0,0]
+p2 >> bass(blues, dur=1)
+p3 >> keys([(n,n+4,n+7,n+10) for n in blues], dur=1)
+
+# Pop progression avec rythmique
+pop = [(0,4,7), (7,11,2), (9,0,4), (5,9,0)]
+p4 >> keys(pop, dur=P[1,0.5,0.5])
+d1 >> play("x-o-", dur=0.5)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Modulation</h3>
+                    <p>La modulation est le passage d'une tonalité à une autre.</p>
+                    
+                    <div class="info-box">
+                        <strong>Types de modulation :</strong><br>
+                        • <strong>Diatonique :</strong> Via un accord commun<br>
+                        • <strong>Chromatique :</strong> Altération progressive<br>
+                        • <strong>Enharmonique :</strong> Réinterprétation d'un accord<br>
+                        • <strong>Directe :</strong> Sans préparation
+                    </div>
+
+                    <div class="code-example" id="modulationCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Techniques de modulation
+# Modulation par accord pivot (Am = vi en Do, ii en Sol)
+p1 >> keys([
+    (0,4,7),      # C (I en Do)
+    (9,0,4),      # Am (vi en Do / ii en Sol)
+    (2,6,9),      # D (V en Sol)
+    (7,11,2)      # G (I en Sol)
+], dur=2)
+
+# Modulation chromatique
+p2 >> pluck([0,2,4,5,7,7.5,8], dur=0.5)  # Fa# mène vers Sol
+
+# Modulation par tons entiers
+for i in range(6):
+    Clock.future(i*4, lambda t=i: Scale.default.set("major", t*2))</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Harmonie avancée</h4>
+                    <p>1. Analysez une progression de votre chanson préférée</p>
+                    <p>2. Créez une progression utilisant toutes les fonctions harmoniques</p>
+                    <p>3. Composez une pièce qui module vers au moins 3 tonalités</p>
+                    <p>4. Réharmonisez une mélodie simple avec des accords sophistiqués</p>
+                </div>
+            </div>
+
+            <!-- Section Rythme -->
+            <div class="section" id="rhythm">
+                <h2>Théorie Rythmique Avancée</h2>
+
+                <div class="theory-card">
+                    <h3>Divisions Rythmiques</h3>
+                    <p>Le rythme organise le temps musical en pulsations régulières et leurs subdivisions.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Valeurs rythmiques (4/4) :</strong><br>
+                        Ronde = 4 temps<br>
+                        Blanche = 2 temps<br>
+                        Noire = 1 temps<br>
+                        Croche = 1/2 temps<br>
+                        Double croche = 1/4 temps<br>
+                        Triple croche = 1/8 temps
+                    </div>
+
+                    <div class="rhythm-grid" id="rhythmGrid">
+                        <!-- Rhythm grid visualization -->
+                    </div>
+
+                    <div class="code-example" id="rhythmDivisionsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Divisions rythmiques
+# Valeurs de base
+p1 >> pluck(0, dur=4)      # Ronde
+p2 >> pluck(0, dur=2)      # Blanche
+p3 >> pluck(0, dur=1)      # Noire
+p4 >> pluck(0, dur=0.5)    # Croche
+p5 >> pluck(0, dur=0.25)   # Double croche
+
+# Triolets (division par 3)
+p6 >> pluck([0,2,4], dur=2/3)
+
+# Quintolets (division par 5)
+p7 >> pluck(P[:5], dur=0.8)
+
+# Polyrythmie 3:4
+p8 >> pluck(0, dur=4/3)
+p9 >> bass(0, dur=1)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Métriques et Mesures Composées</h3>
+                    
+                    <table class="interval-table">
+                        <thead>
+                            <tr>
+                                <th>Métrique</th>
+                                <th>Pulsation</th>
+                                <th>Caractère</th>
+                                <th>Exemple</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2/4</td>
+                                <td>Binaire simple</td>
+                                <td>Marche</td>
+                                <td>Polka</td>
+                            </tr>
+                            <tr>
+                                <td>3/4</td>
+                                <td>Ternaire simple</td>
+                                <td>Valse</td>
+                                <td>Menuet</td>
+                            </tr>
+                            <tr>
+                                <td>4/4</td>
+                                <td>Binaire simple</td>
+                                <td>Stable</td>
+                                <td>Pop/Rock</td>
+                            </tr>
+                            <tr>
+                                <td>6/8</td>
+                                <td>Binaire composé</td>
+                                <td>Fluide</td>
+                                <td>Tarentelle</td>
+                            </tr>
+                            <tr>
+                                <td>5/4</td>
+                                <td>Asymétrique</td>
+                                <td>Boiteux</td>
+                                <td>Take Five</td>
+                            </tr>
+                            <tr>
+                                <td>7/8</td>
+                                <td>Asymétrique</td>
+                                <td>Balkanique</td>
+                                <td>Musique bulgare</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="code-example" id="metricsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Métriques diverses
+# 3/4 - Valse
+p1 >> keys([0], dur=P[1,0.5,0.5], amp=P[1,0.5,0.5])
+
+# 5/4 - Asymétrique (3+2)
+p2 >> pluck([0,2,4,5,7], dur=P[0.6,0.6,0.6,0.4,0.4])
+
+# 7/8 - Balkanique (3+2+2)
+p3 >> play("x--x-x-", dur=0.875)
+
+# 6/8 - Composé
+p4 >> bass([0,0,0,5,5,5], dur=1/3)
+
+# Polymétrie 3 contre 4
+p5 >> pluck(0, dur=4/3)
+p6 >> play("x", dur=1)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Patterns Rythmiques du Monde</h3>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4>Clave Son (Cuba)</h4>
+                            <p>3-2 ou 2-3</p>
+                            <small>X..X..X...X.X...</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Tresillo</h4>
+                            <p>Pattern africain</p>
+                            <small>X..X..X.</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Bossa Nova</h4>
+                            <p>Brésil</p>
+                            <small>X.XX.XX.</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Shuffle</h4>
+                            <p>Jazz/Blues</p>
+                            <small>Triolets avec silence</small>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="worldRhythmsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Rythmes du monde
+# Clave son 3-2
+d1 >> play("x  x  x   x x   ", dur=0.25)
+
+# Tresillo (base de nombreux rythmes latins)
+d2 >> play("x  x  x ", dur=0.375)
+
+# Bossa nova
+d3 >> play("x xx xx ", dur=0.25)
+p1 >> keys([(0,4,7), (2,5,9)], dur=P[1.5,2.5])
+
+# Rythme euclidien africain
+d4 >> play("x", dur=PDur(5,8))
+
+# Shuffle (swing feel)
+Clock.bpm = 120
+p2 >> pluck([0,2,4,5], dur=P[0.67,0.33])</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Syncope et Contretemps</h3>
+                    
+                    <div class="info-box">
+                        <strong>Syncope :</strong> Accentuation d'un temps faible qui se prolonge sur un temps fort<br>
+                        <strong>Contretemps :</strong> Silence sur temps fort, note sur temps faible<br>
+                        <strong>Hémiole :</strong> Superposition de groupements binaires et ternaires
+                    </div>
+
+                    <div class="code-example" id="syncopationCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Syncopes et contretemps
+# Syncope simple
+p1 >> pluck([0,2,4], dur=[0.5,1,0.5])
+
+# Contretemps
+p2 >> pluck(P[None,0,None,2,None,4], dur=0.5)
+
+# Hémiole (3 contre 2)
+p3 >> pluck([0,4,7], dur=2/3)
+p4 >> bass([0,5], dur=1)
+
+# Décalage progressif (phasing)
+p5 >> pluck([0,2,4,5], dur=1)
+p6 >> pluck([0,2,4,5], dur=0.99)</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Maîtrise rythmique</h4>
+                    <p>1. Créez un pattern utilisant toutes les divisions (binaire, ternaire, etc.)</p>
+                    <p>2. Composez en 7/8 en groupant les temps différemment (3+4, 2+3+2, etc.)</p>
+                    <p>3. Superposez deux rythmes euclidiens différents</p>
+                    <p>4. Créez une polyrythmie complexe avec au moins 3 couches</p>
+                </div>
+            </div>
+
+            <!-- Section Contrepoint -->
+            <div class="section" id="counterpoint">
+                <h2>Contrepoint et Conduite des Voix</h2>
+
+                <div class="theory-card">
+                    <h3>Règles du Contrepoint Classique</h3>
+                    <p>Le contrepoint est l'art de superposer des lignes mélodiques indépendantes.</p>
+                    
+                    <div class="counterpoint-rules">
+                        <h4>Règles de base (Fux) :</h4>
+                        <div class="rule-item">Mouvement contraire préféré</div>
+                        <div class="rule-item">Éviter les quintes et octaves parallèles</div>
+                        <div class="rule-item">Résolution des dissonances par mouvement conjoint</div>
+                        <div class="rule-item">Indépendance rythmique des voix</div>
+                        <div class="rule-item">Climax unique par phrase</div>
+                    </div>
+
+                    <div class="code-example" id="counterpointCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Contrepoint à deux voix
+# Contrepoint note contre note (1:1)
+cantus = [0, 2, 4, 5, 4, 2, 0]
+counter = [7, 5, 7, 9, 7, 5, 7]
+p1 >> pluck(cantus, dur=1)
+p2 >> pluck(counter, dur=1, oct=5)
+
+# Contrepoint fleuri (valeurs variées)
+p3 >> pluck([0, 2, 1, 2, 4, 5, 4, 2, 0], dur=[1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 2])
+p4 >> bass([0, -3, -1, 0], dur=[2, 2, 2, 2])
+
+# Canon (imitation)
+melody = [0, 2, 4, 5, 7, 5, 4, 2]
+p5 >> pluck(melody, dur=0.5)
+p6 >> pluck(melody, dur=0.5, delay=2)  # Entrée décalée</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Types de Mouvement</h3>
+                    
+                    <div class="voicing-display">
+                        <h4>Mouvements mélodiques :</h4>
+                        <div class="voice-line">
+                            <span class="voice-label">Parallèle:</span>
+                            <div class="voice-note">Do→Ré</div>
+                            <div class="voice-note">Mi→Fa</div>
+                        </div>
+                        <div class="voice-line">
+                            <span class="voice-label">Contraire:</span>
+                            <div class="voice-note">Do→Ré</div>
+                            <div class="voice-note">Sol→Fa</div>
+                        </div>
+                        <div class="voice-line">
+                            <span class="voice-label">Oblique:</span>
+                            <div class="voice-note">Do→Do</div>
+                            <div class="voice-note">Mi→Sol</div>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="voiceMovementCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Mouvements de voix
+# Éviter les quintes parallèles
+# MAUVAIS:
+# p1 >> keys([(0,7), (2,9)])  # Do-Sol → Ré-La
+
+# BON: Mouvement contraire
+p1 >> keys([(0,7), (2,5)])  # Do-Sol → Ré-Fa
+
+# Voice leading optimal (proche)
+progression = [
+    (0, 4, 7),      # Do Mi Sol
+    (0, 3, 7),      # Do Mi♭ Sol (Mi descend)
+    (-1, 3, 5),     # Si Mi♭ Fa (Do descend, Sol descend)
+    (0, 4, 7)       # Do Mi Sol (retour)
+]
+p2 >> keys(progression, dur=2)</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Contrepoint Modal et Moderne</h3>
+                    
+                    <div class="info-box">
+                        <strong>Extensions modernes :</strong><br>
+                        • Quartes et quintes parallèles acceptées (Debussy)<br>
+                        • Polytonalité (plusieurs tonalités simultanées)<br>
+                        • Contrepoint rythmique (Steve Reich)<br>
+                        • Contrepoint timbral (Ligeti)
+                    </div>
+
+                    <div class="code-example" id="modernCounterpointCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Contrepoint moderne
+# Contrepoint minimaliste (phasing)
+pattern = [0, 2, 5, 2, 7, 2, 5, 2]
+p1 >> pluck(pattern, dur=0.25)
+p2 >> pluck(pattern, dur=0.24)  # Décalage progressif
+
+# Contrepoint polytonal
+Scale.default = "major"
+p3 >> keys(P[0, 2, 4, 5].every(4, "reverse"), dur=0.5)
+p4 >> keys(P[0, 2, 4, 5].every(4, "reverse") + 6, dur=0.5)  # En Fa#
+
+# Hétérophonie (même mélodie, variations)
+mel = [0, 2, 4, 5, 7]
+p5 >> pluck(mel, dur=0.5)
+p6 >> pluck(mel, dur=P[0.25, 0.75], oct=5)
+p7 >> pluck(mel.reverse(), dur=0.5, delay=0.25)</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Art du contrepoint</h4>
+                    <p>1. Écrivez un contrepoint à 2 voix respectant les règles classiques</p>
+                    <p>2. Créez un canon à 3 voix</p>
+                    <p>3. Composez un contrepoint moderne utilisant des techniques étendues</p>
+                    <p>4. Réalisez une fugue simple (exposition, développement, réexposition)</p>
+                </div>
+            </div>
+
+            <!-- Section Forme -->
+            <div class="section" id="form">
+                <h2>Formes Musicales et Structure</h2>
+
+                <div class="theory-card">
+                    <h3>Formes Binaires et Ternaires</h3>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4>Forme Binaire (AB)</h4>
+                            <p>A : Tonique → Dominante</p>
+                            <p>B : Dominante → Tonique</p>
+                            <small>Danses baroques</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Forme Ternaire (ABA)</h4>
+                            <p>Exposition - Contraste - Retour</p>
+                            <small>Aria da capo</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Rondo (ABACA)</h4>
+                            <p>Refrain alternant avec épisodes</p>
+                            <small>Final de sonate</small>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>Variations</h4>
+                            <p>Thème transformé</p>
+                            <small>Goldberg, Diabelli</small>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="formsCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Formes musicales
+# Forme ABA
+def section_a():
+    p1 >> pluck([0, 2, 4, 5, 7], dur=0.5)
+    p2 >> bass([0, 5], dur=2)
+
+def section_b():
+    p1 >> pluck([7, 5, 4, 2, 0], dur=0.25)
+    p2 >> bass([4, 2], dur=2)
+
+# Structure temporelle
+Clock.future(0, section_a)
+Clock.future(8, section_b)
+Clock.future(16, section_a)
+
+# Rondo ABACA
+sections = {
+    'A': lambda: p1 >> keys([0, 4, 7], dur=1),
+    'B': lambda: p1 >> keys([2, 5, 9], dur=1),
+    'C': lambda: p1 >> keys([5, 9, 0], dur=1)
+}
+
+for i, section in enumerate(['A','B','A','C','A']):
+    Clock.future(i*4, sections[section])</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Forme Sonate</h3>
+                    <p>Structure complexe en trois parties avec développement thématique.</p>
+                    
+                    <div class="chord-progression">
+                        <div class="chord-block">
+                            <div class="chord-roman">Exposition</div>
+                            <div class="chord-function">Thème A (I) - Pont - Thème B (V)</div>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">Développement</div>
+                            <div class="chord-function">Exploration harmonique</div>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">Réexposition</div>
+                            <div class="chord-function">Thème A (I) - Thème B (I)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Techniques de Développement</h3>
+                    
+                    <div class="info-box">
+                        <strong>Transformation thématique :</strong><br>
+                        • <strong>Augmentation :</strong> Doubler les valeurs rythmiques<br>
+                        • <strong>Diminution :</strong> Diviser les valeurs<br>
+                        • <strong>Inversion :</strong> Renverser les intervalles<br>
+                        • <strong>Rétrograde :</strong> Jouer à l'envers<br>
+                        • <strong>Fragmentation :</strong> Utiliser des portions
+                    </div>
+
+                    <div class="code-example" id="developmentCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Techniques de développement
+theme = P[0, 2, 4, 5, 7]
+
+# Original
+p1 >> pluck(theme, dur=0.5)
+
+# Augmentation
+p2 >> pluck(theme, dur=1)
+
+# Diminution
+p3 >> pluck(theme, dur=0.25)
+
+# Inversion
+p4 >> pluck(12 - theme, dur=0.5)
+
+# Rétrograde
+p5 >> pluck(theme.reverse(), dur=0.5)
+
+# Fragmentation et séquence
+fragment = theme[:3]
+p6 >> pluck(fragment + (fragment + 2) + (fragment + 4), dur=0.25)</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Construction formelle</h4>
+                    <p>1. Composez une pièce en forme ABA avec modulation dans B</p>
+                    <p>2. Créez un thème et 4 variations utilisant différentes techniques</p>
+                    <p>3. Esquissez une forme sonate miniature (2-3 minutes)</p>
+                </div>
+            </div>
+
+            <!-- Section Analyse -->
+            <div class="section" id="analysis">
+                <h2>Analyse Musicale Appliquée</h2>
+
+                <div class="theory-card">
+                    <h3>Analyse Harmonique</h3>
+                    <p>Méthodologie pour analyser et comprendre une œuvre.</p>
+                    
+                    <div class="analysis-grid">
+                        <div class="analysis-card">
+                            <h4>1. Identifier la tonalité</h4>
+                            <ul>
+                                <li>Armure</li>
+                                <li>Notes finales</li>
+                                <li>Accords principaux</li>
+                            </ul>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>2. Chiffrage des accords</h4>
+                            <ul>
+                                <li>Degrés romains</li>
+                                <li>Fonctions</li>
+                                <li>Inversions</li>
+                            </ul>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>3. Phrases et cadences</h4>
+                            <ul>
+                                <li>Découpage</li>
+                                <li>Points de repos</li>
+                                <li>Symétrie</li>
+                            </ul>
+                        </div>
+                        <div class="analysis-card">
+                            <h4>4. Forme globale</h4>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Reprises</li>
+                                <li>Développements</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Exemple d'Analyse : Pachelbel Canon</h3>
+                    
+                    <div class="code-example" id="analysisCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Analyse du Canon de Pachelbel
+# Basse obstinée (ground bass)
+bass_line = [0, -5, -3, -8, -6, -3, -6, -5]
+p1 >> bass(bass_line, dur=1, oct=3)
+
+# Progression harmonique dérivée
+chords = [
+    (0, 4, 7),      # I - Ré majeur
+    (9, 0, 4),      # V - La majeur  
+    (11, 2, 6),     # vi - Si mineur
+    (6, 9, 2),      # iii - Fa# mineur
+    (8, 0, 3),      # IV - Sol majeur
+    (0, 4, 7),      # I - Ré majeur
+    (8, 0, 3),      # IV - Sol majeur
+    (9, 0, 4)       # V - La majeur
+]
+p2 >> keys(chords, dur=1)
+
+# Mélodie en canon (3 voix)
+melody = [14, 12, 11, 9, 7, 5, 7, 9]
+p3 >> pluck(melody, dur=1, oct=5)
+p4 >> pluck(melody, dur=1, oct=5, delay=2)
+p5 >> pluck(melody, dur=1, oct=6, delay=4)
+
+# Analyse: I-V-vi-iii-IV-I-IV-V
+# Mouvement par quintes descendantes
+# 8 mesures, forme cyclique</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Analyse Rythmique et Métrique</h3>
+                    
+                    <div class="info-box">
+                        <strong>Éléments à analyser :</strong><br>
+                        • Métrique de base et changements<br>
+                        • Patterns récurrents<br>
+                        • Syncopes et accentuations<br>
+                        • Rapport mélodie/accompagnement<br>
+                        • Micro-timing et groove
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Application au Live Coding</h3>
+                    
+                    <div class="code-example" id="livecodingAnalysisCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># FoxDot - Recréer une structure analysée
+# Après analyse d'un morceau pop typique
+
+# Structure: Intro(4) - Verse(8) - Chorus(8) - Verse(8) - Chorus(8) - Bridge(4) - Chorus(8)
+
+def intro():
+    d1 >> play("x-o-", dur=0.5)
+    p1 >> pluck(P[0,7].palindrome(), dur=0.5, amp=0.5)
+
+def verse():
+    p1 >> pluck([0,2,4,2], dur=0.5)
+    p2 >> bass([0,0,5,5], dur=1)
+    d1 >> play("x-o-", dur=0.5)
+
+def chorus():
+    p1 >> keys([(0,4,7), (5,9,0), (9,0,4), (3,7,10)], dur=1)
+    p2 >> bass([0,5,9,3], dur=1)
+    d1 >> play("x-o-x-oo", dur=0.25)
+
+def bridge():
+    p1 >> pluck(P[7,5,4,2,0].stutter(2), dur=0.25)
+    p2.stop()
+    d1 >> play("xxxx", dur=0.25)
+
+# Timeline automatisée
+timeline = [
+    (0, intro),
+    (4, verse),
+    (12, chorus),
+    (20, verse),
+    (28, chorus),
+    (36, bridge),
+    (40, chorus)
+]
+
+for beat, section in timeline:
+    Clock.future(beat, section)</pre>
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Projet Final : Analyse et Recomposition</h4>
+                    <p>1. Choisissez une œuvre classique ou moderne</p>
+                    <p>2. Analysez sa structure harmonique, mélodique et rythmique</p>
+                    <p>3. Identifiez les techniques de composition utilisées</p>
+                    <p>4. Recréez l'œuvre en live coding en ajoutant votre touche personnelle</p>
+                    <p>5. Documentez votre processus d'analyse et les choix créatifs</p>
+                </div>
+            </div>
+
+            <!-- Section Morceaux Connus -->
+            <div class="section" id="songs">
+                <h2>Analyse de Morceaux Populaires</h2>
+
+                <div class="theory-card">
+                    <h3>Let It Be - The Beatles</h3>
+                    <p>Un exemple parfait de progression I-V-vi-IV, l'une des plus utilisées dans la pop.</p>
+                    
+                    <div class="chord-progression">
+                        <div class="chord-block">
+                            <div class="chord-roman">I</div>
+                            <div class="chord-function">Do majeur</div>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">V</div>
+                            <div class="chord-function">Sol majeur</div>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">vi</div>
+                            <div class="chord-function">La mineur</div>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">IV</div>
+                            <div class="chord-function">Fa majeur</div>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="letItBeCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Let It Be
+use_bpm 72
+use_synth :piano
+
+# Progression d'accords
+chords = [
+  chord(:C4, :major),
+  chord(:G4, :major),
+  chord(:A3, :minor),
+  chord(:F4, :major)
+]
+
+# Partie piano
+live_loop :piano do
+  chords.each do |c|
+    play c, release: 2, amp: 0.8
+    sleep 2
+  end
+end
+
+# Mélodie vocale simplifiée
+live_loop :melody do
+  use_synth :sine
+  notes = [:G4, :G4, :A4, :G4, :F4, :E4, :E4, :C4]
+  durations = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1, 1]
+  
+  notes.zip(durations).each do |note, dur|
+    play note, release: dur * 0.9, amp: 0.6
+    sleep dur
+  end
+end
+
+# Ligne de basse
+live_loop :bass do
+  use_synth :fm
+  play :C2, release: 2, amp: 0.5
+  sleep 2
+  play :G2, release: 2, amp: 0.5
+  sleep 2
+  play :A2, release: 2, amp: 0.5
+  sleep 2
+  play :F2, release: 2, amp: 0.5
+  sleep 2
+end</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Points clés :</strong><br>
+                        • Progression utilisée dans des centaines de chansons<br>
+                        • Mouvement par quintes descendantes (Do→Sol, La→Fa)<br>
+                        • Alternance majeur/mineur crée de l'émotion<br>
+                        • Structure simple mais efficace
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Creep - Radiohead</h3>
+                    <p>Utilise une progression inhabituelle avec des accords empruntés qui créent une tension unique.</p>
+                    
+                    <div class="formula-box">
+                        <strong>Progression :</strong> G - B - C - Cm<br>
+                        <strong>Analyse :</strong> I - III - IV - iv<br>
+                        Le III majeur est emprunté au mode lydien, le iv mineur crée une couleur mélancolique
+                    </div>
+
+                    <div class="code-example" id="creepCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Creep (Radiohead)
+use_bpm 92
+
+# Progression unique avec accord emprunté
+define :play_creep_progression do
+  use_synth :pluck
+  
+  # G majeur
+  play_chord chord(:G3, :major), release: 1
+  sleep 1
+  
+  # B majeur (accord emprunté - normalement Bm en Sol majeur)
+  play_chord chord(:B3, :major), release: 1
+  sleep 1
+  
+  # C majeur
+  play_chord chord(:C4, :major), release: 1
+  sleep 1
+  
+  # Cm (accord emprunté - iv mineur)
+  play_chord chord(:C4, :minor), release: 1
+  sleep 1
+end
+
+# Pattern arpégé caractéristique
+live_loop :arpeggio do
+  use_synth :electric_guitar_clean
+  4.times do
+    play_creep_progression
+  end
+end
+
+# Ligne de basse
+live_loop :bass_line do
+  use_synth :bass_foundation
+  notes = [:G2, :B2, :C3, :C3]
+  notes.each do |n|
+    play n, release: 0.9, amp: 0.7
+    sleep 1
+  end
+end
+
+# Effet de distorsion sur le refrain
+live_loop :power_chords do
+  sync :arpeggio
+  sleep 16  # Attendre 4 mesures
+  
+  with_fx :distortion, distort: 0.7 do
+    use_synth :saw
+    play_chord chord(:G3, :major), release: 4, amp: 0.3
+    sleep 4
+  end
+end</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Hallelujah - Leonard Cohen</h3>
+                    <p>Exemple de progression sophistiquée utilisant des accords de passage et des dominantes secondaires.</p>
+                    
+                    <div class="chord-progression">
+                        <div class="chord-block">
+                            <div class="chord-roman">I</div>
+                            <small>C</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">vi</div>
+                            <small>Am</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">I</div>
+                            <small>C</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">vi</div>
+                            <small>Am</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">IV</div>
+                            <small>F</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">V</div>
+                            <small>G</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">I</div>
+                            <small>C</small>
+                        </div>
+                        <div class="chord-block">
+                            <div class="chord-roman">V/V</div>
+                            <small>G/B</small>
+                        </div>
+                    </div>
+
+                    <div class="code-example" id="hallelujahCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Hallelujah
+use_bpm 63
+
+# Pattern d'arpège en 6/8
+define :arpeggio_pattern do |root, type|
+  use_synth :kalimba
+  notes = chord(root, type)
+  
+  # Pattern caractéristique en 6/8
+  play notes[0], release: 0.3, amp: 0.7
+  sleep 0.25
+  play notes[1], release: 0.3, amp: 0.5
+  sleep 0.25
+  play notes[2], release: 0.3, amp: 0.5
+  sleep 0.25
+  
+  play notes[0], release: 0.3, amp: 0.6
+  sleep 0.25
+  play notes[1], release: 0.3, amp: 0.5
+  sleep 0.25
+  play notes[2], release: 0.3, amp: 0.5
+  sleep 0.25
+end
+
+# Progression principale
+live_loop :main_progression do
+  # "I heard there was a secret chord"
+  arpeggio_pattern(:C4, :major)    # I
+  arpeggio_pattern(:A3, :minor)    # vi
+  arpeggio_pattern(:C4, :major)    # I
+  arpeggio_pattern(:A3, :minor)    # vi
+  
+  # "That David played and it pleased the Lord"
+  arpeggio_pattern(:F4, :major)    # IV
+  arpeggio_pattern(:G4, :major)    # V
+  arpeggio_pattern(:C4, :major)    # I
+  arpeggio_pattern(:G4, :major)    # V
+  
+  # "It goes like this: the fourth, the fifth"
+  arpeggio_pattern(:F4, :major)    # IV
+  arpeggio_pattern(:G4, :major)    # V
+  arpeggio_pattern(:A3, :minor)    # vi
+  arpeggio_pattern(:F4, :major)    # IV
+  
+  # "The minor fall and the major lift"
+  arpeggio_pattern(:G4, :major)    # V
+  arpeggio_pattern(:E3, :minor)    # iii
+  arpeggio_pattern(:A3, :minor)    # vi
+  arpeggio_pattern(:F4, :major)    # IV
+end
+
+# Mélodie vocale (refrain)
+live_loop :chorus do
+  sync :main_progression
+  sleep 12  # Attendre le bon moment
+  
+  use_synth :sine
+  # "Hal-le-lu-jah"
+  4.times do
+    play :C5, release: 0.5, amp: 0.4
+    sleep 0.5
+    play :A4, release: 0.5, amp: 0.4
+    sleep 0.5
+    play :C5, release: 0.5, amp: 0.4
+    sleep 0.5
+    play :A4, release: 1.5, amp: 0.4
+    sleep 1.5
+  end
+end</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Analyse théorique :</strong><br>
+                        • Utilise le mode 6/8 pour un feeling de valse<br>
+                        • Les paroles décrivent littéralement la progression ("the fourth, the fifth")<br>
+                        • Mélange de simplicité harmonique et de sophistication mélodique<br>
+                        • L'accord de Mi mineur (iii) est rare et crée une couleur particulière
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Billie Jean - Michael Jackson</h3>
+                    <p>Un groove minimaliste construit sur seulement deux accords, démontrant le pouvoir du rythme.</p>
+                    
+                    <div class="code-example" id="billieJeanCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Billie Jean
+use_bpm 117
+
+# Le célèbre pattern de basse
+live_loop :bass_line do
+  use_synth :bass_foundation
+  
+  # Pattern en F#m - C#m
+  2.times do
+    play :Fs2, release: 0.2, amp: 1
+    sleep 0.5
+    play :Fs2, release: 0.2, amp: 1
+    sleep 0.5
+    play :Fs3, release: 0.2, amp: 0.8
+    sleep 0.5
+    play :Fs2, release: 0.2, amp: 1
+    sleep 0.5
+  end
+  
+  2.times do
+    play :Cs2, release: 0.2, amp: 1
+    sleep 0.5
+    play :Cs2, release: 0.2, amp: 1
+    sleep 0.5
+    play :Cs3, release: 0.2, amp: 0.8
+    sleep 0.5
+    play :Cs2, release: 0.2, amp: 1
+    sleep 0.5
+  end
+end
+
+# Pattern de batterie iconique
+live_loop :drums do
+  sample :bd_haus, amp: 1.5
+  sleep 0.5
+  sample :drum_cymbal_closed, amp: 0.5
+  sleep 0.5
+  sample :sn_dolf, amp: 1
+  sleep 0.5
+  sample :drum_cymbal_closed, amp: 0.5
+  sleep 0.5
+end
+
+# Accords synthé (strings)
+live_loop :chords do
+  use_synth :prophet
+  
+  # F#m
+  play_chord chord(:Fs3, :minor), release: 3.5, amp: 0.3
+  sleep 4
+  
+  # C#m
+  play_chord chord(:Cs3, :minor), release: 3.5, amp: 0.3
+  sleep 4
+end
+
+# Hi-hat pattern caractéristique
+live_loop :hihat do
+  use_synth :noise
+  16.times do
+    play 80, release: 0.05, amp: 0.2 if spread(7,16).tick
+    sleep 0.125
+  end
+end</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Points d'analyse :</strong><br>
+                        • Seulement 2 accords (i - v en Fa# mineur)<br>
+                        • Le groove et le rythme sont plus importants que l'harmonie<br>
+                        • La ligne de basse est le véritable hook du morceau<br>
+                        • Exemple parfait du "moins c'est plus" en composition
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Autumn Leaves - Standard de Jazz</h3>
+                    <p>Un standard qui démontre le cycle des quintes et la modulation relative majeur/mineur.</p>
+                    
+                    <div class="code-example" id="autumnLeavesCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Autumn Leaves
+use_bpm 120
+
+# Progression ii-V-I en Sol majeur puis en Mi mineur
+define :jazz_voicing do |root, quality|
+  # Voicings jazz typiques (sans fondamentale pour le bassiste)
+  case quality
+  when :maj7
+    [root+3, root+7, root+11, root+14]  # 3, 7, 9, 11
+  when :m7
+    [root+3, root+7, root+10, root+14]  # b3, b7, 9, 11
+  when :dom7
+    [root+4, root+7, root+10, root+13]  # 3, b7, 9, 13
+  when :m7b5
+    [root+3, root+6, root+10, root+15]  # b3, b5, b7, 9
+  end
+end
+
+live_loop :autumn_changes do
+  use_synth :electric_piano
+  
+  # Cm7 (ii en Bb)
+  play_chord jazz_voicing(60, :m7), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # F7 (V en Bb)
+  play_chord jazz_voicing(65, :dom7), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # BbM7 (I en Bb)
+  play_chord jazz_voicing(58, :maj7), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # EbM7 (IV en Bb)
+  play_chord jazz_voicing(63, :maj7), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # Am7b5 (ii en Gm)
+  play_chord jazz_voicing(57, :m7b5), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # D7 (V en Gm)
+  play_chord jazz_voicing(62, :dom7), release: 1.8, amp: 0.7
+  sleep 2
+  
+  # Gm (i en Gm)
+  play_chord chord(:G3, :minor), release: 3.8, amp: 0.7
+  sleep 4
+end
+
+# Walking bass
+live_loop :walking_bass do
+  use_synth :upright_bass
+  
+  # Pattern de walking bass sur les changements
+  notes = [:C2, :E2, :F2, :A2,    # Cm7 - F7
+           :Bb2, :D3, :Eb3, :G2,   # BbM7 - EbM7
+           :A2, :C3, :D3, :Fs2,    # Am7b5 - D7
+           :G2, :Bb2, :D3, :G2]    # Gm
+  
+  notes.each do |n|
+    play n, release: 0.4, amp: 0.8
+    sleep 0.5
+  end
+end
+
+# Mélodie (thème simplifié)
+live_loop :melody do
+  sync :autumn_changes
+  use_synth :soprano_sax
+  
+  # Phrase mélodique caractéristique
+  play :C5, release: 0.8, amp: 0.5
+  sleep 1
+  play :D5, release: 0.8, amp: 0.5
+  sleep 1
+  play :Eb5, release: 0.8, amp: 0.5
+  sleep 1
+  play :F5, release: 2.8, amp: 0.5
+  sleep 3
+  
+  play :Eb5, release: 0.8, amp: 0.5
+  sleep 1
+  play :F5, release: 0.8, amp: 0.5
+  sleep 1
+  play :G5, release: 3.8, amp: 0.5
+  sleep 4
+end</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Concepts jazz illustrés :</strong><br>
+                        • Progression ii-V-I (base du jazz)<br>
+                        • Modulation entre relatifs (Si♭ majeur ↔ Sol mineur)<br>
+                        • Voicings sophistiqués avec extensions<br>
+                        • Walking bass créant du mouvement<br>
+                        • Utilisation du cycle des quintes
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Sweet Child O' Mine - Guns N' Roses</h3>
+                    <p>Le riff d'intro démontre comment une simple gamme pentatonique peut créer une mélodie mémorable.</p>
+                    
+                    <div class="code-example" id="sweetChildCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Sweet Child O' Mine (Intro)
+use_bpm 125
+
+# Le célèbre riff d'intro
+define :intro_riff do
+  use_synth :distorted_guitar
+  use_synth_defaults amp: 0.3, release: 0.3
+  
+  # Pattern ascendant/descendant en Ré majeur
+  notes = [:D4, :D5, :A4, :G4, :G5, :A4, :Fs5, :A4]
+  
+  2.times do
+    notes.each do |n|
+      play n
+      sleep 0.25
+    end
+  end
+  
+  # Variation
+  notes2 = [:E4, :D5, :A4, :G4, :G5, :A4, :Fs5, :A4]
+  notes2.each do |n|
+    play n
+    sleep 0.25
+  end
+  
+  notes.each do |n|
+    play n
+    sleep 0.25
+  end
+end
+
+# Accords de la progression (couplet)
+live_loop :rhythm_guitar do
+  use_synth :fm
+  use_synth_defaults amp: 0.4, release: 1
+  
+  # D - C - G - D
+  play_chord chord(:D3, :major)
+  sleep 2
+  play_chord chord(:C3, :major)
+  sleep 2
+  play_chord chord(:G3, :major)
+  sleep 2
+  play_chord chord(:D3, :major)
+  sleep 2
+end
+
+# Basse
+live_loop :bass do
+  use_synth :bass_highend
+  
+  play :D2, release: 1.8, amp: 0.8
+  sleep 2
+  play :C2, release: 1.8, amp: 0.8
+  sleep 2
+  play :G2, release: 1.8, amp: 0.8
+  sleep 2
+  play :D2, release: 1.8, amp: 0.8
+  sleep 2
+end
+
+# Jouer le riff
+live_loop :lead_guitar do
+  intro_riff
+  sleep 8  # Pause avant de répéter
+end</pre>
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <h3>Clocks - Coldplay</h3>
+                    <p>Utilisation d'arpèges en croches pour créer une texture hypnotique sur une progression simple.</p>
+                    
+                    <div class="code-example" id="clocksCode">
+                        <button class="copy-btn" onclick="copyCode(this)">Copier</button>
+                        <pre># Sonic Pi - Clocks
+use_bpm 131
+
+# Pattern d'arpège caractéristique du piano
+live_loop :piano_arpeggio do
+  use_synth :piano
+  
+  # Eb - Bbm - Fm
+  3.times do
+    # Eb majeur
+    play :Eb4, release: 0.3, amp: 0.8
+    sleep 0.25
+    play :Bb4, release: 0.3, amp: 0.6
+    sleep 0.25
+    play :G4, release: 0.3, amp: 0.7
+    sleep 0.25
+    play :Bb4, release: 0.3, amp: 0.6
+    sleep 0.25
+  end
+  
+  # Bbm
+  play :Bb3, release: 0.3, amp: 0.8
+  sleep 0.25
+  play :F4, release: 0.3, amp: 0.6
+  sleep 0.25
+  play :Db4, release: 0.3, amp: 0.7
+  sleep 0.25
+  play :F4, release: 0.3, amp: 0.6
+  sleep 0.25
+  
+  # Fm
+  2.times do
+    play :F3, release: 0.3, amp: 0.8
+    sleep 0.25
+    play :C4, release: 0.3, amp: 0.6
+    sleep 0.25
+    play :Ab3, release: 0.3, amp: 0.7
+    sleep 0.25
+    play :C4, release: 0.3, amp: 0.6
+    sleep 0.25
+  end
+end
+
+# Basse synth
+live_loop :bass_synth do
+  use_synth :prophet
+  
+  play :Eb2, release: 3, amp: 0.5, cutoff: 80
+  sleep 3
+  play :Bb2, release: 1, amp: 0.5, cutoff: 80
+  sleep 1
+  play :F2, release: 2, amp: 0.5, cutoff: 80
+  sleep 2
+end
+
+# Pattern de batterie
+live_loop :drums do
+  sample :bd_tek, amp: 1
+  sleep 0.5
+  sample :drum_cymbal_closed, amp: 0.3
+  sleep 0.5
+  sample :sn_dolf, amp: 0.8
+  sleep 0.5
+  sample :drum_cymbal_closed, amp: 0.3
+  sleep 0.5
+end
+
+# Pad atmosphérique
+live_loop :atmosphere do
+  use_synth :hollow
+  play_chord chord(:Eb3, :major), release: 6, amp: 0.2
+  sleep 6
+end</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Éléments clés :</strong><br>
+                        • Progression I-v-ii en Mi♭ majeur<br>
+                        • Pattern d'arpège créant une pulsation constante<br>
+                        • Utilisation de la répétition pour l'hypnose<br>
+                        • Contraste entre mouvement (arpèges) et statisme (accords tenus)
+                    </div>
+                </div>
+
+                <div class="exercise-box">
+                    <h4>📝 Exercice : Analyse et Reconstruction</h4>
+                    <p>1. Choisissez une chanson que vous aimez</p>
+                    <p>2. Identifiez sa progression d'accords (utilisez votre oreille ou recherchez)</p>
+                    <p>3. Analysez la structure : intro, couplet, refrain, pont</p>
+                    <p>4. Recréez-la en live coding en ajoutant votre touche personnelle</p>
+                    <p>5. Expérimentez : changez le tempo, la tonalité, ou le style !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // État global
+        let currentLang = 'fr';
+        let currentPlatform = 'foxdot';
+        let audioContext;
+        let currentScale = 'major';
+        let currentMode = 'ionian';
+
+        // Notes et fréquences
+        const notesFR = ['Do', 'Do#', 'Ré', 'Ré#', 'Mi', 'Fa', 'Fa#', 'Sol', 'Sol#', 'La', 'La#', 'Si'];
+        const notesEN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const baseFrequencies = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88];
+
+        // Définitions des gammes et modes
+        const scales = {
+            major: [0, 2, 4, 5, 7, 9, 11],
+            minor: [0, 2, 3, 5, 7, 8, 10],
+            harmonic: [0, 2, 3, 5, 7, 8, 11],
+            melodic: [0, 2, 3, 5, 7, 9, 11],
+            pentatonic: [0, 2, 4, 7, 9],
+            blues: [0, 3, 5, 6, 7, 10],
+            chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        };
+
+        const modes = {
+            ionian: [0, 2, 4, 5, 7, 9, 11],
+            dorian: [0, 2, 3, 5, 7, 9, 10],
+            phrygian: [0, 1, 3, 5, 7, 8, 10],
+            lydian: [0, 2, 4, 6, 7, 9, 11],
+            mixolydian: [0, 2, 4, 5, 7, 9, 10],
+            aeolian: [0, 2, 3, 5, 7, 8, 10],
+            locrian: [0, 1, 3, 5, 6, 8, 10]
+        };
+
+        // Code examples pour différentes plateformes
+        const codeExamples = {
+            physics: {
+                foxdot: `# FoxDot - Physique du son
+# Fréquence fondamentale et harmoniques
+freq = 440  # La 440 Hz
+p1 >> sine(freq, amp=0.5)
+p2 >> sine(freq*2, amp=0.25)  # Octave
+p3 >> sine(freq*3, amp=0.17)  # Quinte
+p4 >> sine(freq*4, amp=0.12)  # 2e octave
+
+# Battements entre fréquences proches
+p5 >> sine([440, 441], amp=0.3)  # 1 Hz de battement`,
+                sonicpi: `# Sonic Pi - Physique du son
+# Démonstration des harmoniques
+live_loop :harmonics do
+  fundamental = 220  # La2
+  use_synth :sine
+  
+  # Jouer la série harmonique
+  (1..8).each do |h|
+    play hz_to_midi(fundamental * h), 
+         amp: 0.5 / h,
+         sustain: 2,
+         release: 0.5
+  end
+  sleep 3
+end
+
+# Battements acoustiques
+live_loop :beats do
+  use_synth :sine
+  play hz_to_midi(440), sustain: 4, amp: 0.5
+  play hz_to_midi(444), sustain: 4, amp: 0.5  # 4 battements/sec
+  sleep 5
+end`,
+                supercollider: `// SuperCollider - Physique du son
+// Synthèse additive d'harmoniques
+(
+{
+    var fund = 220;
+    var harmonics = (1..16);
+    var amps = 1 / harmonics;
+    Mix(SinOsc.ar(fund * harmonics, 0, amps * 0.1))
+}.play
+)`
+            },
+            temperament: {
+                foxdot: `# FoxDot - Explorer le tempérament
+# Jouer tous les demi-tons d'une octave
+p1 >> pluck(range(12), dur=0.5)
+
+# Comparer tempérament égal vs. juste intonation
+# Tierce majeure tempérée (400 cents) vs. pure (386 cents)
+p2 >> sine([0, 4], dur=4)  # Tempéré
+p3 >> sine([0, 0+4.86], dur=4)  # Juste (5/4)`,
+                sonicpi: `# Sonic Pi - Explorer le tempérament
+# Jouer tous les demi-tons
+play_pattern_timed (60..71), 0.5
+
+# Comparer tempérament égal vs. juste intonation
+live_loop :temperament do
+  play 60  # Do
+  play 64  # Mi tempéré
+  sleep 2
+  play 60
+  play hz_to_midi(261.63 * 5/4)  # Mi juste
+  sleep 2
+end
+
+# Série harmonique
+use_synth :sine
+fundamental = 60
+8.times do |i|
+  play hz_to_midi(midi_to_hz(fundamental) * (i+1)), amp: 0.3/(i+1)
+end
+sleep 4`,
+                supercollider: `// SuperCollider - Explorer le tempérament
+// Chromatic scale
+(
+Pbind(
+    \\midinote, Pseq((60..71), 1),
+    \\dur, 0.5
+).play
+)
+
+// Just vs equal temperament
+{SinOsc.ar([261.63, 261.63 * 5/4])}.play  // Just
+{SinOsc.ar([261.63, 261.63 * 2.pow(4/12)])}.play  // Equal`
+            },
+            interval: {
+                foxdot: `# FoxDot - Explorer les intervalles
+# Jouer tous les intervalles depuis Do
+root = 0
+p1 >> pluck([[root, root+i] for i in range(13)], dur=1)
+
+# Consonance vs Dissonance
+# Intervalles consonants
+p2 >> keys([(0,4), (0,7), (0,12)], dur=2)  # Tierce maj, Quinte, Octave
+
+# Intervalles dissonants
+p3 >> keys([(0,1), (0,6), (0,11)], dur=2)  # m2, Triton, M7
+
+# Résolution des dissonances
+p4 >> keys([(0,11), (0,12)], dur=[1,3])  # 7M → Octave`,
+                sonicpi: `# Sonic Pi - Explorer les intervalles
+# Tous les intervalles depuis Do
+live_loop :intervals do
+  13.times do |i|
+    play_chord [:c4, note(:c4) + i]
+    sleep 1
+  end
+end
+
+# Consonance vs Dissonance avec analyse
+define :analyze_interval do |interval|
+  case interval
+  when 0 then "Unisson - Parfait"
+  when 7 then "Quinte - Parfait"
+  when 4 then "Tierce majeure - Consonant"
+  when 3 then "Tierce mineure - Consonant"
+  when 1, 11 then "Dissonant fort"
+  when 6 then "Triton - Le diable!"
+  else "Intervalle"
+  end
+end
+
+# Démonstration interactive
+live_loop :demo_intervals do
+  interval = [0, 3, 4, 5, 7, 6, 11].choose
+  puts analyze_interval(interval)
+  play_chord [:c4, note(:c4) + interval]
+  sleep 2
+end`,
+                supercollider: `// SuperCollider - Intervalles
+// Explorer tous les intervalles
+(
+Pbind(
+    \\midinote, Pseq([[60, 60 + i] | i <- (0..12)].flat, 1),
+    \\dur, 1
+).play
+)`
+            },
+            inversion: {
+                foxdot: `# FoxDot - Renversements d'intervalles
+# Tierce majeure (4 demi-tons) → Sixte mineure (8 demi-tons)
+p1 >> pluck([(0,4), (4,12)], dur=2)
+
+# Quinte juste (7) → Quarte juste (5)
+p2 >> pluck([(0,7), (7,12)], dur=2)
+
+# Démonstration avec mouvement contraire
+melody = [0, 2, 4, 5, 7]
+p3 >> pluck(melody, dur=0.5)
+p4 >> pluck([12-n for n in melody], dur=0.5)  # Inversion`,
+                sonicpi: `# Sonic Pi - Renversements d'intervalles
+# Visualiser les renversements
+define :show_inversion do |interval|
+  inverse = 12 - interval
+  puts "Intervalle: #{interval} demi-tons"
+  puts "Renversement: #{inverse} demi-tons"
+  
+  # Jouer l'intervalle original
+  play :c4
+  play note(:c4) + interval
+  sleep 1
+  
+  # Jouer le renversement
+  play note(:c4) + interval
+  play note(:c4) + interval + inverse
+  sleep 1
+end
+
+# Démontrer tous les renversements
+live_loop :inversions do
+  [3, 4, 5, 7, 8, 9].each do |i|
+    show_inversion(i)
+    sleep 0.5
+  end
+end`,
+                supercollider: `// SuperCollider - Renversements
+(
+var intervals = [3, 4, 5, 7, 8, 9];
+Pbind(
+    \\midinote, Pseq([
+        [60, 60 + intervals],
+        [60 + intervals, 72]
+    ].flop.flat, 1),
+    \\dur, 1
+).play
+)`
+            },
+            scales: {
+                foxdot: `# FoxDot - Gammes fondamentales
+# Gamme majeure
+Scale.default = "major"
+p1 >> pluck(P[:8], dur=0.5)
+
+# Comparaison des mineures
+p2 >> pluck([0,2,3,5,7,8,10,12], dur=0.5)  # Naturelle
+p3 >> pluck([0,2,3,5,7,8,11,12], dur=0.5)  # Harmonique
+p4 >> pluck([0,2,3,5,7,9,11,12], dur=0.5)  # Mélodique
+
+# Gammes exotiques
+Scale.default = "phrygian"  # Mode phrygien (flamenco)
+p5 >> pluck(P[:8].mirror(), dur=0.25)`,
+                sonicpi: `# Sonic Pi - Gammes fondamentales
+# Comparaison visuelle et sonore des gammes
+define :play_scale do |name, notes|
+  puts "Gamme: #{name}"
+  play_pattern_timed notes.map{|n| 60 + n}, 0.5
+  sleep 1
+end
+
+live_loop :scales_demo do
+  play_scale("Majeure", [0, 2, 4, 5, 7, 9, 11, 12])
+  play_scale("Mineure naturelle", [0, 2, 3, 5, 7, 8, 10, 12])
+  play_scale("Mineure harmonique", [0, 2, 3, 5, 7, 8, 11, 12])
+  play_scale("Mineure mélodique", [0, 2, 3, 5, 7, 9, 11, 12])
+  
+  # Gammes exotiques avec exemples culturels
+  use_synth :kalimba
+  play_scale("Pentatonique japonaise", [0, 2, 3, 7, 8])
+  
+  use_synth :pluck
+  play_scale("Hijaz arabe", [0, 1, 4, 5, 7, 8, 11])
+  
+  sleep 2
+end`,
+                supercollider: `// SuperCollider - Gammes
+(
+Pbind(
+    \\scale, Scale.major,
+    \\degree, Pseq((0..7), inf),
+    \\dur, 0.5
+).play
+)`
+            },
+            modes: {
+                foxdot: `# FoxDot - Explorer les modes
+# Jouer tous les modes depuis la même fondamentale
+modes = ["ionian", "dorian", "phrygian", "lydian", 
+         "mixolydian", "aeolian", "locrian"]
+
+for i, mode in enumerate(modes):
+    Scale.default = mode
+    Clock.future(i*4, lambda m=mode: p1 >> pluck(P[:8], dur=0.5))
+    
+# Progression modale en Dorien
+Scale.default = "dorian"
+p2 >> keys([P(0,2,4), P(1,3,5), P(6,1,3), P(0,2,4)], dur=2)`,
+                sonicpi: `# Sonic Pi - Explorer les modes avec caractère
+# Démonstration interactive des modes
+modes = {
+  ionian: {notes: scale(:c4, :ionian), character: "Joyeux, brillant"},
+  dorian: {notes: scale(:c4, :dorian), character: "Jazz, mélancolique cool"},
+  phrygian: {notes: scale(:c4, :phrygian), character: "Espagnol, mystérieux"},
+  lydian: {notes: scale(:c4, :lydian), character: "Rêveur, éthéré"},
+  mixolydian: {notes: scale(:c4, :mixolydian), character: "Blues, rock"},
+  aeolian: {notes: scale(:c4, :aeolian), character: "Triste, mineur naturel"},
+  locrian: {notes: scale(:c4, :locrian), character: "Instable, tendu"}
+}
+
+live_loop :mode_exploration do
+  modes.each do |name, info|
+    puts "Mode #{name}: #{info[:character]}"
+    
+    # Jouer le mode montant et descendant
+    play_pattern_timed info[:notes], 0.25
+    play_pattern_timed info[:notes].reverse, 0.25
+    
+    # Accord caractéristique du mode
+    play_chord info[:notes].take(5).select.with_index{|n,i| i.even?}
+    sleep 2
+  end
+end`,
+                supercollider: `// SuperCollider - Modes
+(
+var modes = [\ionian, \dorian, \phrygian, \lydian, \mixolydian, \aeolian, \locrian];
+Pbind(
+    \\scale, Pseq([Scale.perform(m) | m <- modes], inf),
+    \\degree, Pseq((0..7), inf),
+    \\dur, 0.25
+).play
+)`
+            },
+            pentatonic: {
+                foxdot: `# FoxDot - Gammes pentatoniques et blues
+# Pentatonique majeure - parfaite pour l'improvisation
+Scale.default = Scale.major.pentatonic
+p1 >> pluck(PRand(0,5)[:16], dur=0.25)
+
+# Blues avec bending de la blue note
+p2 >> pluck([0, 3, 5, 6, 7, 10], dur=0.5, bend=P[0,0,0,0.25,0,0])
+
+# Riff de blues classique
+p3 >> bass([0, 0, 3, 0, 5, 3, 0, 0], dur=0.5, lpf=800)`,
+                sonicpi: `# Sonic Pi - Pentatoniques et Blues
+# Exploration des pentatoniques du monde
+live_loop :world_pentatonics do
+  # Pentatonique majeure occidentale
+  use_synth :piano
+  play_pattern_timed scale(:c4, :major_pentatonic), 0.25
+  sleep 0.5
+  
+  # Pentatonique mineure blues avec blue note
+  use_synth :fm
+  blues_scale = scale(:c4, :minor_pentatonic).to_a
+  blues_scale.insert(3, note(:c4) + 6)  # Ajouter blue note
+  play_pattern_timed blues_scale, 0.25
+  sleep 0.5
+  
+  # Pentatonique japonaise (Hirajoshi)
+  use_synth :kalimba
+  play_pattern_timed [:c4, :d4, :eb4, :g4, :ab4, :c5], 0.25
+  sleep 0.5
+  
+  # Improvisation blues
+  use_synth :electric_guitar_clean
+  16.times do
+    note = scale(:c4, :blues_minor).choose
+    play note, amp: rrand(0.5, 0.8), release: 0.2
+    sleep [0.125, 0.25, 0.25].choose
+  end
+end`,
+                supercollider: `// SuperCollider - Pentatoniques
+(
+Pbind(
+    \\scale, Scale.minorPentatonic,
+    \\degree, Prand((0..4), inf),
+    \\dur, 0.25
+).play
+)`
+            },
+            extensions: {
+                foxdot: `# FoxDot - Extensions d'accords
+# Progression jazz avec extensions
+p1 >> keys([
+    (0, 4, 7, 11),      # CM7
+    (2, 5, 9, 0),       # Dm7
+    (4, 7, 11, 2),      # Em7
+    (5, 9, 0, 4)        # FM7
+], dur=2)
+
+# Accords de 9e
+p2 >> keys([
+    (0, 4, 7, 11, 2),   # CM9
+    (5, 9, 0, 4, 7)     # FM9
+], dur=4)
+
+# Voicings sophistiqués
+p3 >> piano([
+    (0, 7, 11, 2, 5),   # CM9 sans tierce
+    (5, 0, 4, 7, 9)     # FM6/9
+], dur=4, sus=3)`,
+                sonicpi: `# Sonic Pi - Extensions d'accords jazz
+# Construction progressive des extensions
+define :build_chord do |root, type|
+  case type
+  when :triad
+    chord(root, :major)
+  when :seventh
+    chord(root, :major7)
+  when :ninth
+    chord(root, :major7) + [note(root) + 14]
+  when :eleventh
+    chord(root, :major7) + [note(root) + 14, note(root) + 17]
+  when :thirteenth
+    chord(root, :major7) + [note(root) + 14, note(root) + 17, note(root) + 21]
+  end
+end
+
+live_loop :jazz_extensions do
+  [:triad, :seventh, :ninth, :eleventh, :thirteenth].each do |type|
+    puts "Accord: #{type}"
+    play_chord build_chord(:c4, type), sustain: 2
+    sleep 2.5
+  end
+end
+
+# Progression ii-V-I avec extensions
+live_loop :two_five_one do
+  use_synth :electric_piano
+  
+  # Dm11
+  play_chord [:d3, :a3, :c4, :e4, :g4], release: 2
+  sleep 2
+  
+  # G13
+  play_chord [:g2, :b3, :d4, :f4, :a4, :e4], release: 2
+  sleep 2
+  
+  # CM9
+  play_chord [:c3, :g3, :b3, :d4, :e4], release: 4
+  sleep 4
+end`,
+                supercollider: `// SuperCollider - Extensions
+(
+Pbind(
+    \\degree, Pseq([[0,2,4,6], [2,4,6,8], [4,6,8,10]], inf),
+    \\dur, 2
+).play
+)`
+            },
+            voicings: {
+                foxdot: `# FoxDot - Renversements et voicings
+# Même accord, différents renversements
+p1 >> keys([
+    (0, 4, 7),      # Do majeur - position fondamentale
+    (4, 7, 12),     # 1er renversement (Mi à la basse)
+    (7, 12, 16)     # 2e renversement (Sol à la basse)
+], dur=2)
+
+# Voice leading fluide
+p2 >> keys([
+    (0, 4, 7, 11),     # CM7
+    (2, 5, 9, 11),     # Dm7 (Do reste)
+    (4, 7, 11, 14),    # Em7 (Sol reste)
+    (5, 9, 12, 16)     # FM7
+], dur=2)
+
+# Drop 2 voicing (jazz)
+p3 >> keys([(11, 0, 4, 7)], oct=4, dur=4)  # CM7 drop 2`,
+                sonicpi: `# Sonic Pi - Voice leading et voicings jazz
+# Démonstration du voice leading fluide
+define :smooth_voice_leading do
+  use_synth :electric_piano
+  
+  # Progression avec notes communes
+  chords = [
+    [:c4, :e4, :g4, :b4],    # CM7
+    [:c4, :e4, :g4, :a4],    # C6
+    [:c4, :f4, :g4, :a4],    # F6/9
+    [:b3, :e4, :g4, :a4]     # Em7
+  ]
+  
+  chords.each_with_index do |chord, i|
+    puts "Voice leading - notes communes maintenues"
+    play_chord chord, release: 2
+    sleep 2
+  end
+end
+
+# Voicings Drop 2 et Drop 3
+live_loop :jazz_voicings do
+  # Close position
+  play_chord [:c4, :e4, :g4, :b4], release: 1
+  sleep 1
+  
+  # Drop 2 (2e voix descendue d'une octave)
+  play_chord [:c4, :g4, :b4, :e5], release: 1
+  sleep 1
+  
+  # Drop 3 (3e voix descendue)
+  play_chord [:c4, :b3, :e4, :g4], release: 1
+  sleep 1
+  
+  # Rootless voicing (sans fondamentale)
+  play_chord [:e4, :g4, :b4, :d5], release: 1
+  sleep 1
+end`,
+                supercollider: `// SuperCollider - Voicings
+(
+Pbind(
+    \\midinote, Pseq([
+        [60, 64, 67],      // Root position
+        [64, 67, 72],      // 1st inversion
+        [67, 72, 76]       // 2nd inversion
+    ], inf),
+    \\dur, 2
+).play
+)`
+            },
+            altered: {
+                foxdot: `# FoxDot - Accords altérés
+# Dominant altéré (V7alt)
+p1 >> keys([(7, 11, 1, 4, 6)], dur=2)  # G7♭9♭13
+
+# Substitution tritonique
+# G7 → D♭7 (même triton)
+p2 >> keys([
+    (7, 11, 2, 5),     # G7
+    (1, 5, 8, 11)      # D♭7
+], dur=2)
+
+# Accords de couleur
+p3 >> keys([
+    (0, 4, 6, 11),     # CM7♭5
+    (0, 3, 6, 9)       # C°7
+], dur=2)`,
+                sonicpi: `# Sonic Pi - Accords altérés et tensions
+# Explorer les altérations d'accords
+define :play_altered_chord do |root, alterations|
+  use_synth :hollow
+  base = chord(root, :dom7)
+  
+  # Ajouter les altérations
+  altered = base.to_a
+  alterations.each do |alt|
+    case alt
+    when :b9
+      altered << note(root) + 13
+    when :"#9"
+      altered << note(root) + 15
+    when :b5
+      altered[2] = note(root) + 6
+    when :"#5"
+      altered[2] = note(root) + 8
+    when :b13
+      altered << note(root) + 20
+    end
+  end
+  
+  play_chord altered, release: 3
+end
+
+live_loop :altered_progression do
+  # Progression avec tensions croissantes
+  play_altered_chord(:g3, [])           # G7 normal
+  sleep 2
+  play_altered_chord(:g3, [:b9])        # G7b9
+  sleep 2
+  play_altered_chord(:g3, [:b9, :"#5"]) # G7b9#5
+  sleep 2
+  play_altered_chord(:g3, [:b9, :b13])  # G7alt
+  sleep 2
+  
+  # Résolution
+  use_synth :piano
+  play_chord chord(:c4, :major7), release: 4
+  sleep 4
+end`,
+                supercollider: `// SuperCollider - Altérations
+(
+Pbind(
+    \\midinote, Pseq([
+        [67, 71, 74, 77, 80],    // G7b9
+        [67, 71, 74, 77, 82]     // G7#9
+    ], inf),
+    \\dur, 2
+).play
+)`
+            },
+            structure: {
+                foxdot: `# FoxDot - Structures musicales
+# Structure couplet/refrain avec automation
+def verse():
+    p1 >> pluck([0,2,3,2], dur=0.5, amp=0.7)
+    p2 >> bass([0,0,5,5], dur=1)
+    d1 >> play("x-o-", dur=0.5)
+
+def chorus():
+    p1 >> keys([(0,4,7), (5,9,0), (9,0,4), (3,7,10)], dur=1)
+    p2 >> bass([0,5,9,3], dur=1, amp=1.2)
+    d1 >> play("x-o-x-oo", dur=0.25)
+
+# Timeline automatisée
+Clock.future(0, verse)
+Clock.future(8, chorus)
+Clock.future(16, verse)
+Clock.future(24, chorus)`,
+                sonicpi: `# Sonic Pi - Construction de structures
+# Système modulaire pour créer des chansons
+define :song_section do |name, bars, &block|
+  puts "\\n=== Section: #{name} (#{bars} mesures) ==="
+  bars.times do |i|
+    puts "Mesure #{i+1}/#{bars}"
+    block.call(i)
+    sleep 4  # 4 temps par mesure
+  end
+end
+
+# Définir les sections
+define :intro do
+  song_section("Intro", 4) do |bar|
+    use_synth :fm
+    play_pattern_timed [:c3, :c3, :g3, :c3], [1, 1, 1, 1]
+  end
+end
+
+define :verse do
+  song_section("Couplet", 8) do |bar|
+    # Ligne de basse
+    in_thread do
+      use_synth :bass_foundation
+      play [:c2, :c2, :f2, :g2][bar % 4], release: 3.5
+    end
+    
+    # Mélodie
+    use_synth :piano
+    if bar < 4
+      play_pattern_timed scale(:c4, :major).shuffle.take(4), 0.5
+    else
+      play_pattern_timed scale(:c4, :major).reverse.take(4), 0.5
+    end
+  end
+end
+
+define :chorus do
+  song_section("Refrain", 8) do |bar|
+    # Accords puissants
+    use_synth :saw
+    play_chord chord([:c4, :g4, :a3, :f4][bar % 4], :major), 
+               release: 3, amp: 0.5
+    
+    # Mélodie accrocheuse
+    use_synth :lead_1
+    melody = [:e5, :e5, :f5, :e5, :d5, :c5, :c5, :g4]
+    play melody[bar], release: 0.8, amp: 0.7
+  end
+end
+
+# Structure complète
+live_loop :song_structure do
+  intro
+  verse
+  chorus
+  verse
+  chorus
+  sleep 4  # Bridge pourrait aller ici
+  chorus
+  sleep 8  # Outro
+end`,
+                supercollider: `// SuperCollider - Structures
+(
+var structure = Pseq([
+    \\intro, \\intro,
+    \\verse, \\verse,
+    \\chorus, \\chorus,
+    \\verse, \\verse,
+    \\chorus, \\chorus,
+    \\bridge,
+    \\chorus, \\chorus,
+    \\outro
+], 1);
+
+Pbind(
+    \\section, structure,
+    \\dur, 4
+).play
+)`
+            },
+            euclidean: {
+                foxdot: `# FoxDot - Rythmes euclidiens
+p1 >> play("x", dur=PDur(3, 8))
+# PDur distribue 3 beats sur 8 positions
+d1 >> play(PEuclid2(3, 8, "x", "-"))
+# PEuclid2 retourne un pattern de "x" et "-"
+
+# Polyrythmie euclidienne
+d2 >> play("o", dur=PDur(5, 8))
+d3 >> play("h", dur=PDur(7, 8))
+
+# Rotation du pattern
+p2 >> pluck(0, dur=PDur(5, 8, 2))  # Rotation de 2 positions`,
+                sonicpi: `# Sonic Pi - Rythmes euclidiens expliqués
+# Implémentation et visualisation des rythmes euclidiens
+
+define :euclidean_rhythm do |hits, steps, name|
+  pattern = spread(hits, steps)
+  puts "\\n#{name}: #{hits} sur #{steps}"
+  puts "Pattern: #{pattern.map{|x| x ? 'X' : '.'}.join(' ')}"
+  pattern
+end
+
+live_loop :euclidean_showcase do
+  # Patterns classiques
+  patterns = {
+    "Tresillo" => [3, 8],
+    "Cinquillo" => [5, 8],
+    "Rumba" => [7, 12],
+    "Bossa Nova" => [5, 16],
+    "Flamenco" => [12, 16]
+  }
+  
+  patterns.each do |name, params|
+    pattern = euclidean_rhythm(params[0], params[1], name)
+    
+    # Jouer le pattern
+    pattern.each do |hit|
+      if hit
+        sample :drum_bass_hard, amp: 1
+        sample :drum_snare_soft, amp: 0.5
+      else
+        sample :drum_cymbal_closed, amp: 0.3
+      end
+      sleep 0.25
+    end
+    sleep 1
+  end
+end
+
+# Polyrythmie euclidienne
+live_loop :poly_euclidean do
+  in_thread do
+    spread(3, 8).each do |hit|
+      sample :bd_haus if hit
+      sleep 0.125
+    end
+  end
+  
+  in_thread do
+    spread(5, 8).each do |hit|
+      sample :sn_dolf, amp: 0.7 if hit
+      sleep 0.125
+    end
+  end
+  
+  spread(7, 8).each do |hit|
+    sample :drum_cymbal_closed, amp: 0.5 if hit
+    sleep 0.125
+  end
+end`,
+                supercollider: `// SuperCollider - Euclidean
+(
+Ppar([
+    Pbind(
+        \\amp, Pbjorklund(3, 8, inf) * 0.5,
+        \\dur, 0.125
+    ),
+    Pbind(
+        \\amp, Pbjorklund(5, 8, inf) * 0.3,
+        \\dur, 0.125,
+        \\freq, 800
+    )
+]).play
+)`
+            },
+            microtonality: {
+                foxdot: `# FoxDot - Microtonalité
+# Quarts de ton
+p1 >> pluck([0, 0.5, 1, 1.5, 2], dur=0.5)  # Demi-tons divisés
+
+# Gamme à 19 tons par octave
+for i in range(19):
+    p2 >> sine(i * (12/19), dur=0.5, delay=i*0.5)
+
+# Intonation juste
+ratios = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8]
+p3 >> pluck([math.log2(r)*12 for r in ratios], dur=1)`,
+                sonicpi: `# Sonic Pi - Exploration microtonale
+# Systèmes de tempérament alternatifs
+
+# Quarts de ton (24-EDO)
+define :play_quarter_tones do
+  use_synth :tri
+  base = 60  # Do central
+  
+  24.times do |i|
+    puts "#{i}/24 ton = #{i * 50} cents"
+    play base + (i * 0.5), release: 0.5, amp: 0.6
+    sleep 0.5
+  end
+end
+
+# Gamme en intonation juste
+define :just_intonation_scale do
+  fundamental = midi_to_hz(60)
+  
+  # Ratios de la gamme majeure juste
+  ratios = [1, 9/8.0, 5/4.0, 4/3.0, 3/2.0, 5/3.0, 15/8.0, 2]
+  
+  use_synth :sine
+  ratios.each_with_index do |ratio, i|
+    freq = fundamental * ratio
+    puts "Degré #{i}: ratio #{ratio}, freq #{freq.round(2)} Hz"
+    play hz_to_midi(freq), sustain: 1, release: 0.5
+    sleep 1
+  end
+end
+
+# Gamme Bohlen-Pierce (13 tons, octave = ratio 3:1)
+live_loop :bohlen_pierce do
+  stop  # Décommenter pour activer
+  
+  use_synth :hollow
+  fundamental = 220
+  
+  13.times do |i|
+    # Division égale de la "tritave" (3:1)
+    ratio = 3 ** (i / 13.0)
+    play hz_to_midi(fundamental * ratio), release: 0.8
+    sleep 0.5
+  end
+end
+
+# Comparaison tempéraments
+live_loop :temperament_comparison do
+  use_synth :beep
+  
+  # Tierce majeure
+  puts "Tierce majeure:"
+  
+  # Tempérament égal (400 cents)
+  play 60, release: 2
+  play 64, release: 2
+  sleep 2.5
+  
+  # Intonation juste (386 cents)
+  play 60, release: 2
+  play hz_to_midi(midi_to_hz(60) * 5/4), release: 2
+  sleep 2.5
+  
+  # Tempérament pythagoricien (408 cents)
+  play 60, release: 2
+  play hz_to_midi(midi_to_hz(60) * 81/64), release: 2
+  sleep 3
+end`,
+                supercollider: `// SuperCollider - Microtonalité
+// Exploration des quarts de ton
+(
+Pbind(
+    \\midinote, Pseq((60, 60.5..72), 1),
+    \\dur, 0.25
+).play
+)`
+            },
+            cadences: {
+                foxdot: `# FoxDot - Cadences
+# Cadence parfaite (V7 → I)
+p1 >> keys([(7,11,2,5), (0,4,7)], dur=[1,3])
+
+# Cadence plagale (IV → I)
+p2 >> keys([(5,9,0), (0,4,7)], dur=[2,2])
+
+# Cadence rompue (V → vi)
+p3 >> keys([(7,11,2), (9,0,4)], dur=[2,2])
+
+# ii-V-I (jazz)
+p4 >> keys([
+    (2,5,9,0),    # Dm7
+    (7,11,2,5),   # G7
+    (0,4,7,11)    # CM7
+], dur=[1,1,2])`,
+                sonicpi: `# Sonic Pi - Cadences avec analyse
+# Démonstration interactive des cadences
+define :analyze_cadence do |type, chords, description|
+  puts "Cadence #{type}: #{description}"
+  use_synth :piano
+  
+  chords.each_with_index do |c, i|
+    is_last = (i == chords.length - 1)
+    play_chord c, release: is_last ? 3 : 1, amp: 0.8
+    sleep is_last ? 3 : 1
+  end
+  sleep 1
+end
+
+live_loop :cadence_demonstration do
+  # Cadence parfaite authentique
+  analyze_cadence("Parfaite", 
+    [chord(:g3, :dom7), chord(:c4, :major)],
+    "V7-I - Résolution conclusive")
+  
+  # Cadence plagale
+  analyze_cadence("Plagale",
+    [chord(:f3, :major), chord(:c4, :major)],
+    "IV-I - L'Amen musical")
+  
+  # Demi-cadence
+  analyze_cadence("Demi",
+    [chord(:c4, :major), chord(:g3, :dom7)],
+    "I-V - Suspensive")
+  
+  # Cadence rompue/évitée
+  analyze_cadence("Rompue",
+    [chord(:g3, :dom7), chord(:a3, :minor)],
+    "V7-vi - Surprise!")
+  
+  # Cadence jazz ii-V-I
+  analyze_cadence("Jazz ii-V-I",
+    [chord(:d3, :minor7), chord(:g3, :dom7), chord(:c4, :major7)],
+    "Progression fondamentale du jazz")
+end`,
+                supercollider: `// SuperCollider - Cadences
+(
+Pbind(
+    \\midinote, Pseq([
+        [62, 65, 69, 72],    // Dm7
+        [67, 71, 74, 77],    // G7
+        [60, 64, 67, 71]     // CM7
+    ], 1),
+    \\dur, Pseq([1, 1, 2], 1)
+).play
+)`
+            },
+            progressions: {
+                foxdot: `# FoxDot - Progressions classiques
+# Anatole (Rhythm Changes)
+rhythm_changes = [(0,4,7), (9,0,4), (2,5,9), (7,11,2)]
+p1 >> keys(rhythm_changes, dur=1)
+
+# Blues 12 bars
+blues = [0,0,0,0, 5,5,0,0, 7,5,0,0]
+p2 >> bass(blues, dur=1)
+p3 >> keys([(n,n+4,n+7,n+10) for n in blues], dur=1)
+
+# Pop progression avec rythmique
+pop = [(0,4,7), (7,11,2), (9,0,4), (5,9,0)]
+p4 >> keys(pop, dur=P[1,0.5,0.5])
+d1 >> play("x-o-", dur=0.5)`,
+                sonicpi: `# Sonic Pi - Progressions analysées
+# Système pour jouer et analyser des progressions
+define :play_progression do |name, chords, pattern|
+  puts "\\n=== #{name} ==="
+  puts "Pattern: #{pattern}"
+  
+  use_synth :electric_piano
+  use_bpm 120
+  
+  chords.each_with_index do |chord_notes, i|
+    puts "Mesure #{i+1}: #{chord_notes}"
+    play_chord chord_notes, release: 0.9
+    sleep 1
+  end
+end
+
+live_loop :classic_progressions do
+  # I-V-vi-IV (Hit pop moderne)
+  play_progression("Pop 4 accords",
+    [chord(:c4, :major), chord(:g4, :major), 
+     chord(:a3, :minor), chord(:f4, :major)],
+    "I-V-vi-IV")
+  sleep 1
+  
+  # Pachelbel Canon
+  play_progression("Canon de Pachelbel",
+    [chord(:d4, :major), chord(:a3, :major),
+     chord(:b3, :minor), chord(:fs3, :minor),
+     chord(:g3, :major), chord(:d4, :major),
+     chord(:g3, :major), chord(:a3, :major)],
+    "I-V-vi-iii-IV-I-IV-V")
+  sleep 1
+  
+  # Turnaround jazz
+  play_progression("Turnaround Jazz",
+    [chord(:c4, :major7), chord(:a3, :minor7),
+     chord(:d3, :minor7), chord(:g3, :dom7)],
+    "IM7-vi7-ii7-V7")
+  sleep 1
+end
+
+# Blues 12 mesures interactif
+live_loop :blues_12_bar do
+  stop  # Décommenter pour activer
+  
+  use_synth :electric_guitar_clean
+  use_bpm 120
+  
+  blues_progression = [
+    :c4, :c4, :c4, :c4,    # I (4 mesures)
+    :f4, :f4, :c4, :c4,    # IV-I (4 mesures)
+    :g4, :f4, :c4, :c4     # V-IV-I (4 mesures)
+  ]
+  
+  blues_progression.each do |root|
+    4.times do
+      play root, release: 0.2
+      play root + 3, release: 0.2  # Tierce mineure
+      play root + 7, release: 0.2  # Quinte
+      play root + 10, release: 0.2 # Septième mineure
+      sleep 0.25
+    end
+  end
+end`,
+                supercollider: `// SuperCollider - Progressions
+(
+var anatole = Pbind(
+    \\midinote, Pseq([
+        [60,64,67], [69,72,76], [62,65,69], [67,71,74]
+    ], inf),
+    \\dur, 1
+);
+anatole.play;
+)`
+            },
+            modulation: {
+                foxdot: `# FoxDot - Techniques de modulation
+# Modulation par accord pivot (Am = vi en Do, ii en Sol)
+p1 >> keys([
+    (0,4,7),      # C (I en Do)
+    (9,0,4),      # Am (vi en Do / ii en Sol)
+    (2,6,9),      # D (V en Sol)
+    (7,11,2)      # G (I en Sol)
+], dur=2)
+
+# Modulation chromatique
+p2 >> pluck([0,2,4,5,7,7.5,8], dur=0.5)  # Fa# mène vers Sol
+
+# Modulation par tons entiers
+for i in range(6):
+    Clock.future(i*4, lambda t=i: Scale.default.set("major", t*2))`,
+                sonicpi: `# Sonic Pi - Modulations sophistiquées
+# Exploration des techniques de modulation
+define :modulate_pivot do |from_key, to_key, pivot_chord|
+  puts "Modulation de #{from_key} vers #{to_key} via #{pivot_chord}"
+  use_synth :piano
+  
+  # Établir la tonalité de départ
+  play_chord chord(from_key, :major), release: 2
+  sleep 2
+  
+  # Accord pivot (fonctionne dans les deux tonalités)
+  play_chord pivot_chord, release: 2
+  sleep 2
+  
+  # Dominante de la nouvelle tonalité
+  play_chord chord(note(to_key) - 5, :dom7), release: 1
+  sleep 1
+  
+  # Nouvelle tonalité
+  play_chord chord(to_key, :major), release: 3
+  sleep 3
+end
+
+live_loop :modulation_examples do
+  # Modulation par accord commun
+  modulate_pivot(:c4, :g4, chord(:a3, :minor))
+  
+  # Modulation chromatique
+  use_synth :saw
+  notes = scale(:c4, :major).to_a
+  notes << note(:fs4)  # Note chromatique
+  notes += scale(:g4, :major).to_a
+  play_pattern_timed notes, 0.25
+  sleep 1
+  
+  # Modulation enharmonique (accord diminué)
+  use_synth :hollow
+  dim_chord = [note(:c4), note(:eb4), note(:gb4), note(:a4)]
+  
+  # Le même accord diminué peut résoudre vers 4 tonalités
+  play_chord dim_chord, release: 2
+  sleep 2
+  play_chord chord(:db4, :major), release: 2  # Résolution 1
+  sleep 2
+  
+  play_chord dim_chord, release: 2
+  sleep 2
+  play_chord chord(:e4, :major), release: 2   # Résolution 2
+  sleep 2
+end`,
+                supercollider: `// SuperCollider - Modulation
+(
+Pbind(
+    \\midinote, Pseq([
+        [60,64,67],    // C
+        [69,72,76],    // Am (pivot)
+        [62,66,69],    // D
+        [67,71,74]     // G
+    ], 1),
+    \\dur, 2
+).play
+)`
+            },
+            rhythmDivisions: {
+                foxdot: `# FoxDot - Divisions rythmiques
+# Valeurs de base
+p1 >> pluck(0, dur=4)      # Ronde
+p2 >> pluck(0, dur=2)      # Blanche
+p3 >> pluck(0, dur=1)      # Noire
+p4 >> pluck(0, dur=0.5)    # Croche
+p5 >> pluck(0, dur=0.25)   # Double croche
+
+# Triolets (division par 3)
+p6 >> pluck([0,2,4], dur=2/3)
+
+# Quintolets (division par 5)
+p7 >> pluck(P[:5], dur=0.8)
+
+# Polyrythmie 3:4
+p8 >> pluck(0, dur=4/3)
+p9 >> bass(0, dur=1)`,
+                sonicpi: `# Sonic Pi - Divisions rythmiques complexes
+# Visualisation des divisions rythmiques
+use_bpm 60  # 60 BPM = 1 beat par seconde
+
+define :demonstrate_division do |name, divisions, total_beats|
+  puts "\\n#{name}: #{divisions} notes en #{total_beats} temps"
+  
+  use_synth :beep
+  duration = total_beats.to_f / divisions
+  
+  divisions.times do |i|
+    play :c5, release: duration * 0.9, amp: 0.5
+    sleep duration
+  end
+end
+
+live_loop :rhythm_divisions do
+  # Divisions binaires
+  demonstrate_division("Noires", 4, 4)
+  demonstrate_division("Croches", 8, 4)
+  demonstrate_division("Doubles croches", 16, 4)
+  
+  # Divisions ternaires
+  demonstrate_division("Triolets de noires", 3, 2)
+  demonstrate_division("Triolets de croches", 6, 2)
+  
+  # Divisions irrégulières
+  demonstrate_division("Quintolets", 5, 4)
+  demonstrate_division("Septolets", 7, 4)
+  
+  sleep 2
+end
+
+# Polyrythmie interactive
+live_loop :polyrhythm_3_against_4 do
+  use_synth :fm
+  
+  # 3 contre 4
+  in_thread do
+    3.times do
+      play :c4, release: 0.3, amp: 0.7
+      sleep 4.0/3
+    end
+  end
+  
+  4.times do
+    play :g4, release: 0.3, amp: 0.7, pan: 0.5
+    sleep 1
+  end
+end`,
+                supercollider: `// SuperCollider - Divisions
+(
+Pbind(
+    \\dur, Pseq([4, 2, 1, 0.5, 0.25], inf),
+    \\amp, 0.5
+).play
+)`
+            },
+            metrics: {
+                foxdot: `# FoxDot - Métriques diverses
+# 3/4 - Valse
+p1 >> keys([0], dur=P[1,0.5,0.5], amp=P[1,0.5,0.5])
+
+# 5/4 - Asymétrique (3+2)
+p2 >> pluck([0,2,4,5,7], dur=P[0.6,0.6,0.6,0.4,0.4])
+
+# 7/8 - Balkanique (3+2+2)
+p3 >> play("x--x-x-", dur=0.875)
+
+# 6/8 - Composé
+p4 >> bass([0,0,0,5,5,5], dur=1/3)
+
+# Polymétrie 3 contre 4
+p5 >> pluck(0, dur=4/3)
+p6 >> play("x", dur=1)`,
+                sonicpi: `# Sonic Pi - Métriques du monde
+# Explorer différentes signatures rythmiques
+define :play_in_meter do |name, beats, pattern|
+  puts "\\n#{name} - #{beats} temps"
+  use_bpm 120
+  
+  live_loop name.to_sym do
+    pattern.each_with_index do |hit, i|
+      if hit == 1
+        sample :drum_bass_hard, amp: 1.2 if i == 0  # Accent temps fort
+        sample :drum_snare_soft, amp: 0.8 if i > 0
+      elsif hit == 0.5
+        sample :drum_cymbal_closed, amp: 0.5
+      end
+      sleep 1.0 / pattern.length
+    end
+  end
+end
+
+# Signatures courantes
+play_in_meter("Binaire_4/4", 4, [1, 0.5, 0.5, 0.5])
+sleep 4
+
+play_in_meter("Valse_3/4", 3, [1, 0.5, 0.5])
+sleep 3
+
+play_in_meter("5/4_Take_Five", 5, [1, 0.5, 0.5, 1, 0.5])
+sleep 5
+
+# Métriques composées
+live_loop :compound_6_8 do
+  use_bpm 120
+  
+  # 6/8 se sent comme 2 temps ternaires
+  sample :drum_bass_hard
+  sleep 0.375  # 3/8
+  2.times do
+    sample :drum_cymbal_closed, amp: 0.4
+    sleep 0.125
+  end
+  
+  sample :drum_snare_soft
+  sleep 0.375
+  2.times do
+    sample :drum_cymbal_closed, amp: 0.4
+    sleep 0.125
+  end
+end
+
+# Métrique balkanique 7/8 (3+2+2)
+live_loop :bulgarian_7_8 do
+  stop  # Décommenter pour activer
+  
+  use_bpm 180
+  pattern = [1, 0, 0, 1, 0, 1, 0]  # 3+2+2
+  
+  pattern.each do |hit|
+    if hit == 1
+      sample :drum_tom_mid_hard
+    else
+      sample :drum_cymbal_closed, amp: 0.3
+    end
+    sleep 1.0/8
+  end
+end`,
+                supercollider: `// SuperCollider - Métriques
+(
+// 5/4 pattern
+Pbind(
+    \\dur, Pseq([0.6, 0.6, 0.6, 0.4, 0.4], inf),
+    \\degree, Pseq([0, 2, 4, 5, 7], inf)
+).play
+)`
+            },
+            worldRhythms: {
+                foxdot: `# FoxDot - Rythmes du monde
+# Clave son 3-2
+d1 >> play("x  x  x   x x   ", dur=0.25)
+
+# Tresillo (base de nombreux rythmes latins)
+d2 >> play("x  x  x ", dur=0.375)
+
+# Bossa nova
+d3 >> play("x xx xx ", dur=0.25)
+p1 >> keys([(0,4,7), (2,5,9)], dur=P[1.5,2.5])
+
+# Rythme euclidien africain
+d4 >> play("x", dur=PDur(5,8))
+
+# Shuffle (swing feel)
+Clock.bpm = 120
+p2 >> pluck([0,2,4,5], dur=P[0.67,0.33])`,
+                sonicpi: `# Sonic Pi - Rythmes traditionnels du monde
+# Collection de patterns rythmiques culturels
+
+# Clave Son Cubaine (3-2)
+live_loop :clave_son do
+  use_bpm 120
+  pattern_3_2 = [1,0,0,1,0,0,1,0,0,0,1,0,1,0,0,0]
+  
+  pattern_3_2.each do |hit|
+    if hit == 1
+      sample :drum_snare_soft, amp: 0.8, rate: 2
+    end
+    sleep 0.25
+  end
+end
+
+# Samba brésilienne
+live_loop :samba do
+  stop  # Décommenter pour activer
+  use_bpm 180
+  
+  # Surdo (grosse caisse)
+  in_thread do
+    loop do
+      sample :drum_bass_soft
+      sleep 1
+      sample :drum_bass_soft, amp: 0.7
+      sleep 1
+    end
+  end
+  
+  # Pattern de shaker
+  16.times do
+    sample :drum_cymbal_closed, amp: 0.3, rate: 2
+    sleep 0.125
+  end
+end
+
+# Rythme Gnawa (Maroc)
+live_loop :gnawa do
+  stop  # Décommenter pour activer
+  use_bpm 100
+  
+  # Sintir (basse)
+  use_synth :fm
+  play :e2, release: 0.3
+  sleep 0.5
+  play :e2, release: 0.1
+  sleep 0.25
+  play :g2, release: 0.1
+  sleep 0.25
+  
+  # Qarqaba (castagnettes métalliques)
+  sample :drum_cymbal_closed, rate: 3, amp: 0.5
+  sleep 0.5
+  sample :drum_cymbal_closed, rate: 3, amp: 0.3
+  sleep 0.5
+end
+
+# Tabla indien (Teental - 16 temps)
+live_loop :tabla_teental do
+  stop  # Décommenter pour activer
+  use_bpm 120
+  
+  # Dha Dhin Dhin Dha | Dha Dhin Dhin Dha |
+  # Dha Tin Tin Ta | Ta Dhin Dhin Dha ||
+  
+  bols = [:dha, :dhin, :dhin, :dha,
+          :dha, :dhin, :dhin, :dha,
+          :dha, :tin, :tin, :ta,
+          :ta, :dhin, :dhin, :dha]
+  
+  bols.each do |bol|
+    case bol
+    when :dha
+      sample :tabla_dhec, amp: 0.8
+    when :dhin
+      sample :tabla_na_o, amp: 0.6
+    when :tin
+      sample :tabla_na_s, amp: 0.5
+    when :ta
+      sample :tabla_na, amp: 0.7
+    end
+    sleep 0.25
+  end
+end`,
+                supercollider: `// SuperCollider - World Rhythms
+// Clave pattern
+(
+Pbind(
+    \\amp, Pseq([1,0,0,1,0,0,1,0,0,0,1,0,1,0,0,0], inf) * 0.5,
+    \\dur, 0.25
+).play
+)`
+            },
+            syncopation: {
+                foxdot: `# FoxDot - Syncopes et contretemps
+# Syncope simple
+p1 >> pluck([0,2,4], dur=[0.5,1,0.5])
+
+# Contretemps
+p2 >> pluck(P[None,0,None,2,None,4], dur=0.5)
+
+# Hémiole (3 contre 2)
+p3 >> pluck([0,4,7], dur=2/3)
+p4 >> bass([0,5], dur=1)
+
+# Décalage progressif (phasing)
+p5 >> pluck([0,2,4,5], dur=1)
+p6 >> pluck([0,2,4,5], dur=0.99)`,
+                sonicpi: `# Sonic Pi - Syncopes et décalages rythmiques
+# Exploration des syncopes
+define :play_syncopated do |pattern, name|
+  puts "Pattern: #{name}"
+  use_synth :pluck
+  
+  pattern.each_with_index do |note, i|
+    if note
+      play note, release: 0.3, amp: 0.8
+      # Accent sur les temps faibles
+      play note + 12, release: 0.1, amp: 0.3 if i.odd?
+    end
+    sleep 0.25
+  end
+end
+
+live_loop :syncopation_examples do
+  # Syncope classique
+  play_syncopated(
+    [nil, :c4, :d4, nil, :e4, nil, :f4, :g4],
+    "Syncope classique"
+  )
+  sleep 0.5
+  
+  # Contretemps pur
+  play_syncopated(
+    [nil, :c4, nil, :d4, nil, :e4, nil, :f4],
+    "Contretemps"
+  )
+  sleep 0.5
+  
+  # Syncope anticipée
+  play_syncopated(
+    [:c4, nil, nil, :d4, :e4, nil, nil, :f4],
+    "Anticipation"
+  )
+  sleep 0.5
+end
+
+# Hémiole - 3 contre 2
+live_loop :hemiola do
+  stop  # Décommenter pour activer
+  
+  use_bpm 120
+  
+  # Groupe de 3
+  in_thread do
+    use_synth :fm
+    3.times do
+      play :c4, release: 0.5
+      sleep 2.0/3
+    end
+  end
+  
+  # Groupe de 2
+  use_synth :saw
+  2.times do
+    play :g3, release: 0.5
+    sleep 1
+  end
+end
+
+# Phasing à la Steve Reich
+live_loop :phasing do
+  stop  # Décommenter pour activer
+  
+  pattern = [:e4, :fs4, :b4, :cs5, :d5, :fs4, :e4, :cs5, :b4, :fs4, :d5, :cs5]
+  
+  # Voix 1
+  in_thread do
+    use_synth :piano
+    loop do
+      pattern.each do |n|
+        play n, release: 0.3, amp: 0.5
+        sleep 0.25
+      end
+    end
+  end
+  
+  # Voix 2 (légèrement plus rapide)
+  use_synth :piano
+  loop do
+    pattern.each do |n|
+      play n, release: 0.3, amp: 0.5, pan: 0.5
+      sleep 0.249  # Décalage progressif
+    end
+  end
+end`,
+                supercollider: `// SuperCollider - Syncopation
+(
+Pbind(
+    \\midinote, Pseq([\\rest, 60, \\rest, 62, \\rest, 64], inf),
+    \\dur, 0.5
+).play
+)`
+            },
+            counterpoint: {
+                foxdot: `# FoxDot - Contrepoint à deux voix
+# Contrepoint note contre note (1:1)
+cantus = [0, 2, 4, 5, 4, 2, 0]
+counter = [7, 5, 7, 9, 7, 5, 7]
+p1 >> pluck(cantus, dur=1)
+p2 >> pluck(counter, dur=1, oct=5)
+
+# Contrepoint fleuri (valeurs variées)
+p3 >> pluck([0, 2, 1, 2, 4, 5, 4, 2, 0], dur=[1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 2])
+p4 >> bass([0, -3, -1, 0], dur=[2, 2, 2, 2])
+
+# Canon (imitation)
+melody = [0, 2, 4, 5, 7, 5, 4, 2]
+p5 >> pluck(melody, dur=0.5)
+p6 >> pluck(melody, dur=0.5, delay=2)  # Entrée décalée`,
+                sonicpi: `# Sonic Pi - Contrepoint et polyphonie
+# Contrepoint à 2 voix selon les règles classiques
+define :check_interval do |note1, note2|
+  interval = (note2 - note1).abs % 12
+  case interval
+  when 0, 7, 12  # Unisson, quinte, octave
+    "Parfait - À éviter en mouvement parallèle"
+  when 3, 4, 8, 9  # Tierces et sixtes
+    "Consonant imparfait - Bon"
+  when 5  # Quarte
+    "Dépend du contexte"
+  else
+    "Dissonant - Résoudre"
+  end
+end
+
+# Contrepoint en première espèce (note contre note)
+live_loop :first_species do
+  use_synth :piano
+  cantus_firmus = [:c4, :d4, :f4, :e4, :g4, :f4, :e4, :d4, :c4]
+  counterpoint = [:g4, :f4, :a4, :g4, :e5, :d5, :c5, :b4, :c5]
+  
+  cantus_firmus.zip(counterpoint).each do |cf, cp|
+    puts check_interval(cf, cp)
+    play cf, release: 0.9, amp: 0.7
+    play cp, release: 0.9, amp: 0.7, pan: 0.3
+    sleep 1
+  end
+  sleep 2
+end
+
+# Canon à 3 voix
+live_loop :canon do
+  stop  # Décommenter pour activer
+  
+  theme = [:c4, :e4, :g4, :c5, :g4, :e4, :f4, :d4, :c4]
+  use_synth :sine
+  
+  # Voix 1 (dux)
+  in_thread do
+    play_pattern_timed theme, 0.5, release: 0.4, amp: 0.5
+  end
+  
+  # Voix 2 (comes) - entrée après 2 temps
+  in_thread do
+    sleep 2
+    play_pattern_timed theme.map{|n| n + 7}, 0.5, release: 0.4, amp: 0.5, pan: -0.5
+  end
+  
+  # Voix 3 - entrée après 4 temps
+  sleep 4
+  play_pattern_timed theme.map{|n| n + 4}, 0.5, release: 0.4, amp: 0.5, pan: 0.5
+  
+  sleep 6
+end
+
+# Contrepoint moderne (indépendance rythmique)
+live_loop :modern_counterpoint do
+  stop  # Décommenter pour activer
+  
+  use_bpm 60
+  
+  # Voix 1 - Mélodie lente
+  in_thread do
+    use_synth :hollow
+    notes1 = scale(:c4, :dorian, num_octaves: 2)
+    play_pattern_timed notes1.shuffle.take(5), [1, 1.5, 0.5, 2, 1]
+  end
+  
+  # Voix 2 - Mélodie rapide
+  in_thread do
+    use_synth :pretty_bell
+    notes2 = scale(:c5, :dorian)
+    16.times do
+      play notes2.choose, release: 0.1, amp: 0.3
+      sleep [0.125, 0.25, 0.25].choose
+    end
+  end
+  
+  # Voix 3 - Ligne de basse
+  use_synth :fm
+  [:c2, :g2, :bb2, :f2].each do |n|
+    play n, release: 1.5, amp: 0.6
+    sleep 1.5
+  end
+end`,
+                supercollider: `// SuperCollider - Counterpoint
+(
+var cantus = [0, 2, 4, 5, 4, 2, 0];
+var counter = [7, 5, 7, 9, 7, 5, 7];
+Ppar([
+    Pbind(\\degree, Pseq(cantus, 1), \\dur, 1),
+    Pbind(\\degree, Pseq(counter, 1), \\dur, 1, \\octave, 5)
+]).play
+)`
+            },
+            voiceMovement: {
+                foxdot: `# FoxDot - Mouvements de voix
+# Éviter les quintes parallèles
+# MAUVAIS:
+# p1 >> keys([(0,7), (2,9)])  # Do-Sol → Ré-La
+
+# BON: Mouvement contraire
+p1 >> keys([(0,7), (2,5)])  # Do-Sol → Ré-Fa
+
+# Voice leading optimal (proche)
+progression = [
+    (0, 4, 7),      # Do Mi Sol
+    (0, 3, 7),      # Do Mi♭ Sol (Mi descend)
+    (-1, 3, 5),     # Si Mi♭ Fa (Do descend, Sol descend)
+    (0, 4, 7)       # Do Mi Sol (retour)
+]
+p2 >> keys(progression, dur=2)`,
+                sonicpi: `# Sonic Pi - Conduite des voix sophistiquée
+# Analyse et démonstration du voice leading
+
+define :analyze_voice_motion do |chord1, chord2|
+  puts "\\nAnalyse du mouvement des voix:"
+  
+  chord1.zip(chord2).each_with_index do |(n1, n2), i|
+    motion = n2 - n1
+    type = case
+    when motion == 0 then "Oblique (statique)"
+    when motion > 0 && i == 0 then "Ascendant"
+    when motion < 0 && i == 0 then "Descendant"
+    else "Mouvement de #{motion} demi-tons"
+    end
+    
+    puts "Voix #{i+1}: #{note_info(n1).midi_string} → #{note_info(n2).midi_string} (#{type})"
+  end
+end
+
+# Progression avec voice leading optimal
+live_loop :voice_leading_demo do
+  use_synth :piano
+  
+  # Progression avec mouvement minimal des voix
+  chords = [
+    [:c4, :e4, :g4, :c5],    # C
+    [:c4, :f4, :a4, :c5],    # F/C (seule une voix bouge)
+    [:b3, :f4, :g4, :b4],    # G7/B
+    [:c4, :e4, :g4, :c5]     # C
+  ]
+  
+  chords.each_cons(2) do |c1, c2|
+    analyze_voice_motion(c1, c2)
+    play_chord c1, release: 2
+    sleep 2
+  end
+  
+  play_chord chords.last, release: 3
+  sleep 4
+end
+
+# Éviter les mouvements parallèles interdits
+define :check_parallel_motion do |chord1, chord2|
+  # Vérifier les quintes et octaves parallèles
+  (0...chord1.length).each do |i|
+    (i+1...chord1.length).each do |j|
+      interval1 = (chord1[j] - chord1[i]) % 12
+      interval2 = (chord2[j] - chord2[i]) % 12
+      
+      if interval1 == interval2 && [0, 7].include?(interval1)
+        puts "ATTENTION: Mouvement parallèle interdit détecté!"
+      end
+    end
+  end
+end
+
+# Exemple de bonne conduite des voix
+live_loop :good_voice_leading do
+  stop  # Décommenter pour activer
+  
+  use_synth :sine
+  use_synth_defaults release: 2, amp: 0.5
+  
+  # Soprano
+  in_thread do
+    play_pattern_timed [:g4, :f4, :e4, :e4, :d4, :c4], [1, 1, 1, 1, 1, 3]
+  end
+  
+  # Alto
+  in_thread do
+    play_pattern_timed [:e4, :d4, :c4, :c4, :b3, :c4], [1, 1, 1, 1, 1, 3]
+  end
+  
+  # Ténor
+  in_thread do
+    play_pattern_timed [:c4, :a3, :g3, :a3, :g3, :e3], [1, 1, 1, 1, 1, 3]
+  end
+  
+  # Basse
+  play_pattern_timed [:c3, :d3, :e3, :a2, :g2, :c3], [1, 1, 1, 1, 1, 3]
+  
+  sleep 8
+end`,
+                supercollider: `// SuperCollider - Voice Movement
+(
+Pbind(
+    \\midinote, Pseq([
+        [60, 64, 67],      // C E G
+        [60, 63, 67],      // C Eb G
+        [59, 63, 65],      // B Eb F
+        [60, 64, 67]       // C E G
+    ], 1),
+    \\dur, 2
+).play
+)`
+            },
+            modernCounterpoint: {
+                foxdot: `# FoxDot - Contrepoint moderne
+# Contrepoint minimaliste (phasing)
+pattern = [0, 2, 5, 2, 7, 2, 5, 2]
+p1 >> pluck(pattern, dur=0.25)
+p2 >> pluck(pattern, dur=0.24)  # Décalage progressif
+
+# Contrepoint polytonal
+Scale.default = "major"
+p3 >> keys(P[0, 2, 4, 5].every(4, "reverse"), dur=0.5)
+p4 >> keys(P[0, 2, 4, 5].every(4, "reverse") + 6, dur=0.5)  # En Fa#
+
+# Hétérophonie (même mélodie, variations)
+mel = [0, 2, 4, 5, 7]
+p5 >> pluck(mel, dur=0.5)
+p6 >> pluck(mel, dur=P[0.25, 0.75], oct=5)
+p7 >> pluck(mel.reverse(), dur=0.5, delay=0.25)`,
+                sonicpi: `# Sonic Pi - Techniques de contrepoint étendu
+# Contrepoint spectral et textural
+
+# Contrepoint de timbres (Klangfarbenmelodie)
+define :timbre_counterpoint do
+  melody = [:c4, :d4, :e4, :g4, :a4, :g4, :e4, :d4, :c4]
+  synths = [:sine, :triangle, :saw, :square, :fm]
+  
+  melody.each_with_index do |note, i|
+    use_synth synths[i % synths.length]
+    play note, release: 0.5, amp: 0.5
+    sleep 0.5
+  end
+end
+
+# Contrepoint algorithmique génératif
+live_loop :generative_counterpoint do
+  stop  # Décommenter pour activer
+  
+  # Voix 1 - Marche aléatoire contrainte
+  in_thread do
+    use_synth :piano
+    current = 60
+    8.times do
+      current += [-2, -1, 0, 1, 2].choose
+      current = [50, current, 70].sort[1]  # Contraindre la tessiture
+      play current, release: 0.3, amp: 0.5
+      sleep 0.5
+    end
+  end
+  
+  # Voix 2 - Réponse inversée
+  in_thread do
+    sleep 0.25  # Décalage
+    use_synth :vibraphone
+    current = 72
+    8.times do
+      current += [-2, -1, 0, 1, 2].choose * -1  # Inversion
+      current = [60, current, 80].sort[1]
+      play current, release: 0.3, amp: 0.4, pan: 0.5
+      sleep 0.5
+    end
+  end
+  
+  sleep 4
+end
+
+# Contrepoint fractal (auto-similaire)
+define :fractal_voice do |notes, level|
+  if level == 0
+    play_pattern_timed notes, 0.125
+  else
+    notes.each do |n|
+      fractal_voice([n, n+2, n-1], level - 1)
+    end
+  end
+end
+
+# Masses sonores à la Ligeti
+live_loop :micropolyphony do
+  stop  # Décommenter pour activer
+  
+  use_synth :sine
+  
+  # 20 voix en mouvement lent
+  20.times do |i|
+    in_thread do
+      start_note = 60 + i
+      end_note = 60 + i + rrand_i(-5, 5)
+      
+      100.times do |j|
+        freq = midi_to_hz(start_note + (end_note - start_note) * (j/100.0))
+        play hz_to_midi(freq), release: 0.1, amp: 0.05
+        sleep 0.1
+      end
+    end
+    sleep 0.05
+  end
+  
+  sleep 10
+end`,
+                supercollider: `// SuperCollider - Modern Counterpoint
+// Phasing pattern
+(
+var pattern = [0, 2, 5, 2, 7, 2, 5, 2];
+Ppar([
+    Pbind(\\degree, Pseq(pattern, inf), \\dur, 0.25),
+    Pbind(\\degree, Pseq(pattern, inf), \\dur, 0.24)
+]).play
+)`
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupTabs();
+            setupLanguageToggle();
+            setupPlatformSelectors();
+            initAudioContext();
+            createPianoKeyboard();
+            setupModeCards();
+            createScaleDisplay();
+            createCircleOfFifths();
+            createRhythmGrid();
+            updateCodeExamples();
+        });
+
+        // Configuration des onglets
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.section');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetSection = tab.getAttribute('data-section');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(targetSection).classList.add('active');
+                });
+            });
+        }
+
+        // Toggle de langue
+        function setupLanguageToggle() {
+            const toggle = document.getElementById('langToggle');
+            toggle.addEventListener('click', () => {
+                currentLang = currentLang === 'fr' ? 'en' : 'fr';
+                toggle.classList.toggle('en');
+                updateLanguage();
+            });
+        }
+
+        // Sélecteurs de plateforme
+        function setupPlatformSelectors() {
+            document.querySelectorAll('.platform-selector').forEach(selector => {
+                const buttons = selector.querySelectorAll('.platform-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        buttons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentPlatform = btn.getAttribute('data-platform');
+                        updateCodeExamples();
+                    });
+                });
+            });
+        }
+
+        // Initialisation audio
+        function initAudioContext() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        // Créer le clavier de piano
+        function createPianoKeyboard() {
+            const keyboard = document.getElementById('pianoKeyboard');
+            if (!keyboard) return;
+
+            const whiteKeys = [0, 2, 4, 5, 7, 9, 11];
+            const blackKeys = [1, 3, 6, 8, 10];
+            const blackKeyPositions = [1, 2, 4, 5, 6];
+
+            // Créer les touches blanches
+            whiteKeys.forEach((note, index) => {
+                const key = document.createElement('div');
+                key.className = 'key white-key';
+                key.dataset.note = note;
+                
+                const label = document.createElement('div');
+                label.className = 'key-label';
+                label.textContent = currentLang === 'fr' ? notesFR[note] : notesEN[note];
+                key.appendChild(label);
+                
+                key.addEventListener('click', () => playNote(note));
+                keyboard.appendChild(key);
+            });
+
+            // Créer les touches noires
+            blackKeyPositions.forEach((pos, index) => {
+                const key = document.createElement('div');
+                key.className = 'key black-key';
+                key.dataset.note = blackKeys[index];
+                key.style.left = `${pos * 40 + 25}px`;
+                
+                const label = document.createElement('div');
+                label.className = 'key-label';
+                label.textContent = currentLang === 'fr' ? notesFR[blackKeys[index]] : notesEN[blackKeys[index]];
+                key.appendChild(label);
+                
+                key.addEventListener('click', () => playNote(blackKeys[index]));
+                keyboard.appendChild(key);
+            });
+        }
+
+        // Jouer une note
+        function playNote(noteIndex, octave = 4) {
+            if (!audioContext) return;
+
+            const frequency = baseFrequencies[noteIndex] * Math.pow(2, octave - 4);
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+
+            // Feedback visuel
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                if (parseInt(key.dataset.note) === noteIndex) {
+                    key.classList.add('active');
+                    setTimeout(() => key.classList.remove('active'), 300);
+                }
+            });
+        }
+
+        // Configuration des cartes de modes
+        function setupModeCards() {
+            const modeCards = document.querySelectorAll('.mode-card');
+            modeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    modeCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    currentMode = card.dataset.mode;
+                    playMode(currentMode);
+                });
+            });
+        }
+
+        // Jouer un mode
+        function playMode(modeName) {
+            const modeNotes = modes[modeName];
+            modeNotes.forEach((note, index) => {
+                setTimeout(() => playNote(note), index * 300);
+            });
+        }
+
+        // Créer l'affichage des gammes
+        function createScaleDisplay() {
+            const display = document.getElementById('scaleDisplay');
+            if (!display) return;
+
+            const scaleNotes = scales[currentScale];
+            display.innerHTML = '';
+
+            for (let i = 0; i < 12; i++) {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'scale-note';
+                
+                if (i === 0) noteDiv.classList.add('root');
+                if (scaleNotes.includes(i)) noteDiv.classList.add('active');
+
+                const notes = currentLang === 'fr' ? notesFR : notesEN;
+                noteDiv.textContent = notes[i];
+
+                if (scaleNotes.includes(i)) {
+                    const degree = document.createElement('div');
+                    degree.className = 'degree-label';
+                    degree.textContent = scaleNotes.indexOf(i) + 1;
+                    noteDiv.appendChild(degree);
+                }
+
+                noteDiv.addEventListener('click', () => playNote(i));
+                display.appendChild(noteDiv);
+            }
+        }
+
+        // Créer le cercle des quintes
+        function createCircleOfFifths() {
+            const container = document.querySelector('.circle-diagram');
+            if (!container) return;
+
+            const fifthsOrder = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5];
+            const radius = 200;
+            const centerX = 250;
+            const centerY = 250;
+
+            fifthsOrder.forEach((note, index) => {
+                const angle = (index * 30 - 90) * Math.PI / 180;
+                const x = centerX + radius * Math.cos(angle) - 30;
+                const y = centerY + radius * Math.sin(angle) - 30;
+
+                const noteCircle = document.createElement('div');
+                noteCircle.className = 'circle-note';
+                noteCircle.style.left = x + 'px';
+                noteCircle.style.top = y + 'px';
+
+                const notes = currentLang === 'fr' ? notesFR : notesEN;
+                noteCircle.innerHTML = `
+                    <div>${notes[note]}</div>
+                    <small>${note} demi-tons</small>
+                `;
+
+                noteCircle.addEventListener('click', () => {
+                    playNote(note);
+                    highlightFifths(note);
+                });
+
+                container.appendChild(noteCircle);
+            });
+        }
+
+        // Mettre en surbrillance les relations de quintes
+        function highlightFifths(noteIndex) {
+            const circleNotes = document.querySelectorAll('.circle-note');
+            circleNotes.forEach(el => el.classList.remove('active'));
+
+            const fifth = (noteIndex + 7) % 12;
+            const fourth = (noteIndex + 5) % 12;
+
+            circleNotes.forEach(el => {
+                const noteText = el.querySelector('div').textContent;
+                const notes = currentLang === 'fr' ? notesFR : notesEN;
+                const index = notes.indexOf(noteText);
+
+                if (index === noteIndex || index === fifth || index === fourth) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // Créer la grille rythmique
+        function createRhythmGrid() {
+            const grid = document.getElementById('rhythmGrid');
+            if (!grid) return;
+
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'rhythm-cell';
+                if (i % 4 === 0) cell.classList.add('accent');
+                
+                cell.addEventListener('click', () => {
+                    cell.classList.toggle('active');
+                    playRhythmClick();
+                });
+                
+                grid.appendChild(cell);
+            }
+        }
+
+        // Son de clic rythmique
+        function playRhythmClick() {
+            if (!audioContext) return;
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Mise à jour des exemples de code
+        function updateCodeExamples() {
+            Object.entries(codeExamples).forEach(([key, examples]) => {
+                const element = document.getElementById(key + 'Code');
+                if (element && examples[currentPlatform]) {
+                    element.querySelector('pre').textContent = examples[currentPlatform];
+                }
+            });
+        }
+
+        // Fonction pour copier le code
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copié !';
+                button.style.backgroundColor = '#00ff88';
+                button.style.color = '#000';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '#333';
+                    button.style.color = '#fff';
+                }, 2000);
+            });
+        }
+
+        // Mise à jour de la langue
+        function updateLanguage() {
+            createPianoKeyboard();
+            createScaleDisplay();
+            document.querySelector('.circle-diagram').innerHTML = '';
+            createCircleOfFifths();
+        }
+    </script>
+</body>
+</html>

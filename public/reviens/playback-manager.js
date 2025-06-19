@@ -47,7 +47,12 @@ class PlaybackManager {
     // Show the playback cursor
     showCursor() {
         if (this.cursorElement) {
+            console.log('Showing cursor element:', this.cursorElement);
             this.cursorElement.style.display = 'block';
+            this.cursorElement.style.opacity = '1';
+            this.cursorElement.style.visibility = 'visible';
+        } else {
+            console.error('No cursor element available');
         }
     }
 
@@ -97,7 +102,11 @@ class PlaybackManager {
             return;
         }
         
+        // Force cursor to be visible during playback
         this.cursorElement.style.display = 'block';
+        this.cursorElement.style.opacity = '1';
+        this.cursorElement.style.visibility = 'visible';
+        this.cursorElement.style.zIndex = '15';
         
         // Calculate cursor position as percentage of visible area
         const relativePosition = currentPosition - this.viewStartTime;
@@ -153,13 +162,22 @@ class PlaybackManager {
         this.isPlaying = true;
         this.playbackStartTime = this.audioEngine.audioContext.currentTime;
         
+        console.log('Starting loop playback manager:', {
+            startTime: startTime,
+            duration: duration,
+            currentTime: this.audioEngine.audioContext.currentTime
+        });
+        
         this.showCursor();
         this.animateLoopPlayback();
     }
 
     // Animate cursor for looping playback
     animateLoopPlayback() {
-        if (!this.isPlaying || !this.cursorElement) return;
+        if (!this.isPlaying || !this.cursorElement) {
+            console.log('Animation stopped:', {isPlaying: this.isPlaying, hasCursor: !!this.cursorElement});
+            return;
+        }
 
         const currentTime = this.audioEngine.audioContext.currentTime;
         const elapsed = currentTime - this.playbackStartTime;
@@ -167,6 +185,16 @@ class PlaybackManager {
         // Calculate position within the loop
         const loopPosition = elapsed % this.duration;
         const currentPosition = this.startTime + loopPosition;
+        
+        // Debug every second
+        if (Math.floor(elapsed) % 1 === 0 && Math.floor(elapsed * 10) % 10 === 0) {
+            console.log('Loop animation running:', {
+                elapsed: elapsed.toFixed(2),
+                loopPosition: loopPosition.toFixed(2),
+                currentPosition: currentPosition.toFixed(2),
+                cursorDisplay: this.cursorElement.style.display
+            });
+        }
         
         // Update cursor position
         this.updateCursorPosition(currentPosition);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviens - Perfect Loop Maker</title>
-    <link rel="stylesheet" href="reviens\_styles.css">
+    <link rel="stylesheet" href="REVIENS/_styles.css">
 </head>
 <body>
     <div class="container">
@@ -40,10 +40,69 @@
             <div class="terminal-section">
                 <div class="terminal-header">[ WAVEFORM_ANALYSIS ]</div>
                 <div class="visualization-controls">
-                    <button id="resetViewBtn" class="terminal-btn">[ RESET_VIEW ]</button>
-                    <span class="terminal-hint">mouse_wheel: zoom | drag: select</span>
+                    <div class="main-controls">
+                        <div class="control-buttons">
+                            <button id="playBtn" class="terminal-btn primary">[ PLAY ]</button>
+                            <button id="loopBtn" class="terminal-btn primary">[ LOOP ]</button>
+                            <button id="analyzeBtn" class="terminal-btn">[ ANALYZE ]</button>
+                            <div class="beat-length-control">
+                                <label>length:</label>
+                                <select id="beatLength">
+                                    <option value="0.25">1/4</option>
+                                    <option value="0.5">1/2</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="4" selected>4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                    <option value="32">32</option>
+                                    <option value="custom">custom</option>
+                                </select>
+                                <input type="number" id="manualBeats" step="0.25" min="0.25" max="64" value="4" style="display: none; width: 60px; margin-left: 5px;">
+                                <button id="snapToNearestBeat" class="terminal-btn compact">APPLY</button>
+                            </div>
+                            <button id="exportBtn" class="terminal-btn success">[ EXPORT ]</button>
+                            <button id="resetViewBtn" class="terminal-btn">[ RESET_VIEW ]</button>
+                            <button id="helpBtn" class="terminal-btn">[ ? ]</button>
+                        </div>
+                        <div class="key-info">
+                            <div class="info-display">
+                                <span class="info-label">BPM:</span>
+                                <span id="bpmDisplay" class="info-value">--</span>
+                            </div>
+                            <div class="info-display">
+                                <span class="info-label">PITCH:</span>
+                                <span id="pitchDisplay" class="info-value">--</span>
+                            </div>
+                            <div class="info-display">
+                                <span class="info-label">QUALITY:</span>
+                                <span id="qualityDisplay" class="info-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="snap-controls-inline">
+                        <label class="checkbox-label compact">
+                            <input type="checkbox" id="snapToBeat" checked> 
+                            snap_to_beat
+                        </label>
+                        <label class="checkbox-label compact">
+                            <input type="checkbox" id="snapToZero"> 
+                            snap_to_zero
+                        </label>
+                        <label class="checkbox-label compact">
+                            <input type="checkbox" id="precisionMode"> 
+                            precision_mode
+                        </label>
+                    </div>
                 </div>
                 <div class="time-ruler" id="timeRuler"></div>
+                <div class="navigation-slider-container">
+                    <input type="range" id="navigationSlider" class="navigation-slider" min="0" max="100" value="0">
+                    <div class="slider-labels">
+                        <span class="slider-start">0:00.000</span>
+                        <span class="slider-end">0:00.000</span>
+                    </div>
+                </div>
                 <div class="waveform-container">
                     <canvas id="waveformCanvas" height="150"></canvas>
                     <div class="beat-markers" id="beatMarkers"></div>
@@ -54,112 +113,87 @@
         </div>
 
         <div class="controls" id="controls">
-            <div class="control-group">
-                <div class="terminal-header">[ SELECTION_PARAMS ]</div>
-                <div class="input-group">
-                    <label>start_time (s)</label>
-                    <input type="number" id="startTime" step="0.01" min="0" value="0">
-                </div>
-                <div class="input-group">
-                    <label>duration (s)</label>
-                    <input type="number" id="duration" step="0.01" min="0.1" value="4">
-                </div>
-                <div class="input-group">
-                    <label>zoom_level</label>
-                    <input type="range" id="zoomLevel" min="1" max="50" value="1" step="0.5">
-                    <span id="zoomValue" class="terminal-value">1x</span>
-                </div>
-                <div class="precision-controls">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="snapToZero"> 
-                        snap_to_zero_crossing
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="precisionMode"> 
-                        precision_mode
-                    </label>
-                </div>
-                <div class="beat-snap-controls">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="snapToBeat"> 
-                        snap_to_beat
-                    </label>
+            <div class="control-tabs">
+                <button class="tab-button active" data-tab="selection">SELECTION</button>
+                <button class="tab-button" data-tab="config">CONFIG</button>
+                <button class="tab-button" data-tab="finder">AUTO-FIND</button>
+            </div>
+            
+            <div class="tab-content active" data-tab="selection">
+                <div class="control-row">
                     <div class="input-group">
-                        <label>loop_length (beats)</label>
-                        <select id="beatLength">
-                            <option value="0.25">1/4</option>
-                            <option value="0.5">1/2</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="4" selected>4</option>
-                            <option value="8">8</option>
-                            <option value="16">16</option>
-                            <option value="32">32</option>
-                            <option value="custom">manual</option>
+                        <label>start_time (s)</label>
+                        <input type="number" id="startTime" step="0.01" min="0" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>duration (s)</label>
+                        <input type="number" id="duration" step="0.01" min="0.1" value="4">
+                    </div>
+                    <div class="input-group">
+                        <label>zoom_level</label>
+                        <input type="range" id="zoomLevel" min="1" max="50" value="1" step="0.5">
+                        <span id="zoomValue" class="terminal-value">1x</span>
+                    </div>
+                </div>
+                <div class="loop-analysis" id="loopAnalysis">
+                    <div class="terminal-output">select region for quality analysis</div>
+                </div>
+            </div>
+
+            <div class="tab-content" data-tab="config">
+                <div class="control-row">
+                    <div class="input-group">
+                        <label>crossfade_ms</label>
+                        <input type="range" id="crossfade" min="5" max="2000" value="20" step="5">
+                        <span id="crossfadeValue" class="terminal-value">20ms</span>
+                    </div>
+                    <div class="input-group">
+                        <label>crossfade_type</label>
+                        <select id="crossfadeType">
+                            <option value="linear">linear</option>
+                            <option value="cosine" selected>cosine</option>
+                            <option value="logarithmic">logarithmic</option>
+                            <option value="exponential">exponential</option>
                         </select>
                     </div>
-                    <div class="input-group" id="manualBeatGroup" style="display: none;">
-                        <label>manual_beats</label>
-                        <input type="number" id="manualBeats" step="0.25" min="0.25" max="64" value="4">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="clickReduction"> 
+                        click_reduction
+                    </label>
+                </div>
+                <div class="hidden-inputs">
+                    <input type="number" id="bpm" min="60" max="200" value="120" readonly style="display: none;">
+                    <input type="text" id="pitch" value="--" readonly style="display: none;">
+                </div>
+            </div>
+
+            <div class="tab-content" data-tab="finder">
+                <div class="control-row">
+                    <div class="input-group">
+                        <label>search_mode</label>
+                        <select id="searchMode">
+                            <option value="full_track" selected>entire track</option>
+                            <option value="around_selection">around current selection</option>
+                        </select>
                     </div>
-                    <button id="snapToNearestBeat" class="terminal-btn">[ SNAP_TO_BEAT ]</button>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <div class="terminal-header">[ LOOP_CONFIG ]</div>
-                <div class="input-group">
-                    <label>detected_bpm</label>
-                    <input type="number" id="bpm" min="60" max="200" value="120" readonly>
-                </div>
-                <div class="input-group">
-                    <label>detected_pitch</label>
-                    <input type="text" id="pitch" value="--" readonly>
-                </div>
-                <div class="input-group">
-                    <label>crossfade_ms</label>
-                    <input type="range" id="crossfade" min="5" max="2000" value="20" step="5">
-                    <span id="crossfadeValue" class="terminal-value">20ms</span>
-                </div>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="clickReduction"> 
-                    click_reduction
-                </label>
-                <div class="input-group">
-                    <label>crossfade_type</label>
-                    <select id="crossfadeType">
-                        <option value="linear">linear</option>
-                        <option value="cosine" selected>cosine</option>
-                        <option value="logarithmic">logarithmic</option>
-                        <option value="exponential">exponential</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <div class="terminal-header">[ LOOP_SUGGESTIONS ]</div>
-                <div class="suggestion-controls">
-                    <button id="findLoopsBtn" class="terminal-btn">[ ANALYZE_LOOPS ]</button>
-                    <div class="terminal-hint">analyze current duration for optimal loop points</div>
+                    <div class="input-group">
+                        <label>min_duration (s)</label>
+                        <input type="number" id="minDuration" step="0.5" min="0.5" max="30" value="2">
+                    </div>
+                    <div class="input-group">
+                        <label>max_duration (s)</label>
+                        <input type="number" id="maxDuration" step="0.5" min="1" max="60" value="8">
+                    </div>
+                    <button id="findLoopsBtn" class="terminal-btn">[ FIND_BEST_LOOP ]</button>
                 </div>
                 <div class="loop-suggestions" id="loopSuggestions">
                     <div class="terminal-output">waiting for analysis...</div>
                     <div id="suggestionsList"></div>
                 </div>
             </div>
-
-            <div class="control-group">
-                <div class="terminal-header">[ QUALITY_METRICS ]</div>
-                <div class="loop-analysis" id="loopAnalysis">
-                    <div class="terminal-output">select region for quality analysis</div>
-                </div>
-            </div>
         </div>
 
         <div class="button-group" id="buttonGroup">
-            <button id="playBtn" class="terminal-btn primary">[ PLAY ]</button>
-            <button id="loopBtn" class="terminal-btn primary">[ LOOP ]</button>
-            <button id="analyzeBtn" class="terminal-btn">[ ANALYZE ]</button>
             <button id="exportBtn" class="terminal-btn success">[ EXPORT ]</button>
         </div>
 
@@ -187,12 +221,12 @@
         </div>
 
     <!-- Load dependencies first -->
-    <script src="reviens\audio-engine.js"></script>
-    <script src="reviens\loop-analyzer.js"></script>
-    <script src="reviens\pitch-detector.js"></script>
-    <script src="reviens\playback-manager.js"></script>
-    <script src="reviens\export-manager.js"></script>
+    <script src="REVIENS/audio-engine.js"></script>
+    <script src="REVIENS/loop-analyzer.js"></script>
+    <script src="REVIENS/pitch-detector.js"></script>
+    <script src="REVIENS/playback-manager.js"></script>
+    <script src="REVIENS/export-manager.js"></script>
     <!-- Load main application last -->
-    <script src="reviens\main.js"></script>
+    <script src="REVIENS/main.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 ---
-const tools = [
+const externalTools = [
     {
         name: "FoxDot",
         url: "https://foxdot.org/",
@@ -69,33 +69,98 @@ const tools = [
         name: "Hydra",
         url: "https://hydra.ojack.xyz/",
         icon: "icon-water"
+    }
+];
+
+const communityTools = [
+    {
+        name: "Audio Viz",
+        description: "un outil pour visualiser le son, version beta",
+        url: "https://livecodingstrasbourg.github.io/audio-vizualiser.html",
+        date: "05/2025",
+        icon: "icon-music"
     },
     {
-        name: "Supermarket*",
+        name: "Supermarket live-coding",
+        description: "Un outil de live coding basé sur une experience de supermarché",
         url: "https://livecodingstrasbourg.github.io/supermarket.html",
+        date: "04/2025",
         icon: "icon-supermarket"
     },
     {
-        name: "AudioViz*",
-        url: "https://livecodingstrasbourg.github.io/audio-visualizer.html",
-        icon: "icon-music"
+        name: "Crowd data",
+        description: "Base de données d'informations concernant l'interaction avec un public",
+        url: "https://livecodingstrasbourg.github.io/crowd.html",
+        date: "05/2025",
+        icon: "icon-users"
+    },
+    {
+        name: "Politis",
+        description: "euh... une.. experience ?",
+        url: "https://livecodingstrasbourg.github.io/politis.html",
+        date: "04/2025",
+        icon: "icon-bulb"
+    },
+    {
+        name: "Reviens, an audio looper",
+        description: "Version très alpha mais essentiellement un outil pour faire des boucles audios",
+        url: "https://livecodingstrasbourg.github.io/reviens.html",
+        date: "05/2025",
+        icon: "icon-loop"
+    },
+    {
+        name: "SynthExplorer",
+        description: "découvrir la synthèse sonore",
+        url: "https://livecodingstrasbourg.github.io/Synthexplorer.html",
+        date: "06/2025",
+        icon: "icon-wave"
+    },
+    {
+        name: "Explorer la théorie musicale appliquée au live-coding",
+        description: "Version alpha",
+        url: "https://livecodingstrasbourg.github.io/theorie.html",
+        date: "06/2025",
+        icon: "icon-note"
     }
-
 ];
-
 ---
 
 <section id="outils">
-    <h2><span class="icon-tools"></span> Outils Utilisés<span class="terminal-cursor"></span></h2>
+    <h2><span class="icon-tools"></span> Outils<span class="terminal-cursor"></span></h2>
+    
+    <!-- External Tools Section -->
     <div class="tools-section">
         <h3>Nos environnements de livecoding préférés, liste non exhaustive !</h3>
-
         <div class="tools-grid">
-            {tools.map(tool => (
+            {externalTools.map(tool => (
                 <a href={tool.url} target="_blank" rel="noopener noreferrer" class="tool-card">
                     <span class={tool.icon}></span>
                     <span>{tool.name}</span>
                 </a>
+            ))}
+        </div>
+    </div>
+
+    <!-- Community Tools Section -->
+    <div class="community-tools-section">
+        <h3><span class="icon-bulb"></span> Outils de la communauté</h3>
+        <div class="community-tools-grid">
+            {communityTools.map(tool => (
+                <div class="community-tool-card">
+                    <div class="tool-header">
+                        <div class="tool-title">
+                            <span class={tool.icon}></span>
+                            <h4>{tool.name}</h4>
+                        </div>
+                        <span class="tool-date">{tool.date}</span>
+                    </div>
+                    <div class="tool-content">
+                        <p>{tool.description}</p>
+                        <a href={tool.url} target="_blank" rel="noopener noreferrer" class="btn-outline">
+                            Accéder à l'outil
+                        </a>
+                    </div>
+                </div>
             ))}
         </div>
     </div>
@@ -105,6 +170,7 @@ const tools = [
 .tools-section {
     background-color: var(--card-background);
     padding: 2rem;
+    margin-bottom: 2rem;
     box-shadow: var(--box-shadow);
     border: 1px solid var(--primary-dark);
     position: relative;
@@ -183,11 +249,126 @@ const tools = [
     margin-top: 0.5rem;
 }
 
-@media (max-width: 768px) {
-      .tools-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-
+/* Community Tools Styles */
+.community-tools-section {
+    background-color: var(--card-background);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--primary-dark);
+    position: relative;
+    overflow: hidden;
 }
 
+.community-tools-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(to right, rgba(255, 0, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 0, 255, 0.05) 1px, transparent 1px);
+    background-size: 25px 25px;
+    z-index: -1;
+}
+
+.community-tools-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--primary-light);
+    font-family: monospace;
+    text-shadow: 1px 1px 0 var(--background-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.community-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.community-tool-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--primary-dark);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.community-tool-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--secondary-color);
+    background-color: rgba(255, 0, 255, 0.1);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.tool-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tool-title h4 {
+    margin: 0;
+    color: var(--primary-light);
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.tool-date {
+    background-color: var(--primary-dark);
+    color: var(--text-light);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    font-family: monospace;
+    border: 1px solid var(--primary-color);
+}
+
+.tool-content p {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.btn-outline {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    background-color: transparent;
+}
+
+.btn-outline:hover {
+    background-color: var(--secondary-color);
+    color: var(--background-dark);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .community-tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
 </style>

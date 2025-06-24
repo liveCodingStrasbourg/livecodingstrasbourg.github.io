@@ -38,16 +38,18 @@ window.productTypes = {
     },
     
     
-    salad: {
-      create: () => new Tone.AMSynth({
-        oscillator: { type: "square" },
-        envelope: { attack: 0.01, decay: 0.1, sustain: 0.3, release: 0.5 },
-      }).toDestination(),
-      note: "E4",
-      pattern: "16n",
-      color: "#7fb800", // Green
-      description: "Square wave AM synth",
-      category: "vegetable",
+salad: {
+  create: () => new Tone.MonoSynth({
+    oscillator: { type: "triangle" },
+    envelope: { attack: 0.01, decay: 0.1, sustain: 0.3, release: 0.2 },
+    filter: { Q: 2, frequency: 2000, type: "highpass" },
+    filterEnvelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 1500, octaves: 2 }
+  }).toDestination(),
+  note: "E5",
+  pattern: "8t",           // Changed from "8t" to "8n" for more regular timing
+  color: "#7fb800",        // Green
+  description: "Crisp pluck synth for fresh texture",
+  category: "vegetable",
       // Modifiers (same structure as beer, modified for salad)
       fresh: { octave: 1, filter: null },
       old: { octave: -1, filter: null },
@@ -69,13 +71,15 @@ window.productTypes = {
     
     ham: {
       create: () => new Tone.MonoSynth({
-        oscillator: { type: "sawtooth" },
-        envelope: { attack: 0.05, decay: 0.3, sustain: 0.4, release: 0.8 },
+        oscillator: { type: "fatsawtooth", count: 4, spread: 40 },
+        envelope: { attack: 0.02, decay: 0.4, sustain: 0.6, release: 0.5 },
+        filter: { Q: 2, frequency: 600, type: "lowpass" },
+        filterEnvelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.5, baseFrequency: 500, octaves: 2.5 }
       }).toDestination(),
-      note: "G4",
-      pattern: "4n",
+      note: "C2",
+      pattern: "4n.",
       color: "#ff6b6b", // Pink
-      description: "Sawtooth mono synth",
+      description: "Rich fat sawtooth with filter movement",
       category: "meat",
       // Modifiers
       fresh: { octave: 1, filter: null },
@@ -96,17 +100,21 @@ window.productTypes = {
       addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.2, feedback: 0.7, wet: 0.25 } }
     },
     
-    milk: {
-      create: () => new Tone.PluckSynth({
-        attackNoise: 1,
-        dampening: 4000,
-        resonance: 0.7,
-      }).toDestination(),
-      note: "A4",
-      pattern: "16n",
-      color: "#ffffff", // White
-      description: "Plucked string synth",
-      category: "dairy",
+// Fixed milk synth configuration in product-types.js
+
+milk: {
+  create: () => new Tone.MonoSynth({
+    oscillator: { type: "sine" },
+    envelope: { attack: 0.02, decay: 0.3, sustain: 0.4, release: 0.6 },
+    filter: { Q: 1, frequency: 1200, type: "lowpass" },
+    filterEnvelope: { attack: 0.02, decay: 0.2, sustain: 0.3, release: 0.4, baseFrequency: 800, octaves: 1.5 }
+  }).toDestination(),
+  note: "A4",
+  pattern: "16n",
+  color: "#ffffff", // White
+  description: "Smooth liquid synth with gentle filtering",
+  category: "dairy",
+ 
       // Modifiers
       fresh: { octave: 1, filter: null },
       old: { octave: -1, filter: "lowpass" },
@@ -127,14 +135,16 @@ window.productTypes = {
     },
     
     chips: {
-  create: () => new Tone.NoiseSynth({
-    noise: { type: "pink" }, // Changed from "white" to "pink" (softer)
-    envelope: { attack: 0.01, decay: 0.15, sustain: 0.05, release: 0.2 }, // Softer envelope
+  create: () => new Tone.MonoSynth({
+    oscillator: { type: "sawtooth" },
+    envelope: { attack: 0.001, decay: 0.1, sustain: 0.3, release: 0.1 },
+    filter: { Q: 2, frequency: 2500, type: "highpass" },
+    filterEnvelope: { attack: 0.001, decay: 0.2, sustain: 0.5, release: 0.2, baseFrequency: 2000, octaves: 2 }
   }).toDestination(),
-  note: "C3", // For compatibility, not actually used
-  pattern: "16t",
+  note: "C5", // Higher pitched for crispness
+  pattern: "8n.", // Dotted 8th notes - less frantic than 16th triplets
   color: "#ffd700", // Gold
-  description: "Pink noise synth", // Updated description
+  description: "Crispy sawtooth synth with filter sweep",
   category: "snack",
       // Modifiers
       fresh: { octave: 0, filter: "bandpass" },
@@ -285,16 +295,24 @@ window.productTypes = {
     },
     
     bread: {
-      create: () => new Tone.FMSynth({
-        harmonicity: 2,
-        modulationIndex: 5,
-        oscillator: { type: "triangle" },
-        envelope: { attack: 0.1, decay: 0.3, sustain: 0.4, release: 1 },
+      create: () => new Tone.DuoSynth({
+        vibratoAmount: 0.2,
+        vibratoRate: 3,
+        harmonicity: 1.005, // Slight detuning for warmth
+        voice0: {
+          oscillator: { type: "fatsine", count: 2, spread: 10 },
+          envelope: { attack: 0.1, decay: 0.3, sustain: 0.7, release: 1.0 },
+          filter: { Q: 1, frequency: 800, type: "lowpass" }
+        },
+        voice1: {
+          oscillator: { type: "sine" },
+          envelope: { attack: 0.15, decay: 0.3, sustain: 0.6, release: 1.2 }
+        }
       }).toDestination(),
       note: "E3",
       pattern: "4n",
       color: "#deb887", // Tan
-      description: "Soft FM synth",
+      description: "Warm duo synth with slight detuning",
       category: "bakery",
       // Modifiers
       fresh: { octave: 1, filter: null },
@@ -316,14 +334,16 @@ window.productTypes = {
     },
     
         cereal: {
-      create: () => new Tone.MonoSynth({
-        oscillator: { type: "square" },
-        envelope: { attack: 0.01, decay: 0.2, sustain: 0.2, release: 0.4 },
+      create: () => new Tone.PolySynth(Tone.Synth, {
+        oscillator: { type: "fatsawtooth", count: 3, spread: 30 },
+        envelope: { attack: 0.002, decay: 0.08, sustain: 0.2, release: 0.1 },
+        filter: { Q: 1, frequency: 3000, type: "highpass" },
+        filterEnvelope: { attack: 0.001, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 2500, octaves: 1.5 }
       }).toDestination(),
-      note: "A3",
+      note: "G5",
       pattern: "16n",
       color: "#ffdb58", // Mustard
-      description: "Square wave mono synth",
+      description: "Crunchy granular synth with filter modulation",
       category: "breakfast",
       // Modifiers
       fresh: { octave: 1, filter: null },
@@ -409,18 +429,18 @@ window.productTypes = {
     },
     
 energy_drink: {
-      create: () => new Tone.MetalSynth({
-        frequency: 150, // Lower frequency (was 200)
-        envelope: { attack: 0.005, decay: 0.1, release: 0.1 }, // Shorter decay
-        harmonicity: 3.1, // Less harsh harmonicity (was 5.1)
-        modulationIndex: 16, // Lower modulation (was 32)
-        resonance: 2000, // Less resonant (was 4000)
-        octaves: 1 // Smaller range (was 1.5)
+      create: () => new Tone.FMSynth({
+        harmonicity: 3,
+        modulationIndex: 10,
+        oscillator: { type: "square" },
+        envelope: { attack: 0.001, decay: 0.2, sustain: 0.4, release: 0.1 },
+        modulation: { type: "sine" },
+        modulationEnvelope: { attack: 0.001, decay: 0.1, sustain: 0.5, release: 0.1 }
       }).toDestination(),
-      note: "C4", // Not used for MetalSynth, but needed for compatibility
-      pattern: "16t",
+      note: "G4", // Higher pitch for energy
+      pattern: "8n", // Changed from 16t to 8th notes for better rhythm
       color: "#39ff14", // Neon Green
-      description: "Softer metallic synth", // Updated description
+      description: "Buzzy FM synth with energy",
       category: "beverage",
       // Modifiers
       fresh: { octave: 1, filter: "bandpass" },

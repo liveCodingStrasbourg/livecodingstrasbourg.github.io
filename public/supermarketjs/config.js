@@ -10,6 +10,13 @@ window.CONFIG = {
       fadeInTime: 0.01, // in seconds
       fadeOutTime: 0.1, // in seconds
       visualizerUpdateInterval: 100, // in milliseconds
+      // Performance settings - prioritizing stability over latency
+      defaultLatencyHint: "playback", // Maximum stability
+      defaultLookAhead: 0.5, // High lookahead for stability (500ms)
+      defaultUpdateInterval: 0.2, // Less frequent updates (200ms)
+      reducedQualityThreshold: 0.7, // More aggressive quality reduction
+      bufferSize: 4096, // Large buffer for maximum stability
+      workletEnabled: true // Use AudioWorklet for better performance
     },
     
     // Cart wheel types

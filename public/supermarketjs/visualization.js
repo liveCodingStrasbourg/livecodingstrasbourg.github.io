@@ -249,15 +249,19 @@ window.visualization = {
     },
     
     // Start the visualization update loop
-    startVisualizationLoop: function() {
-      const updateLoop = () => {
-        this.updateVisualizers();
-        this.animationFrameId = requestAnimationFrame(updateLoop);
-      };
-      
-      // Start the loop
-      this.animationFrameId = requestAnimationFrame(updateLoop);
-    },
+startVisualizationLoop: function() {
+  let lastUpdate = 0;
+  const updateLoop = () => {
+    const now = Date.now();
+    if (now - lastUpdate > 100) { // Only update every 100ms instead of every frame
+      this.updateVisualizers();
+      lastUpdate = now;
+    }
+    this.animationFrameId = requestAnimationFrame(updateLoop);
+  };
+  
+  this.animationFrameId = requestAnimationFrame(updateLoop);
+},
     
     // Stop the visualization update loop
     stopVisualizationLoop: function() {

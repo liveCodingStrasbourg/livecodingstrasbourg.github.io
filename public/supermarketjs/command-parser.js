@@ -6,6 +6,20 @@
     
     // Main command parser module functionality
     window.commandParser = {
+      // Execute command with story tracking
+      executeCommandWithTracking: function(cmd) {
+        const result = this.executeCommand(cmd);
+        
+        // Check story goals after successful command
+        if (result && window.storyMode && window.storyMode.storyActive) {
+          setTimeout(() => {
+            window.storyMode.checkGoal();
+          }, 500);
+        }
+        
+        return result;
+      },
+      
       // Execute command string
       executeCommand: function(cmd) {
         // Normalize and trim command
@@ -17,6 +31,9 @@
         } else {
           console.log(`Command: ${cmd}`);
         }
+        
+        // Store command for story mode tracking
+        this.lastCommand = cmd;
         
         // Time commands
         if (this.isClosingTimeCommand(cmd)) {
@@ -70,12 +87,70 @@
           return this.handleApocalypseModeCommand(cmd);
         }
         
+        // Check if it's closing time command (increase tempo)
+        if (this.isClosingTimeCommand(cmd)) {
+          return this.handleClosingTimeCommand(cmd);
+        }
+        
+        // Check if it's opening time command (decrease tempo)
+        if (this.isOpeningTimeCommand(cmd)) {
+          return this.handleOpeningTimeCommand(cmd);
+        }
+        
+        // Check for store feature commands
+        if (this.isCheckoutCommand(cmd) || this.isFinishCheckoutCommand(cmd) ||
+            this.isScanBarcodeCommand(cmd) || this.isSeasonCommand(cmd) ||
+            this.isAnnouncementCommand(cmd) || this.isRushHourCommand(cmd) ||
+            this.isCouponCommand(cmd) || this.isDecayCommand(cmd) ||
+            this.isStoreLayoutCommand(cmd) || this.isMapComposeCommand(cmd)) {
+          return this.handleStoreFeatureCommand(cmd);
+        }
+        
+        // Check for performance commands
+        if (cmd === "performance stats" || cmd === "show performance") {
+          return this.showPerformanceStats();
+        }
+        
+        if (cmd.startsWith("performance mode ")) {
+          const mode = cmd.replace("performance mode ", "").trim();
+          return this.setPerformanceMode(mode);
+        }
+        
+        // Check for shoplifting commands
+        if (this.isShopliftCommand(cmd)) {
+          return this.handleShopliftCommand(cmd);
+        }
+        
+        // Check for story mode commands
+        if (cmd === "story mode" || cmd === "start story") {
+          if (window.storyMode) {
+            window.storyMode.start();
+            return true;
+          }
+          return false;
+        }
+        
+        if (cmd === "skip story" || cmd === "story skip") {
+          if (window.storyMode) {
+            window.storyMode.skipStory();
+            return true;
+          }
+          return false;
+        }
+        
+        // Check for performance mode commands
+        if (this.isPerformanceModeCommand(cmd)) {
+          return this.handlePerformanceModeCommand(cmd);
+        }
+        
         // Unknown command
         if (window.log) {
           window.log("Unknown command - the register won't accept that.");
         } else {
           console.log("Unknown command");
         }
+        
+        // Don't check story goals for unknown commands
         return false;
       },
       
@@ -129,6 +204,168 @@
         }
       },
       
+      // Check for checkout commands
+      isCheckoutCommand: function(cmd) {
+        return cmd === "checkout" || cmd === "start checkout";
+      },
+      
+      isFinishCheckoutCommand: function(cmd) {
+        return cmd === "finish checkout" || cmd === "stop checkout";
+      },
+      
+      isScanBarcodeCommand: function(cmd) {
+        return cmd.startsWith("scan barcode") || cmd.startsWith("scan");
+      },
+      
+      // Check for season commands
+      isSeasonCommand: function(cmd) {
+        return cmd.startsWith("season ");
+      },
+      
+      // Check for announcement commands
+      isAnnouncementCommand: function(cmd) {
+        return cmd.startsWith("announcement ") || cmd.startsWith("announce ");
+      },
+      
+      // Check for rush hour commands
+      isRushHourCommand: function(cmd) {
+        return cmd === "rush hour on" || cmd === "rush hour off";
+      },
+      
+      // Check for coupon commands
+      isCouponCommand: function(cmd) {
+        return cmd.startsWith("apply coupon ") || cmd.startsWith("coupon ");
+      },
+      
+      // Check for decay commands
+      isDecayCommand: function(cmd) {
+        return cmd === "decay on" || cmd === "decay off" || cmd === "spoil all" || 
+               cmd.startsWith("preserve ");
+      },
+      
+      // Check for store layout commands
+      isStoreLayoutCommand: function(cmd) {
+        return cmd === "store layout" || cmd === "show layout" || cmd === "view store";
+      },
+      
+      // Check for map compose commands
+      isMapComposeCommand: function(cmd) {
+        return cmd === "map compose on" || cmd === "map compose off" || cmd === "map compose";
+      },
+      
+      // Handle store features commands
+      handleStoreFeatureCommand: function(cmd) {
+        if (!window.storeFeatures) {
+          console.log("Store features not loaded");
+          window.log("Store features not available yet.");
+          return false;
+        }
+        
+        // Checkout
+        if (this.isCheckoutCommand(cmd)) {
+          window.storeFeatures.startCheckout();
+          return true;
+        }
+        
+        if (this.isFinishCheckoutCommand(cmd)) {
+          window.storeFeatures.finishCheckout();
+          return true;
+        }
+        
+        // Barcode scanning
+        if (this.isScanBarcodeCommand(cmd)) {
+          const barcode = cmd.replace(/scan\s*(barcode)?\s*/i, '').trim();
+          window.storeFeatures.scanBarcode(barcode);
+          return true;
+        }
+        
+        // Seasons
+        if (this.isSeasonCommand(cmd)) {
+          const season = cmd.replace("season ", "").trim().toLowerCase();
+          window.storeFeatures.setSeason(season);
+          return true;
+        }
+        
+        // Announcements
+        if (this.isAnnouncementCommand(cmd)) {
+          const message = cmd.replace(/announce(ment)?\s+/i, '').trim();
+          window.storeFeatures.makeAnnouncement(message);
+          return true;
+        }
+        
+        // Rush hour
+        if (cmd === "rush hour on") {
+          window.storeFeatures.startRushHour();
+          return true;
+        }
+        if (cmd === "rush hour off") {
+          window.storeFeatures.endRushHour();
+          return true;
+        }
+        
+        // Coupons
+        if (this.isCouponCommand(cmd)) {
+          const code = cmd.replace(/^(apply\s+)?coupon\s+/i, '').trim();
+          window.storeFeatures.applyCoupon(code);
+          return true;
+        }
+        
+        // Decay system
+        if (cmd === "decay on") {
+          window.storeFeatures.startProductDecay();
+          return true;
+        }
+        if (cmd === "decay off") {
+          window.storeFeatures.stopDecay();
+          return true;
+        }
+        if (cmd === "spoil all") {
+          window.storeFeatures.spoilAll();
+          return true;
+        }
+        if (cmd.startsWith("preserve ")) {
+          const product = cmd.replace("preserve ", "").trim();
+          window.storeFeatures.preserveProduct(product);
+          return true;
+        }
+        
+        // Store layout visualizer
+        if (this.isStoreLayoutCommand(cmd)) {
+          if (window.storeLayout) {
+            window.storeLayout.show();
+            return true;
+          } else {
+            window.log("Store Layout Visualizer not available yet.");
+            return false;
+          }
+        }
+        
+        // Map compose mode
+        if (this.isMapComposeCommand(cmd)) {
+          if (window.storeLayout) {
+            if (cmd === "map compose" || cmd === "map compose on") {
+              window.storeLayout.show();
+              setTimeout(() => {
+                if (!window.storeLayout.mapComposing.enabled) {
+                  window.storeLayout.toggleMapCompose();
+                }
+              }, 100);
+              return true;
+            } else if (cmd === "map compose off") {
+              if (window.storeLayout.mapComposing.enabled) {
+                window.storeLayout.toggleMapCompose();
+              }
+              return true;
+            }
+          } else {
+            window.log("Store Layout Visualizer not available yet.");
+            return false;
+          }
+        }
+        
+        return false;
+      },
+      
       // Handle add product command
       handleAddProductCommand: function(cmd) {
         const addParts = cmd.replace("add", "").trim();
@@ -179,6 +416,7 @@
         const nutriscorePos = addParts.toLowerCase().indexOf("nutriscore");
         const shelfLifePos = addParts.toLowerCase().indexOf("shelflife");
         const openProductPos = addParts.toLowerCase().indexOf("open");
+        const escalatorPos = addParts.toLowerCase().indexOf("escalator");
         
         // Determine where to look for the product name
         let cutoffPos = addParts.length;
@@ -194,6 +432,10 @@
         
         if (openProductPos !== -1) {
           cutoffPos = Math.min(cutoffPos, openProductPos);
+        }
+        
+        if (escalatorPos !== -1) {
+          cutoffPos = Math.min(cutoffPos, escalatorPos);
         }
         
         // Get the part before any special parameters
@@ -348,6 +590,34 @@
         return true;
       },
       
+      // Check for performance mode command
+      isPerformanceModeCommand: function(cmd) {
+        return cmd.includes("performance mode") || 
+               cmd.includes("quality mode") || 
+               cmd.includes("balanced mode");
+      },
+      
+      // Handle performance mode command
+      handlePerformanceModeCommand: function(cmd) {
+        if (!window.performanceManager) {
+          window.log("Performance manager not available");
+          return false;
+        }
+        
+        if (cmd.includes("performance mode")) {
+          window.performanceManager.setPerformanceMode('performance');
+          window.log("🚀 Performance mode activated - optimized for stability");
+        } else if (cmd.includes("quality mode")) {
+          window.performanceManager.setPerformanceMode('quality');
+          window.log("🎵 Quality mode activated - maximum audio fidelity");
+        } else if (cmd.includes("balanced mode")) {
+          window.performanceManager.setPerformanceMode('balanced');
+          window.log("⚖️ Balanced mode activated - good quality and performance");
+        }
+        
+        return true;
+      },
+      
       // Generate a random command
       generateRandomCommand: function() {
         // List of possible command categories
@@ -492,6 +762,119 @@
         const action = Math.random() < 0.8 ? 'on' : 'off'; // Bias toward turning modes on
         
         return `${randomMode} mode ${action}`;
+      },
+      
+      // Show performance stats
+      showPerformanceStats: function() {
+        if (!window.performanceManager) {
+          window.log("Performance monitoring not available.");
+          return false;
+        }
+        
+        const stats = window.performanceManager.getStats();
+        window.log("🎛️ PERFORMANCE STATISTICS:");
+        window.log(`Active Voices: ${stats.activeVoices}/${stats.maxPolyphony}`);
+        window.log(`Dropped Voices: ${stats.droppedVoices}`);
+        window.log(`Effect Reuses: ${stats.effectReuses}`);
+        window.log(`Synth Reuses: ${stats.synthReuses}`);
+        window.log(`Performance Mode: ${stats.performanceMode}`);
+        window.log(`Synth Pool: ${stats.synthPoolUsage.inUse} in use, ${stats.synthPoolUsage.available} available`);
+        return true;
+      },
+      
+      // Set performance mode
+      setPerformanceMode: function(mode) {
+        if (!window.performanceManager) {
+          window.log("Performance manager not available.");
+          return false;
+        }
+        
+        if (['performance', 'balanced', 'quality'].includes(mode)) {
+          window.performanceManager.setPerformanceMode(mode);
+          window.log(`🎚️ Performance mode set to: ${mode.toUpperCase()}`);
+          return true;
+        } else {
+          window.log("Invalid performance mode. Use: performance, balanced, or quality");
+          return false;
+        }
+      },
+      
+      // Check if command is shoplifting related
+      isShopliftCommand: function(cmd) {
+        return cmd.startsWith("shoplift ") || 
+               cmd.startsWith("steal ") || 
+               cmd.startsWith("pocket ") ||
+               cmd.startsWith("five finger discount ") ||
+               cmd.startsWith("security level ") ||
+               cmd === "security chase" ||
+               cmd === "security chase on" ||
+               cmd === "security chase off" ||
+               cmd === "shoplifting stats" ||
+               cmd === "theft stats";
+      },
+      
+      // Handle shoplifting commands
+      handleShopliftCommand: function(cmd) {
+        if (!window.shopliftingSystem) {
+          window.log("Shoplifting system not available.");
+          return false;
+        }
+        
+        // Shoplift product commands
+        if (cmd.startsWith("shoplift ") || cmd.startsWith("steal ") || 
+            cmd.startsWith("pocket ") || cmd.startsWith("five finger discount ")) {
+          const productName = cmd.replace(/^(shoplift|steal|pocket|five finger discount)\s+/, '').trim();
+          return window.shopliftingSystem.shopliftProduct(productName);
+        }
+        
+        // Security level
+        if (cmd.startsWith("security level ")) {
+          const level = cmd.replace("security level ", "").trim();
+          if (level === "low") {
+            window.shopliftingSystem.setSecurityLevel(0.3);
+          } else if (level === "medium") {
+            window.shopliftingSystem.setSecurityLevel(0.5);
+          } else if (level === "high") {
+            window.shopliftingSystem.setSecurityLevel(0.7);
+          } else if (level === "paranoid") {
+            window.shopliftingSystem.setSecurityLevel(0.95);
+          } else {
+            const numLevel = parseFloat(level);
+            if (!isNaN(numLevel)) {
+              window.shopliftingSystem.setSecurityLevel(numLevel / 100);
+            } else {
+              window.log("Invalid security level. Use: low, medium, high, paranoid, or 0-100");
+              return false;
+            }
+          }
+          return true;
+        }
+        
+        // Security chase
+        if (cmd === "security chase" || cmd === "security chase on") {
+          window.shopliftingSystem.startChase();
+          return true;
+        }
+        
+        if (cmd === "security chase off") {
+          window.shopliftingSystem.stopChase();
+          return true;
+        }
+        
+        // Stats
+        if (cmd === "shoplifting stats" || cmd === "theft stats") {
+          const stats = window.shopliftingSystem.getStats();
+          window.log("🚨 SHOPLIFTING STATISTICS:");
+          window.log(`Total Attempts: ${stats.totalThefts}`);
+          window.log(`Successful Escapes: ${stats.successful}`);
+          window.log(`Caught by Security: ${stats.caught}`);
+          window.log(`Currently Stealing: ${stats.currentlyStealing}`);
+          window.log(`In Detention: ${stats.detained}`);
+          window.log(`Security Level: ${stats.securityLevel}`);
+          return true;
+        }
+        
+        return false;
       }
     };
     

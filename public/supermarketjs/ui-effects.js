@@ -56,6 +56,9 @@ const spookyMessages = [
       
       // Set up periodic ambient messages
       this.setupPeriodicMessages();
+      
+      // Start status bar updates
+      this.startStatusUpdates();
     },
     
     // Add atmospheric visual elements
@@ -224,5 +227,93 @@ const spookyMessages = [
       setTimeout(() => {
         element.style.backgroundColor = originalBg;
       }, 300);
+    },
+    
+    // Create snow effect for Christmas
+    createSnowEffect: function() {
+      // Remove any existing snow
+      document.querySelectorAll('.snow-particle').forEach(el => el.remove());
+      
+      // Create snow particles
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const snowflake = document.createElement('div');
+          snowflake.className = 'snow-particle';
+          snowflake.textContent = '❄';
+          snowflake.style.left = Math.random() * 100 + '%';
+          snowflake.style.animationDuration = (Math.random() * 10 + 10) + 's';
+          snowflake.style.animationDelay = Math.random() * 10 + 's';
+          snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+          snowflake.style.opacity = Math.random() * 0.8 + 0.2;
+          document.body.appendChild(snowflake);
+          
+          // Remove after animation completes
+          setTimeout(() => {
+            snowflake.remove();
+          }, 20000);
+        }, i * 200);
+      }
+    },
+    
+    // Show temporary message
+    showMessage: function(text, duration, colorClass) {
+      const message = document.createElement('div');
+      message.className = `spooky-message ${colorClass || ''}`;
+      message.textContent = text;
+      message.style.left = '50%';
+      message.style.top = '50%';
+      message.style.transform = 'translate(-50%, -50%)';
+      message.style.fontSize = '24px';
+      message.style.fontWeight = 'bold';
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.remove();
+      }, duration || 3000);
+    },
+    
+    // Update status bar
+    updateStatusBar: function() {
+      // Update BPM
+      const bpmElement = document.getElementById('status-bpm');
+      if (bpmElement && Tone && Tone.Transport) {
+        bpmElement.textContent = Math.round(Tone.Transport.bpm.value);
+      }
+      
+      // Update product count
+      const productsElement = document.getElementById('status-products');
+      if (productsElement && window.state && window.state.products) {
+        productsElement.textContent = Object.keys(window.state.products).length;
+      }
+      
+      // Update active mode
+      const modeElement = document.getElementById('status-mode');
+      if (modeElement && window.state && window.state.modes) {
+        const activeModes = [];
+        if (window.state.modes.discount) activeModes.push('Discount');
+        if (window.state.modes.inflation) activeModes.push('Inflation');
+        if (window.state.modes.consumerism) activeModes.push('Consumerism');
+        if (window.state.modes.black_friday) activeModes.push('Black Friday');
+        if (window.state.modes.apocalypse) activeModes.push('Apocalypse');
+        if (window.storeFeatures && window.storeFeatures.rushHour && window.storeFeatures.rushHour.active) {
+          activeModes.push('Rush Hour');
+        }
+        if (window.storeFeatures && window.storeFeatures.currentSeason !== 'normal') {
+          activeModes.push(window.storeFeatures.currentSeason);
+        }
+        
+        modeElement.textContent = activeModes.length > 0 ? activeModes.join(', ') : 'Normal';
+      }
+    },
+    
+    // Start status bar updates
+    startStatusUpdates: function() {
+      // Update immediately
+      this.updateStatusBar();
+      
+      // Update every second
+      setInterval(() => {
+        this.updateStatusBar();
+      }, 1000);
     }
   };

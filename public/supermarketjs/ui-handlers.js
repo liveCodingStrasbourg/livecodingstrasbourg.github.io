@@ -20,6 +20,12 @@ window.uiHandlers = {
     // Initialize UI components
     this.setupEventListeners();
     
+    // Initialize tab functionality
+    this.initializeTabs();
+    
+    // Initialize clickable reference items
+    this.initializeClickableItems();
+    
     // Create keyboard shortcut tooltip
     if (window.uiEffects && window.uiEffects.createShortcutTooltip) {
       window.uiEffects.createShortcutTooltip();
@@ -107,8 +113,8 @@ window.uiHandlers = {
       // Get and execute current line
       const line = this.getCurrentLine();
       if (line && !line.trim().startsWith("//")) {
-        if (window.commandParser && window.commandParser.executeCommand) {
-          window.commandParser.executeCommand(line);
+        if (window.commandParser && window.commandParser.executeCommandWithTracking) {
+          window.commandParser.executeCommandWithTracking(line);
           
           // Add visual feedback
           if (window.uiEffects && window.uiEffects.flashSuccess) {
@@ -150,9 +156,9 @@ window.uiHandlers = {
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (line && !line.startsWith("//")) {
-          if (window.commandParser && window.commandParser.executeCommand) {
+          if (window.commandParser && window.commandParser.executeCommandWithTracking) {
             await new Promise(resolve => setTimeout(resolve, 100)); // Add a small delay between commands
-            window.commandParser.executeCommand(line);
+            window.commandParser.executeCommandWithTracking(line);
             executedCommands++;
           }
         }
@@ -278,8 +284,8 @@ window.uiHandlers = {
       this.elements.editor.selectionEnd = cursorPos + randomCommand.length;
       
       // Execute the command
-      if (window.commandParser && window.commandParser.executeCommand) {
-        window.commandParser.executeCommand(randomCommand);
+      if (window.commandParser && window.commandParser.executeCommandWithTracking) {
+        window.commandParser.executeCommandWithTracking(randomCommand);
       }
       
       // Visual feedback
@@ -325,5 +331,137 @@ window.uiHandlers = {
   // Helper function to capitalize first letter (for method names)
   capitalizeFirstLetter: function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+  },
+  
+  // Initialize tab functionality
+  initializeTabs: function() {
+    const tabs = document.querySelectorAll('.ref-tab');
+    
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Show corresponding panel
+        const tabName = tab.dataset.tab;
+        const allTabs = ['products', 'modifiers', 'parameters', 'modes', 'cart', 'store', 'special', 'theft', 'settings'];
+        allTabs.forEach(name => {
+          const panel = document.getElementById(`${name}-panel`);
+          if (panel) {
+            panel.classList.toggle('active', name === tabName);
+          }
+        });
+      });
+    });
+  },
+  
+  // Initialize clickable reference items
+  initializeClickableItems: function() {
+    const clickableItems = document.querySelectorAll('.ref-item.clickable');
+    
+    clickableItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Get the command to insert
+        const command = item.dataset.insert;
+        const type = item.dataset.type; // product, modifier, parameter, mode, example
+        if (!command) return;
+        
+        // Get the editor
+        const editor = this.elements.editor;
+        if (!editor) return;
+        
+        // Get current line context
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const currentValue = editor.value;
+        const lines = currentValue.split('\n');
+        
+        // Find which line the cursor is on
+        let lineStart = 0;
+        let lineEnd = 0;
+        let currentLineIndex = 0;
+        let charCount = 0;
+        
+        for (let i = 0; i < lines.length; i++) {
+          lineStart = charCount;
+          lineEnd = charCount + lines[i].length;
+          if (start >= lineStart && start <= lineEnd) {
+            currentLineIndex = i;
+            break;
+          }
+          charCount += lines[i].length + 1; // +1 for newline
+        }
+        
+        const currentLine = lines[currentLineIndex];
+        const trimmedLine = currentLine.trim();
+        
+        // Smart insertion based on context
+        let newLine = currentLine;
+        let cursorOffset = 0;
+        
+        if (type === 'modifier' && trimmedLine.startsWith('add ')) {
+          // Insert modifier after 'add' and before product
+          const parts = trimmedLine.split(/\s+/);
+          const productIndex = parts.findIndex((part, idx) => 
+            idx > 0 && window.productTypes && window.productTypes[part]
+          );
+          
+          if (productIndex > 0) {
+            // Insert before product
+            parts.splice(productIndex, 0, command);
+            newLine = parts.join(' ');
+          } else {
+            // No product found, just append
+            newLine = trimmedLine + ' ' + command;
+          }
+        } else if (type === 'parameter' && trimmedLine.startsWith('add ')) {
+          // Add parameter at the end
+          newLine = trimmedLine + ' ' + command;
+          cursorOffset = newLine.length;
+        } else if (type === 'cart' || type === 'store' || type === 'special') {
+          // Replace entire line with full command
+          newLine = command;
+        } else if (trimmedLine === '' || type === 'example' || type === 'mode') {
+          // Empty line or full command - just insert
+          newLine = command;
+        } else {
+          // Default: new line
+          lines.splice(currentLineIndex + 1, 0, command);
+          editor.value = lines.join('\n');
+          const newPosition = lineEnd + command.length + 1;
+          editor.selectionStart = newPosition;
+          editor.selectionEnd = newPosition;
+          editor.focus();
+          
+          // Visual feedback
+          item.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            item.style.transform = '';
+          }, 100);
+          return;
+        }
+        
+        // Update the current line
+        lines[currentLineIndex] = newLine;
+        editor.value = lines.join('\n');
+        
+        // Set cursor position
+        const newPosition = lineStart + (cursorOffset || newLine.length);
+        editor.selectionStart = newPosition;
+        editor.selectionEnd = newPosition;
+        
+        // Focus the editor
+        editor.focus();
+        
+        // Add a visual feedback effect
+        item.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          item.style.transform = '';
+        }, 100);
+      });
+    });
   }
 };

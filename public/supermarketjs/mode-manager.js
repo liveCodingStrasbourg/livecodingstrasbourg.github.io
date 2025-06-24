@@ -12,6 +12,13 @@ window.modeManager = {
     toggleDiscountMode: function(enabled) {
       window.state.modes.discount = enabled;
       
+      // Check story mode goals after mode change
+      if (window.storyMode && window.storyMode.storyActive) {
+        setTimeout(() => {
+          window.storyMode.checkGoal();
+        }, 100);
+      }
+      
       if (enabled) {
         // Add visual class
         document.body.classList.add('discount-mode');
@@ -36,7 +43,9 @@ window.modeManager = {
         }, CONFIG.modes.discount.autoDuration);
         
         // Show random messages
-        window.uiEffects.showRandomSpookyMessage();
+        if (window.uiEffects && window.uiEffects.showRandomAmbientMessage) {
+          window.uiEffects.showRandomAmbientMessage();
+        }
       } else {
         // Remove visual class
         document.body.classList.remove('discount-mode');
@@ -67,6 +76,13 @@ window.modeManager = {
     toggleInflationMode: function(enabled) {
       window.state.modes.inflation = enabled;
       
+      // Check story mode goals after mode change
+      if (window.storyMode && window.storyMode.storyActive) {
+        setTimeout(() => {
+          window.storyMode.checkGoal();
+        }, 100);
+      }
+      
       if (enabled) {
         // Add visual class
         document.body.classList.add('inflation-mode');
@@ -88,7 +104,9 @@ window.modeManager = {
         }, CONFIG.modes.inflation.autoDuration);
         
         // Show random messages
-        window.uiEffects.showRandomSpookyMessage();
+        if (window.uiEffects && window.uiEffects.showRandomAmbientMessage) {
+          window.uiEffects.showRandomAmbientMessage();
+        }
       } else {
         // Remove visual class
         document.body.classList.remove('inflation-mode');
@@ -581,7 +599,7 @@ window.modeManager = {
       // Show creepy aisle 7 messages
       const showMessage = (index) => {
         setTimeout(() => {
-          window.uiEffects.showCustomSpookyMessage(
+          window.uiEffects.showCustomAmbientMessage(
             aisle7Messages[index % aisle7Messages.length]
           );
         }, index * 4000); // Every 4 seconds

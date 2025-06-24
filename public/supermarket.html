@@ -10,63 +10,382 @@
 </head>
 <body>
   <div class="header-container">
-    <h1 class="title">🛒 Retail Therapy: Market Soundscape 💰</h1>
+    <h1 class="title">ZUPERC0DING</h1>
     <div class="alpha-notice">Alpha Version - Expect occasional bugs</div>
   </div>
 
-  <div class="quick-ref">
-    <div class="ref-section">
-      <h3>Products</h3>
-      <div class="ref-list">
-        beer, salad, ham, milk, chips, pizza, oil, wine, soda, bread, cereal, chocolate, candy, energy_drink
-      </div>
+  <div class="quick-ref-compact">
+    <div class="ref-tabs">
+      <button class="ref-tab active" data-tab="products">Products</button>
+      <button class="ref-tab" data-tab="modifiers">Modifiers</button>
+      <button class="ref-tab" data-tab="parameters">Parameters</button>
+      <button class="ref-tab" data-tab="modes">Modes</button>
+      <button class="ref-tab" data-tab="cart">Cart Wheels</button>
+      <button class="ref-tab" data-tab="store">Store</button>
+      <button class="ref-tab" data-tab="special">Special</button>
+      <button class="ref-tab" data-tab="theft">Theft</button>
+      <button class="ref-tab" data-tab="settings">Settings</button>
     </div>
-    <div class="ref-section">
-      <h3>Modifiers</h3>
-      <div class="ref-list">
-        fresh, old, strong, flavorless, cheap, expensive, processed, industrial, overpriced, vomit, artisanal, bargain, luxury, artificial, mass-produced, addictive
+    
+    <div class="ref-content">
+      <div class="ref-panel active" id="products-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="product" data-insert="add beer" title="Mellow FM synth - smooth jazzy tones">beer</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add salad" title="Crisp pluck synth - fresh texture">salad</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add ham" title="Rich fat sawtooth - savory depth">ham</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add milk" title="Soft pluck synth - liquid smooth">milk</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add chips" title="Crispy sawtooth with filter sweep">chips</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add pizza" title="Triangle wave FM synth - warm tones">pizza</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add oil" title="Low frequency sine wave - liquid bass">oil</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add wine" title="Detuned poly synth - complex layers">wine</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add soda" title="High pitched membrane synth - fizzy">soda</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add bread" title="Warm duo synth - soft and full">bread</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add cereal" title="Crunchy granular synth - textured">cereal</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add chocolate" title="Rich square wave AM synth - sweet">chocolate</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add candy" title="Bright sawtooth mono synth - sugary">candy</span>
+          <span class="ref-item clickable" data-type="product" data-insert="add energy_drink" title="Buzzy FM synth - energetic">energy_drink</span>
+        </div>
       </div>
-    </div>
-    <div class="ref-section">
-      <h3>Parameters</h3>
-      <div class="ref-list">
-        <p>nutriscore (A-E), shelflife (today, week, month, year, decade, forever), open</p>
-        <p>usage : add nutriscore A | after a product to play it in A key.
-        you can also : add shelflife month ---- to set the duration of a sound. </p>
-        <p>you can add open : this makes the product hazardeous, it will only play about 60% of the time</p>
+      
+      <div class="ref-panel" id="modifiers-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="modifier" data-insert="fresh" title="Higher pitch, brighter sound">fresh</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="old" title="Lower pitch, darker sound">old</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="strong" title="Lowpass filter, deeper tone">strong</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="flavorless" title="Highpass filter, thin sound">flavorless</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="cheap" title="Bitcrusher effect, lo-fi digital">cheap</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="expensive" title="Reverb effect, spacious sound">expensive</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="processed" title="Chorus effect, thick texture">processed</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="industrial" title="Distortion effect, harsh tone">industrial</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="overpriced" title="Phaser effect, swirling motion">overpriced</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="vomit" title="Chebyshev waveshaper, extreme distortion">vomit</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="artisanal" title="Tremolo effect, amplitude wobble">artisanal</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="bargain" title="Feedback delay, echoing repeats">bargain</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="luxury" title="Long reverb, premium space">luxury</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="artificial" title="Vibrato effect, pitch wobble">artificial</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="mass-produced" title="Heavy bitcrusher, ultra lo-fi">mass-produced</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="addictive" title="Ping-pong delay, stereo bounce">addictive</span>
+        </div>
       </div>
-    </div>
-    <div class="ref-section">
-      <h3>Modes</h3>
-      <div class="ref-list">
-        discount (detunes everything), inflation (pitch shift everything), consumerism (adds delays), black_friday (chaotic distortion)
-        Usage : inflation mode on (stops automatically after a set duration)
-
-
-
+      
+      <div class="ref-panel" id="parameters-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="parameter" data-insert="nutriscore A" title="Key of A">nutriscore A</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="nutriscore B" title="Key of B">nutriscore B</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="nutriscore C" title="Key of C">nutriscore C</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="nutriscore D" title="Key of D">nutriscore D</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="nutriscore E" title="Key of E">nutriscore E</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="shelflife today" title="Very short duration">shelflife today</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="shelflife week" title="Short duration">shelflife week</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="shelflife month" title="Medium duration">shelflife month</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="shelflife year" title="Long duration">shelflife year</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="shelflife forever" title="Infinite duration">shelflife forever</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="open" title="Plays only ~60% of the time">open</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator up" title="Ascending arpeggio">escalator up</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator down" title="Descending arpeggio">escalator down</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator bounce" title="Up then down">escalator bounce</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator zigzag" title="Alternating pattern">escalator zigzag</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator express" title="Random fast pattern">escalator express</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator checkout" title="Barcode scanner rhythm">escalator checkout</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator slow" title="Slow speed">escalator slow</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator fast" title="Fast speed">escalator fast</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator rush" title="Very fast speed">escalator rush</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="escalator broken" title="Irregular timing">escalator broken</span>
+        </div>
       </div>
-    </div>
-    <div class="ref-section">
-      <h3>Example Command</h3>
-      <div class="ref-list">
-        <code>add processed industrial beer nutriscore E shelflife week open</code><br>
-        <small style="color: #aaa; font-style: italic;">
-          [command] [modifiers] [product] [parameters]<br>
-          • modifiers affect sound quality (up to 3)<br>
-          • nutriscore (A-E) changes key<br>
-          • shelflife changes repetition speed<br>
-          • open makes product behavior unpredictable
-        </small>
+      
+      <div class="ref-panel" id="modes-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="mode" data-insert="discount mode on" title="Detunes everything slightly">discount on</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="inflation mode on" title="Pitch shifts everything up">inflation on</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="consumerism mode on" title="Adds delays to everything">consumerism on</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="black_friday mode on" title="Chaotic distortion effect">black_friday on</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="discount mode off" title="Turn off discount mode">discount off</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="inflation mode off" title="Turn off inflation mode">inflation off</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="consumerism mode off" title="Turn off consumerism mode">consumerism off</span>
+          <span class="ref-item clickable" data-type="mode" data-insert="black_friday mode off" title="Turn off black friday mode">black_friday off</span>
+        </div>
+      </div>
+      
+      <div class="ref-panel" id="cart-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has square wheels" title="Steady 4/4 beat">square wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has broken wheels" title="Glitchy irregular rhythm">broken wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has premium wheels" title="Smooth swing rhythm">premium wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has defective wheels" title="Chaotic polyrhythm">defective wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has bargain wheels" title="Simple minimal beat">bargain wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has luxury wheels" title="Complex jazz rhythm">luxury wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has heavy wheels" title="Kick-heavy techno pattern">heavy wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has chrome wheels" title="Crisp digital beats">chrome wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has turbo wheels" title="Fast breakbeat rhythm">turbo wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has plastic wheels" title="Synthetic artificial drums">plastic wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has wobbly wheels" title="Dubstep wobble bass">wobbly wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has squeaky wheels" title="Hi-hat focused shuffle">squeaky wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has rubber wheels" title="Bouncy funk rhythm">rubber wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has smooth wheels" title="Liquid drum'n'bass flow">smooth wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has rusty wheels" title="Industrial metallic">rusty wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has vintage wheels" title="Classic 808/909">vintage wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has stolen wheels" title="Erratic unpredictable">stolen wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has golden wheels" title="Luxurious trap hi-hats">golden wheels</span>
+          <span class="ref-item clickable" data-type="cart" data-insert="my cart has no wheels" title="No rhythm">no wheels</span>
+        </div>
+      </div>
+      
+      <div class="ref-panel" id="store-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="store" data-insert="checkout" title="Start recording performance">checkout</span>
+          <span class="ref-item clickable" data-type="store" data-insert="finish checkout" title="Stop recording and save">finish checkout</span>
+          <span class="ref-item clickable" data-type="store" data-insert="scan barcode 123456" title="Generate products from barcode">scan barcode</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season halloween" title="Spooky seasonal theme">halloween</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season christmas" title="Festive holiday theme">christmas</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season summer" title="Bright summer vibes">summer</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season winter" title="Cold crisp sounds">winter</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season easter" title="Bouncy spring theme">easter</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season valentines" title="Romantic ambience">valentines</span>
+          <span class="ref-item clickable" data-type="store" data-insert="season normal" title="Back to regular theme">normal season</span>
+          <span class="ref-item clickable" data-type="store" data-insert="announcement cleanup" title="Cleanup on aisle 3">cleanup announce</span>
+          <span class="ref-item clickable" data-type="store" data-insert="announcement closing" title="Store closing soon">closing announce</span>
+          <span class="ref-item clickable" data-type="store" data-insert="announcement sale" title="Special offer">sale announce</span>
+          <span class="ref-item clickable" data-type="store" data-insert="rush hour on" title="Frantic shopping chaos">rush hour on</span>
+          <span class="ref-item clickable" data-type="store" data-insert="rush hour off" title="End rush hour">rush hour off</span>
+          <span class="ref-item clickable" data-type="store" data-insert="store layout" title="View store layout">store layout</span>
+          <span class="ref-item clickable" data-type="store" data-insert="map compose" title="Spatial sequencer mode">map compose</span>
+        </div>
+      </div>
+      
+      <div class="ref-panel" id="special-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="special" data-insert="apply coupon BOGO" title="Buy one get one - duplicates products">BOGO coupon</span>
+          <span class="ref-item clickable" data-type="special" data-insert="apply coupon 50OFF" title="50% off - half speed">50OFF coupon</span>
+          <span class="ref-item clickable" data-type="special" data-insert="apply coupon FREESHIP" title="Free shipping - spacious reverb">FREESHIP coupon</span>
+          <span class="ref-item clickable" data-type="special" data-insert="apply coupon VIP" title="VIP access - luxury effects">VIP coupon</span>
+          <span class="ref-item clickable" data-type="special" data-insert="decay on" title="Products start expiring">decay on</span>
+          <span class="ref-item clickable" data-type="special" data-insert="decay off" title="Stop product decay">decay off</span>
+          <span class="ref-item clickable" data-type="special" data-insert="preserve beer" title="Preserve specific product">preserve product</span>
+          <span class="ref-item clickable" data-type="special" data-insert="spoil all" title="Instantly spoil all products">spoil all</span>
+          <span class="ref-item clickable" data-type="special" data-insert="it's closing time" title="Speed up tempo">closing time</span>
+          <span class="ref-item clickable" data-type="special" data-insert="it's opening time" title="Slow down tempo">opening time</span>
+          <span class="ref-item clickable" data-type="special" data-insert="beer + chips" title="Friday Night party mode combo" style="color: #ffaa00;">combo: party</span>
+          <span class="ref-item clickable" data-type="special" data-insert="milk + cereal" title="Morning routine combo" style="color: #ffaa00;">combo: morning</span>
+          <span class="ref-item clickable" data-type="special" data-insert="wine + cheese" title="Sophisticated jazz combo" style="color: #ffaa00;">combo: jazz</span>
+          <span class="ref-item clickable" data-type="special" data-insert="bread + ham" title="Lunch break combo" style="color: #ffaa00;">combo: lunch</span>
+          <span class="ref-item clickable" data-type="special" data-insert="energy_drink + candy" title="Sugar rush combo" style="color: #ffaa00;">combo: sugar</span>
+          <span class="ref-item clickable" data-type="special" data-insert="oil + salad" title="Health conscious combo" style="color: #ffaa00;">combo: zen</span>
+        </div>
+      </div>
+      
+      <div class="ref-panel" id="theft-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="theft" data-insert="shoplift beer" title="Attempt to steal beer" style="color: #ff6666;">shoplift beer</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="steal chips" title="Try to steal chips" style="color: #ff6666;">steal chips</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="pocket candy" title="Pocket some candy" style="color: #ff6666;">pocket candy</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="five finger discount wine" title="The classic theft" style="color: #ff6666;">5 finger wine</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security level low" title="Easy mode - 30% security">security low</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security level medium" title="Normal security - 50%">security medium</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security level high" title="Tough security - 70%">security high</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security level paranoid" title="Maximum security - 95%">security paranoid</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security chase on" title="Activate pursuit mode" style="color: #ff0000;">chase mode</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security chase off" title="End the chase">chase off</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="shoplifting stats" title="View theft statistics">theft stats</span>
+        </div>
+      </div>
+      
+      <div class="ref-panel" id="settings-panel">
+        <div class="settings-content">
+          <h3 style="color: #ffaa00; margin-top: 0;">Audio Performance Settings</h3>
+          
+          <div class="settings-section">
+            <h4 style="color: #888;">Performance Presets</h4>
+            <div class="preset-buttons">
+              <button class="preset-btn" data-preset="quality" title="Maximum audio quality, requires powerful system">
+                🎵 Quality
+                <span class="preset-desc">Best sound, high CPU</span>
+              </button>
+              <button class="preset-btn active" data-preset="balanced" title="Good balance of quality and performance">
+                ⚖️ Balanced
+                <span class="preset-desc">Recommended</span>
+              </button>
+              <button class="preset-btn" data-preset="performance" title="Optimized for stability on slower systems">
+                🚀 Performance
+                <span class="preset-desc">Low CPU, stable</span>
+              </button>
+              <button class="preset-btn" data-preset="custom" title="Configure your own settings">
+                ⚙️ Custom
+                <span class="preset-desc">Manual control</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="settings-section custom-settings" style="display: none;">
+            <h4 style="color: #888;">Custom Settings</h4>
+            
+            <div class="setting-row">
+              <label>Max Voices (Polyphony)</label>
+              <input type="range" id="setting-polyphony" min="4" max="24" value="12" step="1">
+              <span class="setting-value" id="polyphony-value">12</span>
+            </div>
+            
+            <div class="setting-row">
+              <label>Audio Latency</label>
+              <select id="setting-latency">
+                <option value="interactive">Interactive (low latency)</option>
+                <option value="balanced">Balanced</option>
+                <option value="playback" selected>Playback (stable)</option>
+              </select>
+            </div>
+            
+            <div class="setting-row">
+              <label>Look Ahead (seconds)</label>
+              <input type="range" id="setting-lookahead" min="0.01" max="0.5" value="0.1" step="0.01">
+              <span class="setting-value" id="lookahead-value">0.10</span>
+            </div>
+            
+            <div class="setting-row">
+              <label>Update Interval (seconds)</label>
+              <input type="range" id="setting-update" min="0.01" max="0.2" value="0.05" step="0.01">
+              <span class="setting-value" id="update-value">0.05</span>
+            </div>
+            
+            <div class="setting-row">
+              <label>Effect Quality</label>
+              <select id="setting-effect-quality">
+                <option value="high">High (full quality)</option>
+                <option value="medium" selected>Medium (limited reverb)</option>
+                <option value="low">Low (simplified effects)</option>
+              </select>
+            </div>
+            
+            <div class="setting-row">
+              <label>Voice Stealing</label>
+              <input type="checkbox" id="setting-voice-stealing" checked>
+            </div>
+            
+            <div class="setting-row">
+              <label>Auto Quality Reduction</label>
+              <input type="checkbox" id="setting-auto-reduce" checked>
+            </div>
+            
+            <button class="apply-settings-btn" id="apply-custom-settings">Apply Custom Settings</button>
+          </div>
+          
+          <div class="settings-section">
+            <h4 style="color: #888;">Performance Status</h4>
+            <div class="performance-status">
+              <div class="status-row">
+                <span>Current Mode:</span>
+                <span id="current-mode" style="color: #ffaa00;">Balanced</span>
+              </div>
+              <div class="status-row">
+                <span>Active Voices:</span>
+                <span id="active-voices">0 / 12</span>
+              </div>
+              <div class="status-row">
+                <span>Audio Dropouts:</span>
+                <span id="dropout-count">0</span>
+              </div>
+              <div class="status-row">
+                <span>CPU Load:</span>
+                <span id="cpu-load">Low</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="settings-info">
+            <p style="color: #666; font-size: 11px; margin-top: 20px;">
+              💡 Tip: If you experience audio glitches, try Performance mode or reduce Max Voices in Custom settings.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div id="editor-container">
-    <textarea id="editor">// Example commands:
-// Try these one line at a time!
-my cart has square wheels
+  <!-- Main split-screen container -->
+  <div class="main-container">
+    <!-- Left panel - Editor -->
+    <div class="editor-panel">
+      <div id="editor-container">
+        <textarea id="editor">// COMMAND SYNTAX:
+// add [modifier] product [parameter value]
+// remove product | remove all
+// mode_name mode on/off
+// my cart has [type] wheels
+
+// EXAMPLES - Try these one line at a time:
+
+// Basic products:
+add beer
+add salad
+add chips
+
+// With modifiers (place before product):
+add fresh salad
+add cheap beer
+add expensive wine
+add old industrial ham
+
+// With parameters (place after product):
+add beer nutriscore A
+add chips shelflife forever
+add milk open
+
+// With escalator arpeggiator (flexible order):
+add beer escalator up
+add chips escalator bounce fast
+add salad escalator slow zigzag
+
+// Combine everything:
+add fresh salad nutriscore A escalator up slow
+add cheap old beer shelflife today open
+
+// Cart rhythms:
 my cart has broken wheels
-my cart has premium wheels
+my cart has square wheels
+my cart has heavy wheels
+my cart has turbo wheels
+my cart has golden wheels
+my cart has no wheels
+
+// Special modes:
+discount mode on
+inflation mode on
+black_friday mode on
+
+// Seasonal themes:
+season halloween
+season christmas
+season normal
+
+// Recording/Checkout:
+checkout
+finish checkout
+scan barcode 123456
+
+// Announcements:
+announcement cleanup
+announcement "Special offer today!"
+
+// Store Management:
+rush hour on
+rush hour off
+apply coupon BOGO
+apply coupon 50OFF
+decay on
+decay off
+preserve beer
+spoil all
+
+// Store Layout:
+store layout
+show layout
+view store
+map compose
+map compose on
+map compose off
+
+// Remove products:
+remove beer
+remove all
 my cart has defective wheels
 my cart has no wheels
 add beer
@@ -83,29 +402,49 @@ inflation mode on
 inflation mode off
 consumerism mode on
 </textarea>
+      </div>
+
+      <div class="control-panel">
+        <button id="run-all" class="control-button green">Run All</button>
+        <button id="run-line" class="control-button blue">Run Current Line</button>
+        <button id="stop" class="control-button red">Stop All</button>
+        <button id="randomize" class="control-button yellow">🎲 Random Command</button>
+      </div>
+    </div>
+
+    <!-- Right panel - Output and visualization -->
+    <div class="output-panel">
+      <div id="output-container">
+        <div id="output">Abandoned supermarket awaiting your commands... The products are calling to you...<br><br>
+🆕 NEW: Type 'story mode' to start the guided experience!<br>
+Or dive right in with commands like 'add beer' or check the reference tabs above.</div>
+        <div id="wheel-pattern" style="display: none;"></div>
+      </div>
+
+      <div id="visualization-container">
+        <h2 class="section-title">Active Products</h2>
+        <div id="active-synths" class="synth-grid"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="control-panel">
-    <button id="run-all" class="control-button green">Run All</button>
-    <button id="run-line" class="control-button blue">Run Current Line</button>
-    <button id="stop" class="control-button red">Stop All</button>
-    <button id="randomize" class="control-button yellow">🎲 Random Command</button>
-  </div>
-
-  <div id="visualization-container">
-    <h2 class="section-title">Active Products</h2>
-    <div id="active-synths" class="synth-grid"></div>
-  </div>
-
-  <div id="output-container">
-    <div id="output">Abandoned supermarket awaiting your commands... The products are calling to you...</div>
-  </div>
-
-  <div class="footer">
-    <div class="links">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-label">BPM:</span>
+      <span id="status-bpm">120</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Products:</span>
+      <span id="status-products">0</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">Mode:</span>
+      <span id="status-mode">Normal</span>
+    </div>
+    <div class="status-links">
       <a href="https://livecodingstrasbourg.github.io" target="_blank">Live Coding Strasbourg</a> |
-      <a href="supdoc/en.html" target="_blank">Documentation (EN)</a> |
-      <a href="supdoc/fr.html" target="_blank">Documentation (FR)</a>
+      <a href="supdoc/en.html" target="_blank">Docs</a>
     </div>
   </div>
 
@@ -194,6 +533,13 @@ consumerism mode on
   <script src="supermarketjs/visualization.js"></script>
   <script src="supermarketjs/ui-effects.js"></script>
   <script src="supermarketjs/ui-handlers.js"></script>
+  <script src="supermarketjs/store-features.js"></script>
+  <script src="supermarketjs/store-layout.js"></script>
+  <script src="supermarketjs/performance-manager.js"></script>
+  <script src="supermarketjs/audio-optimizations.js"></script>
+  <script src="supermarketjs/shoplifting-system.js"></script>
+  <script src="supermarketjs/story-mode.js"></script>
+  <script src="supermarketjs/settings-manager.js"></script>
   
   <!-- Audio debugging utility - optional, can be removed in production -->
   <script src="supermarketjs/audio-debug-utility.js"></script>

@@ -29,9 +29,20 @@ window.productManager = {
     // Create a unique ID for this product instance
     const id = `${name}_${Date.now()}`;
     
+    // Check if we can play a new voice
+    if (window.performanceManager && !window.performanceManager.canPlayVoice(1)) {
+      window.log("The supermarket is too crowded with sounds... try removing some products.");
+      return null;
+    }
+    
     // Create the base synth
     const synth = productTypes[name].create();
     synth.volume.value = CONFIG.product.baseVolume; // Set base volume
+    
+    // Register this voice
+    if (window.performanceManager) {
+      window.performanceManager.registerVoice(id, 1);
+    }
     
     // Initialize product parameters
     let note = productTypes[name].note;
@@ -44,6 +55,8 @@ window.productManager = {
       nutriscoreKey,
       shelfLifeDuration,
       isOpenProduct,
+      escalatorPattern,
+      escalatorSpeed,
       cleanModifier
     } = this.parseModifiers(modifier, name);
     
@@ -128,6 +141,11 @@ window.productManager = {
       window.log(`⚠️ Warning: This ${name} has been opened... <span style="color: #ff00ff;">it behaves unpredictably!</span>`);
     }
     
+    // Log if escalator is active
+    if (escalatorPattern) {
+      window.log(`🛗 Escalator mode: ${escalatorPattern} at ${escalatorSpeed} speed`);
+    }
+    
     // Store the product in state
     window.state.products[id] = {
       id,
@@ -142,6 +160,8 @@ window.productManager = {
       nutriscoreKey,
       shelfLifeDuration,
       isOpenProduct,
+      escalatorPattern,
+      escalatorSpeed,
       lastTriggerTime: 0,
       visualAmplitude: 0
     };
@@ -156,7 +176,11 @@ window.productManager = {
       note, 
       pattern, 
       id, 
-      { isOpenProduct }
+      { 
+        isOpenProduct,
+        escalatorPattern,
+        escalatorSpeed
+      }
     );
     
     // Store the loop
@@ -164,6 +188,11 @@ window.productManager = {
     
     // Apply any active global modes
     this.applyActiveModes(id);
+    
+    // Apply seasonal effects if a season is active
+    if (window.storeFeatures && window.storeFeatures.currentSeason !== 'normal') {
+      window.storeFeatures.applySeasonalEffects(id);
+    }
     
     // Add product to visualization
     if (window.visualization && window.visualization.addProductVisualizer) {
@@ -173,6 +202,11 @@ window.productManager = {
     // Random advertisement messages
     if (CONFIG.ui.showAds && Math.random() < CONFIG.ui.adProbability) {
       this.showRandomAd(name);
+    }
+    
+    // Check for product combos
+    if (window.storeFeatures && window.storeFeatures.checkProductCombos) {
+      window.storeFeatures.checkProductCombos();
     }
     
     return id;
@@ -199,6 +233,11 @@ window.productManager = {
     
     const product = window.state.products[id];
     
+    // Unregister voice
+    if (window.performanceManager) {
+      window.performanceManager.unregisterVoice(id);
+    }
+    
     // Remove from visualization with fade out animation
     if (window.visualization && window.visualization.removeProductVisualizer) {
       window.visualization.removeProductVisualizer(id);
@@ -206,8 +245,27 @@ window.productManager = {
     
     // Cleanup audio resources
     try {
+      // Clear all intervals first to prevent memory leaks
+      if (product.inflationInterval) {
+        clearInterval(product.inflationInterval);
+        product.inflationInterval = null;
+      }
+      if (product.blackFridayInterval) {
+        clearInterval(product.blackFridayInterval);
+        product.blackFridayInterval = null;
+      }
+      if (product.apocalypseInterval) {
+        clearInterval(product.apocalypseInterval);
+        product.apocalypseInterval = null;
+      }
+      if (product.decayTimeout) {
+        clearTimeout(product.decayTimeout);
+        product.decayTimeout = null;
+      }
+      
       // Stop and dispose of the loop
       if (product.loop) {
+        product.loop.stop();
         product.loop.dispose();
       }
       
@@ -218,18 +276,44 @@ window.productManager = {
         
         // Schedule disposal after fade-out completes
         setTimeout(() => {
-          if (product.synth) {
-            product.synth.dispose();
-          }
-          
           // Dispose the filter if it exists
           if (product.filter) {
+            product.filter.disconnect();
             product.filter.dispose();
           }
           
-          // Dispose the effect if it exists
+          // Dispose all effects properly
           if (product.effect) {
+            product.effect.disconnect();
             product.effect.dispose();
+          }
+          
+          // Dispose complex effect chains
+          if (product.effects) {
+            Object.values(product.effects).forEach(effect => {
+              if (effect) {
+                // Dispose effect chains if they exist
+                if (effect._chain && Array.isArray(effect._chain)) {
+                  effect._chain.forEach(node => {
+                    if (node && node.dispose) {
+                      node.disconnect();
+                      node.dispose();
+                    }
+                  });
+                }
+                // Dispose the effect itself
+                if (effect.dispose) {
+                  effect.disconnect();
+                  effect.dispose();
+                }
+              }
+            });
+          }
+          
+          // Dispose the synth
+          if (product.synth) {
+            product.synth.disconnect();
+            product.synth.dispose();
           }
           
           // Remove from state after the fade-out
@@ -252,6 +336,8 @@ window.productManager = {
       nutriscoreKey: null,
       shelfLifeDuration: null,
       isOpenProduct: false,
+      escalatorPattern: null,
+      escalatorSpeed: null,
       cleanModifier: modifier
     };
     
@@ -271,6 +357,36 @@ window.productManager = {
       result.shelfLifeDuration = window.shelfLifeDurations[shelfLifeValue];
       // Remove from modifier string
       result.cleanModifier = result.cleanModifier.replace(/shelflife\s+(today|week|month|year|decade|forever)/i, '').trim();
+    }
+    
+    // Extract escalator (arpeggiator) - flexible word order
+    // Patterns: up, down, bounce, zigzag, express, checkout
+    // Speeds: slow, normal, fast, rush, broken
+    const escalatorMatch = modifier.match(/escalator/i);
+    if (escalatorMatch) {
+      // Look for pattern
+      const patternMatch = modifier.match(/(up|down|bounce|zigzag|express|checkout)/i);
+      if (patternMatch) {
+        result.escalatorPattern = patternMatch[1].toLowerCase();
+      } else {
+        result.escalatorPattern = 'up'; // default pattern
+      }
+      
+      // Look for speed
+      const speedMatch = modifier.match(/(slow|normal|fast|rush|broken)/i);
+      if (speedMatch) {
+        result.escalatorSpeed = speedMatch[1].toLowerCase();
+      } else {
+        result.escalatorSpeed = 'normal'; // default speed
+      }
+      
+      // Remove escalator-related words from modifier string
+      result.cleanModifier = result.cleanModifier
+        .replace(/escalator/i, '')
+        .replace(/(up|down|bounce|zigzag|express|checkout)/i, '')
+        .replace(/(slow|normal|fast|rush|broken)/i, '')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
     
     // Check for open product

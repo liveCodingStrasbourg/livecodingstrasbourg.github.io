@@ -30,6 +30,13 @@ function initializeApplication() {
   console.log("Initializing Retail Therapy: Market Soundscape...");
   
   try {
+    // Initialize performance manager first
+    if (window.performanceManager && typeof window.performanceManager.init === 'function') {
+      window.performanceManager.init();
+    } else {
+      console.warn("Performance manager not available - init skipped");
+    }
+    
     // Set up global audio effects
     if (window.audioEngine && typeof window.audioEngine.setupGlobalEffects === 'function') {
       window.audioEngine.setupGlobalEffects();
@@ -56,6 +63,34 @@ function initializeApplication() {
       window.uiEffects.init();
     } else {
       console.warn("UI effects not available - init skipped");
+    }
+    
+    // Initialize shoplifting system
+    if (window.shopliftingSystem && typeof window.shopliftingSystem.init === 'function') {
+      window.shopliftingSystem.init();
+    } else {
+      console.warn("Shoplifting system not available - init skipped");
+    }
+    
+    // Initialize story mode
+    if (window.storyMode && typeof window.storyMode.init === 'function') {
+      window.storyMode.init();
+    } else {
+      console.warn("Story mode not available - init skipped");
+    }
+    
+    // Initialize settings manager
+    if (window.settingsManager && typeof window.settingsManager.init === 'function') {
+      window.settingsManager.init();
+    } else {
+      console.warn("Settings manager not available - init skipped");
+    }
+    
+    // Initialize store layout
+    if (window.storeLayout && typeof window.storeLayout.init === 'function') {
+      window.storeLayout.init();
+    } else {
+      console.warn("Store layout not available - init skipped");
     }
     
     console.log("Application initialization complete.");

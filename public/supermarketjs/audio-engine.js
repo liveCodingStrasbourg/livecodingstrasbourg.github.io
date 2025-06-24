@@ -180,6 +180,14 @@ function createEffect(effectType, settings = {}) {
 
 // Main audio engine module functionality
 window.audioEngine = {
+  // Performance monitoring
+  performanceMonitor: null,
+  performanceMetrics: {
+    dropouts: 0,
+    highLoadEvents: 0,
+    lastCheck: Date.now()
+  },
+  
   // Initialize audio context and start transports
   startAudio: async function() {
     console.log("Starting audio engine...");
@@ -191,13 +199,23 @@ window.audioEngine = {
         return false;
       }
       
+      // Configure audio context for better performance
+      this.configureAudioContext();
+      
       // Set master volume even if context isn't running yet
       Tone.Destination.volume.value = CONFIG.audio.masterVolume;
       
       // Set default BPM
       Tone.Transport.bpm.value = CONFIG.audio.defaultBPM;
       
+      // Configure transport for better performance
+      Tone.Transport.PPQ = 48; // Lower PPQ for less CPU usage
+      Tone.Transport.latencyHint = "playback";
+      
       console.log("Audio parameters set. Audio context state:", Tone.context.state);
+      
+      // Start performance monitoring
+      this.startPerformanceMonitoring();
       
       // Log initialization
       window.log("🔊 Audio engine initialized... the supermarket comes to life.");
@@ -206,6 +224,126 @@ window.audioEngine = {
       console.error("Error starting audio:", error);
       window.log("❌ Failed to start audio. Please try refreshing the page.");
       return false;
+    }
+  },
+  
+  // Configure audio context for optimal performance
+  configureAudioContext: function() {
+    try {
+      // Create a new context with maximum stability settings
+      // Since latency is not important, we can maximize buffers
+      const context = new Tone.Context({
+        latencyHint: "playback", // Maximum stability
+        lookAhead: 1, // Very high lookahead for maximum stability
+        updateInterval: 0.5, // Update infrequently to reduce CPU
+        clockSource: "worker" // Use worker for timing
+      });
+      
+      // Set the context
+      Tone.setContext(context);
+      
+      // Log the configuration
+      console.log("Audio Context configured for performance:");
+      console.log("- Latency hint: playback");
+      console.log("- Look ahead: 0.2s");
+      console.log("- Update interval: 0.1s");
+      
+      // Additional context optimizations
+      if (context.rawContext) {
+        const ctx = context.rawContext;
+        console.log("- Sample rate:", ctx.sampleRate);
+        console.log("- Base latency:", ctx.baseLatency);
+      }
+    } catch (error) {
+      console.warn("Could not configure custom audio context:", error);
+    }
+  },
+  
+  // Monitor audio performance
+  startPerformanceMonitoring: function() {
+    if (this.performanceMonitor) return;
+    
+    this.performanceMonitor = setInterval(() => {
+      if (Tone.context && Tone.context.rawContext) {
+        const ctx = Tone.context.rawContext;
+        const now = Date.now();
+        
+        // Check for audio dropouts
+        if (ctx.currentTime > 0) {
+          const expectedTime = (now - this.performanceMetrics.lastCheck) / 1000;
+          const actualTime = ctx.currentTime;
+          
+          // If actual time is significantly less than expected, we had dropouts
+          if (actualTime < expectedTime * 0.9) {
+            this.performanceMetrics.dropouts++;
+            console.warn("Audio dropout detected");
+            
+            // Automatically reduce quality if too many dropouts
+            if (this.performanceMetrics.dropouts > 3) {
+              this.reduceAudioQuality();
+            }
+          }
+        }
+        
+        this.performanceMetrics.lastCheck = now;
+      }
+    }, 2000); // Check every 2 seconds
+  },
+  
+  // Reduce audio quality to improve performance
+  reduceAudioQuality: function() {
+    console.log("Reducing audio quality to improve performance");
+    
+    // Use performance manager if available
+    if (window.performanceManager) {
+      window.performanceManager.setPerformanceMode('performance');
+    }
+    
+    // Reduce polyphony
+    if (window.performanceManager && window.performanceManager.config) {
+      window.performanceManager.config.maxPolyphony = 8; // Reduce from 12
+    }
+    
+    // Simplify effects
+    this.simplifyGlobalEffects();
+    
+    // Log the change
+    window.log("⚡ Audio quality reduced for better performance");
+    
+    // Reset dropout counter
+    this.performanceMetrics.dropouts = 0;
+  },
+  
+  // Simplify global effects for better performance
+  simplifyGlobalEffects: function() {
+    console.log("Simplifying global effects...");
+    
+    // Disconnect complex master effects if any
+    if (window.state && window.state.masterEffects) {
+      Object.keys(window.state.masterEffects).forEach(key => {
+        const effect = window.state.masterEffects[key];
+        if (effect && effect.dispose) {
+          effect.dispose();
+        }
+      });
+      window.state.masterEffects = {};
+    }
+    
+    // Reduce reverb quality on all products
+    if (window.state && window.state.products) {
+      Object.keys(window.state.products).forEach(id => {
+        const product = window.state.products[id];
+        if (product && product.effects) {
+          // Find and simplify reverb effects
+          Object.keys(product.effects).forEach(effectKey => {
+            const effect = product.effects[effectKey];
+            if (effect && effect.name === "Reverb") {
+              effect.decay = Math.min(effect.decay, 1); // Limit reverb decay
+              effect.wet.value = Math.min(effect.wet.value, 0.3); // Reduce wet signal
+            }
+          });
+        }
+      });
     }
   },
   
@@ -360,6 +498,84 @@ window.audioEngine = {
     console.log("Note:", note, "Options:", options);
     
     try {
+      // Initialize escalator/arpeggiator state
+      let arpIndex = 0;
+      let arpDirection = 1; // 1 for up, -1 for down
+      let arpNotes = [];
+      
+      // If escalator is active, prepare arpeggiator notes
+      if (options.escalatorPattern) {
+        // Convert single note to array if needed
+        const baseNotes = Array.isArray(note) ? note : [note];
+        
+        // Create arpeggio notes based on pattern
+        switch (options.escalatorPattern) {
+          case 'up':
+          case 'down':
+          case 'bounce':
+          case 'zigzag':
+            // Create a 2-octave arpeggio
+            arpNotes = [];
+            baseNotes.forEach(n => {
+              const freq = Tone.Frequency(n);
+              arpNotes.push(n); // Root
+              arpNotes.push(freq.transpose(3).toNote()); // Minor third
+              arpNotes.push(freq.transpose(7).toNote()); // Fifth
+              arpNotes.push(freq.transpose(12).toNote()); // Octave
+              arpNotes.push(freq.transpose(15).toNote()); // Octave + minor third
+              arpNotes.push(freq.transpose(19).toNote()); // Octave + fifth
+            });
+            if (options.escalatorPattern === 'down') {
+              arpNotes.reverse();
+            }
+            break;
+            
+          case 'express':
+            // Random fast pattern
+            arpNotes = [];
+            baseNotes.forEach(n => {
+              const freq = Tone.Frequency(n);
+              for (let i = 0; i < 8; i++) {
+                const semitones = Math.floor(Math.random() * 24) - 12;
+                arpNotes.push(freq.transpose(semitones).toNote());
+              }
+            });
+            break;
+            
+          case 'checkout':
+            // Repeating pattern like a barcode scanner
+            arpNotes = [];
+            baseNotes.forEach(n => {
+              const freq = Tone.Frequency(n);
+              arpNotes.push(n);
+              arpNotes.push(freq.transpose(12).toNote());
+              arpNotes.push(n);
+              arpNotes.push(freq.transpose(7).toNote());
+            });
+            break;
+        }
+        
+        // Adjust pattern timing based on escalator speed
+        const speedMultipliers = {
+          slow: 2,
+          normal: 1,
+          fast: 0.5,
+          rush: 0.25,
+          broken: 1 // Will be handled differently
+        };
+        
+        const speedMult = speedMultipliers[options.escalatorSpeed] || 1;
+        if (options.escalatorSpeed !== 'broken') {
+          // Parse pattern and adjust for speed
+          const patternMatch = pattern.match(/(\d+)([ntr])/);
+          if (patternMatch) {
+            const [_, value, unit] = patternMatch;
+            const newValue = Math.max(1, Math.round(parseFloat(value) * speedMult));
+            pattern = newValue + unit;
+          }
+        }
+      }
+      
       // Create loop that triggers the synth with a specific pattern
       const loop = new Tone.Loop(time => {
         // Skip trigger randomly if product is marked as "open"
@@ -367,8 +583,58 @@ window.audioEngine = {
           return; // Skip this trigger (60% chance)
         }
         
+        // Add broken escalator random timing
+        if (options.escalatorSpeed === 'broken' && Math.random() > 0.7) {
+          return; // Skip some notes randomly
+        }
+        
         // Determine note to play
         let playNote = note;
+        
+        // Handle escalator/arpeggiator pattern
+        if (options.escalatorPattern && arpNotes.length > 0) {
+          // Update arp index based on pattern
+          switch (options.escalatorPattern) {
+            case 'up':
+            case 'checkout':
+              playNote = arpNotes[arpIndex];
+              arpIndex = (arpIndex + 1) % arpNotes.length;
+              break;
+              
+            case 'down':
+              playNote = arpNotes[arpIndex];
+              arpIndex = (arpIndex + 1) % arpNotes.length;
+              break;
+              
+            case 'bounce':
+              playNote = arpNotes[arpIndex];
+              arpIndex += arpDirection;
+              if (arpIndex >= arpNotes.length - 1) {
+                arpIndex = arpNotes.length - 1;
+                arpDirection = -1;
+              } else if (arpIndex <= 0) {
+                arpIndex = 0;
+                arpDirection = 1;
+              }
+              break;
+              
+            case 'zigzag':
+              // Alternating pattern - jump between low and high notes
+              if (arpIndex % 2 === 0) {
+                playNote = arpNotes[Math.floor(arpIndex / 2)];
+              } else {
+                playNote = arpNotes[arpNotes.length - 1 - Math.floor(arpIndex / 2)];
+              }
+              arpIndex = (arpIndex + 1) % (arpNotes.length * 2);
+              break;
+              
+            case 'express':
+              // Random
+              arpIndex = Math.floor(Math.random() * arpNotes.length);
+              playNote = arpNotes[arpIndex];
+              break;
+          }
+        }
         
         // Apply random variations if discount mode is on
         if (window.state.modes.discount) {
@@ -380,7 +646,7 @@ window.audioEngine = {
             });
           } else {
             const cents = (Math.random() * 100) - 50; // Random detune +/- 50 cents
-            playNote = Tone.Frequency(note).transpose(cents/100).toNote();
+            playNote = Tone.Frequency(playNote).transpose(cents/100).toNote();
           }
         }
         
@@ -436,22 +702,40 @@ window.audioEngine = {
   stopAllAudio: function() {
     console.log("Stopping all audio...");
     
+    // Clear performance monitor interval
+    if (this.performanceMonitor) {
+      clearInterval(this.performanceMonitor);
+      this.performanceMonitor = null;
+    }
+    
     try {
       // Stop transport
       Tone.Transport.stop();
       console.log("Transport stopped");
       
       // Dispose all cart wheel sequences
-      if (window.cartWheels && window.cartWheels.sequencer) {
-        window.cartWheels.sequencer.dispose();
-        window.cartWheels.sequencer = null;
-        console.log("Cart wheels sequencer disposed");
+      if (window.cartWheels) {
+        if (window.cartWheels.cleanup) {
+          window.cartWheels.cleanup();
+        }
+        console.log("Cart wheels cleaned up");
+      }
+      
+      // Hide the pattern display
+      const patternDiv = document.getElementById('wheel-pattern');
+      if (patternDiv) {
+        patternDiv.style.display = 'none';
       }
       
       // Reset state
       if (window.state) {
         window.state.cart.wheels = "none";
         console.log("State reset");
+      }
+      
+      // Clean up performance manager resources
+      if (window.performanceManager && window.performanceManager.cleanup) {
+        window.performanceManager.cleanup();
       }
       
       // Reset BPM

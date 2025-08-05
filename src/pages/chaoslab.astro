@@ -82,7 +82,7 @@ const galleryPhotos = [
       <p class="section-subtitle">Relive the exceptional performances from Chaos Lab VII</p>
     </div>
   </div>
-  
+
   <!-- Featured Video - Pierre Danger -->
   <div class="featured-video">
     <div class="lang-content" id="featured-fr">
@@ -93,19 +93,19 @@ const galleryPhotos = [
       <h3>🎬 Episode 1 - Pierre Danger</h3>
       <p class="featured-desc">Discover Pierre Danger's hypnotic audiovisual performance, blending oscilloscopes and vector synthesis in a unique generative experience.</p>
     </div>
-    
+
     <div class="video-embed">
-      <iframe 
-        width="100%" 
-        height="400" 
-        src="https://www.youtube.com/embed/o2A-gha15o4" 
-        title="Pierre Danger - Chaos Lab VII Live Session" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      <iframe
+        width="100%"
+        height="400"
+        src="https://www.youtube.com/embed/o2A-gha15o4"
+        title="Pierre Danger - Chaos Lab VII Live Session"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen>
       </iframe>
     </div>
-    
+
     <div class="video-actions">
       <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
         <span class="icon-external"></span> Voir sur YouTube
@@ -122,7 +122,7 @@ const galleryPhotos = [
       </div>
     </div>
   </div>
-  
+
   <!-- Coming Soon Videos -->
   <div class="upcoming-videos">
     <div class="lang-content" id="upcoming-fr">
@@ -133,7 +133,7 @@ const galleryPhotos = [
       <h3>🔜 Upcoming Episodes</h3>
       <p>More performances coming soon! Subscribe to stay updated.</p>
     </div>
-    
+
     <div class="upcoming-grid">
       <div class="upcoming-card">
         <div class="upcoming-placeholder">
@@ -177,7 +177,7 @@ const galleryPhotos = [
     <h2><span class="icon-users"></span> The Artists<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Meet the talents who made Chaos Lab VII extraordinary</p>
   </div>
-  
+
   <div class="artists-grid">
     <div class="artist-card featured-artist">
       <div class="artist-badge">🎬 Live Session Available</div>
@@ -197,7 +197,7 @@ const galleryPhotos = [
         <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" class="btn btn-outline">Portfolio</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>KittyClock</h3>
       <div class="lang-content" id="artist1-fr">
@@ -212,7 +212,7 @@ const galleryPhotos = [
         <a href="https://on.soundcloud.com/oTFTJUA76vJr5ohw9" class="btn btn-outline">SoundCloud</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>Ralt144MI</h3>
       <div class="lang-content" id="artist2-fr">
@@ -227,7 +227,7 @@ const galleryPhotos = [
         <a href="https://ralt144mi.remigeorges.fr/" class="btn btn-outline">Website</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>Crash Server</h3>
       <div class="lang-content" id="artist4-fr">
@@ -242,7 +242,7 @@ const galleryPhotos = [
         <a href="https://crashserver.fr" class="btn btn-outline">Website</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>Blaž Pavlica</h3>
       <div class="lang-content" id="artist5-fr">
@@ -257,7 +257,7 @@ const galleryPhotos = [
         <a href="https://soundcloud.com/blaz-pavlica" class="btn btn-outline">SoundCloud</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>YEV</h3>
       <div class="lang-content" id="artist6-fr">
@@ -282,7 +282,7 @@ const galleryPhotos = [
     <h2><span class="icon-camera"></span> Photo Gallery<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Relive the unique atmosphere of this exceptional evening</p>
   </div>
-  
+
   <div class="photo-gallery">
     {galleryPhotos.map((photo, index) => (
       <div class="photo-item" data-index={index}>
@@ -314,7 +314,7 @@ const galleryPhotos = [
         </div>
       </div>
     </div>
-    
+
     <div class="info-card">
       <div class="lang-content" id="venue-fr">
         <h2><span class="icon-location"></span> Le Lieu</h2>
@@ -332,7 +332,7 @@ const galleryPhotos = [
       </div>
     </div>
   </div>
-  
+
   <div class="poster-container">
     <Image src={cl7} alt="Chaos lab VII poster" class="event-poster" />
   </div>
@@ -348,7 +348,7 @@ const galleryPhotos = [
     <h2><span class="icon-heart"></span> With support from<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Thanks to our partners who make these events possible</p>
   </div>
-  
+
   <div class="contributors-grid">
     <a href="https://ultratech-rec.com" target="_blank" class="contributor-logo">
       <Image src={utr} alt="Ultratech Rec." class="logo-image" />
@@ -373,15 +373,15 @@ const galleryPhotos = [
 document.addEventListener('DOMContentLoaded', function() {
   const langButtons = document.querySelectorAll('.lang-btn');
   const contentElements = document.querySelectorAll('.lang-content');
-  
+
   langButtons.forEach(button => {
     button.addEventListener('click', function() {
       const targetLang = this.id.split('-')[1]; // 'fr' or 'en'
-      
+
       // Update active button
       langButtons.forEach(btn => btn.classList.remove('active'));
       this.classList.add('active');
-      
+
       // Show/hide content
       contentElements.forEach(element => {
         if (element.id.endsWith('-' + targetLang)) {
@@ -392,14 +392,14 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   });
-  
+
   // Photo gallery hover effects
   const photoItems = document.querySelectorAll('.photo-item');
   photoItems.forEach(item => {
     item.addEventListener('mouseenter', function() {
       this.style.transform = 'scale(1.05)';
     });
-    
+
     item.addEventListener('mouseleave', function() {
       this.style.transform = 'scale(1)';
     });
@@ -454,7 +454,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(0,255,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(255,0,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 40% 80%, rgba(0,255,0,0.1) 0%, transparent 50%);
@@ -1059,11 +1059,11 @@ body {
   .event-title {
     font-size: 2.5rem;
   }
-  
+
   .hero {
     padding: 4rem 1rem;
   }
-  
+
   .video-releases-section,
   .artists-section,
   .photo-gallery-section,
@@ -1071,41 +1071,42 @@ body {
   .contributors-section {
     padding: 4rem 1rem;
   }
-  
+
   .featured-video {
     padding: 1.5rem;
   }
-  
+
   .video-embed iframe {
     height: 250px;
   }
-  
+
   .video-actions {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .artists-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .photo-gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .contributors-grid {
     flex-direction: column;
     gap: 2rem;
   }
-  
-  .upcoming-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -1113,15 +1114,12 @@ body {
   .event-title {
     font-size: 2rem;
   }
-  
+
   .photo-gallery {
     grid-template-columns: 1fr;
   }
-  
-  .upcoming-grid {
-    grid-template-columns: 1fr;
-  }
-  
+
+
   .artist-links {
     flex-direction: column;
   }
@@ -1209,7 +1207,7 @@ const galleryPhotos = [
       <p class="section-subtitle">Relive the exceptional performances from Chaos Lab VII</p>
     </div>
   </div>
-  
+
   <!-- Episode Grid for Released Videos -->
   <div class="episodes-grid">
     <!-- Episode 1 - Pierre Danger -->
@@ -1224,19 +1222,19 @@ const galleryPhotos = [
           <p class="episode-desc">Hypnotic audiovisual performance blending oscilloscopes and vector synthesis in a unique generative experience.</p>
         </div>
       </div>
-      
+
       <div class="video-embed">
-        <iframe 
-          width="100%" 
-          height="300" 
-          src="https://www.youtube.com/embed/o2A-gha15o4" 
-          title="Pierre Danger - Chaos Lab VII Live Session" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        <iframe
+          width="100%"
+          height="300"
+          src="https://www.youtube.com/embed/o2A-gha15o4"
+          title="Pierre Danger - Chaos Lab VII Live Session"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen>
         </iframe>
       </div>
-      
+
       <div class="episode-actions">
         <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
           <span class="icon-external"></span> Voir sur YouTube
@@ -1256,67 +1254,149 @@ const galleryPhotos = [
           <p class="episode-desc">Explosive performance by Rémi Georges with his Non-techno / Eurodance Chaos, mixing eurodance on synthesizers in fascinating rhythmic chaos.</p>
         </div>
       </div>
-      
+
       <div class="video-embed">
-        <iframe 
-          width="100%" 
-          height="300" 
-          src="https://www.youtube.com/embed/-zMJYI4XizU" 
-          title="Ralt144MI - Chaos Lab VII Live Session" 
-          frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        <iframe
+          width="100%"
+          height="300"
+          src="https://www.youtube.com/embed/o2A-gha15o4"
+          title="Ralt144MI - Chaos Lab VII Live Session"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowfullscreen>
         </iframe>
       </div>
-      
+
       <div class="episode-actions">
-        <a href="https://www.youtube.com/watch?v=-zMJYI4XizU" target="_blank" class="btn btn-primary">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
           <span class="icon-external"></span> Voir sur YouTube
         </a>
-        <a href="https://www.youtube.com/watch?v=6UipLFlHuGk&t=134s" target="_blank" class="btn btn-outline">
-          <span class="icon-interview"></span> 
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-outline">
+          <span class="icon-interview"></span>
           <span class="lang-content" id="interview-fr">Interview</span>
           <span class="lang-content hidden" id="interview-en">Interview</span>
         </a>
       </div>
     </div>
+
+    <!-- Episode 3 - Blaž Pavlica -->
+    <div class="episode-card">
+      <div class="episode-header">
+        <div class="lang-content" id="ep3-fr">
+          <h3>🎬 Épisode 3 - Blaž Pavlica</h3>
+          <p class="episode-desc">Artiste audio-visuel slovène explorant les frontières entre musique électronique et programmation générative avec son breakbeat & bass.</p>
+        </div>
+        <div class="lang-content hidden" id="ep3-en">
+          <h3>🎬 Episode 3 - Blaž Pavlica</h3>
+          <p class="episode-desc">Slovenian audio-visual artist exploring boundaries between electronic music and generative programming with his breakbeat & bass.</p>
+        </div>
+      </div>
+
+      <div class="video-embed">
+        <iframe
+          width="100%"
+          height="300"
+          src="https://www.youtube.com/embed/o2A-gha15o4"
+          title="Blaž Pavlica - Chaos Lab VII Live Session"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="episode-actions">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
+          <span class="icon-external"></span> Voir sur YouTube
+        </a>
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-outline">
+          <span class="icon-interview"></span>
+          <span class="lang-content" id="interview-blaz-fr">Interview</span>
+          <span class="lang-content hidden" id="interview-blaz-en">Interview</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Episode 4 - KittyClock -->
+    <div class="episode-card">
+      <div class="episode-header">
+        <div class="lang-content" id="ep4-fr">
+          <h3>🎬 Épisode 4 - KittyClock</h3>
+          <p class="episode-desc">Artiste ukrainien basé à Prague créant de la musique expérimentale avec FoxDot et SuperCollider dans un style deconstructed techno unique.</p>
+        </div>
+        <div class="lang-content hidden" id="ep4-en">
+          <h3>🎬 Episode 4 - KittyClock</h3>
+          <p class="episode-desc">Ukrainian artist based in Prague creating experimental music with FoxDot and SuperCollider in a unique deconstructed techno style.</p>
+        </div>
+      </div>
+
+      <div class="video-embed">
+        <iframe
+          width="100%"
+          height="300"
+          src="https://www.youtube.com/embed/o2A-gha15o4"
+          title="KittyClock - Chaos Lab VII Live Session"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="episode-actions">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
+          <span class="icon-external"></span> Voir sur YouTube
+        </a>
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-outline">
+          <span class="icon-interview"></span>
+          <span class="lang-content" id="interview-kitty-fr">Interview</span>
+          <span class="lang-content hidden" id="interview-kitty-en">Interview</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Episode 5 - Crash Server -->
+    <div class="episode-card">
+      <div class="episode-header">
+        <div class="lang-content" id="ep5-fr">
+          <h3>🎬 Épisode 5 - Crash Server</h3>
+          <p class="episode-desc">Duo de live coding strasbourgeois créant musique et visuels en direct avec FoxDot et SuperCollider dans un style post-mayhem unique.</p>
+        </div>
+        <div class="lang-content hidden" id="ep5-en">
+          <h3>🎬 Episode 5 - Crash Server</h3>
+          <p class="episode-desc">Strasbourg live coding duo creating music and visuals live using FoxDot and SuperCollider in a unique post-mayhem style.</p>
+        </div>
+      </div>
+
+      <div class="video-embed">
+        <iframe
+          width="100%"
+          height="300"
+          src="https://www.youtube.com/embed/o2A-gha15o4"
+          title="Crash Server - Chaos Lab VII Live Session"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="episode-actions">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" target="_blank" class="btn btn-primary">
+          <span class="icon-external"></span> Voir sur YouTube
+        </a>
+      </div>
+    </div>
   </div>
-  
-  <!-- Coming Soon Videos -->
-  <div class="upcoming-videos">
-    <div class="lang-content" id="upcoming-fr">
-      <h3>🔜 Prochains Épisodes</h3>
-      <p>Plus de performances arrivent bientôt ! Abonnez-vous pour ne rien rater.</p>
+
+  <!-- All Videos Released -->
+  <div class="all-videos-info">
+    <div class="lang-content" id="all-videos-fr">
+      <h3>🎉 Toutes les performances sont maintenant disponibles !</h3>
+      <p>Découvrez l'intégralité des performances de Chaos Lab VII ci-dessus.</p>
     </div>
-    <div class="lang-content hidden" id="upcoming-en">
-      <h3>🔜 Upcoming Episodes</h3>
-      <p>More performances coming soon! Subscribe to stay updated.</p>
+    <div class="lang-content hidden" id="all-videos-en">
+      <h3>🎉 All performances are now available!</h3>
+      <p>Discover all the performances from Chaos Lab VII above.</p>
     </div>
-    
-    <div class="upcoming-grid">
-      <div class="upcoming-card">
-        <div class="upcoming-placeholder">
-          <span class="icon-video"></span>
-        </div>
-        <h4>KittyClock</h4>
-        <p class="upcoming-status">Coming Soon</p>
-      </div>
-      <div class="upcoming-card">
-        <div class="upcoming-placeholder">
-          <span class="icon-video"></span>
-        </div>
-        <h4>Crash Server</h4>
-        <p class="upcoming-status">Coming Soon</p>
-      </div>
-      <div class="upcoming-card">
-        <div class="upcoming-placeholder">
-          <span class="icon-video"></span>
-        </div>
-        <h4>Blaž Pavlica</h4>
-        <p class="upcoming-status">Coming Soon</p>
-      </div>
-    </div>
-    
+
     <div class="video-info-footer">
       <div class="lang-content" id="video-info-fr">
         <span class="video-credit">Publié par <strong>Nuance</strong></span>
@@ -1340,7 +1420,7 @@ const galleryPhotos = [
     <h2><span class="icon-users"></span> The Artists<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Meet the talents who made Chaos Lab VII extraordinary</p>
   </div>
-  
+
   <div class="artists-grid">
     <div class="artist-card featured-artist">
       <div class="artist-badge">🎬 Live Session Available</div>
@@ -1360,7 +1440,7 @@ const galleryPhotos = [
         <a href="https://www.youtube.com/watch?v=ht_VgKwVqdQ" class="btn btn-outline">Portfolio</a>
       </div>
     </div>
-    
+
     <div class="artist-card featured-artist">
       <div class="artist-badge">🎬 Live Session Available</div>
       <h3>Ralt144MI</h3>
@@ -1373,17 +1453,18 @@ const galleryPhotos = [
         <p class="artist-desc">Mixing eurodance on synthesizers - fast, loud, changing tempo, sometimes too noisy for eurodance.</p>
       </div>
       <div class="artist-links">
-        <a href="https://www.youtube.com/watch?v=-zMJYI4XizU" class="btn btn-primary">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-primary">
           <span class="icon-play"></span> Live Session
         </a>
-        <a href="https://www.youtube.com/watch?v=6UipLFlHuGk&t=134s" class="btn btn-outline">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-outline">
           <span class="icon-interview"></span> Interview
         </a>
         <a href="https://ralt144mi.remigeorges.fr/" class="btn btn-outline">Website</a>
       </div>
     </div>
-    
-    <div class="artist-card">
+
+    <div class="artist-card featured-artist">
+      <div class="artist-badge">🎬 Live Session Available</div>
       <h3>KittyClock</h3>
       <div class="lang-content" id="artist1-fr">
         <p class="artist-genre">Deconstructed techno</p>
@@ -1394,11 +1475,18 @@ const galleryPhotos = [
         <p class="artist-desc">Ukrainian artist based in Prague creating experimental music with FoxDot and SuperCollider.</p>
       </div>
       <div class="artist-links">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-primary">
+          <span class="icon-play"></span> Live Session
+        </a>
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-outline">
+          <span class="icon-interview"></span> Interview
+        </a>
         <a href="https://on.soundcloud.com/oTFTJUA76vJr5ohw9" class="btn btn-outline">SoundCloud</a>
       </div>
     </div>
-    
-    <div class="artist-card">
+
+    <div class="artist-card featured-artist">
+      <div class="artist-badge">🎬 Live Session Available</div>
       <h3>Crash Server</h3>
       <div class="lang-content" id="artist4-fr">
         <p class="artist-genre">Post-mayhem live-coding</p>
@@ -1409,11 +1497,15 @@ const galleryPhotos = [
         <p class="artist-desc">Strasbourg live coding duo creating music and visuals live using FoxDot and SuperCollider.</p>
       </div>
       <div class="artist-links">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-primary">
+          <span class="icon-play"></span> Live Session
+        </a>
         <a href="https://crashserver.fr" class="btn btn-outline">Website</a>
       </div>
     </div>
-    
-    <div class="artist-card">
+
+    <div class="artist-card featured-artist">
+      <div class="artist-badge">🎬 Live Session Available</div>
       <h3>Blaž Pavlica</h3>
       <div class="lang-content" id="artist5-fr">
         <p class="artist-genre">Breakbeat & Bass</p>
@@ -1424,10 +1516,16 @@ const galleryPhotos = [
         <p class="artist-desc">Slovenian audio-visual artist exploring boundaries between electronic music and generative programming.</p>
       </div>
       <div class="artist-links">
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-primary">
+          <span class="icon-play"></span> Live Session
+        </a>
+        <a href="https://www.youtube.com/watch?v=o2A-gha15o4" class="btn btn-outline">
+          <span class="icon-interview"></span> Interview
+        </a>
         <a href="https://soundcloud.com/blaz-pavlica" class="btn btn-outline">SoundCloud</a>
       </div>
     </div>
-    
+
     <div class="artist-card">
       <h3>YEV</h3>
       <div class="lang-content" id="artist6-fr">
@@ -1452,7 +1550,7 @@ const galleryPhotos = [
     <h2><span class="icon-camera"></span> Photo Gallery<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Relive the unique atmosphere of this exceptional evening</p>
   </div>
-  
+
   <div class="photo-gallery">
     {galleryPhotos.map((photo, index) => (
       <div class="photo-item" data-index={index}>
@@ -1484,7 +1582,7 @@ const galleryPhotos = [
         </div>
       </div>
     </div>
-    
+
     <div class="info-card">
       <div class="lang-content" id="venue-fr">
         <h2><span class="icon-location"></span> Le Lieu</h2>
@@ -1502,7 +1600,7 @@ const galleryPhotos = [
       </div>
     </div>
   </div>
-  
+
   <div class="poster-container">
     <Image src={cl7} alt="Chaos lab VII poster" class="event-poster" />
   </div>
@@ -1518,7 +1616,7 @@ const galleryPhotos = [
     <h2><span class="icon-heart"></span> With support from<span class="terminal-cursor"></span></h2>
     <p class="section-subtitle">Thanks to our partners who make these events possible</p>
   </div>
-  
+
   <div class="contributors-grid">
     <a href="https://ultratech-rec.com" target="_blank" class="contributor-logo">
       <Image src={utr} alt="Ultratech Rec." class="logo-image" />
@@ -1543,15 +1641,15 @@ const galleryPhotos = [
 document.addEventListener('DOMContentLoaded', function() {
   const langButtons = document.querySelectorAll('.lang-btn');
   const contentElements = document.querySelectorAll('.lang-content');
-  
+
   langButtons.forEach(button => {
     button.addEventListener('click', function() {
       const targetLang = this.id.split('-')[1]; // 'fr' or 'en'
-      
+
       // Update active button
       langButtons.forEach(btn => btn.classList.remove('active'));
       this.classList.add('active');
-      
+
       // Show/hide content
       contentElements.forEach(element => {
         if (element.id.endsWith('-' + targetLang)) {
@@ -1562,14 +1660,14 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   });
-  
+
   // Photo gallery hover effects
   const photoItems = document.querySelectorAll('.photo-item');
   photoItems.forEach(item => {
     item.addEventListener('mouseenter', function() {
       this.style.transform = 'scale(1.05)';
     });
-    
+
     item.addEventListener('mouseleave', function() {
       this.style.transform = 'scale(1)';
     });
@@ -1624,7 +1722,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(0,255,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(255,0,255,0.1) 0%, transparent 50%),
     radial-gradient(circle at 40% 80%, rgba(0,255,0,0.1) 0%, transparent 50%);
@@ -1799,67 +1897,23 @@ body {
   margin-top: 2rem;
 }
 
-/* Upcoming Videos */
-.upcoming-videos {
+/* All Videos Info */
+.all-videos-info {
   max-width: 1000px;
   margin: 0 auto;
+  text-align: center;
 }
 
-.upcoming-videos h3 {
+.all-videos-info h3 {
   color: var(--secondary-color);
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
 }
 
-.upcoming-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
-
-.upcoming-card {
-  background: var(--bg-card);
-  border: 1px solid var(--primary-color);
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.upcoming-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--secondary-color);
-  box-shadow: 0 0 20px rgba(0,255,0,0.2);
-}
-
-.upcoming-placeholder {
-  width: 80px;
-  height: 80px;
-  background: rgba(0,255,255,0.1);
-  border: 2px dashed var(--primary-color);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-}
-
-.upcoming-placeholder .icon-video {
-  font-size: 2rem;
-  color: var(--primary-color);
-}
-
-.upcoming-card h4 {
+.all-videos-info p {
   color: var(--primary-light);
-  margin-bottom: 0.5rem;
-}
-
-.upcoming-status {
-  color: var(--secondary-color);
-  font-size: 0.9rem;
-  font-style: italic;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
 }
 
 .video-info-footer {
@@ -2244,11 +2298,11 @@ body {
   .event-title {
     font-size: 2.5rem;
   }
-  
+
   .hero {
     padding: 4rem 1rem;
   }
-  
+
   .video-releases-section,
   .artists-section,
   .photo-gallery-section,
@@ -2256,46 +2310,47 @@ body {
   .contributors-section {
     padding: 4rem 1rem;
   }
-  
+
   .episodes-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .episode-card {
     padding: 1.5rem;
   }
-  
+
   .video-embed iframe {
     height: 250px;
   }
-  
+
   .episode-actions {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .artists-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .photo-gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .contributors-grid {
     flex-direction: column;
     gap: 2rem;
   }
-  
-  .upcoming-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -2303,19 +2358,16 @@ body {
   .event-title {
     font-size: 2rem;
   }
-  
+
   .photo-gallery {
     grid-template-columns: 1fr;
   }
-  
-  .upcoming-grid {
-    grid-template-columns: 1fr;
-  }
-  
+
+
   .artist-links {
     flex-direction: column;
   }
-  
+
   .episodes-grid {
     grid-template-columns: 1fr;
   }

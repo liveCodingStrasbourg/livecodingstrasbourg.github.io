@@ -12,7 +12,8 @@ lien: ""
 ## Thème : Mercury 
 ### Présentation du langage de livecoding Mercury
 
-Présenté par Beryann Parker
+*Présenté par Beryann Parker*
+
 
 J’aurai le plaisir de vous présenter le programme de live coding [Mercury](https://mercury-playground.pages.dev/) créé par Timo Hoogland, compositeur, développeur et batteur hollandais. 
 Mercury est pour moi le logiciel idéal pour créer dans la même interface (disponible gratuitement en ligne)  de la musique et des visuels grâce à la parfaite intégration d’Hydra ( qui est aussi disponible gratuitement en ligne) dans Mercury. 

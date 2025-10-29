@@ -34,9 +34,9 @@ const year = eventDate.toLocaleDateString('fr-FR', { year: 'numeric', timeZone: 
         <div class="workshop-description">
             <Content />
         </div>
-        <div class="workshop-actions">
+        { lien && <div class="workshop-actions">
             <Button label="Plus d'infos" link={lien} color="primary" />
-        </div>
+        </div> }        
     </div>
 </div>
 
@@ -81,10 +81,10 @@ const year = eventDate.toLocaleDateString('fr-FR', { year: 'numeric', timeZone: 
 }
 
 .workshop-card:hover {
-    transform: translateY(-5px) scale(1.02);
+    transform: translateY(-5px) scale(1.01);
     box-shadow: 0 10px 20px rgba(255, 0, 255, 0.3);
     border-color: var(--secondary-color);
-    animation: cardGlitch 0.3s infinite;
+    /* animation: cardGlitch 0.3s infinite; */
 }
 
 @keyframes cardGlitch {

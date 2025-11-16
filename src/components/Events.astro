@@ -12,6 +12,12 @@ const upcomingEvents = allEvents.filter((event) => {
   const eventDate = new Date(event.data.date);
   return eventDate >= currentDate;
 });
+const pastEventsSorted = allEvents.filter((event) => {
+  const eventDate = new Date(event.data.date);
+  return eventDate < currentDate;
+}).sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+;
+
 ---
 
 <section id="prochains-ateliers">
@@ -28,6 +34,41 @@ const upcomingEvents = allEvents.filter((event) => {
             <Button label="Rejoignez notre Discord" link="https://discord.gg/2H8YcxMAWE" color="primary" /> 
             
         </div>
+    </div>
+    <h2 style="margin-top: 4rem;"><span class="icon-calendar"></span> Événements Passés<span class="terminal-cursor"></span></h2>
+    <div class="past-events-grid">
+        {pastEventsSorted.map(async (event) => {
+            const { Content } = await event.render();
+            const { title, date, lien } = event.data;
+            const eventDate = new Date(date);
+            eventDate.setUTCHours(12,0,0,0);
+            const day = eventDate.toLocaleDateString('fr-FR', { day: '2-digit', timeZone: 'UTC' });
+            const month = eventDate.toLocaleDateString('fr-FR', { month: 'short', timeZone: 'UTC' }).toUpperCase().replace('.', '');
+            const year = eventDate.toLocaleDateString('fr-FR', { year: 'numeric', timeZone: 'UTC' });
+            
+            return (
+                <div class="past-event-card">
+                    <div class="past-event-header">
+                        <div class="past-event-date">
+                            <span class="day">{day}</span>
+                            <span class="month">{month}</span>
+                            <span class="year">{year}</span>
+                        </div>
+                        <div class="past-event-title">
+                            <h4>{title}</h4>
+                        </div>
+                    </div>
+                    <div class="past-event-description">
+                        <Content />
+                    </div>
+                    {lien && (
+                        <div class="past-event-actions">
+                            <a href={lien} class="past-event-link">En savoir plus →</a>
+                        </div>
+                    )}
+                </div>
+            );
+        })}
     </div>
 </section>
 
@@ -61,9 +102,150 @@ const upcomingEvents = allEvents.filter((event) => {
     color: #aaa;
     font-size: 1.2rem;
     font-family: monospace;
-}   
+}
 
+.past-events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
 
+.past-event-card {
+    background-color: rgba(25, 25, 25, 0.7);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    padding: 1rem;
+    transition: var(--transition);
+    opacity: 0.8;
+}
+
+.past-event-card:hover {
+    opacity: 1;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.past-event-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+}
+
+.past-event-date {
+    background-color: var(--background-dark);
+    color: var(--secondary-color);
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+    min-width: 60px;
+    margin-right: 1rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.past-event-date .day {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.past-event-date .month {
+    font-size: 0.75rem;
+}
+
+.past-event-date .year {
+    font-size: 0.7rem;
+}
+
+.past-event-title h4 {
+    font-size: 1rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+}
+
+.past-event-description {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.past-event-description p {
+    margin: 0.5rem 0;
+}
+
+.past-event-actions {
+    margin-top: 0.75rem;
+}
+
+.past-event-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.past-event-link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .past-events-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .past-event-card {
+        padding: 0.75rem;
+    }
+
+    .past-event-description {
+        display: none;
+    }
+
+    .past-event-header {
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .past-event-date {
+        min-width: 50px;
+        margin-right: 0.75rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .past-event-date .day {
+        font-size: 1rem;
+    }
+
+    .past-event-date .month {
+        font-size: 0.7rem;
+    }
+
+    .past-event-date .year {
+        font-size: 0.65rem;
+    }
+
+    .past-event-title h4 {
+        font-size: 0.9rem;
+    }
+
+    .past-event-actions {
+        margin-top: 0.5rem;
+    }
+
+    .past-event-link {
+        font-size: 0.85rem;
+    }
+}
 
 
 </style>   

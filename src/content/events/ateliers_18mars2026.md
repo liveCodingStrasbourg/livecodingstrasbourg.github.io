@@ -1,6 +1,6 @@
 ---
 title: "Atelier livecoding"
-date: "2026-02-18"
+date: "2026-03-18"
 heure: "19h00"
 lieu: "Perestroika - Strasbourg"
 audience: "Débutants"

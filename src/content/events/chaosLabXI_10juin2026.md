@@ -12,13 +12,19 @@ lien: "https://www.karmen-camina.eu/"
 
 ## Lineup
 
-★ Crash Server (Strasbourg)
-★ dkyuh (Karlsruhe)
+★ Crash Server (Strasbourg, FR)
+
+★ dkyuh (Karlsruhe, DE)
+
 ★ Ivalmok (Lomé, Togo)
+
 ★ Jia Liu (Karlsruhe)
-★ Michele Samarotto (Karlsruhe)
-★ Papirouve Houby (Strasbourg)
-★ 520Still (Strasbourg)
+
+★ Michele Samarotto (Karlsruhe, DE)
+
+★ Papirouve Houby (Strasbourg, FR)
+
+★ 520Still (Strasbourg, FR)
 
 
 ## Description
@@ -43,11 +49,11 @@ Pour cette édition, nous avons le plaisir d'accueillir des membres du collectif
 
 Préventes limitées / Billets sur place.
 
-- Tarif réduit (solidarity) : 5 €
-- Tarif plein (general admission) : 8 €
-- Tarif soutien (support) : 10 €
+Tarif réduit (solidarity) : 5 €
+Tarif plein (general admission) : 8 €
+Tarif soutien (support) : 10 €
 
 Tarifs au choix sans justificatif et en conscience.
 
-- [ShotGun](https://shotgun.live/events/chaos-lab)
-- [HelloAsso](https://www.helloasso.com/associations/ultratech-europe/evenements/chaos-lab-11)
+- [Billetterie ShotGun](https://shotgun.live/events/chaos-lab)
+- [Billetterie HelloAsso](https://www.helloasso.com/associations/ultratech-europe/evenements/chaos-lab-11)

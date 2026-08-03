@@ -1,0 +1,79 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allTools = await getCollection('tools');
+
+const external = allTools.filter(t => !t.data.community);
+const community = allTools.filter(t => t.data.community).sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const categories = ['audio', 'visual', 'other'] as const;
+const categoryLabel: Record<(typeof categories)[number], string> = {
+  audio: 'Audio',
+  visual: 'Visual',
+  other: 'Other',
+};
+const extByCategory = categories.map(cat => ({
+  cat,
+  list: external.filter(t => t.data.category === cat).sort((a, b) => a.data.name.localeCompare(b.data.name)),
+}));
+---
+<Base title={t('tools.title')}>
+  <div class="page-header">
+    <h1>{t('tools.title')}</h1>
+    <p style="color:var(--muted)">{t('tools.subtitle')}</p>
+  </div>
+
+  <h2 style="margin-bottom:0.3rem">
+    Community-built tools
+    <span class="badge-community">TOPLAP STR</span>
+  </h2>
+  <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.6rem">
+    Experiments and tools developed by TOPLAP Strasbourg members.
+  </p>
+
+  {community.length > 0 && (
+    <div class="tool-grid">
+      {community.map(tool => {
+        const desc = tool.data.description_en ?? tool.data.description;
+        return (
+          <div class="tool-card" style="border-color:color-mix(in srgb, var(--accent) 30%, var(--border))">
+            <div class="tool-card__name">
+              <a href={tool.data.url} target="_blank" rel="noopener noreferrer">{tool.data.name}</a>
+            </div>
+            {tool.data.language && <div class="tool-card__lang">{tool.data.language}</div>}
+            <p class="tool-card__desc">{desc}</p>
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  <hr style="margin:1rem 0" />
+
+  <h2 style="margin-bottom:0.6rem">External environments</h2>
+
+  {extByCategory.map(({ cat, list }) => list.length > 0 && (
+    <>
+      <h3 style="color:var(--accent2);margin-bottom:0.4rem;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em">{categoryLabel[cat]}</h3>
+      <div class="tool-grid">
+        {list.map(tool => {
+          const desc = tool.data.description_en ?? tool.data.description;
+          return (
+            <div class="tool-card">
+              <div class="tool-card__name">
+                <a href={tool.data.url} target="_blank" rel="noopener noreferrer">{tool.data.name}</a>
+              </div>
+              {tool.data.language && <div class="tool-card__lang">{tool.data.language}</div>}
+              <p class="tool-card__desc">{desc}</p>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  ))}
+</Base>

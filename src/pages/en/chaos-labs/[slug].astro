@@ -1,0 +1,107 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../../i18n';
+import { getCollection } from 'astro:content';
+import ArtistName from '../../../components/ArtistName.astro';
+
+export async function getStaticPaths() {
+  const sessions = await getCollection('chaos-labs');
+  return sessions.map(s => ({ params: { slug: s.id }, props: { session: s } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const { session } = Astro.props;
+const { data } = session;
+
+const desc = data.description_en ?? data.description;
+const dateStr = new Date(data.date).toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric'
+});
+---
+<Base title={data.title}>
+  <p style="font-size:0.82rem;margin-bottom:1.2rem">
+    <a href="/en/chaos-labs">← {t('nav.chaos-labs')}</a>
+  </p>
+
+  {data.cover_image && (
+    <img src={data.cover_image} alt={data.title} class="event-cover" />
+  )}
+
+  <div class="page-header">
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem">{dateStr}</div>
+    <h1>{data.title}</h1>
+  </div>
+
+  <p style="line-height:1.7">{desc}</p>
+
+  {data.event_links?.length > 0 && (
+    <div class="event-links">
+      {data.event_links.map((link: { label: string; url: string }) => (
+        <a href={link.url} target="_blank" rel="noopener noreferrer" class="event-link">
+          ↗ {link.label}
+        </a>
+      ))}
+    </div>
+  )}
+
+  <hr />
+
+  {data.participants?.length > 0 && (
+    <div style="margin-bottom:1.2rem">
+      <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">
+        Performers
+      </div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:0.4rem">
+        {data.participants.map((p: string, i: number) => (
+          <li style="border:1px solid var(--border);padding:0.25rem 0.7rem;font-size:0.88rem">
+            <ArtistName name={p} lang="en" index={i} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {data.tools?.length > 0 && (
+    <div style="margin-bottom:1rem">
+      <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">
+        Tools
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.35rem">
+        {data.tools.map((tool: string) => <span class="tag">{tool}</span>)}
+      </div>
+    </div>
+  )}
+
+  {data.duration && (
+    <p style="font-size:0.82rem;color:var(--muted)">Duration: {data.duration}</p>
+  )}
+
+  {data.video_url && (
+    <>
+      <hr />
+      <div class="video-wrapper">
+        <iframe
+          src={data.video_url}
+          title={data.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+    </>
+  )}
+
+  {data.photos?.length > 0 && (
+    <>
+      <hr />
+      <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">
+        Photos
+      </div>
+      <div class="photo-grid">
+        {data.photos.map((src: string, i: number) => (
+          <img src={src} alt={`${data.title} — photo ${i + 1}`} loading="lazy" />
+        ))}
+      </div>
+    </>
+  )}
+</Base>

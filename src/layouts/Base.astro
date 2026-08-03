@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import { getLangFromUrl, useTranslations, getLocalePath, languages } from '../i18n';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const { title, description } = Astro.props;
+
+const pageTitle = title ? `${title} — LiveCoding Strasbourg` : 'LiveCoding Strasbourg';
+const pageDesc = description ?? t('site.tagline');
+
+const otherLang = lang === 'fr' ? 'en' : 'fr';
+const otherLangLabel = languages[otherLang];
+const currentPath = Astro.url.pathname;
+let altPath: string;
+if (lang === 'fr') {
+  altPath = `/en${currentPath}`;
+} else {
+  altPath = currentPath.replace(/^\/en/, '') || '/';
+}
+
+const navLinks = [
+  { href: getLocalePath(lang, '/agenda'), label: t('nav.agenda') },
+  { href: getLocalePath(lang, '/chaos-labs'), label: t('nav.chaos-labs') },
+  { href: getLocalePath(lang, '/artists'), label: t('nav.artists') },
+  { href: getLocalePath(lang, '/tools'), label: t('nav.tools') },
+];
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDesc} />
+  <link rel="alternate" hreflang={otherLang} href={altPath} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__top">
+      <a href={getLocalePath(lang, '/')} class="site-title" data-text="LiveCodingStrasbourg">
+        LiveCoding<span>Strasbourg</span>
+      </a>
+      <a href={altPath} class="lang-switch">{otherLangLabel}</a>
+    </div>
+    <nav class="site-nav" aria-label="Navigation principale">
+      {navLinks.map(({ href, label }) => (
+        <a href={href} aria-current={Astro.url.pathname === href ? 'page' : undefined}>
+          {label}
+        </a>
+      ))}
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <p>LiveCoding Strasbourg &mdash; {new Date().getFullYear()}</p>
+  </footer>
+</body>
+</html>

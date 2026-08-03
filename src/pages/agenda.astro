@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allEvents = await getCollection('agenda');
+const allChaosLabs = await getCollection('chaos-labs');
+const now = new Date();
+
+const upcoming = allEvents
+  .filter(e => new Date(e.data.date) >= now)
+  .sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime());
+
+// past agenda events + all chaos labs entries, merged and sorted newest-first
+const pastAgenda = allEvents.filter(e => new Date(e.data.date) < now);
+
+type PastItem =
+  | { kind: 'agenda'; date: Date; id: string; title: string; subtitle?: string; location?: string; tags: string[] }
+  | { kind: 'chaos'; date: Date; id: string; title: string; participants: string[] };
+
+const past: PastItem[] = [
+  ...pastAgenda.map(e => ({
+    kind: 'agenda' as const,
+    date: new Date(e.data.date),
+    id: e.id,
+    title: lang === 'en' && e.data.title_en ? e.data.title_en : e.data.title,
+    subtitle: lang === 'en' && e.data.subtitle_en ? e.data.subtitle_en : e.data.subtitle,
+    location: e.data.location,
+    tags: e.data.tags ?? [],
+  })),
+  ...allChaosLabs.map(s => ({
+    kind: 'chaos' as const,
+    date: new Date(s.data.date),
+    id: s.id,
+    title: s.data.title,
+    participants: s.data.participants ?? [],
+  })),
+].sort((a, b) => b.date.getTime() - a.date.getTime());
+---
+<Base title={t('agenda.title')}>
+  <div class="page-header">
+    <h1>{t('agenda.title')}</h1>
+  </div>
+
+  {upcoming.length === 0 ? (
+    <p style="color:var(--muted)">{t('agenda.empty')}</p>
+  ) : (
+    <div class="card-grid card-grid--2col">
+      {upcoming.map(ev => {
+        const title = lang === 'en' && ev.data.title_en ? ev.data.title_en : ev.data.title;
+        const subtitle = lang === 'en' && ev.data.subtitle_en ? ev.data.subtitle_en : ev.data.subtitle;
+        const desc = lang === 'en' && ev.data.description_en ? ev.data.description_en : ev.data.description;
+        const dateStr = new Date(ev.data.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+          weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+        });
+        return (
+          <a href={`/agenda/${ev.id}`} class="card">
+            <div class="card__meta">
+              {dateStr}{ev.data.time_start ? ` — ${ev.data.time_start}${ev.data.time_end ? ` – ${ev.data.time_end}` : ''}` : ''}
+            </div>
+            <div class="card__title">{title}</div>
+            {subtitle && <div class="card__subtitle">{subtitle}</div>}
+            {ev.data.location && <div style="font-size:0.82rem;color:var(--muted);margin:0.2rem 0">{ev.data.location}</div>}
+            <p style="font-size:0.85rem;margin:0.3rem 0 0.5rem;color:var(--muted)">{desc}</p>
+            {ev.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
+          </a>
+        );
+      })}
+    </div>
+  )}
+
+  {past.length > 0 && (
+    <>
+      <hr />
+      <h2 style="color:var(--muted);font-size:0.9rem;margin-bottom:1rem">
+        {lang === 'fr' ? 'Événements passés' : 'Past events'}
+      </h2>
+      <div class="card-grid card-grid--2col">
+        {past.map(item => {
+          const dateStr = item.date.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+            day: 'numeric', month: 'long', year: 'numeric'
+          });
+          if (item.kind === 'chaos') {
+            return (
+              <a href={`/chaos-labs/${item.id}`} class="card" style="opacity:0.65">
+                <div class="card__meta">{dateStr}</div>
+                <div class="card__title">{item.title}</div>
+                {item.participants.length > 0 && (
+                  <div style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem">
+                    {item.participants.join(', ')}
+                  </div>
+                )}
+                <div style="font-size:0.75rem;color:var(--accent2);margin-top:0.3rem">Chaos Lab</div>
+              </a>
+            );
+          }
+          return (
+            <a href={`/agenda/${item.id}`} class="card" style="opacity:0.65">
+              <div class="card__meta">{dateStr}{item.location ? ` — ${item.location}` : ''}</div>
+              <div class="card__title">{item.title}</div>
+              {item.subtitle && <div class="card__subtitle">{item.subtitle}</div>}
+              {item.tags.length > 0 && (
+                <div style="margin-top:0.4rem">
+                  {item.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+                </div>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </>
+  )}
+</Base>

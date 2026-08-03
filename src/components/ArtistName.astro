@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  name: string;
+  lang?: string;
+  index?: number;
+}
+
+const { name, lang = 'fr', index = 0 } = Astro.props;
+
+// Normalize: strip parenthetical suffixes, lowercase, remove spaces
+const normalize = (s: string) =>
+  s.replace(/\s*\(.*?\)\s*/g, '').toLowerCase().replace(/\s+/g, '');
+
+const artists = await getCollection('artists');
+const artist = artists.find(a => normalize(a.data.name) === normalize(name));
+
+const uid = `ap-${normalize(name)}-${index}`;
+const bio = lang === 'en' && artist?.data.bio_en ? artist.data.bio_en : artist?.data.bio;
+const hasContent = bio || (artist?.data.tools?.length ?? 0) > 0 || (artist?.data.links?.length ?? 0) > 0;
+---
+
+{artist && hasContent ? (
+  <span class="artist-name-wrap">
+    <button class="artist-btn" popovertarget={uid} type="button">{name}</button>
+    <div id={uid} popover class="artist-popover">
+      <div class="artist-popover__name">{artist.data.name}</div>
+      {bio && <p class="artist-popover__bio">{bio}</p>}
+      {artist.data.tools && artist.data.tools.length > 0 && (
+        <div class="artist-popover__tools">
+          {artist.data.tools.map((t: string) => <span class="tag">{t}</span>)}
+        </div>
+      )}
+      {artist.data.links && artist.data.links.length > 0 && (
+        <div class="artist-popover__links">
+          {artist.data.links.map((l: { label: string; url: string }) => (
+            <a href={l.url} target="_blank" rel="noopener noreferrer" class="artist-popover__link">
+              ↗ {l.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </span>
+) : (
+  <span>{name}</span>
+)}

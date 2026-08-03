@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const sessions = await getCollection('chaos-labs');
+const sorted = sessions.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+<Base title={t('chaos-labs.title')}>
+  <div class="page-header">
+    <h1>{t('chaos-labs.title')}</h1>
+    <p style="color:var(--muted)">{t('chaos-labs.subtitle')}</p>
+  </div>
+
+  <div class="card-grid card-grid--2col">
+    {sorted.map(session => {
+      const desc = lang === 'en' && session.data.description_en ? session.data.description_en : session.data.description;
+      const dateStr = new Date(session.data.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
+        month: 'long', year: 'numeric'
+      });
+      const href = `/chaos-labs/${session.id}`;
+      return (
+        <a href={href} class="card">
+          {session.data.cover_image && (
+            <img
+              src={session.data.cover_image}
+              alt={session.data.title}
+              style="width:100%;aspect-ratio:16/7;object-fit:cover;display:block;margin-bottom:0.7rem;border-bottom:1px solid var(--border)"
+            />
+          )}
+          <div class="card__meta">
+            {dateStr}
+            {session.data.duration ? ` — ${session.data.duration}` : ''}
+          </div>
+          <div class="card__title">{session.data.title}</div>
+          <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 0.5rem;line-height:1.4">{desc}</p>
+          {session.data.participants?.length > 0 && (
+            <div style="font-size:0.78rem;color:var(--muted)">
+              {session.data.participants.join(', ')}
+            </div>
+          )}
+          {session.data.tools?.length > 0 && (
+            <div style="margin-top:0.4rem;display:flex;flex-wrap:wrap;gap:0.3rem">
+              {session.data.tools.map((tool: string) => <span class="tag">{tool}</span>)}
+            </div>
+          )}
+        </a>
+      );
+    })}
+  </div>
+</Base>

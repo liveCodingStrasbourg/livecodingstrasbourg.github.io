@@ -1,0 +1,73 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../../i18n';
+import { getCollection } from 'astro:content';
+import ArtistName from '../../../components/ArtistName.astro';
+
+export async function getStaticPaths() {
+  const events = await getCollection('agenda');
+  return events.map(e => ({ params: { slug: e.id }, props: { event: e } }));
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const { event } = Astro.props;
+const { data } = event;
+
+const title = data.title_en ?? data.title;
+const subtitle = data.subtitle_en ?? data.subtitle;
+const desc = data.description_en ?? data.description;
+const dateStr = new Date(data.date).toLocaleDateString('en-GB', {
+  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+});
+---
+<Base title={title}>
+  <p style="font-size:0.82rem;margin-bottom:1.2rem">
+    <a href="/en/agenda">← {t('nav.agenda')}</a>
+  </p>
+
+  <div class="page-header">
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem">
+      {dateStr}{data.time_start ? ` — ${data.time_start}${data.time_end ? ` – ${data.time_end}` : ''}` : ''}
+    </div>
+    <h1>{title}</h1>
+    {subtitle && <p style="color:var(--accent2);margin:0.3rem 0 0">{subtitle}</p>}
+  </div>
+
+  {data.location && (
+    <div style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem">📍 {data.location}</div>
+  )}
+
+  <p>{desc}</p>
+
+  {data.artists?.length > 0 && (
+    <div style="margin-top:1.2rem">
+      <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">
+        Artists
+      </div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:0.4rem">
+        {data.artists.map((a: string, i: number) => (
+          <li style="border:1px solid var(--border);padding:0.25rem 0.7rem;font-size:0.88rem">
+            <ArtistName name={a} lang={lang} index={i} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  {data.tags?.length > 0 && (
+    <div style="margin-top:1rem">
+      {data.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+
+  {data.links?.length > 0 && (
+    <div class="event-links" style="margin-top:1.5rem">
+      {data.links.map((link: { label: string; url: string }) => (
+        <a href={link.url} target="_blank" rel="noopener noreferrer" class="event-link">
+          ↗ {link.label}
+        </a>
+      ))}
+    </div>
+  )}
+</Base>

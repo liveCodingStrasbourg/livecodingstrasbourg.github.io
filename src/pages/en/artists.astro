@@ -1,0 +1,42 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const artists = await getCollection('artists');
+const sorted = artists
+  .filter(a => a.data.collective)
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+<Base title={t('artists.title')}>
+  <div class="page-header">
+    <h1>{t('artists.title')}</h1>
+  </div>
+
+  <div class="artist-grid">
+    {sorted.map(artist => {
+      const bio = artist.data.bio_en ?? artist.data.bio;
+      return (
+        <div class="artist-card">
+          <div class="artist-card__name">{artist.data.name}</div>
+          <div class="artist-card__bio">{bio}</div>
+          <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted)">
+            {artist.data.tools?.join(', ')}
+          </div>
+          {artist.data.links?.length > 0 && (
+            <div style="margin-top:0.5rem;font-size:0.8rem">
+              {artist.data.links.map((link: {label: string, url: string}) => (
+                <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</Base>

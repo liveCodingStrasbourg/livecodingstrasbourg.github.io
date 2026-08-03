@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allEvents = await getCollection('agenda');
+const upcoming = allEvents
+  .filter(e => new Date(e.data.date) >= new Date())
+  .sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime())
+  .slice(0, 3);
+---
+<Base>
+  <div class="ascii-deco">{`
+ _     _           ____          _
+| |   (_)_   _____/ ___|___   __| | ___
+| |   | \ \ / / _ \___ \/ _ \ / _\` |/ _ \\
+| |___| |\ V /  __/___) | (_) | (_| |  __/
+|_____|_| \_/ \___|____/ \___/ \__,_|\___| STR
+`}</div>
+
+  <p>{t('site.tagline')}</p>
+
+  <hr />
+
+  <h2>{t('nav.agenda')}</h2>
+  {upcoming.length === 0 ? (
+    <p style="color:var(--muted)">{t('agenda.empty')}</p>
+  ) : (
+    <div class="card-grid">
+      {upcoming.map(ev => {
+        const title = lang === 'en' && ev.data.title_en ? ev.data.title_en : ev.data.title;
+        const desc = lang === 'en' && ev.data.description_en ? ev.data.description_en : ev.data.description;
+        const dateStr = new Date(ev.data.date).toLocaleDateString('en-GB', {
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+        return (
+          <div class="card">
+            <div class="card__meta">{dateStr} &mdash; {ev.data.time} &mdash; {ev.data.location}</div>
+            <div class="card__title">{title}</div>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0">{desc}</p>
+            {ev.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  <hr />
+
+  <p style="font-size:0.85rem;color:var(--muted)">
+    <a href="/en/agenda">→ {t('nav.agenda')}</a> &nbsp;
+    <a href="/en/chaos-labs">→ {t('nav.chaos-labs')}</a> &nbsp;
+    <a href="/en/artists">→ {t('nav.artists')}</a> &nbsp;
+    <a href="/en/tools">→ {t('nav.tools')}</a>
+  </p>
+</Base>

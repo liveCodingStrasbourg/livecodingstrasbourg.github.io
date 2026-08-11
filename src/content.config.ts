@@ -6,34 +6,23 @@ const agenda = defineCollection({
   schema: z.object({
     title: z.string(),
     title_en: z.string().optional(),
+    type: z.enum(['atelier', 'chaos-lab', 'concert', 'jam', 'other']).default('atelier'),
     date: z.date(),
     time_start: z.string().optional(),
     time_end: z.string().optional(),
-    location: z.string(),
+    duration: z.string().optional(),
+    location: z.string().optional(),
     subtitle: z.string().optional(),
     subtitle_en: z.string().optional(),
     description: z.string(),
     description_en: z.string().optional(),
-    artists: z.array(z.string()).default([]),
+    participants: z.array(z.string()).default([]),
+    tools: z.array(z.string()).default([]),
     tags: z.array(z.string()).default([]),
     links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
-  }),
-});
-
-const chaosLabs = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/chaos-labs' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.date(),
-    participants: z.array(z.string()).default([]),
-    duration: z.string().optional(),
-    tools: z.array(z.string()).default([]),
-    video_url: z.string().optional(),
     cover_image: z.string().optional(),
     photos: z.array(z.string()).default([]),
-    event_links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
-    description: z.string(),
-    description_en: z.string().optional(),
+    video_url: z.string().optional(),
   }),
 });
 
@@ -42,6 +31,7 @@ const artists = defineCollection({
   schema: z.object({
     name: z.string(),
     collective: z.boolean().default(false),
+    image: z.string().optional(),
     tools: z.array(z.string()).default([]),
     links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
     bio: z.string().optional(),
@@ -69,7 +59,19 @@ const media = defineCollection({
     title_en: z.string().optional(),
     date: z.date(),
     type: z.enum(['video', 'audio', 'image', 'link']),
-    url: z.string().url().optional(),
+    url: z.string().optional(),
+    description: z.string(),
+    description_en: z.string().optional(),
+  }),
+});
+
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  schema: z.object({
+    title: z.string(),
+    period: z.string().optional(),
+    participants: z.array(z.string()).default([]),
+    links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
     description: z.string(),
     description_en: z.string().optional(),
   }),
@@ -77,8 +79,8 @@ const media = defineCollection({
 
 export const collections = {
   agenda,
-  'chaos-labs': chaosLabs,
   artists,
   tools,
   media,
+  projects,
 };

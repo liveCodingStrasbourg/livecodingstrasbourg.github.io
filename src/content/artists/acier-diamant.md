@@ -1,6 +1,5 @@
 ---
 name: "Acier Diamant"
-collective: true
 tools: []
 links: []
 bio: "Teknorock : une mixture à base de drone, de kick et de punk, patiemment mijotée dans l'acide."

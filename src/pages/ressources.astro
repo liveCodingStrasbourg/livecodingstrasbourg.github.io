@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+import FriseBar from '../components/FriseBar.astro';
+import FriseHeading from '../components/FriseHeading.astro';
+import { getLangFromUrl, useTranslations } from '../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allTools = await getCollection('tools');
+
+const external = allTools.filter(tool => !tool.data.community);
+const community = allTools.filter(tool => tool.data.community).sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const categories = ['audio', 'visual', 'other'] as const;
+const categoryLabel: Record<(typeof categories)[number], string> = {
+  audio: 'Audio',
+  visual: lang === 'fr' ? 'Visuel' : 'Visual',
+  other: lang === 'fr' ? 'Autre' : 'Other',
+};
+const extByCategory = categories.map(cat => ({
+  cat,
+  list: external.filter(tool => tool.data.category === cat).sort((a, b) => a.data.name.localeCompare(b.data.name)),
+}));
+
+const docItems = [
+  {
+    name: 'Introduction au live coding',
+    tag: '8 chapitres',
+    desc: 'Support de cours complet : définitions, histoire, cartographie des outils, scène strasbourgeoise, glitch art, feedback, Pure Data, culture libre.',
+    url: '/ressources/cours-live-coding',
+  },
+  {
+    name: 'Charte TOPLAP Strasbourg',
+    tag: 'Règlement',
+    desc: "Les valeurs et règles de vie de l'association : ouverture, partage, expérimentation, communauté.",
+    url: '/ressources/charte',
+  },
+];
+
+const communityItems = community.map(tool => ({
+  name: tool.data.name,
+  tag: tool.data.language,
+  desc: lang === 'en' && tool.data.description_en ? tool.data.description_en : tool.data.description,
+  url: tool.data.url,
+}));
+
+const friends = [
+  { name: 'Le Shadok', url: 'https://shadok-strasbourg.eu/', desc: "Fabrique du numérique de l'Eurométropole. Lieu d'accueil historique des Chaos Labs et ateliers TOPLAP Strasbourg." },
+  { name: 'Hackstub', url: 'https://hackstub.eu/', desc: "Hackerspace associatif strasbourgeois, culture du logiciel libre et éducation populaire critique aux technologies." },
+  { name: 'La Semencerie', url: 'https://www.lasemencerie.org/', desc: "Entrepôt d'ateliers d'artistes en autogestion, ouvert en 2010, quartier Gare." },
+  { name: 'Alsace Réseau Neutre', url: 'https://arn-fai.net/', desc: "Fournisseur d'accès associatif et neutre, promotion d'un internet libre et décentralisé." },
+  { name: 'CLI — Coopérative Libre Informatique', url: 'https://www.cli.coop/', desc: "Coopérative strasbourgeoise d'informatique libre et éthique." },
+  { name: 'La Quadrature du Net', url: 'https://www.laquadrature.net/', desc: "Association de défense des libertés fondamentales dans l'environnement numérique. Pas locale à Strasbourg, mais un allié naturel sur les enjeux de vie privée et de neutralité du net." },
+];
+---
+<Base title={t('tools.title')}>
+  <div class="page-header">
+    <h1>{t('tools.title')}</h1>
+    <p style="color:var(--muted)">{t('tools.subtitle')}</p>
+  </div>
+
+  <FriseHeading label={t('tools.documentation')} />
+  <FriseBar items={docItems} />
+
+  <FriseHeading label={lang === 'fr' ? 'Outils faits par la communauté' : 'Community-built tools'} />
+  {communityItems.length > 0 && <FriseBar items={communityItems} />}
+
+  <FriseHeading label={lang === 'fr' ? 'Environnements externes' : 'External environments'} />
+  {extByCategory.map(({ cat, list }) => list.length > 0 && (
+    <>
+      <h3 style="color:var(--accent2);margin:1rem 0 0.3rem;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em">{categoryLabel[cat]}</h3>
+      <FriseBar items={list.map(tool => ({
+        name: tool.data.name,
+        tag: tool.data.language,
+        desc: lang === 'en' && tool.data.description_en ? tool.data.description_en : tool.data.description,
+        url: tool.data.url,
+      }))} />
+    </>
+  ))}
+
+  <FriseHeading label={t('tools.linkotheque')} />
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.3rem 0 0.6rem">{t('tools.linkotheque.subtitle')}</p>
+  <FriseBar items={friends} />
+</Base>

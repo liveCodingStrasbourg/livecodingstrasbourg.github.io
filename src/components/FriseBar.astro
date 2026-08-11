@@ -1,0 +1,53 @@
+---
+interface Item {
+  name: string;
+  desc?: string;
+  tag?: string;
+  url?: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+
+function hash(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+// Warm gradient across the strip: yellow (48) -> red (0), with a small
+// deterministic per-item jitter so adjacent items still read as distinct.
+const n = items.length;
+const hues = items.map((item, i) => {
+  const base = n > 1 ? 48 - (i / (n - 1)) * 48 : 24;
+  const jitter = (hash(item.name) % 9) - 4;
+  return Math.max(0, Math.min(48, base + jitter));
+});
+---
+<div class="frise">
+  {items.map((item, i) => {
+    const Tag = item.url ? 'a' : 'div';
+    return (
+      <Tag
+        class="frise__segment"
+        style={`--hue:${hues[i]}`}
+        href={item.url}
+        target={item.url ? '_blank' : undefined}
+        rel={item.url ? 'noopener noreferrer' : undefined}
+        tabindex={item.url ? undefined : 0}
+      >
+        <span class="frise__label">{item.name}</span>
+        <div class="frise__panel">
+          <div class="frise__panel-name">{item.name}</div>
+          {item.tag && <div class="frise__panel-tag">{item.tag}</div>}
+          {item.desc && <div class="frise__panel-desc">{item.desc}</div>}
+        </div>
+      </Tag>
+    );
+  })}
+</div>

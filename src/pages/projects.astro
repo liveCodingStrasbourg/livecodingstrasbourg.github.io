@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allProjects = await getCollection('projects');
+const sorted = allProjects.sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+<Base title={t('projects.title')}>
+  <div class="page-header">
+    <h1>{t('projects.title')}</h1>
+    <p style="color:var(--muted)">{t('projects.subtitle')}</p>
+  </div>
+
+  <div class="card-grid card-grid--2col">
+    {sorted.map(project => {
+      const desc = lang === 'en' && project.data.description_en ? project.data.description_en : project.data.description;
+      return (
+        <div class="card">
+          <div class="card__title">{project.data.title}</div>
+          {project.data.period && <div class="card__meta">{project.data.period}</div>}
+          <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 0.5rem;line-height:1.4">{desc}</p>
+          {project.data.participants?.length > 0 && (
+            <div style="font-size:0.78rem;color:var(--muted)">{project.data.participants.join(', ')}</div>
+          )}
+          {project.data.links?.length > 0 && (
+            <div style="margin-top:0.5rem;font-size:0.82rem">
+              {project.data.links.map((link: {label: string, url: string}) => (
+                <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</Base>

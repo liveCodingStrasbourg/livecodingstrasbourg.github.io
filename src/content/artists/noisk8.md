@@ -1,6 +1,5 @@
 ---
 name: "Noisk8"
-collective: true
 tools:
   - FoxDot
   - SuperCollider

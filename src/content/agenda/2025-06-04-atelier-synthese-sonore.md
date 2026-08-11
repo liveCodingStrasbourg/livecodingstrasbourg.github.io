@@ -7,7 +7,7 @@ subtitle: "Créer du son en partant de la base"
 subtitle_en: "Creating sound from scratch"
 description: "Atelier TOPLAP Strasbourg au Shadok sur la synthèse sonore par le code : oscillateurs, enveloppes, filtres et effets produits en temps réel. Apportez votre ordinateur portable et un casque."
 description_en: "TOPLAP Strasbourg workshop at Le Shadok on sound synthesis through code: oscillators, envelopes, filters and effects produced in real time. Bring your laptop and headphones."
-artists: []
+participants: []
 tags:
   - atelier
   - synthèse sonore

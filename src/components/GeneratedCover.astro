@@ -1,0 +1,37 @@
+---
+interface Props {
+  seed: string;
+  ratio?: string;
+}
+
+const { seed, ratio = '4/3' } = Astro.props;
+
+function hash(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+const h = hash(seed);
+const hue1 = h % 360;
+const hue2 = (hue1 + 40 + (h >> 8) % 80) % 360;
+const angle = (h >> 4) % 180;
+const stripeSize = 8 + (h % 10);
+const glitchOffset = (h >> 12) % 20;
+---
+<div
+  class="generated-cover"
+  aria-hidden="true"
+  style={`aspect-ratio:${ratio};background:
+    repeating-linear-gradient(${angle}deg,
+      hsl(${hue1} 70% 45% / 0.9) 0px,
+      hsl(${hue1} 70% 45% / 0.9) ${stripeSize}px,
+      hsl(${hue2} 70% 12% / 1) ${stripeSize}px,
+      hsl(${hue2} 70% 12% / 1) ${stripeSize * 2}px
+    );
+    position:relative;overflow:hidden`}
+>
+  <div style={`position:absolute;inset:0;mix-blend-mode:overlay;background:repeating-linear-gradient(${180 - angle}deg, transparent 0, transparent ${glitchOffset + 4}px, rgba(0,0,0,0.4) ${glitchOffset + 4}px, rgba(0,0,0,0.4) ${glitchOffset + 5}px)`}></div>
+</div>

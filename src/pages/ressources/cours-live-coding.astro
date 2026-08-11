@@ -1,0 +1,740 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Introduction au live coding"
+  description="Support de cours complet : définitions, histoire, cartographie des outils, scène strasbourgeoise, glitch art, feedback, Pure Data, culture libre."
+>
+  <p style="font-size:0.82rem;margin-bottom:1.2rem">
+    <a href="/ressources">← Ressources</a>
+  </p>
+
+  <div class="page-header">
+    <h1>Introduction au live coding</h1>
+    <p style="color:var(--muted)">Support de cours — TOPLAP Strasbourg. Arts numériques, VJing et scène strasbourgeoise.</p>
+  </div>
+
+  <nav class="doc-toc" aria-label="Sommaire">
+    <div class="doc-toc__title">Partie 1 — Introduction</div>
+    <ol>
+      <li><a href="#s1">Qu'est-ce que le live coding ?</a></li>
+      <li><a href="#s2">Pourquoi le live coding aux arts numériques ?</a></li>
+      <li><a href="#s3">Cartographie des outils du cursus</a></li>
+      <li><a href="#s4">Live coding et VJing : deux gestes pour l'image en direct</a></li>
+    </ol>
+    <div class="doc-toc__title" style="margin-top:1rem">Partie 2 — Approfondissements</div>
+    <ol>
+      <li><a href="#s5">Scène strasbourgeoise et glitch art en profondeur</a></li>
+      <li><a href="#s6">Le feedback en profondeur</a></li>
+      <li><a href="#s7">Pure Data : programmation visuelle pour le temps réel</a></li>
+      <li><a href="#s8">Open source, art libre et Creative Commons</a></li>
+    </ol>
+  </nav>
+
+  <div class="doc-part-label">Partie 1 — Introduction</div>
+
+  <section class="doc-section" id="s1">
+    <h2>1. Qu'est-ce que le live coding ?</h2>
+
+    <h3>Définition</h3>
+    <p>Le <strong>live coding</strong> est une pratique artistique qui consiste à écrire et modifier du code informatique <strong>en temps réel devant un public</strong>, pour produire du son, de l'image, ou les deux simultanément. Le code n'est pas préparé puis exécuté lors d'un concert : il est tapé, transformé, cassé et reconstruit pendant la performance elle-même.</p>
+    <p>C'est un déplacement important : <strong>le code devient l'instrument</strong>, et l'acte d'écrire devient l'acte de jouer. Là où un guitariste manipule des cordes, le live codeur manipule des fonctions, des boucles, des paramètres.</p>
+
+    <h3>Ce qui distingue le live coding</h3>
+    <p>Trois éléments le différencient des pratiques électroniques voisines :</p>
+    <ul>
+      <li><strong>Par rapport au DJ</strong> : le live codeur ne mixe pas des œuvres existantes, il <em>génère</em> le matériau. Le son ou l'image n'existe pas avant la performance.</li>
+      <li><strong>Par rapport au musicien « laptop » classique</strong> : il ne déclenche pas un set figé préparé en studio. Tout — ou presque — est ouvert à la modification.</li>
+      <li><strong>Par rapport à la programmation classique</strong> : pas de séparation entre écrire et exécuter. Le langage est conçu pour que toute modification soit prise en compte immédiatement, sans interruption du flux sonore ou visuel. C'est le principe du <em>hot-swapping</em>.</li>
+    </ul>
+    <p>Cette dernière contrainte technique est fondamentale : un environnement de live coding est, avant tout, un environnement où <strong>on peut changer le programme pendant qu'il tourne</strong>.</p>
+
+    <h3>TOPLAP et le manifeste</h3>
+    <p>En février 2004, à Hambourg, un groupe d'artistes-chercheurs (Alex McLean, Click Nilson, Julian Rohrhuber, entre autres) fondent <strong>TOPLAP</strong> — <em>Temporary Organisation for the Promotion of Live Algorithm Programming</em>. Ils rédigent un manifeste qui pose les principes encore référents aujourd'hui :</p>
+    <blockquote>
+      « Give us access to the performer's mind, to the whole human instrument. »<br />
+      « Obscurantism is dangerous. Show us your screens. »<br />
+      « Programs are instruments that can change themselves. »<br />
+      « Algorithms are thoughts. Chainsaws are tools. Chainsaws are dangerous. »
+    </blockquote>
+    <p>Deux exigences à retenir :</p>
+    <ol class="doc-list">
+      <li><strong>« Show us your screens »</strong> — montrer le code projeté est devenu une signature esthétique et politique de la pratique. Le public voit la pensée à l'œuvre. Ce qui est en jeu : la transparence, le refus de la magie noire, la dimension pédagogique de la performance.</li>
+      <li><strong>L'erreur fait partie du jeu</strong> — un crash, une boucle infinie, un son saturé : ces accidents sont assumés. Cela rapproche le live coding de l'improvisation jazz plus que du concert classique.</li>
+    </ol>
+
+    <h3>Une généalogie courte</h3>
+    <p>Le live coding ne sort pas de nulle part. Il s'inscrit dans plusieurs lignées :</p>
+    <ul>
+      <li><strong>La musique algorithmique</strong> (Xenakis, Koenig, puis les premiers travaux sur ordinateur dans les années 1950–1960) : composer en formalisant des règles plutôt qu'en écrivant des notes.</li>
+      <li><strong>Les langages de synthèse sonore</strong> : Music-N de Max Mathews (années 1950), puis CSound, plus tard SuperCollider (1996, James McCartney) — ce dernier sera décisif car il introduit une architecture client/serveur qui rend le hot-swapping naturel.</li>
+      <li><strong>La démoscène</strong> : ces compétitions de programmation graphique en temps contraint ont popularisé l'idée d'un code performé, esthétique en soi.</li>
+      <li><strong>L'improvisation libre et le free jazz</strong> : pour le rapport au temps, à l'écoute, à l'erreur.</li>
+    </ul>
+    <p>Le tournant est l'apparition de <strong>TidalCycles</strong> (Alex McLean, 2009) pour la musique, puis d'environnements visuels comme <strong>Hydra</strong> (Olivia Jack, 2018) qui démocratisent radicalement la pratique en la mettant dans un navigateur.</p>
+
+    <h3>Le mouvement Algorave</h3>
+    <p>En 2012, Alex McLean et Nick Collins inventent le terme <strong>Algorave</strong> : des soirées où des live codeurs jouent de la musique dansante générée par algorithme, le code projeté derrière eux. C'est aujourd'hui le format de diffusion principal de la scène, avec des éditions partout dans le monde.</p>
+    <p>L'Algorave a deux conséquences importantes :</p>
+    <ul>
+      <li>Le live coding sort des conférences académiques et des galeries pour entrer dans des contextes festifs.</li>
+      <li>Il revendique une dimension <strong>populaire</strong> : on peut danser sur du code, et le code peut être laid, brut, inachevé.</li>
+    </ul>
+
+    <h3>Ce que le live coding n'est pas</h3>
+    <ul>
+      <li>Ce n'est pas du <strong>VJing</strong> : on y reviendra (OBS Studio, partie 4), mais le VJ assemble des clips et des effets via une interface, là où le live codeur écrit des instructions textuelles.</li>
+      <li>Ce n'est pas de la <strong>musique assistée par ordinateur</strong> classique (Ableton, Logic) : pas de timeline, pas de clips préparés, pas de mixage en aval.</li>
+      <li>Ce n'est pas réservé aux informaticiens : la plupart des outils du cursus (Sonic Pi, Strudel) sont conçus pour entrer par la musique, pas par le code.</li>
+    </ul>
+  </section>
+
+  <section class="doc-section" id="s2">
+    <h2>2. Pourquoi le live coding aux arts numériques ?</h2>
+    <p>Le live coding n'est pas une bizarrerie née d'un bricolage de geeks. C'est l'aboutissement contemporain d'une lignée artistique longue, qui traverse la musique, les arts visuels, la performance et la pensée du code. Cette section trace cette filiation pour situer la pratique : un live codeur ne joue pas <em>contre</em> l'histoire de l'art, il la prolonge avec un nouvel instrument.</p>
+
+    <h3>Le code comme matériau, pas comme outil</h3>
+    <p>Première bascule conceptuelle : aux arts numériques, le code n'est pas un outil au service d'une œuvre extérieure (un script qui rendrait une image), il <em>est</em> la matière de l'œuvre. Le geste artistique consiste à manipuler des symboles, des règles, des structures formelles — pas seulement à appuyer sur un bouton qui les exécute.</p>
+    <p>Cette bascule a un nom dans le champ académique : les <strong>software studies</strong>, portées notamment par Lev Manovich (<em>The Language of New Media</em>, 2001) et Wendy Hui Kyong Chun (<em>Programmed Visions</em>, 2011). Le code est étudié comme un fait culturel, pas seulement technique.</p>
+
+    <h3>Filiation historique</h3>
+    <h4>La musique algorithmique</h4>
+    <p>Bien avant les ordinateurs, des compositeurs ont cherché à formaliser la composition par des règles. <strong>Iannis Xenakis</strong> (1922–2001) écrit dans les années 1950 des œuvres stochastiques — <em>Pithoprakta</em>, <em>Achorripsis</em> — où les nuées de notes sont calculées à partir de distributions de probabilités. Sa <em>Musique formelle</em> (1963) est un texte fondateur : la composition y est explicitement décrite comme un programme.</p>
+    <p><strong>Gottfried Michael Koenig</strong>, à Utrecht puis à Cologne, développe dès les années 1960 des programmes de composition (<em>Project 1</em>, <em>Project 2</em>). <strong>John Cage</strong> et l'usage du I Ching, <strong>Karlheinz Stockhausen</strong> et la sérialisation intégrale, <strong>Pierre Boulez</strong> et ses structures formelles : tous explorent l'idée d'une partition comme <em>ensemble d'instructions</em> plutôt que comme suite de notes.</p>
+    <p>Le live codeur hérite directement de cette tradition. Quand on écrit en Strudel <code>n("0 3 7 12").scale("minor")</code>, on déclare une règle, pas un événement.</p>
+
+    <h4>L'art génératif visuel</h4>
+    <p>Parallèlement, dès les années 1960, des artistes utilisent des ordinateurs pour générer des images :</p>
+    <ul>
+      <li><strong>Vera Molnár</strong> (1924–2023), franco-hongroise, pionnière de l'art génératif. Ses séries de carrés perturbés (<em>(Dés)Ordres</em>, années 1970) explorent la déformation systématique d'une grille par des règles paramétrables.</li>
+      <li><strong>Frieder Nake</strong> et <strong>Georg Nees</strong>, Allemagne, exposent dès 1965 des œuvres faites par traceurs.</li>
+      <li><strong>Manfred Mohr</strong>, qui transforme l'hypercube en motif graphique récurrent.</li>
+      <li><strong>Roman Verostko</strong> et le mouvement des <em>algorists</em>, défini par Jean-Pierre Hébert avec une formule programmatique : « Si l'algorithme avait une part dans votre œuvre, alors vous étiez un algorist. »</li>
+    </ul>
+    <p>Ces artistes pratiquent un live coding <em>différé</em> : ils écrivent un programme, le lancent, observent, modifient. Le live codeur compresse cette boucle dans le temps de la performance.</p>
+
+    <h4>Sol LeWitt et l'instruction comme œuvre</h4>
+    <p>En dehors du numérique, l'art conceptuel a posé une question parallèle. Sol LeWitt, dans ses <em>Wall Drawings</em> (à partir de 1968), définit une œuvre comme une instruction écrite que des assistants exécutent — l'œuvre <em>est</em> l'instruction. Sa formule de 1967 : « The idea becomes a machine that makes the art. »</p>
+    <p>Le parallèle avec le live coding est frappant : la performance live coding rend visible cette « machine de l'idée » pendant qu'elle tourne.</p>
+
+    <h4>La démoscène</h4>
+    <p>À partir des années 1980, sur Commodore 64, Amiga, puis PC, des collectifs (les <em>demogroups</em>) produisent des démos : courtes performances audiovisuelles temps réel, calculées par le programme lui-même, pas pré-rendues. Compétitions célèbres : <em>Assembly</em> en Finlande, <em>Revision</em> en Allemagne. Catégories « 4k » ou « 64k » : produire une œuvre audiovisuelle de plusieurs minutes en moins de 64 kilo-octets de code.</p>
+    <p>La démoscène apporte trois choses au live coding :</p>
+    <ul>
+      <li>L'esthétique du code performé, où le code lui-même peut être beau.</li>
+      <li>La culture du <em>shader</em> GLSL en temps réel (cf. Hydra, partie 3).</li>
+      <li>L'idée que la contrainte technique est une matière esthétique.</li>
+    </ul>
+
+    <h4>Glitch art, net art et culture du dysfonctionnement</h4>
+    <p>Dans les années 1990–2000, des artistes comme <strong>JODI</strong> (Joan Heemskerk et Dirk Paesmans), <strong>Cory Arcangel</strong>, ou <strong>Rosa Menkman</strong> (<em>Glitch Studies Manifesto</em>, 2010) revendiquent l'erreur, le bug, l'incompréhension du code par lui-même comme matière artistique. Le live coding accueille cet héritage : un crash en performance n'est pas une honte, c'est un événement.</p>
+
+    <h3>Le code comme partition</h3>
+    <p>Une métaphore travaille toute la pratique : <strong>le programme est une partition</strong>. Cette métaphore a des conséquences concrètes dans le design des langages dédiés :</p>
+    <ul>
+      <li>En <strong>TidalCycles</strong> et <strong>Strudel</strong>, la <em>mini-notation</em> décrit des cycles temporels comme une partition. <code>"bd sd [bd cp] sd"</code> se lit littéralement comme une mesure rythmique.</li>
+      <li>En <strong>SuperCollider</strong>, les <code>Pbind</code> sont des suites d'événements paramétrables — une partition événementielle.</li>
+      <li>En <strong>Hydra</strong>, la chaîne d'opérateurs est une partition de transformations visuelles : <code>osc().rotate().out()</code> se lit de gauche à droite comme une mesure.</li>
+    </ul>
+    <p>L'élève musicien retrouve donc, à un niveau plus abstrait, la logique d'une portée : on déclare un <em>matériau</em> et un <em>traitement temporel</em>.</p>
+
+    <h3>Dimension politique : code visible, code partagé</h3>
+    <p>Le live coding est traversé par une éthique — héritée de la culture du logiciel libre, du hacker, et du DIY :</p>
+    <ul>
+      <li><strong>Code visible.</strong> « Show us your screens » (TOPLAP) refuse l'effet boîte noire des laptops dont on ne sait pas s'ils jouent ou s'ils lisent un fichier.</li>
+      <li><strong>Code libre.</strong> Tous les outils du cursus (Sonic Pi, Strudel, SuperCollider, Hydra, OBS Studio) sont open source — y compris côté VJing, où l'industrie « pro » (Resolume, MadMapper) reste majoritairement propriétaire.</li>
+      <li><strong>Code partageable.</strong> Les sessions sont souvent diffusées intégralement (le <code>.scd</code>, le <code>.tidal</code>) : la performance est aussi un objet pédagogique.</li>
+      <li><strong>Communautés horizontales.</strong> Algoraves, Toplap Slack, forums TidalCycles, serveurs Discord : la transmission est faite pair à pair plus que par des canaux institutionnels.</li>
+    </ul>
+    <p>C'est pourquoi initier quelqu'un au live coding, ce n'est pas seulement enseigner des outils — c'est l'introduire à une <strong>culture</strong>.</p>
+
+    <h3>Repères bibliographiques</h3>
+    <ul>
+      <li>Geoff Cox &amp; Alex McLean, <em>Speaking Code: Coding as Aesthetic and Political Expression</em>, MIT Press, 2013.</li>
+      <li>Nick Collins &amp; Alex McLean (dir.), <em>The Oxford Handbook of Algorithmic Music</em>, Oxford University Press, 2018.</li>
+      <li>Iannis Xenakis, <em>Musique formelle</em>, 1963 ; rééd. Stock, 1981.</li>
+      <li>Lev Manovich, <em>The Language of New Media</em>, MIT Press, 2001.</li>
+      <li>Florian Cramer, <em>Words Made Flesh: Code, Culture, Imagination</em>, 2005, disponible librement en ligne.</li>
+      <li>Wendy Hui Kyong Chun, <em>Programmed Visions: Software and Memory</em>, MIT Press, 2011.</li>
+      <li>Casey Reas &amp; Chandler McWilliams, <em>Form+Code in Design, Art, and Architecture</em>, Princeton Architectural Press, 2010.</li>
+      <li>Rosa Menkman, <em>The Glitch Moment(um)</em>, Institute of Network Cultures, 2011.</li>
+    </ul>
+    <p>Et deux conférences fondatrices à voir en captation : Andrew Sorensen, <em>The Concert Programmer</em> (TEDx Queensland, 2014) ; Sam Aaron, <em>Programming as Performance</em>.</p>
+  </section>
+
+  <section class="doc-section" id="s3">
+    <h2>3. Cartographie des outils du cursus</h2>
+    <p>Le cursus mobilise cinq outils, couvrant trois familles : les environnements pédagogiques (Sonic Pi, Strudel), les environnements professionnels de synthèse (SuperCollider), le live coding visuel (Hydra), et la composition scénique libre (OBS Studio). Chacun a un <em>paradigme</em> — une manière de penser le temps, le matériau et la performance — qu'il faut comprendre avant la syntaxe.</p>
+
+    <h3>Sonic Pi</h3>
+    <p><strong>Auteur :</strong> Sam Aaron, université de Cambridge, 2012. <strong>Plateforme :</strong> Linux, macOS, Windows, Raspberry Pi. <strong>Langage :</strong> dérivé de Ruby. <strong>Sous le capot :</strong> le serveur SuperCollider (<code>scsynth</code>).</p>
+    <h4>Paradigme</h4>
+    <p>Sonic Pi est conçu comme un <em>instrument pédagogique d'abord, instrument de scène ensuite</em>. La syntaxe est verbale, lisible (<code>play 60</code> = joue le do médian). Le concept central est la <code>live_loop</code> : une boucle nommée qui peut être réécrite à chaud pendant qu'elle tourne.</p>
+    <pre><code>live_loop :kick do
+  sample :bd_haus
+  sleep 0.5
+end
+
+live_loop :melody do
+  use_synth :prophet
+  play choose([:c4, :e4, :g4, :a4]), release: 0.3
+  sleep 0.25
+end</code></pre>
+    <p>Deux boucles tournent en parallèle. Modifier le <code>choose</code> ou le <code>sleep</code>, recharger : la nouvelle version remplace l'ancienne au prochain cycle, sans coupure.</p>
+    <p><strong>Forces :</strong> courbe d'apprentissage très douce, excellent pour l'éducation musicale, communauté pédagogique active. <strong>Limites :</strong> moins puissant que SuperCollider en synthèse, pas de patterns aussi riches que TidalCycles/Strudel. <strong>Ressources :</strong> <a href="https://sonic-pi.net/" target="_blank" rel="noopener noreferrer">sonic-pi.net</a>.</p>
+
+    <h3>Strudel</h3>
+    <p><strong>Auteur :</strong> Felix Roos, à partir de 2022. <strong>Plateforme :</strong> navigateur web. <strong>Langage :</strong> JavaScript + mini-notation inspirée de TidalCycles. <strong>Filiation :</strong> portage JS de <strong>TidalCycles</strong> (Alex McLean, 2009), écrit en Haskell.</p>
+    <h4>Paradigme</h4>
+    <p>Strudel pense la musique comme <strong>des cycles</strong>. Un cycle dure par défaut une seconde. Tout pattern est une fonction du temps qui découpe ce cycle en événements — paradigme fonctionnel pur, pas d'état mutable, pas de boucle visible.</p>
+    <h4>La mini-notation</h4>
+    <pre><code>"bd sd [bd cp] sd"</code></pre>
+    <p>Lecture : un cycle est divisé en 4 temps. Aux temps 1, 2, 4 : kick, snare, snare. Au temps 3, deux subdivisions imbriquées : kick puis clap.</p>
+    <pre><code>"a b c"        // séquence
+"a [b c]"      // subdivision
+"a*3"          // répétition (a a a)
+"a/2"          // étirement (a sur deux cycles)
+"a@2 b"        // pondération de durée
+"a(3,8)"       // rythme euclidien : 3 pulsations sur 8 pas
+"a | b | c"    // alternance (random sur cycles)
+"&lt;a b c&gt;"      // alternance déterministe sur cycles</code></pre>
+    <h4>Rythmes euclidiens</h4>
+    <p>L'opérateur <code>(k,n)</code> génère un <strong>rythme euclidien</strong> : distribuer k pulsations le plus régulièrement possible sur n pas (algorithme de Bjorklund, appliqué aux rythmes par Godfried Toussaint en 2005). Il produit des rythmes traditionnels du monde entier :</p>
+    <pre><code>(2,5)  // x . x . .            : khafif-e-ramal (Perse)
+(3,8)  // x . . x . . x .      : tresillo (Cuba)
+(5,8)  // x . x x . x x .      : cinquillo
+(7,16) // x . . x . x . x . . x . x . x .  : Samba</code></pre>
+    <h4>Exemple complet</h4>
+    <pre><code>stack(
+  s("bd(3,8)"),
+  s("hh*8").gain(0.4),
+  n("0 3 5 7 12".add("&lt;0 -3 2&gt;"))
+    .scale("D:minor")
+    .s("sawtooth")
+    .lpf(sine.range(400, 2000).slow(4))
+).cpm(120)</code></pre>
+    <p>Trois couches superposées : kick euclidien, charley, ligne de basse en mineur naturel transposée par cycles, avec un filtre passe-bas modulé par un sinus lent.</p>
+    <p><strong>Forces :</strong> rien à installer, très expressif, communauté active. <strong>Limites :</strong> sons par défaut limités. <strong>Ressources :</strong> <a href="https://strudel.cc/" target="_blank" rel="noopener noreferrer">strudel.cc</a>, workshop interactif intégré (<em>Learn</em>).</p>
+
+    <h3>SuperCollider</h3>
+    <p><strong>Auteur :</strong> James McCartney, 1996, libre depuis 2002. <strong>Langage :</strong> <code>sclang</code>, inspiré de Smalltalk. <strong>Architecture :</strong> client (<code>sclang</code>) / serveur audio (<code>scsynth</code>) via OSC.</p>
+    <h4>Paradigme</h4>
+    <p>SuperCollider est l'environnement <em>adulte</em> de la synthèse temps réel — le moteur qu'utilisent Sonic Pi (en interne) et TidalCycles (par OSC). On y descend pour définir ses propres synthés (<code>SynthDef</code>), faire de la synthèse fine (FM, granulaire, soustractive, additive, physique), travailler avec des patterns sophistiqués (<code>Pbind</code>, <code>Pmono</code>, <code>Pdef</code>).</p>
+    <pre><code>SynthDef(\bass, &#123; |freq=110, amp=0.3, gate=1, cutoff=800|
+    var env, sig;
+    env = EnvGen.kr(Env.adsr(0.01, 0.2, 0.6, 0.3), gate, doneAction: 2);
+    sig = Saw.ar(freq) + Saw.ar(freq * 1.005);
+    sig = RLPF.ar(sig, cutoff, 0.3);
+    sig = sig * env * amp;
+    Out.ar(0, sig ! 2);
+&#125;).add;</code></pre>
+    <p>Un synthé soustractif : deux scies légèrement désaccordées passées dans un filtre passe-bas résonant, modulées par une enveloppe ADSR.</p>
+    <pre><code>Pdef(\groove,
+    Pbind(
+        \instrument, \bass,
+        \scale, Scale.minor,
+        \degree, Pseq([0, 2, 4, 7, 4, 2], inf),
+        \octave, 3,
+        \dur, Pseq([0.25, 0.25, 0.5, 0.25, 0.25, 0.5], inf),
+        \cutoff, Pwhite(400, 2000)
+    )
+).play;</code></pre>
+    <p><strong>Forces :</strong> puissance maximale en synthèse, stabilité (en production depuis 1996). <strong>Limites :</strong> courbe d'apprentissage raide, documentation parfois aride. <strong>Ressources :</strong> <a href="https://supercollider.github.io/" target="_blank" rel="noopener noreferrer">supercollider.github.io</a>.</p>
+
+    <h3>Hydra</h3>
+    <p><strong>Auteur :</strong> Olivia Jack, 2018. <strong>Plateforme :</strong> navigateur web. <strong>Sous le capot :</strong> compile vers du <strong>GLSL fragment shader</strong>, exécuté par WebGL sur le GPU.</p>
+    <h4>Paradigme</h4>
+    <p>Hydra pense l'image comme un <strong>réseau de buffers vidéo</strong> qui se modulent les uns les autres — inspiré des <em>video synthesizers</em> analogiques (Sandin, Rutt-Etra, années 1970).</p>
+    <p>Quatre sortes d'objets : <strong>sources</strong> (<code>osc</code>, <code>noise</code>, <code>shape</code>, <code>voronoi</code>, <code>gradient</code>, <code>solid</code>, <code>src(o0)</code>), <strong>géométrie</strong> (<code>rotate</code>, <code>scale</code>, <code>kaleid</code>, <code>pixelate</code>, <code>repeat</code>), <strong>couleur</strong> (<code>color</code>, <code>invert</code>, <code>contrast</code>, <code>luma</code>, <code>posterize</code>), <strong>combinaisons</strong> (<code>add</code>, <code>mult</code>, <code>blend</code>, <code>diff</code>, <code>modulate</code>, <code>modulateScale</code>, <code>modulateRotate</code>). Quatre buffers de sortie : <code>o0</code> à <code>o3</code>.</p>
+    <pre><code>osc(20, 0.1, 1.2)
+  .rotate(0.3)
+  .kaleid(5)
+  .modulate(noise(3, 0.2))
+  .out()</code></pre>
+    <p>Un oscillateur sinusoïdal coloré, tourné, kaléidoscopé, dont les coordonnées UV sont déformées par un bruit. Quatre lignes pour une vidéo musicale entière.</p>
+    <h4>Audio-réactivité</h4>
+    <pre><code>a.show()                  // visualise les bandes (réglage)
+a.setBins(4)              // découpe en 4 bandes
+a.setSmooth(0.8)          // lissage temporel
+
+osc(10, 0.1, 1)
+  .modulate(noise(3))
+  .scale(() => 1 + a.fft[0] * 2)   // graves font respirer l'image
+  .rotate(() => time * 0.1)
+  .out()</code></pre>
+    <p>Le <code>() => ...</code> est crucial : c'est une fonction réévaluée à chaque frame. Sans elle, la valeur serait figée à l'instant du chargement.</p>
+    <p><strong>Forces :</strong> aucune installation, esthétique riche obtenue très vite, couplage audio simple. <strong>Limites :</strong> tout est en mémoire GPU dans le navigateur, peu d'options pour intégrer de la vidéo lourde ou de la 3D complexe. <strong>Ressources :</strong> <a href="https://hydra.ojack.xyz/" target="_blank" rel="noopener noreferrer">hydra.ojack.xyz</a>, <em>The Book of Shaders</em> pour le GLSL en général.</p>
+
+    <h3>OBS Studio</h3>
+    <p><strong>Auteur :</strong> Hugh « Jim » Bailey, premier lancement 2012 ; développé depuis par l'<strong>OBS Project</strong>, communauté ouverte. <strong>Plateforme :</strong> Windows, macOS, Linux. <strong>Licence :</strong> GPL v2, libre et gratuit.</p>
+    <h4>Paradigme</h4>
+    <p>OBS Studio <strong>n'est pas du live coding</strong> et n'a pas été conçu pour le VJing — à l'origine, c'est un outil de composition et de diffusion vidéo (streaming, enregistrement). Mais son modèle de <em>scènes</em> composées de <em>sources</em> empilées, avec effets, filtres et bascules à la volée, en fait une alternative libre crédible aux séquenceurs visuels propriétaires comme Resolume, une fois complété par quelques extensions.</p>
+    <h4>Architecture mentale</h4>
+    <ul>
+      <li><strong>Sources</strong> : capture d'écran, fenêtre, webcam, fichier média, <em>Browser Source</em> (une page web entière, rendue en direct — voir plus bas), entrée NDI/Spout via plugin.</li>
+      <li><strong>Scènes</strong> : une combinaison de sources empilées, avec position, effets, filtres. L'équivalent d'une « colonne » Resolume.</li>
+      <li><strong>Collections de scènes</strong> : ensembles de scènes, basculables à la volée (raccourcis clavier, Stream Deck, OSC via plugin).</li>
+      <li><strong>Extensions clés pour le VJing</strong> : <em>Move Transition</em> (anime des propriétés de source dans le temps), <em>Advanced Scene Switcher</em> (automatisation, y compris par OSC/MIDI), <em>obs-ndi</em> et <em>obs-spout2-plugin</em> (entrées/sorties réseau ou GPU).</li>
+    </ul>
+    <h4>Pont avec le live coding</h4>
+    <p>Deux approches, complémentaires :</p>
+    <ul>
+      <li><strong>Capture réseau/GPU</strong> — comme avec Resolume : Hydra tourne dans un navigateur, sa sortie est envoyée en NDI ou Spout, OBS la reçoit comme n'importe quelle source vidéo.</li>
+      <li><strong>Browser Source directe</strong> — plus simple et propre à OBS : on charge l'URL d'un sketch Hydra (ou Strudel, ou toute page web) directement comme source, sans capture d'écran intermédiaire. Rendu net, latence minimale, plusieurs sketches superposables sur des couches différentes.</li>
+    </ul>
+    <p><strong>Forces :</strong> libre, gratuit, multiplateforme, communauté et écosystème de plugins considérables, intégration NDI de premier ordre. Cohérent avec l'éthique open source du reste du cursus. <strong>Limites :</strong> pensé pour le streaming, pas le VJing — les fonctions typiquement attendues d'un séquenceur visuel (grille de clips synchronisée au BPM, transitions avancées prêtes à l'emploi) demandent plus de configuration manuelle ou des plugins tiers. <strong>Ressources :</strong> <a href="https://obsproject.com/" target="_blank" rel="noopener noreferrer">obsproject.com</a>.</p>
+
+    <h3>Vue d'ensemble</h3>
+    <table>
+      <thead>
+        <tr><th>Outil</th><th>Famille</th><th>Paradigme</th><th>Niveau</th><th>Intégration</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sonic Pi</td><td>Audio LC</td><td>Boucles nommées</td><td>Débutant</td><td>SC en interne</td></tr>
+        <tr><td>Strudel</td><td>Audio LC</td><td>Patterns fonctionnels</td><td>Débutant–avancé</td><td>WebAudio, OSC</td></tr>
+        <tr><td>SuperCollider</td><td>Audio LC</td><td>Synthèse client/serveur</td><td>Avancé</td><td>OSC, MIDI</td></tr>
+        <tr><td>Hydra</td><td>Visuel LC</td><td>Chaînage GLSL</td><td>Débutant–avancé</td><td>NDI/Spout/Syphon</td></tr>
+        <tr><td>OBS Studio</td><td>Composition scénique libre</td><td>Scènes + sources</td><td>Débutant–scène</td><td>NDI/Spout (plugins), OSC (plugin), Browser Source</td></tr>
+      </tbody>
+    </table>
+    <p>Une chaîne typique de fin de cursus : <em>Strudel</em> (motif rythmique, envoie OSC) → <em>SuperCollider</em> (synthèse) → analyse audio → <em>Hydra</em> (visuel) → <em>OBS Studio</em> (composition de scène et diffusion).</p>
+  </section>
+
+  <section class="doc-section" id="s4">
+    <h2>4. Live coding et VJing : deux gestes pour l'image en direct</h2>
+    <p>Cette section est l'articulation théorique du cursus. Il faut penser ensemble <em>ce qui sépare et ce qui rapproche</em> le live coding et le VJing, parce que la pratique contemporaine ne respecte plus la frontière — et c'est tant mieux.</p>
+
+    <h3>Brève histoire du VJing</h3>
+    <p>Le VJ (<em>video jockey</em>) hérite de plusieurs lignées : les <strong>light shows</strong> psychédéliques des années 1960 (Joshua Light Show, Mark Boyle, l'Exploding Plastic Inevitable d'Andy Warhol) ; les <strong>video synthesizers</strong> analogiques des années 1970 (Dan Sandin, Rutt-Etra) ; le <strong>cinéma élargi</strong> (Gene Youngblood, 1970) ; les <strong>clubs et raves</strong> des années 1980–90, où le VJ devient un métier.</p>
+    <p>Jalons logiciels : <em>VDMX</em> (1999), <em>Modul8</em> (2003), <em>Resolume Avenue</em> (2003), <em>VVVV</em> (2002), <em>TouchDesigner</em> (2008), <em>MadMapper</em> (2010) — tous propriétaires. <em>OBS Studio</em> (2012) arrive plus tard dans cet écosystème, non pas comme outil VJ dédié mais comme alternative libre détournée par la communauté.</p>
+
+    <h3>Deux gestes différents</h3>
+    <table>
+      <thead>
+        <tr><th></th><th>VJing (OBS Studio type)</th><th>Live coding visuel (Hydra type)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Matériau de base</td><td>Clips vidéo préparés</td><td>Code écrit en direct</td></tr>
+        <tr><td>Geste de scène</td><td>Déclencher, mixer, modifier paramètres</td><td>Écrire, modifier, recharger</td></tr>
+        <tr><td>Préparation</td><td>Très lourde (banque de clips)</td><td>Légère (quelques snippets de départ)</td></tr>
+        <tr><td>Improvisation</td><td>Sur l'enchaînement et les effets</td><td>Sur le contenu lui-même</td></tr>
+        <tr><td>Risque scénique</td><td>Faible (clips testés)</td><td>Élevé (un crash est possible)</td></tr>
+        <tr><td>Identité visuelle</td><td>Donnée par les clips choisis</td><td>Émergente, parfois imprévue</td></tr>
+        <tr><td>Public visible</td><td>Interface, parfois cachée</td><td>Code projeté</td></tr>
+      </tbody>
+    </table>
+    <p>Ce ne sont pas deux versions d'une même chose : ce sont <strong>deux esthétiques de la performance</strong>. Le VJ assume un répertoire visuel, comme un DJ assume sa discothèque. Le live codeur assume un <em>processus</em> dont le résultat n'est pas connu d'avance.</p>
+
+    <h3>Ce que les deux ont en commun</h3>
+    <ul>
+      <li><strong>Le temps réel.</strong> Tout est calculé/déclenché pendant que ça joue.</li>
+      <li><strong>L'audio-réactivité.</strong> FFT envoyée à un filtre audio-réactif OBS ou à <code>a.fft[0]</code> dans Hydra.</li>
+      <li><strong>L'improvisation.</strong> Aucun set n'est jamais figé.</li>
+      <li><strong>La performance comme objet.</strong> Le geste de l'opérateur compte, pas seulement le résultat à l'écran.</li>
+      <li><strong>Une économie d'attention partagée</strong> avec un musicien, un public, une lumière.</li>
+    </ul>
+
+    <h3>Zones de recouvrement et hybrides</h3>
+    <h4>Hydra utilisé comme outil VJ</h4>
+    <p>De plus en plus de VJ « purs » utilisent Hydra en préparant des sketches qu'ils déclenchent comme des clips : Hydra devient une <em>source</em> dans un setup VJ, sans que le code soit projeté.</p>
+    <h4>TouchDesigner et le node-based</h4>
+    <p><strong>TouchDesigner</strong> (Derivative, Toronto) brouille la frontière autrement : environnement node-based, on patche visuellement (comme Max/MSP), avec du Python à l'intérieur. C'est l'équivalent visuel de Pure Data / Max/MSP pour le son : programmation <em>visuelle</em>, pas <em>live coding</em> au sens TOPLAP, mais générative et temps réel.</p>
+    <h4>Routage entre mondes</h4>
+    <pre><code>Hydra (navigateur)
+   --[Browser Source directe, ou capture Spout/Syphon/NDI]-->
+OBS Studio (composition et scéno)
+   --[HDMI, ou sortie NDI]-->
+Vidéoprojecteurs / LED walls</code></pre>
+    <pre><code>Strudel (rythme + OSC out)
+   --[OSC]--> SuperCollider (synthèse audio)
+   --[audio bus]--> analyse FFT
+   --[OSC]--> Hydra (audio-réactivité)</code></pre>
+    <h4>Live coding dans OBS ?</h4>
+    <p>Plus direct qu'avec un séquenceur fermé : une source <em>Browser</em> pointée sur un sketch Hydra hébergé en ligne se recharge dès que le fichier change. On peut donc éditer le code du visuel pendant que la scène OBS tourne, sans jamais quitter le navigateur — la frontière avec le live coding s'efface presque complètement.</p>
+
+    <h3>Audio-réactivité : techniques communes</h3>
+    <h4>Analyse FFT</h4>
+    <p>Décomposition d'un signal audio en bandes de fréquences. En général 4, 8 ou 16 bandes pour une réactivité de scène : la basse module les éléments lents/grands, les hautes les détails fins. Dans Hydra : <code>a.fft[i]</code>. Dans OBS : plugin audio-réactif tiers (ex. <em>obs-audio-visualizer</em>) ou pilotage externe par OSC. Dans SuperCollider : <code>FFT.kr</code> et <code>Onsets.kr</code>.</p>
+    <h4>OSC (Open Sound Control)</h4>
+    <p>Protocole UDP textuel, conçu en 1997 à Berkeley pour remplacer le MIDI. Format : <code>/path/to/something &lt;args&gt;</code>.</p>
+    <pre><code>// dans Strudel
+s("bd").osc("/kick")</code></pre>
+    <pre><code>// dans Hydra (avec extension OSC)
+osc(20, 0.1).out(o0)
+oscReceive("/kick", () => &#123; osc(40, 0.2, 1).out(o0) &#125;)</code></pre>
+    <h4>MIDI</h4>
+    <p>Plus ancien (1983), moins flexible mais universel. Utile pour brancher un contrôleur physique (Akai LPD8, Korg nanoKONTROL, Launchpad).</p>
+
+    <h3>Synthèse</h3>
+    <p>La distinction live coding / VJing est utile au début pour cadrer la pratique. Elle s'efface ensuite : sur scène, ce qui compte est la <strong>cohérence entre le geste et le rendu</strong>, pas l'étiquette de l'outil.</p>
+    <blockquote>Le VJ choisit ce qu'il joue, le live codeur choisit ce qu'il invente, et le bon performeur sait quand basculer de l'un à l'autre.</blockquote>
+  </section>
+
+  <div class="doc-part-label">Partie 2 — Approfondissements</div>
+
+  <section class="doc-section" id="s5">
+    <h2>5. Scène strasbourgeoise et glitch art en profondeur</h2>
+
+    <h3>La scène strasbourgeoise</h3>
+    <p>La scène live coding strasbourgeoise s'organise autour de <strong>TOPLAP Strasbourg</strong>, antenne locale de l'organisation internationale TOPLAP fondée à Hambourg en 2004. Le format de diffusion principal est l'évènement <strong>Chaos Lab</strong>, série de soirées qui réunissent live codeurs, vidéastes en temps réel et public dans une logique d'algorave francophone.</p>
+    <h4>Chaos Lab</h4>
+    <p>Plusieurs éditions ont eu lieu depuis les débuts du collectif. Chaque édition rassemble plusieurs performeurs sur une même soirée, dans une logique de <em>plateau partagé</em> plutôt que de tête d'affiche. Le public est invité à voir le code, à poser des questions ; la plupart des sets sont captés vidéo et archivés.</p>
+    <ul>
+      <li>Un format hybride : performances individuelles, duos, et pièces collectives parfois improvisées entre live codeurs et VJ.</li>
+      <li>Une attention pédagogique : pré-soirée parfois ouverte, ateliers en parallèle.</li>
+      <li>Une diffusion en « cadavre exquis » parfois pratiquée, où chaque performeur reprend la matière du précédent.</li>
+    </ul>
+    <h4>Lieux et écosystèmes proches</h4>
+    <ul>
+      <li><strong>Le Shadok</strong>, fabrique du numérique de l'Eurométropole : ateliers, résidences, lieu d'accueil pour des évènements arts numériques.</li>
+      <li><strong>HEAR</strong> (Haute École des Arts du Rhin) : terrain pour les expérimentations de jeunes artistes.</li>
+      <li><strong>Ososphère</strong>, festival historique de musiques électroniques et arts numériques (depuis 1997).</li>
+      <li><strong>La Laiterie</strong>, <strong>Stimultania</strong>, et d'autres lieux qui programment ponctuellement des artistes proches.</li>
+    </ul>
+    <h4>Sociologie de la scène</h4>
+    <ol class="doc-list">
+      <li><strong>Une pratique transverse.</strong> Les Chaos Labs croisent musiciens noise, codeurs, plasticiens, danseurs ponctuellement.</li>
+      <li><strong>Un fonctionnement DIY.</strong> Pas de subvention massive, beaucoup d'auto-organisation.</li>
+      <li><strong>Une culture du partage.</strong> Captations en ligne, code parfois publié, ateliers gratuits ou à prix libre.</li>
+    </ol>
+
+    <h3>Glitch art en profondeur</h3>
+    <p>Le glitch est l'esthétique du dysfonctionnement assumé. Plutôt que de masquer l'erreur, on l'invite, on la provoque, on l'organise. C'est l'une des esthétiques les plus directement compatibles avec le live coding : le code visible, le bug visible, la machine qui montre ses entrailles.</p>
+
+    <h4>Origines</h4>
+    <p><strong>Nam June Paik, <em>Magnet TV</em> (1965).</strong> Un téléviseur cathodique avec un aimant posé dessus déforme le faisceau d'électrons : un acte glitch avant le mot.</p>
+    <p><strong>Steina et Woody Vasulka.</strong> Dès les années 1970, exploration systématique des artefacts vidéo (drop-out, tearing, boucles de signaux), transformés en grammaire.</p>
+    <p><strong>Émergence du terme.</strong> Le mot <em>glitch</em> s'impose dans la culture numérique des années 1990, d'abord côté musique (Oval, Pole, Alva Noto), puis côté arts visuels.</p>
+
+    <h4>Théoriciens</h4>
+    <p><strong>Rosa Menkman</strong> — <em>Glitch Studies Manifesto</em> (2010), <em>The Glitch Moment(um)</em> (2011) — pose la distinction fondatrice entre <strong>glitch (pur)</strong>, accident réel non reproductible, et <strong>glitch-alike</strong>, reproduction délibérée et contrôlée de cette esthétique.</p>
+    <p><strong>Iman Moradi</strong>, thèse <em>Glitch Aesthetics</em> (2004), un des premiers travaux universitaires sur le sujet. <strong>Hugh S. Manon &amp; Daniel Temkin</strong>, <em>Notes on Glitch</em> (2011) : le glitch comme expérience du réel matériel de l'image numérique.</p>
+
+    <h4>Techniques — panorama</h4>
+    <p><strong>1. Databending.</strong> Ouvrir un fichier image (BMP, RAW, TIFF) avec un éditeur audio (Audacity), lui appliquer des effets sonores (réverb, écho, delay), le ré-enregistrer.</p>
+    <pre><code># Exemple : ouvrir un BMP dans Audacity
+# 1. File > Import > Raw Data (U-Law / 8-bit / mono)
+# 2. Sélectionner la zone après l'en-tête (54 octets pour BMP)
+# 3. Appliquer un effet : Echo, Reverb, Phaser
+# 4. Export > Other uncompressed > même format brut
+# 5. Renommer en .bmp, ouvrir</code></pre>
+    <p><strong>2. Datamoshing.</strong> Les codecs vidéo (H.264) distinguent images-clés (I-frames) et images-différences (P-frames). Supprimer les I-frames fait que les P-frames suivantes « appliquent leur différence » à une image incohérente : écoulements, morphings. Référence : Takeshi Murata, <em>Monster Movie</em> (2005).</p>
+    <p><strong>3. Pixel sorting.</strong> Popularisé par <strong>Kim Asendorf</strong> (2010). Pour chaque segment d'une ligne vérifiant un critère (luminosité, teinte), on trie les pixels selon une mesure.</p>
+    <pre><code># Pseudo-code (Python + PIL)
+from PIL import Image
+img = Image.open('input.jpg').convert('RGB')
+w, h = img.size
+pix = img.load()
+for y in range(h):
+    row = [pix[x, y] for x in range(w)]
+    start, end = 100, 500
+    row[start:end] = sorted(
+        row[start:end],
+        key=lambda c: 0.299*c[0] + 0.587*c[1] + 0.114*c[2]
+    )
+    for x, p in enumerate(row):
+        pix[x, y] = p
+img.save('output.png')</code></pre>
+    <p><strong>4. Mauvaise interprétation de codec / format.</strong> Forcer un programme à lire un fichier comme s'il était dans un autre format (ex : interpréter un fichier audio comme image).</p>
+    <p><strong>5. Bit shifting et XOR.</strong> Manipuler les octets d'une image par décalage de bits ou XOR avec une clé. PNG résiste (CRC) ; BMP, TIFF, RAW se laissent faire.</p>
+    <pre><code># Python : XOR sur les pixels d'un BMP (saute les 54 octets d'en-tête)
+with open('in.bmp', 'rb') as f: data = bytearray(f.read())
+key = 0x37
+for i in range(54, len(data)):
+    data[i] ^= key
+with open('out.bmp', 'wb') as f: f.write(data)</code></pre>
+    <p><strong>6. JPEG — coups dans la quantification.</strong> Modifier les tables de quantification DCT pour obtenir des artefacts de blocs caractéristiques (projet <em>jpglitch</em> de Daniel Temkin).</p>
+    <p><strong>7. Compression à outrance et générations.</strong> Sauver, recompresser, répéter : la perte se cumule (équivalent visuel de <em>I Am Sitting in a Room</em> de Lucier).</p>
+    <p><strong>8. Glitch GLSL en temps réel.</strong> Plutôt que de corrompre des fichiers, écrire des shaders qui simulent le glitch — l'approche de référence pour la performance.</p>
+    <pre><code>// Hydra : un glitch numérique
+osc(40, 0.1)
+  .modulateScale(noise(2, 1).pixelate(20, 20), 0.3)
+  .pixelate(50, () => 50 + a.fft[0]*200)
+  .modulate(noise(10).thresh(0.5))
+  .out()</code></pre>
+    <p><strong>9. Glitch matériel : circuit bending.</strong> <strong>Reed Ghazala</strong>, années 1970–90 : court-circuiter volontairement des jouets sonores et synthétiseurs bon marché.</p>
+    <p><strong>10. Mojibake et corruptions de texte.</strong> Encodages mélangés (UTF-8/ISO-8859-1) produisant des séquences de caractères absurdes, utilisées comme matière par Jodi, Daniel Temkin.</p>
+
+    <h4>Glitch et live coding : ce qui s'aligne</h4>
+    <ul>
+      <li><strong>Le code visible.</strong> Le glitch montre la matière numérique, le live coder montre l'instruction.</li>
+      <li><strong>Le risque.</strong> Une performance live coding peut crasher ; un glitch artist provoque le crash. Le crash est l'évènement.</li>
+      <li><strong>La critique de la « propreté » numérique.</strong> Refuser le rendu lisse au profit d'une matière brute.</li>
+    </ul>
+
+    <h4>Pour aller plus loin</h4>
+    <ul>
+      <li>Rosa Menkman, <em>The Glitch Moment(um)</em>, INC, 2011 (téléchargeable libre).</li>
+      <li>Iman Moradi, <em>Glitch Aesthetics</em>, mémoire de Master, 2004.</li>
+      <li>Jon Cates, <em>Dirty New Media</em>, à partir de 2007.</li>
+      <li>Daniel Temkin, blog <em>esoteric.codes</em>.</li>
+      <li>Le festival <em>GLI.TC/H</em> (2010–2014, Chicago/Birmingham/Amsterdam).</li>
+      <li>Kim Asendorf, <em>ASDFPixelSort</em> sur GitHub.</li>
+    </ul>
+  </section>
+
+  <section class="doc-section" id="s6">
+    <h2>6. Le feedback en profondeur</h2>
+    <p>Le feedback — la rétroaction — est l'un des grands principes esthétiques et techniques du temps réel. Une sortie qui revient en entrée, un système qui s'écoute lui-même, et qui dérive ou s'auto-stabilise. Aussi vieux que le micro qui siffle devant une enceinte, aussi neuf qu'un <code>src(o0)</code> dans Hydra.</p>
+
+    <h3>Origine cybernétique</h3>
+    <p>Le terme <em>feedback</em> entre dans le langage scientifique avec Norbert Wiener, <em>Cybernetics: Or Control and Communication in the Animal and the Machine</em> (1948). Deux régimes : <strong>feedback négatif</strong> (corrige l'écart, stabilise — thermostat) et <strong>feedback positif</strong> (amplifie l'écart, diverge, sature, oscille).</p>
+    <p>L'art du feedback en arts numériques navigue presque toujours dans la zone <em>positive</em> ou à la frontière : juste assez de divergence pour que le système ait l'air vivant, juste assez de stabilité pour qu'il ne sature pas instantanément.</p>
+
+    <h3>Feedback audio</h3>
+    <h4>Feedback acoustique : le Larsen</h4>
+    <p>Un microphone capte une enceinte qui amplifie ce qu'il capte ; certaines fréquences sont renforcées à chaque tour de boucle. <strong>Jimi Hendrix</strong>, à Monterey en juin 1967, joue <em>Wild Thing</em> avec la guitare collée à l'ampli, le Larsen comme matière musicale. <strong>Glenn Branca, Rhys Chatham</strong> en feront un vocabulaire dans les années 1980 à New York.</p>
+    <h4>Alvin Lucier, <em>I Am Sitting in a Room</em> (1969)</h4>
+    <p>Lucier enregistre lui-même prononçant un texte, puis rejoue et ré-enregistre cet enregistrement dans la même pièce, en boucle. À chaque génération, les résonances propres de la pièce sont accentuées, la voix se désintègre, et il ne reste qu'une nappe harmonique — la signature acoustique de la pièce. Manifeste : <em>le médium est la composition</em>.</p>
+    <h4>Stockhausen, <em>Mikrophonie I</em> (1964)</h4>
+    <p>Deux musiciens frottent un grand tam-tam ; deux autres déplacent des micros directionnels ; deux autres filtrent et spatialisent en direct. Un dispositif de feedback contrôlé.</p>
+    <h4>No-input mixer (Toshimaru Nakamura)</h4>
+    <p>Une table de mixage branchée sur elle-même, sans signal source : elle entre en oscillation et devient un instrument dont on « joue » en bougeant les potentiomètres (fin des années 1990).</p>
+    <h4>Feedback synthétique : bouclages internes</h4>
+    <ul>
+      <li><strong>Filtre en peigne</strong> (<em>comb filter</em>) : un délai court rebouclé, cœur du flanger, du chorus, de la synthèse de Karplus-Strong.</li>
+      <li><strong>Synthèse FM</strong> (Chowning, 1973) : auto-modulation d'un opérateur → spectres saturés (DX7).</li>
+      <li><strong>Synthèse par modèles physiques</strong> : l'instrument modélisé comme système à feedback.</li>
+      <li><strong>Karplus-Strong</strong> (1983) : une corde simulée comme un délai bouclé avec un filtre passe-bas.</li>
+    </ul>
+    <pre><code>// SuperCollider : Karplus-Strong minimal
+SynthDef(\karplus, &#123; |freq=220, amp=0.3|
+    var sig, in;
+    in = WhiteNoise.ar() * EnvGen.kr(Env.perc(0.001, 0.05));
+    sig = LocalIn.ar(1) * 0.99;       // lit le buffer feedback
+    sig = LPF.ar(sig + in, freq * 4);
+    sig = DelayC.ar(sig, 0.05, 1.0/freq);
+    LocalOut.ar(sig);                  // écrit dans le buffer feedback
+    Out.ar(0, sig * amp ! 2);
+&#125;).add;</code></pre>
+    <p>Trois lignes de feedback (<code>LocalIn</code>, <code>DelayC</code>, <code>LocalOut</code>) suffisent à transformer un bruit blanc bref en corde pincée. Le coefficient <code>0.99</code> contrôle la décroissance ; <code>0.999</code> prolonge à l'infini.</p>
+
+    <h3>Feedback vidéo</h3>
+    <h4>Le feedback analogique : caméra-écran</h4>
+    <p>Filmer un écran de TV qui affiche ce que la caméra filme : au moindre angle, un motif émerge (couloirs infinis, fractales, vortex). Steina et Woody Vasulka, Joan Jonas (<em>Vertical Roll</em>, 1972) ont systématiquement exploité cette boucle.</p>
+    <h4>Feedback numérique : Hydra</h4>
+    <p>Hydra a fait du feedback un primitif central avec <code>src(o0)</code> (lire le buffer de sortie comme une source).</p>
+    <pre><code>// Feedback simple — le couloir infini
+osc(10, 0.1, 0.8).out()
+
+src(o0)
+  .scale(0.98)        // chaque image est légèrement réduite
+  .layer(osc(10, 0.1, 0.8).mask(shape(4, 0.3)))
+  .out()</code></pre>
+    <pre><code>// Feedback modulé — le "Lucier visuel"
+osc(20, 0.05, 1.4)
+  .modulate(src(o0), 0.005)
+  .blend(src(o0), 0.92)
+  .out()</code></pre>
+    <pre><code>// Feedback chaotique
+src(o0)
+  .rotate(() => 0.01 + a.fft[0]*0.05)
+  .scale(1.01)
+  .modulateHue(src(o0), 0.4)
+  .layer(osc(40, 0.1).luma(0.3).color(1, 0, 0))
+  .out()</code></pre>
+    <h4>Concept clé : le coefficient de fuite</h4>
+    <p>Tout feedback artistique repose sur un dosage entre <em>persistance</em> (combien on garde du passé) et <em>nouveauté</em> (combien on injecte). 0.95 et 0.99 ne donnent pas du tout la même musique.</p>
+
+    <h3>Feedback en code : auto-modification</h3>
+    <p><strong>Extempore</strong> (Andrew Sorensen) permet de redéfinir des fonctions pendant qu'elles sont en cours d'exécution. <strong>Gibber</strong> (Charlie Roberts) intègre des notions de réflexivité où l'éditeur peut être modifié par le code joué — la limite asymptotique du live coding : le code s'auto-réécrit.</p>
+
+    <h3>Feedback comme matière mathématique</h3>
+    <h4>La carte logistique (May, 1976)</h4>
+    <p><code>x(n+1) = r · x(n) · (1 − x(n))</code> — un système discret à feedback dont le comportement varie selon <code>r</code> : convergence (r&lt;3), oscillation (3&lt;r&lt;3.45), régime chaotique (r&gt;~3.57).</p>
+    <pre><code>// SuperCollider : carte logistique comme LFO
+SynthDef(\logistic_lfo, &#123; |out=0, r=3.8, freq=4|
+    var x;
+    x = LocalIn.kr(1, 0.5);
+    x = r * x * (1 - x);
+    LocalOut.kr(x);
+    Out.kr(out, x);
+&#125;).add;</code></pre>
+    <h4>L'attracteur de Lorenz (1963)</h4>
+    <p>Trois équations différentielles couplées (σ=10, ρ=28, β=8/3) tracent l'attracteur étrange en forme de papillon — trois signaux de contrôle corrélés mais imprévisibles.</p>
+
+    <h3>Feedback : pratique pédagogique</h3>
+    <ol class="doc-list">
+      <li><strong>Acoustique.</strong> Un micro, une enceinte, on écoute le Larsen, on apprend à le contrôler.</li>
+      <li><strong>Numérique audio.</strong> Un Karplus-Strong en SuperCollider ou Sonic Pi, coefficient de 0.5 à 0.999.</li>
+      <li><strong>Numérique visuel.</strong> En Hydra, <code>osc().out()</code> puis <code>src(o0)</code>, doser le <code>blend</code>.</li>
+    </ol>
+
+    <h3>Pour aller plus loin</h3>
+    <ul>
+      <li>Norbert Wiener, <em>Cybernetics</em>, 1948.</li>
+      <li>Alvin Lucier, <em>Reflections / Réflexions</em>, MusikTexte, 1995.</li>
+      <li>David Toop, <em>Sinister Resonance</em>, Continuum, 2010.</li>
+      <li>Robert M. May, « Simple Mathematical Models with Very Complicated Dynamics », <em>Nature</em>, 1976.</li>
+      <li>Karplus &amp; Strong, « Digital Synthesis of Plucked-String and Drum Timbres », <em>Computer Music Journal</em>, 1983.</li>
+    </ul>
+  </section>
+
+  <section class="doc-section" id="s7">
+    <h2>7. Pure Data : programmation visuelle pour le temps réel</h2>
+
+    <h3>Présentation</h3>
+    <p><strong>Pure Data</strong> (<em>Pd</em>) est un environnement de programmation visuelle pour le son, l'image et l'interactivité, créé par <strong>Miller Puckette</strong> en 1996. On y « patche » en branchant des boîtes les unes aux autres, comme on connecterait des modules eurorack. C'est l'outil de référence des arts numériques depuis vingt-cinq ans : installations interactives, scénographies, instruments embarqués, prototypage temps réel.</p>
+
+    <h3>Filiation : Patcher, Max, Pd</h3>
+    <ol class="doc-list">
+      <li><strong>1985–1990, IRCAM, Paris.</strong> Miller Puckette développe <em>Patcher</em> sur Macintosh — le grand-père commun.</li>
+      <li><strong>1990, IRCAM puis Cycling '74.</strong> Patcher devient <em>Max</em> — aujourd'hui <em>Max/MSP/Jitter</em>, commercial.</li>
+      <li><strong>1996, UCSD.</strong> Puckette repart d'une page blanche, plus modulaire et libre : <em>Pure Data</em>. Open source dès l'origine.</li>
+    </ol>
+    <p>Pd et Max sont conceptuellement frères, mais Pd est libre, Max payant et plus poli graphiquement.</p>
+
+    <h3>Versions</h3>
+    <ul>
+      <li><strong>Pd Vanilla</strong> : la distribution officielle. Minimaliste, stable.</li>
+      <li><strong>Pd Extended</strong> : abandonnée depuis 2013, à éviter.</li>
+      <li><strong>Purr Data</strong> : fork actif de Pd Extended (Jonathan Wilkes).</li>
+      <li><strong>PlugData</strong> (Timothy Schoen, 2022–) : recommandé pour les débutants, fonctionne en plugin VST/AU, 100% compatible Pd.</li>
+    </ul>
+
+    <h3>Concepts fondamentaux</h3>
+    <h4>Patch</h4>
+    <p>Un programme Pd est un <em>patch</em> : un canevas où l'on dispose des boîtes (objets, messages, nombres, atomes) reliées par des cordons.</p>
+    <h4>Types de boîtes</h4>
+    <ul>
+      <li><strong>Objets</strong> : <code>[osc~ 440]</code>, <code>[+ 1]</code>, <code>[delay 500]</code>. Le <code>~</code> en suffixe indique un objet <em>audio rate</em> ; sans lui, <em>message rate</em>.</li>
+      <li><strong>Messages</strong> : <code>[hello]</code>, <code>[set 100]</code>. Données envoyées à la demande.</li>
+      <li><strong>Nombres, symboles, sliders, radio buttons, bangs</strong>, etc.</li>
+    </ul>
+    <h4>Inlets et outlets</h4>
+    <p>L'<strong>inlet de gauche est « chaud »</strong> : tout message reçu déclenche le calcul. Les <strong>inlets suivants sont « froids »</strong> : ils mettent à jour des valeurs internes sans déclencher. Conséquence : pour qu'un <code>[+]</code> additionne A et B, il faut envoyer B en froid d'abord, puis A en chaud.</p>
+    <h4>Audio rate vs message rate</h4>
+    <p><strong>Message rate</strong> : asynchrone, événementiel (un bang, un nombre). <strong>Audio rate</strong> (<code>~</code>) : flux continu à la fréquence d'échantillonnage (44100, 48000 Hz).</p>
+
+    <h3>Premier patch : un oscillateur</h3>
+    <pre><code>   [number 440]              &lt;-- fréquence ajustable
+        |
+   [osc~ 440]                &lt;-- oscillateur sinusoïdal audio
+        |
+   [*~ 0.3]                  &lt;-- multiplication par 0.3 (volume)
+        |
+   [dac~]                    &lt;-- sortie audio</code></pre>
+    <p>Quatre boîtes, trois cordons, on entend un sinus à 440 Hz. Modifier le <code>number</code> change la fréquence en temps réel.</p>
+
+    <h3>Feedback en Pd</h3>
+    <p>On connecte une sortie à une entrée précédente. Pour des feedbacks sans larsen numérique, on utilise les paires <code>[send~ bus]</code> / <code>[receive~ bus]</code>. Karplus-Strong en Pd : <code>[noise~]</code> pulse bref → <code>[delwrite~ corde 50]</code> ← <code>[delread~ corde]</code> multiplié par 0.99 et filtré, rebouclé.</p>
+
+    <h3>GEM et le visuel</h3>
+    <p><strong>GEM</strong> (<em>Graphics Environment for Multimedia</em>), extension graphique historique (Mark Danks, 1995) : 2D, 3D, vidéo, OpenGL en patch. Concurrence aujourd'hui avec <strong>Ofelia</strong> (openFrameworks) et des solutions externes via OSC vers Hydra/TouchDesigner.</p>
+
+    <h3>Cas d'usage typiques</h3>
+    <ul>
+      <li><strong>Installations interactives.</strong> Capteurs (Arduino, Kinect, OSC) → Pd → son et image.</li>
+      <li><strong>Performance live électronique non-textuelle.</strong> Patch préparé, modulé en live avec contrôleurs.</li>
+      <li><strong>Embarqué.</strong> <code>libpd</code> (Peter Brinkmann, 2010) embarque un moteur Pd dans une appli mobile, un Raspberry Pi, un Bela.</li>
+      <li><strong>Recherche musicale.</strong> Standard à l'IRCAM, à STEIM, dans les laboratoires académiques.</li>
+    </ul>
+
+    <h3>Pure Data et live coding : le faux opposé</h3>
+    <table>
+      <thead><tr><th>Pd / Max</th><th>Live coding textuel</th></tr></thead>
+      <tbody>
+        <tr><td>Programmation visuelle</td><td>Programmation textuelle</td></tr>
+        <tr><td>Patch préparé, modulé en live</td><td>Code écrit/modifié pendant la performance</td></tr>
+        <tr><td>Le geste est dans les contrôleurs</td><td>Le geste est dans la frappe</td></tr>
+        <tr><td>Le « programme » est figé visuellement</td><td>Le programme est en mouvement permanent</td></tr>
+      </tbody>
+    </table>
+    <p>Mais Pd permet de modifier le patch <em>en cours d'exécution</em> ; beaucoup de live codeurs textuels travaillent à partir de templates préparés ; des outils hybrides (<strong>Bespoke Synth</strong>, <strong>vvvv</strong>, <strong>TouchDesigner</strong>) brouillent encore plus la frontière. Pd est un <em>cousin du live coding</em> plus qu'un opposé.</p>
+
+    <h3>Pour aller plus loin</h3>
+    <ul>
+      <li>Site officiel : <a href="https://puredata.info/" target="_blank" rel="noopener noreferrer">puredata.info</a>.</li>
+      <li>PlugData : <a href="https://plugdata.org/" target="_blank" rel="noopener noreferrer">plugdata.org</a>.</li>
+      <li>Andy Farnell, <em>Designing Sound</em>, MIT Press, 2010.</li>
+      <li>Johannes Kreidler, <em>Loadbang: Programming Electronic Music in Pd</em>, 2009 (téléchargeable libre).</li>
+      <li>Floss Manual <em>Pure Data</em> (en français, en partie).</li>
+    </ul>
+  </section>
+
+  <section class="doc-section" id="s8">
+    <h2>8. Open source, art libre et Creative Commons</h2>
+    <p>Cette section n'est pas un appendice juridique. C'est l'ossature <em>politique et éthique</em> du live coding, qu'il faut transmettre en même temps que la technique. Faire du live coding sans comprendre la culture du logiciel libre, c'est manquer la moitié du sujet.</p>
+
+    <h3>Free software : l'origine politique</h3>
+    <h4>Richard Stallman et le projet GNU (1983)</h4>
+    <p>Stallman, chercheur au MIT AI Lab, démissionne en 1983 et lance le projet <strong>GNU</strong>. En 1985, il fonde la <strong>Free Software Foundation</strong>. Il définit le <strong>logiciel libre</strong> par quatre libertés :</p>
+    <ul>
+      <li><strong>Liberté 0</strong> : exécuter le programme, pour tout usage.</li>
+      <li><strong>Liberté 1</strong> : étudier le programme, le modifier.</li>
+      <li><strong>Liberté 2</strong> : redistribuer des copies.</li>
+      <li><strong>Liberté 3</strong> : distribuer des copies modifiées.</li>
+    </ul>
+    <p>Le mot <em>free</em> est ici « libre », pas « gratuit ». La distinction « libre vs gratuit » est essentielle.</p>
+    <h4>Copyleft et licence GPL</h4>
+    <p>La licence <strong>GPL</strong> (1989, v2 en 1991, v3 en 2007) introduit le <strong>copyleft</strong> : tout dérivé d'une œuvre GPL doit lui-même être distribué sous GPL. Une logique <em>virale</em> et délibérée : la liberté se propage.</p>
+
+    <h3>Open source : la reformulation pragmatique (1998)</h3>
+    <p>En 1998, Eric Raymond, Bruce Perens et d'autres lancent l'<strong>Open Source Initiative</strong>. Discours plus pragmatique : <em>l'open source, c'est efficace</em> (Raymond, <em>The Cathedral and the Bazaar</em>, 1999 : « Given enough eyeballs, all bugs are shallow. »). <strong>Free software</strong> (FSF) : argument éthique. <strong>Open source</strong> (OSI) : argument pragmatique. En pratique, les licences agréées se recouvrent à 99%.</p>
+
+    <h3>Familles de licences logicielles</h3>
+    <p><strong>Copyleft fort :</strong> GPL v2/v3 (SuperCollider est en GPL), AGPL. <strong>Copyleft faible :</strong> LGPL, MPL. <strong>Permissif :</strong> MIT, BSD (Pure Data, Hydra sont proches), Apache 2.0.</p>
+
+    <h3>Les outils du cursus, leurs licences</h3>
+    <table>
+      <thead><tr><th>Outil</th><th>Licence</th><th>Famille</th></tr></thead>
+      <tbody>
+        <tr><td>SuperCollider</td><td>GPL v3</td><td>Copyleft fort</td></tr>
+        <tr><td>Sonic Pi</td><td>MIT</td><td>Permissif</td></tr>
+        <tr><td>TidalCycles</td><td>GPL v3</td><td>Copyleft fort</td></tr>
+        <tr><td>Strudel</td><td>AGPL v3</td><td>Copyleft fort + réseau</td></tr>
+        <tr><td>Hydra</td><td>AGPL v3</td><td>Copyleft fort + réseau</td></tr>
+        <tr><td>Pure Data</td><td>BSD-3</td><td>Permissif</td></tr>
+        <tr><td>OBS Studio</td><td>GPL v2</td><td>Copyleft fort</td></tr>
+      </tbody>
+    </table>
+    <p>Sept outils sur sept de l'écosystème du cursus sont libres — y compris côté VJing, en s'écartant volontairement du standard propriétaire de l'industrie (Resolume, MadMapper) au profit d'OBS Studio.</p>
+
+    <h3>Creative Commons : libérer les œuvres, pas les programmes</h3>
+    <p>En 2001, Lawrence Lessig fonde <strong>Creative Commons</strong> pour combler le manque de licences adaptées aux œuvres artistiques. Quatre clauses : <strong>BY</strong> (Attribution), <strong>SA</strong> (Share-Alike), <strong>NC</strong> (Non-Commercial), <strong>ND</strong> (No Derivatives).</p>
+    <p>Six combinaisons, de la plus libre à la plus restrictive : <strong>CC BY</strong>, <strong>CC BY-SA</strong> (licence de Wikipédia), <strong>CC BY-NC</strong>, <strong>CC BY-NC-SA</strong>, <strong>CC BY-ND</strong>, <strong>CC BY-NC-ND</strong>. Et hors combinaisons : <strong>CC0</strong>, équivalent du domaine public.</p>
+    <h4>Critique des clauses NC et ND</h4>
+    <p><strong>NC</strong> est juridiquement flou et freine la circulation autant qu'un copyright classique. <strong>ND</strong> interdit le remix — contraire à l'esprit des arts numériques. Pour un live codeur, <strong>CC BY</strong> ou <strong>CC BY-SA</strong> sont les choix naturels, cohérents avec le manifeste TOPLAP.</p>
+
+    <h3>Free Art License (LAL)</h3>
+    <p>La <strong>Licence Art Libre</strong>, publiée en 2000 par le collectif <em>Copyleft Attitude</em> à Paris. Conçue spécifiquement pour l'art, copyleft pur. Compatible avec CC BY-SA depuis 2014.</p>
+
+    <h3>Open art, art libre, art en partage</h3>
+    <ul>
+      <li><strong>Code source publié.</strong> GitHub, Codeberg, Bitbucket regorgent de patchs Pd, sketches Hydra, projets SuperCollider.</li>
+      <li><strong>Captations en ligne.</strong> Algoraves, Chaos Labs, conférences diffusées sur YouTube/PeerTube.</li>
+      <li><strong>Workshops gratuits.</strong> TOPLAP, Sonic Pi (Live Coding Education), Strudel (workshops intégrés).</li>
+      <li><strong>Forums et chats horizontaux.</strong> TidalCycles Discord, Sonic Pi Slack, TOPLAP Mattermost.</li>
+    </ul>
+
+    <h3>Limites et tensions</h3>
+    <ul>
+      <li><strong>Travail invisible.</strong> Maintenir un outil open source comme SuperCollider est une charge énorme, souvent bénévole.</li>
+      <li><strong>Modèles économiques.</strong> Performance live, résidences, financements publics, donations (ko-fi, Liberapay, GitHub Sponsors), enseignement.</li>
+      <li><strong>NC et l'ambiguïté.</strong> Beaucoup choisissent NC par défaut sans réaliser qu'ils restreignent fortement la diffusion.</li>
+      <li><strong>Limites du copyleft musical.</strong> La SACEM française n'accepte pas les œuvres sous licence libre (sauf exceptions).</li>
+    </ul>
+
+    <h3>Qu'enseigner concrètement</h3>
+    <ol class="doc-list">
+      <li>Lire les licences des outils qu'on utilise.</li>
+      <li>Choisir une licence pour son propre travail dès le début (par défaut : CC BY-SA 4.0 pour les œuvres, MIT ou GPL v3 pour le code).</li>
+      <li>Créditer systématiquement.</li>
+      <li>Publier le code de ses performances, pas « quand ce sera propre ».</li>
+      <li>Utiliser des plateformes neutres (Codeberg, Gitea auto-hébergé).</li>
+    </ol>
+
+    <h3>Pour aller plus loin</h3>
+    <ul>
+      <li>Richard Stallman, <em>Free Software, Free Society</em>, FSF, 2010.</li>
+      <li>Lawrence Lessig, <em>Free Culture</em>, 2004 (téléchargeable gratuitement).</li>
+      <li>Eric S. Raymond, <em>The Cathedral and the Bazaar</em>, 1999.</li>
+      <li>Christopher Kelty, <em>Two Bits: The Cultural Significance of Free Software</em>, Duke, 2008.</li>
+      <li>Florent Latrive, <em>Du bon usage de la piraterie</em>, La Découverte, 2004.</li>
+      <li>Site officiel Creative Commons : <a href="https://creativecommons.org/" target="_blank" rel="noopener noreferrer">creativecommons.org</a>.</li>
+      <li>Licence Art Libre : <a href="https://artlibre.org/" target="_blank" rel="noopener noreferrer">artlibre.org</a>.</li>
+    </ul>
+  </section>
+
+  <p><a href="#" class="doc-back-to-top">↑ Retour au sommaire</a></p>
+</Base>

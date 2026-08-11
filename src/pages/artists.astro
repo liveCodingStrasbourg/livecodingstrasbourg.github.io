@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { getLangFromUrl, useTranslations } from '../i18n';
 import { getCollection } from 'astro:content';
+import GeneratedCover from '../components/GeneratedCover.astro';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -21,20 +22,27 @@ const sorted = artists
       const bio = lang === 'en' && artist.data.bio_en ? artist.data.bio_en : artist.data.bio;
       return (
         <div class="artist-card">
-          <div class="artist-card__name">{artist.data.name}</div>
-          <div class="artist-card__bio">{bio}</div>
-          <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted)">
-            {artist.data.tools?.join(', ')}
-          </div>
-          {artist.data.links?.length > 0 && (
-            <div style="margin-top:0.5rem;font-size:0.8rem">
-              {artist.data.links.map((link: {label: string, url: string}) => (
-                <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
-                  {link.label}
-                </a>
-              ))}
-            </div>
+          {artist.data.image ? (
+            <img src={artist.data.image} alt={artist.data.name} class="artist-card__cover" loading="lazy" />
+          ) : (
+            <GeneratedCover seed={artist.data.name} />
           )}
+          <div class="artist-card__body">
+            <div class="artist-card__name">{artist.data.name}</div>
+            <div class="artist-card__bio">{bio}</div>
+            <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted)">
+              {artist.data.tools?.join(', ')}
+            </div>
+            {artist.data.links?.length > 0 && (
+              <div style="margin-top:0.5rem;font-size:0.8rem">
+                {artist.data.links.map((link: {label: string, url: string}) => (
+                  <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       );
     })}

@@ -7,7 +7,7 @@ date: 2026-07-28
 location: "La Pérestroïka (cave), 2 rue Tiergarten, 67000 Strasbourg"
 description: "Atelier de découverte de webFoxDot, l'environnement de live coding FoxDot dans le navigateur, suivi d'un concert. Invitée spéciale venue de Colombie : Noisk8. Avec également Pierre Danger."
 description_en: "Discovery workshop for webFoxDot, the browser-based FoxDot live coding environment, followed by a concert. Special guest from Colombia: Noisk8. Also featuring Pierre Danger."
-artists:
+participants:
   - Noisk8
   - Pierre Danger
 tags:

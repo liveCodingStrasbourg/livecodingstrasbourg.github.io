@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import FriseBar from '../../components/FriseBar.astro';
+import FriseHeading from '../../components/FriseHeading.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allTools = await getCollection('tools');
+
+const external = allTools.filter(t => !t.data.community);
+const community = allTools.filter(t => t.data.community).sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const categories = ['audio', 'visual', 'other'] as const;
+const categoryLabel: Record<(typeof categories)[number], string> = {
+  audio: 'Audio',
+  visual: 'Visual',
+  other: 'Other',
+};
+const extByCategory = categories.map(cat => ({
+  cat,
+  list: external.filter(t => t.data.category === cat).sort((a, b) => a.data.name.localeCompare(b.data.name)),
+}));
+
+const docItems = [
+  {
+    name: 'Introduction to live coding',
+    tag: '8 chapters (FR)',
+    desc: 'Full course material: definitions, history, tool landscape, the Strasbourg scene, glitch art, feedback, Pure Data, free/libre culture.',
+    url: '/ressources/cours-live-coding',
+  },
+  {
+    name: 'TOPLAP Strasbourg charter',
+    tag: 'Charter (FR)',
+    desc: "The association's values and ground rules: openness, sharing, experimentation, community.",
+    url: '/ressources/charte',
+  },
+];
+
+const communityItems = community.map(tool => ({
+  name: tool.data.name,
+  tag: tool.data.language,
+  desc: tool.data.description_en ?? tool.data.description,
+  url: tool.data.url,
+}));
+
+const friends = [
+  { name: 'Le Shadok', url: 'https://shadok-strasbourg.eu/', desc: "The Eurométropole's digital factory. Longtime host venue for Chaos Labs and TOPLAP Strasbourg workshops." },
+  { name: 'Hackstub', url: 'https://hackstub.eu/', desc: "Strasbourg's community hackerspace, free/libre software culture and critical popular education on technology." },
+  { name: 'La Semencerie', url: 'https://www.lasemencerie.org/', desc: "Self-managed artist workshop warehouse, opened in 2010, near Strasbourg's train station." },
+  { name: 'Alsace Réseau Neutre', url: 'https://arn-fai.net/', desc: "Non-profit, neutral internet service provider, promoting a free and decentralized internet." },
+  { name: 'CLI — Coopérative Libre Informatique', url: 'https://www.cli.coop/', desc: "Strasbourg cooperative for free/libre and ethical IT." },
+  { name: 'La Quadrature du Net', url: 'https://www.laquadrature.net/', desc: "French digital-rights advocacy group. Not Strasbourg-local, but a natural ally on privacy and net neutrality issues." },
+];
+---
+<Base title={t('tools.title')}>
+  <div class="page-header">
+    <h1>{t('tools.title')}</h1>
+    <p style="color:var(--muted)">{t('tools.subtitle')}</p>
+  </div>
+
+  <FriseHeading label={t('tools.documentation')} />
+  <FriseBar items={docItems} />
+
+  <FriseHeading label="Community-built tools" />
+  {communityItems.length > 0 && <FriseBar items={communityItems} />}
+
+  <FriseHeading label="External environments" />
+  {extByCategory.map(({ cat, list }) => list.length > 0 && (
+    <>
+      <h3 style="color:var(--accent2);margin:1rem 0 0.3rem;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em">{categoryLabel[cat]}</h3>
+      <FriseBar items={list.map(tool => ({
+        name: tool.data.name,
+        tag: tool.data.language,
+        desc: tool.data.description_en ?? tool.data.description,
+        url: tool.data.url,
+      }))} />
+    </>
+  ))}
+
+  <FriseHeading label={t('tools.linkotheque')} />
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.3rem 0 0.6rem">{t('tools.linkotheque.subtitle')}</p>
+  <FriseBar items={friends} />
+</Base>

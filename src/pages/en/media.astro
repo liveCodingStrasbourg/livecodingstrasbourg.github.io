@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const allMedia = await getCollection('media');
+
+const typeOrder = ['video', 'image', 'audio', 'link'] as const;
+const typeLabel: Record<(typeof typeOrder)[number], string> = {
+  video: 'Videos',
+  image: 'Photos',
+  audio: 'Audio',
+  link: 'Links',
+};
+
+const groups = typeOrder.map(type => ({
+  type,
+  items: allMedia
+    .filter(m => m.data.type === type)
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()),
+})).filter(g => g.items.length > 0);
+---
+<Base title={t('media.title')}>
+  <div class="page-header">
+    <h1>{t('media.title')}</h1>
+  </div>
+
+  {groups.map(({ type, items }) => (
+    <>
+      <h2 style="color:var(--accent2);margin-bottom:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em">{typeLabel[type]}</h2>
+      {items.map(item => {
+        const title = item.data.title_en ?? item.data.title;
+        const desc = item.data.description_en ?? item.data.description;
+        const dateStr = new Date(item.data.date).toLocaleDateString('en-GB', {
+          month: 'long', year: 'numeric'
+        });
+        return (
+          <div class="media-embed">
+            <div class="media-embed__title">{title} <span class="card__meta">— {dateStr}</span></div>
+            {item.data.type === 'video' && item.data.url ? (
+              <div class="video-wrapper">
+                <iframe src={item.data.url} title={title} allowfullscreen loading="lazy"></iframe>
+              </div>
+            ) : item.data.type === 'image' && item.data.url ? (
+              <img src={item.data.url} alt={title} loading="lazy" style="width:100%;max-height:480px;object-fit:cover;border:1px solid var(--border)" />
+            ) : (
+              item.data.url && (
+                <p><a href={item.data.url} target="_blank" rel="noopener noreferrer">{item.data.url}</a></p>
+              )
+            )}
+            <p style="font-size:0.85rem;color:var(--muted);margin-top:0.4rem">{desc}</p>
+          </div>
+        );
+      })}
+      <hr style="margin:1.5rem 0" />
+    </>
+  ))}
+</Base>

@@ -25,6 +25,22 @@ const upcoming = allEvents
 
   <hr />
 
+  <h2>Qui sommes-nous ?</h2>
+  <p style="line-height:1.7">
+    <strong>TOPLAP Strasbourg</strong> est une association à but non lucratif dédiée à la <strong>création numérique innovante sous toutes ses formes</strong>. Ancrée dans le réseau international <strong>TOPLAP</strong> (<em>The Organisation for the Promotion of Live Algorithm Programming</em>), collectif mondial né en 2004 autour du <em>live coding</em>, elle en partage l'esprit tout en portant une ambition plus large : faire vivre à Strasbourg un foyer de l'art numérique dans sa diversité.
+  </p>
+  <p style="line-height:1.7">
+    Le <em>live coding</em> — écrire et modifier du code en temps réel, souvent projeté à l'écran, pour générer sons et images devant le public — est l'une de nos pratiques fondatrices. Mais nous ne nous y limitons pas : performance audiovisuelle, VJing et arts visuels, scénographie innovante, installations et dispositifs participatifs, où le public n'est pas seulement spectateur mais partie prenante de l'œuvre.
+  </p>
+  <p style="line-height:1.7">
+    Deux engagements traversent toutes nos activités : la <strong>culture libre et l'open source</strong> — partage des outils, des codes sources et des savoir-faire — et la <strong>transmission</strong>, par l'éducation, la formation et la médiation, pour rendre la création numérique accessible à toutes et à tous. L'association réunit artistes, VJ, développeurs, musiciens, plasticiens, scénographes, enseignants, curieux et amateurs autour de l'art numérique et de l'expérimentation.
+  </p>
+  <p style="line-height:1.7;color:var(--muted);font-size:0.9rem">
+    Nos rendez-vous réguliers — les <strong>Chaos Labs</strong> — rassemblent live codeurs, VJ et public dans une logique d'algorave : code projeté, musique générée en direct, image en temps réel. Entre deux soirées, des <strong>ateliers</strong> ouverts à tous les niveaux font vivre la transmission au quotidien.
+  </p>
+
+  <hr />
+
   <h2>{t('nav.agenda')}</h2>
   {upcoming.length === 0 ? (
     <p class="muted">{t('agenda.empty')}</p>
@@ -38,7 +54,11 @@ const upcoming = allEvents
         });
         return (
           <div class="card">
-            <div class="card__meta">{dateStr} &mdash; {ev.data.time} &mdash; {ev.data.location}</div>
+            <div class="card__meta">
+              {dateStr}
+              {ev.data.time_start ? ` — ${ev.data.time_start}` : ''}
+              {ev.data.location ? ` — ${ev.data.location}` : ''}
+            </div>
             <div class="card__title">{title}</div>
             <p style="font-size:0.85rem;color:var(--muted);margin:0">{desc}</p>
             {ev.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
@@ -52,8 +72,7 @@ const upcoming = allEvents
 
   <p style="font-size:0.85rem;color:var(--muted)">
     <a href="/agenda">→ {t('nav.agenda')}</a> &nbsp;
-    <a href="/chaos-labs">→ {t('nav.chaos-labs')}</a> &nbsp;
     <a href="/artists">→ {t('nav.artists')}</a> &nbsp;
-    <a href="/tools">→ {t('nav.tools')}</a>
+    <a href="/ressources">→ {t('nav.tools')}</a>
   </p>
 </Base>

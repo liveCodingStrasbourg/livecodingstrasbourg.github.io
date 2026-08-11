@@ -7,7 +7,7 @@ subtitle: "Rendre une performance interactive"
 subtitle_en: "Making a performance interactive"
 description: "Atelier TOPLAP Strasbourg au Shadok sur l'interaction avec le public : capteurs, entrées caméra, données en temps réel intégrées dans une performance live-codée. Apportez votre ordinateur portable et un casque."
 description_en: "TOPLAP Strasbourg workshop at Le Shadok on audience interaction: sensors, camera input, real-time data integrated into a live-coded performance. Bring your laptop and headphones."
-artists: []
+participants: []
 tags:
   - atelier
   - interaction

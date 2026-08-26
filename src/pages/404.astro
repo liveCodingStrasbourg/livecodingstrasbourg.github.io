@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="404" description="Page introuvable">
+  <div class="ascii-deco">{`
+ _ _  ___ _ _
+| | || . | | |
+|__/|___|_  |
+        |___|
+`}</div>
+
+  <h1>404 — Segfault</h1>
+  <p style="line-height:1.7">
+    Cette page n'existe pas, ou plus. Le lien est peut-être cassé, ou l'URL a changé.
+  </p>
+  <p style="line-height:1.7;color:var(--muted)">
+    This page doesn't exist, or not anymore. The link might be broken, or the URL has changed.
+  </p>
+
+  <hr />
+
+  <p style="font-size:0.85rem;color:var(--muted)">
+    <a href="/">→ Accueil / Home</a> &nbsp;
+    <a href="/agenda">→ Agenda</a> &nbsp;
+    <a href="/artists">→ Artistes / Artists</a> &nbsp;
+    <a href="/ressources">→ Ressources</a>
+  </p>
+</Base>

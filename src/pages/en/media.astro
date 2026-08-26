@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import FriseHeading from '../../components/FriseHeading.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
 
@@ -30,7 +31,7 @@ const groups = typeOrder.map(type => ({
 
   {groups.map(({ type, items }) => (
     <>
-      <h2 style="color:var(--accent2);margin-bottom:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em">{typeLabel[type]}</h2>
+      <FriseHeading label={typeLabel[type]} />
       {items.map(item => {
         const title = item.data.title_en ?? item.data.title;
         const desc = item.data.description_en ?? item.data.description;
@@ -55,7 +56,6 @@ const groups = typeOrder.map(type => ({
           </div>
         );
       })}
-      <hr style="margin:1.5rem 0" />
     </>
   ))}
 </Base>

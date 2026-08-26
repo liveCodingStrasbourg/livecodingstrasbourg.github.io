@@ -1,5 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
+import GeneratedCover from '../../components/GeneratedCover.astro';
+import FriseHeading from '../../components/FriseHeading.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
 
@@ -10,22 +12,52 @@ const allEvents = await getCollection('agenda');
 const upcoming = allEvents
   .filter(e => new Date(e.data.date) >= new Date())
   .sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime())
-  .slice(0, 3);
+  .slice(0, 4);
+
+const [next, ...rest] = upcoming;
+
+function eventTitle(ev: (typeof upcoming)[number]) {
+  return ev.data.title_en ?? ev.data.title;
+}
+function eventDesc(ev: (typeof upcoming)[number]) {
+  return ev.data.description_en ?? ev.data.description;
+}
+function eventDate(ev: (typeof upcoming)[number]) {
+  return new Date(ev.data.date).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
 ---
 <Base>
-  <div class="ascii-deco">{`
- _     _           ____          _
-| |   (_)_   _____/ ___|___   __| | ___
-| |   | \ \ / / _ \___ \/ _ \ / _\` |/ _ \\
-| |___| |\ V /  __/___) | (_) | (_| |  __/
-|_____|_| \_/ \___|____/ \___/ \__,_|\___| STR
-`}</div>
+  <div class="home-hero">
+    <img src="/images/toplap-strasbourg-logo.webp" alt="TOPLAP Strasbourg" class="home-logo" />
+    <p class="home-hero__tagline">{t('site.tagline')}</p>
+    <div class="home-hero__cta">
+      <a href="/en/agenda">→ Upcoming events</a>
+      <a href="/en/contact" class="secondary">Get in touch</a>
+    </div>
+  </div>
 
-  <p>{t('site.tagline')}</p>
+  {next && (
+    <a href={`/en/agenda/${next.id}`} class="next-event">
+      {next.data.cover_image ? (
+        <img src={next.data.cover_image} alt={eventTitle(next)} class="next-event__cover" />
+      ) : (
+        <GeneratedCover seed={next.data.title} ratio="21/7" />
+      )}
+      <div class="next-event__body">
+        <div class="next-event__eyebrow">Next event</div>
+        <div class="next-event__title">{eventTitle(next)}</div>
+        <div class="next-event__meta">
+          {eventDate(next)}
+          {next.data.time_start ? ` — ${next.data.time_start}` : ''}
+          {next.data.location ? ` — ${next.data.location}` : ''}
+        </div>
+      </div>
+    </a>
+  )}
 
-  <hr />
-
-  <h2>Who we are</h2>
+  <FriseHeading label="Who we are" />
   <p style="line-height:1.7">
     <strong>TOPLAP Strasbourg</strong> is a non-profit association dedicated to <strong>innovative digital creation in all its forms</strong>. Rooted in the international <strong>TOPLAP</strong> network (<em>The Organisation for the Promotion of Live Algorithm Programming</em>), a worldwide collective born in 2004 around <em>live coding</em>, we share its spirit while carrying a broader ambition: to give Strasbourg a home for digital art in all its diversity.
   </p>
@@ -39,33 +71,31 @@ const upcoming = allEvents
     Our recurring events — the <strong>Chaos Labs</strong> — bring together live coders, VJs and audiences in an algorave spirit: projected code, music generated live, real-time image. Between shows, <strong>workshops</strong> open to all levels keep transmission going day to day.
   </p>
 
-  <hr />
-
-  <h2>{t('nav.agenda')}</h2>
-  {upcoming.length === 0 ? (
-    <p style="color:var(--muted)">{t('agenda.empty')}</p>
-  ) : (
-    <div class="card-grid">
-      {upcoming.map(ev => {
-        const title = lang === 'en' && ev.data.title_en ? ev.data.title_en : ev.data.title;
-        const desc = lang === 'en' && ev.data.description_en ? ev.data.description_en : ev.data.description;
-        const dateStr = new Date(ev.data.date).toLocaleDateString('en-GB', {
-          day: 'numeric', month: 'long', year: 'numeric'
-        });
-        return (
+  {rest.length > 0 && (
+    <>
+      <FriseHeading label="Also coming up" />
+      <div class="card-grid">
+        {rest.map(ev => (
           <div class="card">
             <div class="card__meta">
-              {dateStr}
+              {eventDate(ev)}
               {ev.data.time_start ? ` — ${ev.data.time_start}` : ''}
               {ev.data.location ? ` — ${ev.data.location}` : ''}
             </div>
-            <div class="card__title">{title}</div>
-            <p style="font-size:0.85rem;color:var(--muted);margin:0">{desc}</p>
+            <div class="card__title">{eventTitle(ev)}</div>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0">{eventDesc(ev)}</p>
             {ev.data.tags?.map((tag: string) => <span class="tag">{tag}</span>)}
           </div>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+    </>
+  )}
+
+  {upcoming.length === 0 && (
+    <>
+      <FriseHeading label={t('nav.agenda')} />
+      <p style="color:var(--muted)">{t('agenda.empty')}</p>
+    </>
   )}
 
   <hr />

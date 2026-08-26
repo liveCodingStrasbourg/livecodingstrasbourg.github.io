@@ -5,14 +5,17 @@ import { getLangFromUrl, useTranslations, getLocalePath, languages } from '../i1
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const { title, description } = Astro.props;
+const { title, description, image } = Astro.props;
 
 const pageTitle = title ? `${title} — LiveCoding Strasbourg` : 'LiveCoding Strasbourg';
 const pageDesc = description ?? t('site.tagline');
+const ogImage = new URL(image ?? '/images/livecoding-stras.webp', Astro.site ?? Astro.url).toString();
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 
 const otherLang = lang === 'fr' ? 'en' : 'fr';
 const otherLangLabel = languages[otherLang];
@@ -30,6 +33,7 @@ const navLinks = [
   { href: getLocalePath(lang, '/ressources'), label: t('nav.tools') },
   { href: getLocalePath(lang, '/projects'), label: t('nav.projects') },
   { href: getLocalePath(lang, '/media'), label: t('nav.media') },
+  { href: getLocalePath(lang, '/contact'), label: t('nav.contact') },
 ];
 ---
 <!doctype html>
@@ -39,8 +43,21 @@ const navLinks = [
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{pageTitle}</title>
   <meta name="description" content={pageDesc} />
+  <link rel="canonical" href={canonicalURL} />
   <link rel="alternate" hreflang={otherLang} href={altPath} />
+  <link rel="alternate" type="application/rss+xml" title="TOPLAP Strasbourg — Agenda" href="/rss.xml" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={pageDesc} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={pageTitle} />
+  <meta name="twitter:description" content={pageDesc} />
+  <meta name="twitter:image" content={ogImage} />
 </head>
 <body>
   <header class="site-header">
@@ -64,7 +81,10 @@ const navLinks = [
   </main>
 
   <footer class="site-footer">
-    <p>LiveCoding Strasbourg &mdash; {new Date().getFullYear()}</p>
+    <p>
+      LiveCoding Strasbourg &mdash; {new Date().getFullYear()}
+      &nbsp;·&nbsp; <a href="/rss.xml">RSS</a>
+    </p>
   </footer>
 </body>
 </html>

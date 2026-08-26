@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+
+const links = [
+  { label: 'Email', value: 'livecodingstrasbourg@gmail.com', url: 'mailto:livecodingstrasbourg@gmail.com' },
+  { label: 'Discord', value: 'discord.gg/9Es2kUdn', url: 'https://discord.gg/9Es2kUdn' },
+  { label: 'YouTube', value: '@livecodingstrasbourg8206', url: 'https://www.youtube.com/@livecodingstrasbourg8206' },
+  { label: 'Facebook', value: 'facebook.com/livecodingstrasbourg', url: 'https://www.facebook.com/livecodingstrasbourg' },
+];
+---
+<Base title="Contact" description="Contacter TOPLAP Strasbourg : email, Discord, réseaux sociaux.">
+  <div class="page-header">
+    <h1>Contact</h1>
+    <p style="color:var(--muted)">Une question, une envie de rejoindre un atelier, une proposition ? Écrivez-nous.</p>
+  </div>
+
+  <div class="tool-grid">
+    {links.map(l => (
+      <div class="tool-card">
+        <div class="tool-card__name">
+          <a href={l.url} target={l.url.startsWith('mailto:') ? undefined : '_blank'} rel={l.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}>{l.label}</a>
+        </div>
+        <p class="tool-card__desc">{l.value}</p>
+      </div>
+    ))}
+  </div>
+
+  <hr style="margin:1.5rem 0" />
+
+  <p style="font-size:0.85rem;color:var(--muted);line-height:1.6">
+    Le plus sûr pour être tenu·e au courant des prochains ateliers et Chaos Labs : rejoindre le Discord. C'est aussi là que se discutent la plupart des questions pratiques et des idées de collaboration.
+  </p>
+</Base>

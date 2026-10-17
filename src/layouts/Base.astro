@@ -41,6 +41,12 @@ const navLinks = [
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script is:inline>
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+    } catch {}
+  </script>
   <title>{pageTitle}</title>
   <meta name="description" content={pageDesc} />
   <link rel="canonical" href={canonicalURL} />
@@ -65,7 +71,18 @@ const navLinks = [
       <a href={getLocalePath(lang, '/')} class="site-title" data-text="LiveCodingStrasbourg">
         LiveCoding<span>Strasbourg</span>
       </a>
-      <a href={altPath} class="lang-switch">{otherLangLabel}</a>
+      <div class="site-header__actions">
+        <button
+          type="button"
+          class="theme-toggle"
+          data-label-light={lang === 'fr' ? 'Passer en mode clair' : 'Switch to light mode'}
+          data-label-dark={lang === 'fr' ? 'Passer en mode sombre' : 'Switch to dark mode'}
+        >
+          <span class="theme-toggle__to-light">{lang === 'fr' ? 'Clair' : 'Light'}</span>
+          <span class="theme-toggle__to-dark">{lang === 'fr' ? 'Sombre' : 'Dark'}</span>
+        </button>
+        <a href={altPath} class="lang-switch">{otherLangLabel}</a>
+      </div>
     </div>
     <nav class="site-nav" aria-label="Navigation principale">
       {navLinks.map(({ href, label }) => (
@@ -86,5 +103,26 @@ const navLinks = [
       &nbsp;·&nbsp; <a href="/rss.xml">RSS</a>
     </p>
   </footer>
+  <script is:inline>
+    (() => {
+      const btn = document.querySelector('.theme-toggle');
+      if (!btn) return;
+      const root = document.documentElement;
+      const current = () =>
+        root.dataset.theme ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      const sync = () => {
+        const label = current() === 'dark' ? btn.dataset.labelLight : btn.dataset.labelDark;
+        btn.setAttribute('aria-label', label);
+        btn.title = label;
+      };
+      btn.addEventListener('click', () => {
+        const next = current() === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch {}
+        sync();
+      });
+      sync();
+    })();
+  </script>
 </body>
 </html>

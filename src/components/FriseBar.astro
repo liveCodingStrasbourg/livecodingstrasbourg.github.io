@@ -20,15 +20,15 @@ function hash(s: string) {
   return h;
 }
 
-// Fixed neon palette, cyberpunk-flavored — cycled deterministically per item
-// rather than a smooth gradient, so the strip reads as punchy and varied.
+// Muted accent palette, cycled deterministically per item. Used only as a
+// thin top rule and hover tint so the strip stays calm on the dark background.
 const palette = [
-  { bg: '#fcee0a', fg: '#0a0a0a' }, // electric yellow
-  { bg: '#00f0ff', fg: '#0a0a0a' }, // cyan
-  { bg: '#ff2079', fg: '#0a0a0a' }, // hot pink
-  { bg: '#7b2ff7', fg: '#f5f5f5' }, // violet
-  { bg: '#39ff14', fg: '#0a0a0a' }, // acid green
-  { bg: '#ff6a00', fg: '#0a0a0a' }, // neon orange
+  { bg: '#b8ad3a', fg: '#0a0a0a' }, // dim yellow
+  { bg: '#4fa3ab', fg: '#0a0a0a' }, // teal
+  { bg: '#b05a7a', fg: '#0a0a0a' }, // dusty pink
+  { bg: '#7d68b0', fg: '#f5f5f5' }, // soft violet
+  { bg: '#6f9a4e', fg: '#0a0a0a' }, // moss green
+  { bg: '#b87a45', fg: '#0a0a0a' }, // burnt orange
 ];
 const colors = items.map((item, i) => palette[(hash(item.name) + i) % palette.length]);
 ---

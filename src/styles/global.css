@@ -982,6 +982,26 @@ a.card:hover .card__title { color: var(--accent); }
   color: var(--muted);
 }
 
+/* ── FAQ (homepage) ── */
+.faq details {
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0;
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.faq summary:hover { color: var(--accent); }
+
+.faq details p {
+  margin: 0.5rem 0 0.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
 /* ── Homepage hero ── */
 .home-hero {
   position: relative;

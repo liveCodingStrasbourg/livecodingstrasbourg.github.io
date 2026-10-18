@@ -4,6 +4,8 @@ tools:
   - FoxDot
   - SuperCollider
 links:
+  - label: "Site"
+    url: "https://noisk8.coop.re/"
   - label: "Bandcamp"
     url: "https://noisk8.bandcamp.com"
   - label: "SoundCloud"

@@ -10,6 +10,11 @@ export default defineConfig({
     format: 'directory',
   },
   redirects: {
+    // Chaos Lab VII archive pages from the previous site
+    '/chaoslab': '/agenda/2025-05-chaos-lab-7',
+    '/chaoslab_backup': '/agenda/2025-05-chaos-lab-7',
+    '/chaos-lab-vii': '/agenda/2025-05-chaos-lab-7',
+    '/chaoslab_en': '/en/agenda/2025-05-chaos-lab-7',
     '/tools': '/ressources',
     '/en/tools': '/en/ressources',
     '/chaos-labs': '/agenda',

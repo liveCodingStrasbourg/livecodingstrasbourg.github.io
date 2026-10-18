@@ -36,8 +36,6 @@ links:
     url: "https://shadok-strasbourg.eu/event/chaos-lab-vii/"
   - label: "Crash Server"
     url: "https://crashserver.fr/events/chaos-lab-vii-shadok-21-mai-2025/"
-  - label: "Archive TOPLAP Strasbourg"
-    url: "https://livecodingstrasbourg.github.io/chaoslab/"
   - label: "Video : Crash Server"
     url: "https://www.youtube.com/watch?v=9geH-_CRX2k"
   - label: "Video : Blaž Pavlica"

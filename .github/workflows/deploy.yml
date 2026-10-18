@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # new-site only builds (as a check); only main publishes
+    branches: [main, new-site]
   workflow_dispatch:
 
 permissions:
@@ -26,10 +27,12 @@ jobs:
       - run: npm ci
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
         with:
           path: dist
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:

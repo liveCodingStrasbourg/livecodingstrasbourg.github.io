@@ -230,23 +230,22 @@ window.audioEngine = {
   // Configure audio context for optimal performance
   configureAudioContext: function() {
     try {
-      // Create a new context with maximum stability settings
-      // Since latency is not important, we can maximize buffers
+      // Balance between stability and responsiveness
       const context = new Tone.Context({
-        latencyHint: "playback", // Maximum stability
-        lookAhead: 1, // Very high lookahead for maximum stability
-        updateInterval: 0.5, // Update infrequently to reduce CPU
+        latencyHint: "balanced", // Good balance of latency and stability
+        lookAhead: 0.1, // 100ms lookahead - responsive but stable
+        updateInterval: 0.05, // 50ms updates
         clockSource: "worker" // Use worker for timing
       });
-      
+
       // Set the context
       Tone.setContext(context);
-      
+
       // Log the configuration
-      console.log("Audio Context configured for performance:");
-      console.log("- Latency hint: playback");
-      console.log("- Look ahead: 0.2s");
-      console.log("- Update interval: 0.1s");
+      console.log("Audio Context configured for balanced performance:");
+      console.log("- Latency hint: balanced");
+      console.log("- Look ahead: 0.1s");
+      console.log("- Update interval: 0.05s");
       
       // Additional context optimizations
       if (context.rawContext) {
@@ -379,13 +378,13 @@ window.audioEngine = {
     console.log("Applying effect modifier:", modifierName, "to", productName);
     
     // Skip if there's no modifier or it doesn't exist in the product config
-    if (!modifierName || !productTypes[productName] || !productTypes[productName][modifierName]) {
+    if (!modifierName || !window.productTypes[productName] || !window.productTypes[productName][modifierName]) {
       console.warn("Invalid modifier or product config:", modifierName, productName);
       return existingEffect;
     }
-    
+
     // Get effect configuration from product type
-    const effectConfig = productTypes[productName][modifierName];
+    const effectConfig = window.productTypes[productName][modifierName];
     
     // Skip if no effect is defined for this modifier
     if (!effectConfig || !effectConfig.effect) {
@@ -651,18 +650,31 @@ window.audioEngine = {
         }
         
         try {
-          // Handle array-type notes (chords) vs single notes
-          if (Array.isArray(playNote)) {
-            console.log("Triggering chord:", playNote);
+          // Helper to detect synth type (constructor.name may be mangled in bundles)
+          const isNoiseSynth = synth.noise !== undefined && synth.envelope !== undefined && !synth.oscillator;
+          const isPluckSynth = synth.attackNoise !== undefined && synth.resonance !== undefined;
+
+          // Cut off any lingering previous note to prevent overlap accumulation
+          // This is critical for preventing CPU buildup over time
+          if (synth.triggerRelease && !isPluckSynth) {
+            try {
+              synth.triggerRelease(time);
+            } catch (e) {
+              // Ignore release errors - synth might not have active note
+            }
+          }
+
+          // Special handling for NoiseSynth which doesn't use notes
+          if (isNoiseSynth || playNote === null) {
+            synth.triggerAttackRelease(pattern, time);
+          }
+          // Special handling for PluckSynth which only has triggerAttack (no release)
+          else if (isPluckSynth) {
+            synth.triggerAttack(playNote, time);
+          } else if (Array.isArray(playNote)) {
             synth.triggerAttackRelease(playNote, pattern, time);
           } else {
-            console.log("Triggering note:", playNote);
             synth.triggerAttackRelease(playNote, pattern, time);
-          }
-          
-          // Update visualizer for this product
-          if (window.visualization && window.visualization.triggerVisualizer) {
-            window.visualization.triggerVisualizer(productId);
           }
         } catch (error) {
           console.error("Error triggering synth:", error);

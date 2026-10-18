@@ -2,50 +2,234 @@
 
 // Main product manager module functionality
 window.productManager = {
-  // Add a product with optional modifiers
-  addProduct: function(name, modifier = "") {
-    // Check if product exists in our catalog
-    if (!productTypes[name]) {
-      window.log(`Product ${name} not available in this supermarket!`);
-      return null;
-    }
-    
-    // Check if we've reached the maximum number of products
-    const totalProducts = Object.keys(window.state.products).length;
-    if (totalProducts >= CONFIG.audio.maxProducts) {
-      window.log(`Maximum number of products reached. Remove some products first.`);
-      return null;
-    }
-    
-    // Count instances of this product
-    const productInstances = Object.values(window.state.products).filter(p => p.name === name).length;
-    
-    // Check if we've reached the maximum instances of this product
-    if (productInstances >= CONFIG.product.maxInstances) {
-      window.log(`Maximum number of ${name} instances reached. Remove some ${name} first.`);
+
+  // ============================================
+  // SLOT-BASED API (Primary interface)
+  // ============================================
+
+  // Add or update a product in a specific slot
+  addProductToSlot: function(slot, name, modifier = "") {
+    // Validate slot
+    if (!window.state.VALID_SLOTS.includes(slot)) {
+      window.log(`❌ Invalid slot [${slot}]! Use [0] through [9]`);
       return null;
     }
 
-    // Create a unique ID for this product instance
-    const id = `${name}_${Date.now()}`;
-    
+    // Check if slot already has a product - if so, schedule update on next beat
+    if (window.state.slots[slot]) {
+      return this.updateSlot(slot, name, modifier);
+    }
+
+    // Empty slot - create product immediately
+    return this.createProductInSlot(slot, name, modifier);
+  },
+
+  // Update an existing slot (replaces immediately or beat-synced if Transport running)
+  updateSlot: function(slot, name, modifier = "") {
+    const existingProduct = window.state.slots[slot];
+
+    if (!existingProduct) {
+      // No existing product, just create
+      return this.createProductInSlot(slot, name, modifier);
+    }
+
+    const self = this;
+    const oldName = existingProduct.name;
+
+    // If Transport is running, schedule for next beat; otherwise replace immediately
+    if (Tone.Transport.state === "started") {
+      // Schedule the update for next half note (much faster than waiting for full bar)
+      window.state.pendingChanges[slot] = {
+        name: name,
+        modifier: modifier,
+        scheduledTime: Tone.Transport.nextSubdivision("2n") // Next half note (~0.5-1s)
+      };
+
+      window.log(`🔄 Slot [${slot}] update queued: ${oldName} → ${name} (next beat)`);
+
+      // Schedule the actual update
+      Tone.Transport.scheduleOnce(function(time) {
+        self.executeSlotUpdate(slot);
+      }, window.state.pendingChanges[slot].scheduledTime);
+    } else {
+      // Transport not running - replace immediately
+      window.log(`🔄 Slot [${slot}]: ${oldName} → ${name}`);
+      this.removeSlotImmediate(slot, 0.05);
+      setTimeout(function() {
+        self.createProductInSlot(slot, name, modifier);
+      }, 60);
+    }
+
+    return slot;
+  },
+
+  // Execute a pending slot update (called on beat)
+  executeSlotUpdate: function(slot) {
+    const pending = window.state.pendingChanges[slot];
+    if (!pending) return;
+
+    const self = this;
+
+    // Remove old product from slot (quick fade)
+    if (window.state.slots[slot]) {
+      this.removeSlotImmediate(slot, 0.05); // 50ms fade for smooth transition
+    }
+
+    // Small delay to let old synth fade, then create new
+    setTimeout(function() {
+      self.createProductInSlot(slot, pending.name, pending.modifier);
+      delete window.state.pendingChanges[slot];
+    }, 60);
+  },
+
+  // Create a product in a slot (internal - use addProductToSlot externally)
+  createProductInSlot: function(slot, name, modifier = "") {
+    // Delegate to the main addProduct logic but use slot as ID
+    return this.addProduct(name, modifier, slot);
+  },
+
+  // Remove a specific slot
+  removeSlot: function(slot) {
+    if (!window.state.slots[slot]) {
+      window.log(`❌ Slot [${slot}] is already empty`);
+      return false;
+    }
+
+    const productName = window.state.slots[slot].name;
+
+    // Remove from both products and slots state
+    this.removeProductById(slot);
+    delete window.state.slots[slot];
+
+    window.log(`🗑️ Slot [${slot}] cleared (${productName} removed)`);
+    return true;
+  },
+
+  // Remove slot with custom fade time (for transitions)
+  removeSlotImmediate: function(slot, fadeTime = 0.1) {
+    if (!window.state.slots[slot]) return false;
+
+    const product = window.state.slots[slot];
+
+    // Quick cleanup
+    if (product.loop) {
+      product.loop.stop();
+      product.loop.dispose();
+    }
+
+    if (product.synth) {
+      product.synth.volume.rampTo(-60, fadeTime);
+      setTimeout(() => {
+        if (product.filter) {
+          product.filter.disconnect();
+          product.filter.dispose();
+        }
+        if (product.effect) {
+          product.effect.disconnect();
+          product.effect.dispose();
+        }
+        product.synth.disconnect();
+        product.synth.dispose();
+      }, fadeTime * 1000 + 50);
+    }
+
+    // Remove from visualization
+    if (window.visualization && window.visualization.removeProductVisualizer) {
+      window.visualization.removeProductVisualizer(slot);
+    }
+
+    // Unregister voice
+    if (window.performanceManager) {
+      window.performanceManager.unregisterVoice(slot);
+    }
+
+    delete window.state.slots[slot];
+    return true;
+  },
+
+  // Remove all slots
+  removeAll: function() {
+    const slots = Object.keys(window.state.slots);
+
+    if (slots.length === 0) {
+      window.log("No products to remove.");
+      return false;
+    }
+
+    const count = slots.length;
+    slots.forEach(slot => {
+      // Remove from both products and slots state
+      this.removeProductById(slot);
+      delete window.state.slots[slot];
+    });
+
+    window.log(`🧹 All ${count} slots cleared`);
+    return true;
+  },
+
+  // Get slot info for display
+  getSlotInfo: function() {
+    const info = {};
+    for (let i = 0; i <= 9; i++) {
+      const slot = String(i);
+      if (window.state.slots[slot]) {
+        info[slot] = {
+          name: window.state.slots[slot].name,
+          modifiers: Object.keys(window.state.slots[slot].modifiers || {})
+        };
+      } else {
+        info[slot] = null;
+      }
+    }
+    return info;
+  },
+
+  // ============================================
+  // CORE PRODUCT LOGIC (modified to use slot ID)
+  // ============================================
+
+  // Add a product with optional modifiers (now accepts optional slot parameter)
+  addProduct: function(name, modifier = "", slotId = null) {
+    // Check if product exists in our catalog
+    if (!window.productTypes[name]) {
+      window.log(`Product ${name} not available in this supermarket!`);
+      return null;
+    }
+
+    // Use slot ID if provided, otherwise generate legacy ID (for backward compat)
+    const id = slotId !== null ? slotId : `${name}_${Date.now()}`;
+
+    // If using slot system, check we have valid slot
+    if (slotId !== null && !window.state.VALID_SLOTS.includes(slotId)) {
+      window.log(`❌ Invalid slot [${slotId}]!`);
+      return null;
+    }
+
     // Check if we can play a new voice
     if (window.performanceManager && !window.performanceManager.canPlayVoice(1)) {
       window.log("The supermarket is too crowded with sounds... try removing some products.");
       return null;
     }
-    
+
     // Create the base synth
-    const synth = productTypes[name].create();
+    const synth = window.productTypes[name].create();
     synth.volume.value = CONFIG.product.baseVolume; // Set base volume
-    
+
+    // Route through processing chain or fallback to destination
+    if (window.processingChain && window.processingChain.initialized) {
+      window.processingChain.route(synth, name);
+    } else {
+      // Fallback: connect directly to destination
+      synth.toDestination();
+    }
+
     // Register this voice
     if (window.performanceManager) {
       window.performanceManager.registerVoice(id, 1);
     }
     
     // Initialize product parameters
-    let note = productTypes[name].note;
+    let note = window.productTypes[name].note;
     let filter = null;
     let effect = null;
     let modifiers = {};
@@ -57,9 +241,20 @@ window.productManager = {
       isOpenProduct,
       escalatorPattern,
       escalatorSpeed,
+      volumeLevel,
+      shelfOctave,
       cleanModifier
     } = this.parseModifiers(modifier, name);
-    
+
+    // Apply shelf octave shift (from crouch/reach/grab verbs)
+    if (shelfOctave !== 0) {
+      if (Array.isArray(note)) {
+        note = note.map(n => Tone.Frequency(n).transpose(12 * shelfOctave).toNote());
+      } else if (note) {
+        note = Tone.Frequency(note).transpose(12 * shelfOctave).toNote();
+      }
+    }
+
     // Apply modifiers (fresh/old, strong/flavorless, etc.)
     if (cleanModifier) {
       const modifierList = cleanModifier.split(' ');
@@ -79,7 +274,7 @@ window.productManager = {
           this.applyPitchModifier(synth, name, note, currentModifier);
           
           // Update note for future modifications
-          const octaveShift = productTypes[name][currentModifier].octave || 0;
+          const octaveShift = window.productTypes[name][currentModifier].octave || 0;
           if (Array.isArray(note)) {
             note = note.map(n => Tone.Frequency(n).transpose(12 * octaveShift).toNote());
           } else {
@@ -145,7 +340,14 @@ window.productManager = {
     if (escalatorPattern) {
       window.log(`🛗 Escalator mode: ${escalatorPattern} at ${escalatorSpeed} speed`);
     }
-    
+
+    // Apply custom volume if specified
+    if (volumeLevel !== null) {
+      synth.volume.value = volumeLevel;
+      const volumePercent = Math.round(((volumeLevel + 40) / 40) * 100);
+      window.log(`🔊 Volume set to ${volumePercent}%`);
+    }
+
     // Store the product in state
     window.state.products[id] = {
       id,
@@ -154,7 +356,7 @@ window.productManager = {
       note,
       filter,
       effect,
-      color: productTypes[name].color || "#ffffff",
+      color: window.productTypes[name].color || "#ffffff",
       modifiers: modifiers,
       loop: null,
       nutriscoreKey,
@@ -168,7 +370,7 @@ window.productManager = {
     
     // Create a loop for this product with the right pattern
     // Use shelfLifeDuration if specified, otherwise use the default pattern
-    const pattern = shelfLifeDuration || productTypes[name].pattern;
+    const pattern = shelfLifeDuration || window.productTypes[name].pattern;
     
     // Create audio loop
     const loop = window.audioEngine.createProductLoop(
@@ -230,20 +432,28 @@ window.productManager = {
   // Remove a single product instance by ID
   removeProductById: function(id) {
     if (!window.state.products[id]) return false;
-    
+
+    // Track for story mode
+    if (window.storyMode && window.storyMode.tracking) {
+      window.storyMode.tracking.productsRemoved++;
+    }
+
     const product = window.state.products[id];
-    
+
+    // Remove from state IMMEDIATELY so slot is freed
+    delete window.state.products[id];
+
     // Unregister voice
     if (window.performanceManager) {
       window.performanceManager.unregisterVoice(id);
     }
-    
+
     // Remove from visualization with fade out animation
     if (window.visualization && window.visualization.removeProductVisualizer) {
       window.visualization.removeProductVisualizer(id);
     }
-    
-    // Cleanup audio resources
+
+    // Cleanup audio resources (continues in background)
     try {
       // Clear all intervals first to prevent memory leaks
       if (product.inflationInterval) {
@@ -262,39 +472,39 @@ window.productManager = {
         clearTimeout(product.decayTimeout);
         product.decayTimeout = null;
       }
-      
-      // Stop and dispose of the loop
+
+      // Stop the loop immediately
       if (product.loop) {
         product.loop.stop();
         product.loop.dispose();
       }
-      
+
       // Fade out volume and then dispose the synth
       if (product.synth) {
-        // Ramp down volume over 3 seconds before disposing
-        product.synth.volume.rampTo(-60, 3);
-        
+        // Ramp down volume over 0.5 seconds for quick fade
+        product.synth.volume.rampTo(-60, 0.5);
+
         // Schedule disposal after fade-out completes
-        setTimeout(() => {
+        setTimeout(function() {
           // Dispose the filter if it exists
           if (product.filter) {
             product.filter.disconnect();
             product.filter.dispose();
           }
-          
+
           // Dispose all effects properly
           if (product.effect) {
             product.effect.disconnect();
             product.effect.dispose();
           }
-          
+
           // Dispose complex effect chains
           if (product.effects) {
-            Object.values(product.effects).forEach(effect => {
+            Object.values(product.effects).forEach(function(effect) {
               if (effect) {
                 // Dispose effect chains if they exist
                 if (effect._chain && Array.isArray(effect._chain)) {
-                  effect._chain.forEach(node => {
+                  effect._chain.forEach(function(node) {
                     if (node && node.dispose) {
                       node.disconnect();
                       node.dispose();
@@ -309,23 +519,18 @@ window.productManager = {
               }
             });
           }
-          
+
           // Dispose the synth
           if (product.synth) {
             product.synth.disconnect();
             product.synth.dispose();
           }
-          
-          // Remove from state after the fade-out
-          if (window.state.products[id]) {
-            delete window.state.products[id];
-          }
-        }, 3000); // Wait for 3 seconds to match the volume ramp time
+        }, 600); // Wait 600ms to match the quick volume fade
       }
     } catch (error) {
       console.error("Error removing product:", error);
     }
-    
+
     return true;
   },
   
@@ -338,8 +543,17 @@ window.productManager = {
       isOpenProduct: false,
       escalatorPattern: null,
       escalatorSpeed: null,
+      volumeLevel: null,
+      shelfOctave: 0,  // Shelf height octave shift (from crouch/reach/grab verbs)
       cleanModifier: modifier
     };
+
+    // Extract shelf octave (from verb-based shelf height: crouch=-2, grab=-1, reach=+1)
+    const shelfMatch = modifier.match(/shelf:(-?\d+)/i);
+    if (shelfMatch) {
+      result.shelfOctave = parseInt(shelfMatch[1]);
+      result.cleanModifier = result.cleanModifier.replace(/shelf:-?\d+/i, '').trim();
+    }
     
     // Extract Nutriscore
     const nutriscoreMatch = modifier.match(/nutriscore\s+([A-E])/i);
@@ -395,13 +609,38 @@ window.productManager = {
       // Remove from modifier string
       result.cleanModifier = result.cleanModifier.replace(/open/i, '').trim();
     }
-    
+
+    // Extract volume level
+    // Can be: volume 0-100, volume loud/soft/quiet/max/min/mute
+    const volumeNumMatch = modifier.match(/volume\s+(\d+)/i);
+    const volumeWordMatch = modifier.match(/volume\s+(loud|soft|quiet|max|min|mute|whisper)/i);
+
+    if (volumeNumMatch) {
+      // Numeric volume 0-100 maps to -40 to 0 dB
+      const numVal = Math.max(0, Math.min(100, parseInt(volumeNumMatch[1])));
+      result.volumeLevel = (numVal / 100) * 40 - 40;
+      result.cleanModifier = result.cleanModifier.replace(/volume\s+\d+/i, '').trim();
+    } else if (volumeWordMatch) {
+      const word = volumeWordMatch[1].toLowerCase();
+      const volumeWords = {
+        'max': 0,
+        'loud': -6,
+        'soft': -20,
+        'quiet': -25,
+        'whisper': -30,
+        'min': -35,
+        'mute': -60
+      };
+      result.volumeLevel = volumeWords[word];
+      result.cleanModifier = result.cleanModifier.replace(/volume\s+(loud|soft|quiet|max|min|mute|whisper)/i, '').trim();
+    }
+
     return result;
   },
   
   // Apply pitch modifier (fresh/old)
   applyPitchModifier: function(synth, productName, note, modifierName) {
-    const config = productTypes[productName][modifierName];
+    const config = window.productTypes[productName][modifierName];
     if (!config) return;
     
     // Apply octave shift if defined
@@ -482,12 +721,20 @@ window.productManager = {
   applyInflationToProduct: function(id) {
     const product = window.state.products[id];
     if (!product || !product.synth) return;
-    
+
     // Clear any existing inflation interval
     if (product.inflationInterval) {
       clearInterval(product.inflationInterval);
     }
-    
+
+    // Store original volume to restore later
+    if (product._originalVolume === undefined) {
+      product._originalVolume = product.synth.volume.value;
+    }
+
+    // Reduce volume slightly to compensate for perceived loudness increase from rising pitch
+    product.synth.volume.value = product._originalVolume - 6;
+
     // Create gradually increasing pitch
     let detuneAmount = 0;
     product.inflationInterval = setInterval(() => {
@@ -495,13 +742,13 @@ window.productManager = {
         clearInterval(product.inflationInterval);
         return;
       }
-      
+
       detuneAmount += 2; // Increase by 2 cents every interval
       if (detuneAmount > 1200) {
         detuneAmount = 0; // Reset after going up an octave
         window.log(`${product.name} price has doubled! (Reset to base level...)`);
       }
-      
+
       product.synth.detune.value = detuneAmount;
     }, 500); // Update every 500ms
   },

@@ -1,26 +1,78 @@
-/* Styles généraux */
+/* ===========================================
+   BASE STYLES & TYPOGRAPHY
+   =========================================== */
+
+:root {
+  /* Color palette */
+  --color-bg: #050505;
+  --color-surface: #0a0a0a;
+  --color-surface-light: #141414;
+  --color-primary: #ff3333;
+  --color-primary-dim: #cc2828;
+  --color-primary-glow: rgba(255, 51, 51, 0.5);
+  --color-secondary: #ff6666;
+  --color-accent: #ff9933;
+  --color-info: #33ccff;
+  --color-text: #ffffff;
+  --color-text-dim: #999999;
+
+  /* Typography */
+  --font-mono: 'Courier New', 'Lucida Console', monospace;
+  --font-size-xs: 0.7rem;
+  --font-size-sm: 0.85rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Effects */
+  --border-width: 2px;
+  --border-radius: 0;
+  --shadow-glow: 0 0 20px var(--color-primary-glow);
+  --shadow-glow-intense: 0 0 40px var(--color-primary-glow);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-    margin: 0;
-    padding: 0;
-    background-color: #000000;
-    color: #ff3333;
-    font-family: 'Courier New', monospace;
-  }
-  
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .audio-warning {
-    background-color: #ff3333;
-    color: white;
-    padding: 10px;
-    margin-bottom: 15px;
-    text-align: center;
-    display: none;
-  }
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-sm);
+}
+
+.audio-warning {
+  background-color: var(--color-primary);
+  color: white;
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  text-align: center;
+  display: none;
+  font-size: var(--font-size-sm);
+}
   
   /* Animations */
   @keyframes glitch {
@@ -48,9 +100,8 @@ body {
   }
   
   @keyframes shake {
-    0%, 100% { transform: translateX(0) rotate(0deg); }
-    25% { transform: translateX(-3px) rotate(-1deg); }
-    75% { transform: translateX(3px) rotate(1deg); }
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-1px); }
   }
   
   @keyframes scan-bar {
@@ -58,504 +109,605 @@ body {
     100% { transform: translateX(100%); }
   }
   
-  /* Interface principale */
-  .politician-interface {
-    display: flex;
-    flex-direction: column;
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: #0a0a0a;
-    color: #ff3333;
-    font-family: 'Courier New', monospace;
-    padding: 20px;
-    border: 2px solid #ff3333;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-    position: relative;
-    overflow: hidden;
+/* ===========================================
+   MAIN INTERFACE
+   =========================================== */
+
+.politician-interface {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  padding: var(--space-sm);
+  border: var(--border-width) solid var(--color-primary);
+  box-shadow: var(--shadow-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.politician-interface::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary-glow);
+  animation: scanline 5s linear infinite;
+  z-index: 999;
+  pointer-events: none;
+}
+
+.politician-interface::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    transparent 0px,
+    rgba(0, 0, 0, 0.03) 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+/* ===========================================
+   HEADER
+   =========================================== */
+
+.interface-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid rgba(255, 51, 51, 0.3);
+}
+
+.system-info {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.system-status, .system-warning, .system-code, .system-time {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid rgba(255, 51, 51, 0.3);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.5px;
+}
+
+.system-warning {
+  color: var(--color-accent);
+  animation: blink 2s infinite;
+}
+
+.header-title {
+  text-align: center;
+  margin: 0;
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+  text-shadow: 0 0 20px var(--color-primary-glow);
+  letter-spacing: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.header-title::before,
+.header-title::after {
+  content: "▌";
+  color: var(--color-primary-dim);
+  margin: 0 var(--space-sm);
+  font-size: var(--font-size-lg);
+  opacity: 0.6;
+}
+  
+/* ===========================================
+   POLITICIANS GRID
+   =========================================== */
+
+.politicians-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  position: relative;
+}
+
+.grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(255, 51, 51, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 51, 51, 0.05) 1px, transparent 1px);
+  background-size: 25px 25px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.politician-face {
+  background: linear-gradient(180deg, var(--color-surface-light) 0%, var(--color-surface) 100%);
+  border: var(--border-width) solid var(--color-primary-dim);
+  padding: var(--space-lg);
+  text-align: center;
+  position: relative;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.politician-face:hover {
+  border-color: var(--color-primary);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 4px 30px rgba(255, 51, 51, 0.3);
+}
+
+.politician-face::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--color-primary-dim),
+    transparent
+  );
+  opacity: 0.5;
+}
+
+.politician-face.animate {
+  border-color: var(--color-primary);
+  animation: shake 0.4s ease-in-out infinite,
+             pulse 1.5s infinite;
+}
+
+.politician-face.animate::before {
+  opacity: 1;
+  background: var(--color-primary);
+}
+
+.name {
+  font-weight: bold;
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+  text-shadow: 0 0 10px rgba(255, 102, 102, 0.5);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: var(--space-sm);
+}
+
+.name::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--color-secondary),
+    transparent
+  );
+}
+
+.ascii-face {
+  font-size: var(--font-size-3xl);
+  line-height: 1.2;
+  color: var(--color-text);
+  position: relative;
+  z-index: 10;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  padding: var(--space-sm) 0;
+}
+
+/* ===========================================
+   POLITICIAN RESPONSES
+   =========================================== */
+
+.response {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--color-secondary);
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: var(--space-xs) var(--space-sm);
+  word-wrap: break-word;
+  border-left: 2px solid var(--color-primary-dim);
+  max-height: 45px;
+  overflow: hidden;
+}
+
+.response::before {
+  content: "«";
+  margin-right: var(--space-xs);
+  opacity: 0.7;
+}
+
+.response::after {
+  content: "»";
+  margin-left: var(--space-xs);
+  opacity: 0.7;
+}
+
+.response.screaming {
+  color: var(--color-primary);
+  background-color: rgba(255, 0, 0, 0.15);
+  border-left-color: var(--color-primary);
+  animation: glitch 0.2s infinite;
+  font-size: var(--font-size-sm);
+}
+
+.response.shouting {
+  color: var(--color-accent);
+  background-color: rgba(255, 153, 51, 0.1);
+  border-left-color: var(--color-accent);
+  animation: glitch 0.3s infinite;
+  font-size: var(--font-size-sm);
+}
+
+.response.sweating {
+  color: var(--color-info);
+  background-color: rgba(51, 204, 255, 0.1);
+  border-left-color: var(--color-info);
+  font-style: italic;
+  font-size: var(--font-size-xs);
+}
+  
+/* ===========================================
+   METRICS BARS
+   =========================================== */
+
+.data-metrics {
+  padding: var(--space-md);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.metric-label {
+  width: 140px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-bar {
+  flex-grow: 1;
+  height: 8px;
+  background-color: rgba(50, 50, 50, 0.5);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.metric-value {
+  height: 100%;
+  background-color: var(--color-primary);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.5s ease-out;
+}
+
+.metric-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%);
+  animation: scan-bar 3s linear infinite;
+}
+
+/* ===========================================
+   AUDIENCE STATS
+   =========================================== */
+
+.audience-meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 51, 51, 0.2);
+}
+
+.audience-stat {
+  text-align: center;
+  padding: var(--space-sm);
+  position: relative;
+  background: rgba(255, 51, 51, 0.05);
+  border: 1px solid rgba(255, 51, 51, 0.1);
+}
+
+.stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  color: var(--color-primary);
+  text-shadow: 0 0 10px var(--color-primary-glow);
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.stat-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-trend {
+  font-size: var(--font-size-sm);
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-sm);
+}
+
+.trend-up {
+  color: var(--color-primary);
+}
+
+.trend-down {
+  color: var(--color-info);
+}
+
+/* ===========================================
+   QUESTION INPUT AREA
+   =========================================== */
+
+.coding-area {
+  background: linear-gradient(180deg, var(--color-surface-light) 0%, var(--color-surface) 100%);
+  padding: var(--space-lg);
+  border: var(--border-width) solid var(--color-primary-dim);
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.coding-area::before {
+  content: "TERMINAL";
+  position: absolute;
+  top: calc(-1 * var(--space-sm) - 1px);
+  left: var(--space-lg);
+  background-color: var(--color-surface);
+  padding: 0 var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  letter-spacing: 2px;
+}
+
+.coding-area h3 {
+  margin: 0 0 var(--space-md) 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(255, 51, 51, 0.2);
+  color: var(--color-secondary);
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.question-selector {
+  margin-bottom: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.custom-question {
+  margin-top: var(--space-sm);
+}
+
+.custom-question label {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  margin-bottom: var(--space-sm);
+}
+
+.question-input {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 51, 51, 0.4);
+  padding: var(--space-md);
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  transition: all 0.3s ease;
   }
   
-  .politician-interface::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: rgba(255, 51, 51, 0.5);
-    animation: scanline 5s linear infinite;
-    z-index: 999;
-    pointer-events: none;
-  }
-  
-  .politician-interface::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-      transparent 0px,
-      rgba(0, 0, 0, 0.05) 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-  }
-  
-  /* En-tête de l'interface */
-  .interface-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 51, 51, 0.4);
-    padding-bottom: 10px;
-  }
-  
-  .system-info {
-    font-size: 12px;
-    color: rgba(255, 51, 51, 0.8);
-    font-family: 'Courier New', monospace;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  
-  .system-status, .system-warning, .system-code, .system-time {
-    background-color: rgba(10, 10, 10, 0.8);
-    padding: 3px 6px;
-    border: 1px solid rgba(255, 51, 51, 0.4);
-    position: relative;
-  }
-  
-  .system-warning {
-    color: #ffcc00;
-    animation: blink 2s infinite;
-  }
-  
-  .header-title {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #ff3333;
-    font-size: 24px;
-    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-    letter-spacing: 2px;
-    font-weight: bold;
-    position: relative;
-  }
-  
-  .header-title::before,
-  .header-title::after {
-    content: "//";
-    color: rgba(255, 51, 51, 0.5);
-    margin: 0 10px;
-    font-size: 20px;
-  }
-  
-  /* Grille des politiciens */
-  .politicians-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 15px;
-    margin-bottom: 25px;
-    position: relative;
-  }
-  
-  .grid-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: 
-      linear-gradient(rgba(255, 51, 51, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 51, 51, 0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
-    pointer-events: none;
-    z-index: 10;
-  }
-  
-  .politician-face {
-    background-color: #1a1a1a;
-    border: 1px solid #ff3333;
-    padding: 15px;
-    text-align: center;
-    position: relative;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3);
-    animation: pulse 4s infinite;
-  }
-  
-  .politician-face::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      45deg,
-      rgba(255, 0, 0, 0.05) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(255, 0, 0, 0.05) 100%
-    );
-  }
-  
-  .politician-face.animate {
-    animation: shake 0.2s ease-in-out infinite, 
-               glitch 0.3s ease-in-out infinite,
-               pulse 1s infinite;
-  }
-  
-  .name {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #ff6666;
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-    letter-spacing: 1px;
-    position: relative;
-    display: inline-block;
-  }
-  
-  .name::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;
-    left: -5%;
-    width: 110%;
-    height: 1px;
-    background: linear-gradient(90deg, 
-      transparent, 
-      rgba(255, 102, 102, 0.8),
-      transparent
-    );
-  }
-  
-  .ascii-face {
-    font-size: 24px;
-    line-height: 1.5;
-    color: #ffffff;
-    animation: blink 5s infinite;
-    position: relative;
-    z-index: 10;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-  }
-  
-  /* Réponses des politiciens */
-  .response {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #ff9999;
-    font-weight: bold;
-    background-color: rgba(50, 0, 0, 0.3);
-    padding: 4px;
-    border-radius: 3px;
-    position: relative;
-  }
-  
-  .response::before {
-    content: "<";
-    margin-right: 4px;
-  }
-  
-  .response::after {
-    content: ">";
-    margin-left: 4px;
-  }
-  
-  .response.screaming {
-    color: #ff3333;
-    animation: glitch 0.2s infinite;
-    font-weight: bold;
-    font-size: 14px;
-  }
-  
-  .response.shouting {
-    color: #ff9933;
-    animation: glitch 0.3s infinite;
-    font-weight: bold;
-    font-size: 13px;
-  }
-  
-  .response.sweating {
-    color: #33ccff;
-    animation: pulse 1s infinite;
-    font-style: italic;
-    font-size: 12px;
-  }
-  
-  /* Métriques */
-  .data-metrics {
-    margin: 15px 0;
-    padding: 10px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba(255, 51, 51, 0.4);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .metric {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .metric-label {
-    width: 100px;
-    font-size: 12px;
-    color: #cccccc;
-  }
-  
-  .metric-bar {
-    flex-grow: 1;
-    height: 10px;
-    background-color: rgba(50, 50, 50, 0.5);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .metric-value {
-    height: 100%;
-    background-color: rgba(255, 51, 51, 0.7);
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: width 0.5s ease;
-  }
-  
-  .metric-bar::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      rgba(255, 255, 255, 0.1) 50%, 
-      transparent 100%);
-    animation: scan-bar 2s linear infinite;
-  }
-  
-  /* Métriques d'audience */
-  .audience-meter {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: rgba(20, 20, 20, 0.8);
-    border: 1px solid rgba(255, 51, 51, 0.4);
-  }
-  
-  .audience-stat {
-    text-align: center;
-    position: relative;
-  }
-  
-  .stat-value {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ff3333;
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-  }
-  
-  .stat-label {
-    font-size: 10px;
-    color: #aaaaaa;
-    text-transform: uppercase;
-  }
-  
-  .stat-trend {
-    font-size: 14px;
-    position: absolute;
-    top: 0;
-    right: -15px;
-  }
-  
-  .trend-up {
-    color: #ff3333;
-  }
-  
-  .trend-down {
-    color: #33ccff;
-  }
-  
-  /* Zone de codage */
-  .coding-area {
-    background-color: #1a1a1a;
-    padding: 20px;
-    border: 1px solid #ff3333;
-    border-radius: 3px;
-    position: relative;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
-    margin-top: 20px;
-  }
-  
-  .coding-area::before {
-    content: "/* TERMINAL ACCESS */";
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background-color: #0a0a0a;
-    padding: 0 10px;
-    font-size: 12px;
-    color: #ff3333;
-  }
-  
-  .coding-area h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 51, 51, 0.3);
-    padding-bottom: 5px;
-    color: #ff5555;
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-  }
-  
-  /* Question du journaliste */
-  .question-selector {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .custom-question {
-    margin-top: 10px;
-  }
-  
-  .question-input {
-    background-color: #0a0a0a;
-    color: #ff6666;
-    border: 1px solid rgba(255, 51, 51, 0.6);
-    padding: 8px;
-    width: 100%;
-    font-family: 'Courier New', monospace;
-    margin-top: 5px;
-  }
-  
-  .question-input:focus {
-    outline: none;
-    border-color: #ff3333;
-    box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-  }
-  
-  /* Métriques de question */
-  .question-metrics {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    padding: 8px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba(255, 51, 51, 0.4);
-    font-size: 12px;
-  }
-  
-  .hash-value, .melody-preview {
-    color: #66ff66;
-    font-family: 'Courier New', monospace;
-  }
-  
-  /* Terminal */
-  .terminal-box {
-    background-color: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(102, 255, 102, 0.3);
-    padding: 10px;
-    margin-top: 15px;
-    max-height: 100px;
-    overflow-y: auto;
-    font-family: 'Courier New', monospace;
-    position: relative;
-  }
-  
-  .terminal-box::before {
-    content: "JOURNAL SYSTÈME";
-    position: absolute;
-    top: -8px;
-    left: 10px;
-    background-color: #0a0a0a;
-    padding: 0 5px;
-    font-size: 10px;
-    color: rgba(102, 255, 102, 0.8);
-  }
-  
-  .terminal-line {
-    color: rgba(102, 255, 102, 0.8);
-    font-size: 12px;
-    font-family: 'Courier New', monospace;
-    margin-bottom: 3px;
-    opacity: 0.8;
-  }
-  
-  .cursor {
-    display: inline-block;
-    width: 8px;
-    height: 14px;
-    background-color: rgba(102, 255, 102, 0.8);
-    animation: blink 1s step-end infinite;
-    vertical-align: middle;
-    margin-left: 2px;
-  }
-  
-  /* Contrôles */
-  .controls {
-    display: flex;
-    margin-top: 15px;
-    align-items: center;
-  }
-  
-  .run-button {
-    background-color: rgba(255, 0, 0, 0.8);
-    color: #ffffff;
-    border: none;
-    padding: 8px 20px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-    transition: all 0.3s;
-  }
-  
-  .run-button::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      transparent,
-      rgba(255, 255, 255, 0.1),
-      transparent
-    );
-    transform: rotate(45deg);
-    transition: all 0.3s;
-  }
-  
-  .run-button:hover {
-    background-color: rgba(255, 30, 30, 0.9);
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-  }
-  
-  .run-button:hover::before {
-    left: 100%;
-  }
-  
-  .output {
-    margin-left: 15px;
-    color: #66ff66;
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
-    font-style: italic;
-  }
+.question-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary-glow);
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.question-input::placeholder {
+  color: var(--color-text-dim);
+  opacity: 0.5;
+}
+
+/* ===========================================
+   QUESTION METRICS
+   =========================================== */
+
+.question-metrics {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(102, 255, 102, 0.2);
+  font-size: var(--font-size-xs);
+}
+
+.hash-value, .melody-preview {
+  color: #66ff66;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+/* ===========================================
+   TERMINAL LOG
+   =========================================== */
+
+.terminal-box {
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(102, 255, 102, 0.2);
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  position: relative;
+}
+
+.terminal-box::before {
+  content: "LOG";
+  position: absolute;
+  top: calc(-1 * var(--space-sm));
+  left: var(--space-md);
+  background-color: var(--color-surface);
+  padding: 0 var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: #66ff66;
+  letter-spacing: 1px;
+}
+
+.terminal-line {
+  color: rgba(102, 255, 102, 0.9);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  margin-bottom: var(--space-xs);
+  padding-left: var(--space-sm);
+  border-left: 2px solid transparent;
+}
+
+.terminal-line.error {
+  color: var(--color-primary);
+  border-left-color: var(--color-primary);
+  font-weight: bold;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background-color: #66ff66;
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+/* ===========================================
+   CONTROLS
+   =========================================== */
+
+.controls {
+  display: flex;
+  margin-top: var(--space-lg);
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.run-button {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dim) 100%);
+  color: var(--color-text);
+  border: none;
+  padding: var(--space-md) var(--space-xl);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px var(--color-primary-glow);
+  transition: all 0.3s ease;
+}
+
+.run-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+}
+
+.run-button:hover {
+  background: linear-gradient(180deg, #ff4444 0%, var(--color-primary) 100%);
+  box-shadow: 0 6px 30px var(--color-primary-glow);
+  transform: translateY(-2px);
+}
+
+.run-button:hover::before {
+  left: 100%;
+}
+
+.run-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px var(--color-primary-glow);
+}
+
+.output {
+  flex: 1;
+  color: #66ff66;
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  font-style: italic;
+}
   
   /* Exemples */
   .examples {
@@ -637,16 +789,16 @@ body {
   }
   
   .chaos-mode .politician-face.chaos-animate {
-    animation: shake 0.1s ease-in-out infinite, 
-              glitch 0.1s ease-in-out infinite,
-              pulse 0.5s infinite;
+    animation: shake 0.25s ease-in-out infinite,
+              glitch 0.2s ease-in-out infinite,
+              pulse 0.8s infinite;
     background-color: rgba(50, 0, 0, 0.5);
   }
-  
+
   .chaos-mode .response.screaming {
     color: #ff0000;
     font-size: 16px;
-    animation: glitch 0.1s infinite;
+    animation: glitch 0.2s infinite;
   }
   
   .chaos-mode .metric-bar {
@@ -660,7 +812,475 @@ body {
   }
   
   .chaos-mode .grid-overlay {
-    background-image: 
+    background-image:
       linear-gradient(rgba(255, 0, 0, 0.15) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 0, 0, 0.15) 1px, transparent 1px);
   }
+
+/* ===========================================
+   CRT / TV EFFECTS
+   =========================================== */
+
+/* Vignette effect - darker edges like old TV */
+.politician-interface {
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%),
+    #0a0a0a;
+}
+
+/* Enhanced scanlines - more visible */
+.crt-scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Chromatic aberration on animated faces */
+.politician-face.animate .ascii-face {
+  text-shadow:
+    -1px 0 rgba(255, 0, 0, 0.7),
+    1px 0 rgba(0, 255, 255, 0.7);
+}
+
+/* Stronger chromatic aberration during chaos */
+.chaos-mode .politician-face .ascii-face {
+  text-shadow:
+    -2px 0 rgba(255, 0, 0, 0.8),
+    2px 0 rgba(0, 255, 255, 0.8),
+    0 -1px rgba(255, 0, 255, 0.3);
+}
+
+/* Screen shake animation - subtle */
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 0); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1px, 1px); }
+}
+
+.screen-shake {
+  animation: screen-shake 0.1s ease-in-out;
+}
+
+/* Static noise overlay for chaos mode */
+@keyframes static-noise {
+  0%, 100% { opacity: 0.03; }
+  10% { opacity: 0.05; }
+  20% { opacity: 0.02; }
+  30% { opacity: 0.06; }
+  40% { opacity: 0.03; }
+  50% { opacity: 0.07; }
+  60% { opacity: 0.02; }
+  70% { opacity: 0.05; }
+  80% { opacity: 0.04; }
+  90% { opacity: 0.06; }
+}
+
+.chaos-mode .politician-interface::after {
+  background:
+    repeating-linear-gradient(
+      transparent 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 2px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 2px
+    );
+  animation: static-noise 0.1s steps(5) infinite;
+}
+
+/* Flicker effect for chaos */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  3% { opacity: 0.97; }
+  6% { opacity: 1; }
+  9% { opacity: 0.95; }
+  12% { opacity: 1; }
+  50% { opacity: 0.98; }
+  53% { opacity: 1; }
+}
+
+.chaos-mode .politician-interface {
+  animation: crt-flicker 0.5s infinite, glitch-background 0.5s infinite;
+}
+
+/* Horizontal glitch lines during chaos */
+@keyframes h-glitch {
+  0% { clip-path: inset(0 0 100% 0); }
+  5% { clip-path: inset(40% 0 50% 0); }
+  10% { clip-path: inset(0 0 100% 0); }
+  15% { clip-path: inset(70% 0 20% 0); }
+  20% { clip-path: inset(0 0 100% 0); }
+  100% { clip-path: inset(0 0 100% 0); }
+}
+
+.chaos-mode .header-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 2px;
+  text-shadow: -2px 0 red;
+  animation: h-glitch 0.3s infinite;
+}
+
+/* ===========================================
+   START SCREEN
+   =========================================== */
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 30px var(--color-primary-glow),
+                inset 0 0 30px rgba(255, 51, 51, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 60px var(--color-primary-glow),
+                inset 0 0 50px rgba(255, 51, 51, 0.15);
+  }
+}
+
+@keyframes title-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, #0a0505 0%, #000000 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+/* Scanlines on start screen */
+.start-screen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.start-screen-content {
+  text-align: center;
+  max-width: 800px;
+  width: 90%;
+  padding: var(--space-2xl);
+  border: var(--border-width) solid var(--color-primary);
+  background: linear-gradient(180deg, rgba(20, 5, 5, 0.95) 0%, rgba(10, 5, 5, 0.98) 100%);
+  position: relative;
+  z-index: 2;
+  animation: fade-in-up 0.8s ease-out, pulse-glow 4s ease-in-out infinite;
+}
+
+.start-screen-content::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+.start-screen-content::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary-dim), transparent);
+}
+
+.start-title {
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  font-size: var(--font-size-3xl);
+  margin: 0 0 var(--space-sm) 0;
+  text-shadow:
+    0 0 20px var(--color-primary-glow),
+    0 0 40px var(--color-primary-glow);
+  letter-spacing: 6px;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: title-flicker 5s infinite;
+}
+
+.start-subtitle {
+  font-family: var(--font-mono);
+  color: var(--color-text-dim);
+  font-size: var(--font-size-base);
+  margin: 0 0 var(--space-xl) 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.start-characters {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.start-character {
+  background: linear-gradient(180deg, var(--color-surface-light) 0%, var(--color-surface) 100%);
+  border: var(--border-width) solid var(--color-primary-dim);
+  padding: var(--space-lg) var(--space-xl);
+  min-width: 180px;
+  transition: all 0.3s ease;
+  position: relative;
+  animation: fade-in-up 0.6s ease-out backwards;
+}
+
+.start-character:nth-child(1) { animation-delay: 0.2s; }
+.start-character:nth-child(2) { animation-delay: 0.4s; }
+.start-character:nth-child(3) { animation-delay: 0.6s; }
+
+.start-character::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-primary-dim), transparent);
+  transition: all 0.3s ease;
+}
+
+.start-character:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(255, 51, 51, 0.3);
+}
+
+.start-character:hover::before {
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+.start-character .name {
+  font-family: var(--font-mono);
+  color: var(--color-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.start-character .ascii-face {
+  font-family: var(--font-mono);
+  color: var(--color-text);
+  font-size: var(--font-size-2xl);
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px var(--color-primary-glow);
+}
+
+.start-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-top: var(--space-lg);
+}
+
+.start-button {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  font-weight: bold;
+  padding: var(--space-md) var(--space-xl);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.start-button:hover::after {
+  left: 100%;
+}
+
+.reroll-button {
+  background-color: transparent;
+  color: var(--color-secondary);
+  border: var(--border-width) solid var(--color-secondary);
+}
+
+.reroll-button:hover {
+  background-color: rgba(255, 102, 102, 0.1);
+  box-shadow: 0 0 20px rgba(255, 102, 102, 0.3);
+  transform: translateY(-2px);
+}
+
+.begin-button {
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dim) 100%);
+  color: var(--color-text);
+  box-shadow: 0 4px 20px var(--color-primary-glow);
+}
+
+.begin-button:hover {
+  background: linear-gradient(180deg, #ff4444 0%, var(--color-primary) 100%);
+  box-shadow: 0 6px 30px var(--color-primary-glow);
+  transform: translateY(-2px);
+}
+
+.start-screen.hidden {
+  display: none;
+}
+
+/* Hide main container until started */
+.container.hidden {
+  display: none;
+}
+
+/* ===========================================
+   DYNAMIC BAR EFFECTS
+   =========================================== */
+
+/* Smooth transitions for bar values */
+.metric-value {
+  transition: width 0.5s ease-out, background-color 0.3s ease;
+}
+
+/* Color changes based on bar levels */
+.metric:nth-child(1) .metric-value {
+  /* Véracité - green when high, red when low */
+  background: linear-gradient(90deg, #ff3333, #ff6666);
+}
+
+.metric:nth-child(2) .metric-value {
+  /* Transpiration - blue to red */
+  background: linear-gradient(90deg, #3399ff, #ff3333);
+}
+
+.metric:nth-child(3) .metric-value {
+  /* Foutage de gueule - orange to red */
+  background: linear-gradient(90deg, #ff9933, #ff3333);
+}
+
+/* ===========================================
+   THRESHOLD EFFECTS
+   =========================================== */
+
+/* Sweat effect - blue tint and drip animation */
+@keyframes sweat-drip {
+  0% {
+    box-shadow: inset 0 0 30px rgba(51, 153, 255, 0.3);
+  }
+  50% {
+    box-shadow: inset 0 0 50px rgba(51, 153, 255, 0.5);
+  }
+  100% {
+    box-shadow: inset 0 0 30px rgba(51, 153, 255, 0.3);
+  }
+}
+
+.sweat-effect .politician-interface {
+  animation: sweat-drip 1s ease-in-out infinite;
+}
+
+.sweat-effect .politicians-grid {
+  filter: brightness(1.1) saturate(0.9);
+}
+
+/* Mini-chaos effect - brief glitching */
+@keyframes mini-chaos-shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, -1px); }
+  50% { transform: translate(2px, 1px); }
+  75% { transform: translate(-1px, 1px); }
+}
+
+@keyframes mini-chaos-flash {
+  0%, 100% { background-color: #0a0a0a; }
+  25% { background-color: #1a0505; }
+  50% { background-color: #200a0a; }
+  75% { background-color: #150303; }
+}
+
+.mini-chaos .politician-interface {
+  animation: mini-chaos-shake 0.2s ease-in-out infinite,
+             mini-chaos-flash 0.3s infinite;
+}
+
+.mini-chaos .header-title {
+  animation: chaos-text 0.5s infinite;
+  color: #ff0000 !important;
+}
+
+.mini-chaos .politicians-grid .politician-face {
+  animation: shake 0.3s ease-in-out infinite;
+}
+
+.mini-chaos .politician-face .ascii-face {
+  text-shadow:
+    -2px 0 rgba(255, 0, 0, 0.9),
+    2px 0 rgba(0, 255, 255, 0.9);
+}
+
+/* Bar pulse effect when changing rapidly */
+@keyframes bar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.metric-bar.pulsing .metric-value {
+  animation: bar-pulse 0.3s ease-in-out;
+}

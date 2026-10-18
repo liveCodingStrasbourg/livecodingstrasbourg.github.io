@@ -36,7 +36,7 @@ window.shopliftingSystem = {
     
     // Security scanner beep
     this.scannerBeep = new Tone.Oscillator(2000, "sine").toDestination();
-    this.scannerBeep.volume.value = -20;
+    this.scannerBeep.volume.value = -35; // Quieter alarm
   },
   
   // Attempt to shoplift a product
@@ -82,11 +82,12 @@ window.shopliftingSystem = {
   // Make product sound nervous while being stolen
   makeProductNervous: function(productId, product) {
     if (!product.synth) return;
-    
-    // Add tremolo for nervousness
+
+    // Add tremolo for nervousness (subtle effect)
     const tremolo = new Tone.Tremolo({
-      frequency: 8 + Math.random() * 4, // 8-12 Hz
-      depth: 0.6
+      frequency: 6 + Math.random() * 3, // 6-9 Hz (slower)
+      depth: 0.3, // Less intense
+      wet: 0.5
     }).toDestination();
     
     // Disconnect from current destination and reconnect through tremolo
@@ -161,10 +162,11 @@ window.shopliftingSystem = {
     // Apply "caught" effects
     if (product.synth) {
       // Add distortion (roughed up by security)
-      const distortion = new Tone.Distortion(0.8).toDestination();
+      const distortion = new Tone.Distortion(0.4).toDestination();
+      distortion.wet.value = 0.5; // Mix distortion
       product.synth.disconnect();
       product.synth.connect(distortion);
-      product.synth.volume.value = -5; // Louder when caught
+      product.synth.volume.value = -15; // Not too loud when caught
       
       // Store for cleanup
       product._caughtDistortion = distortion;

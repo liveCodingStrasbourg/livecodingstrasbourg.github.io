@@ -5,6 +5,31 @@
 
 const UIManager = {
     /**
+     * Initialise les effets CRT (scanlines)
+     */
+    initCRTEffects() {
+      // Ajouter l'overlay de scanlines
+      if (!document.querySelector('.crt-scanlines')) {
+        const scanlines = document.createElement('div');
+        scanlines.className = 'crt-scanlines';
+        document.body.appendChild(scanlines);
+      }
+    },
+
+    /**
+     * Déclenche un effet de secousse d'écran
+     */
+    triggerShake() {
+      const container = document.querySelector('.politician-interface');
+      if (container) {
+        container.classList.add('screen-shake');
+        setTimeout(() => {
+          container.classList.remove('screen-shake');
+        }, 150);
+      }
+    },
+
+    /**
      * Initialise la grille des politiciens
      */
     initPoliticians() {
@@ -27,7 +52,7 @@ const UIManager = {
         
         const faceDiv = document.createElement('div');
         faceDiv.className = 'ascii-face';
-        faceDiv.textContent = CONFIG.faces.idle[i];
+        faceDiv.textContent = CONFIG.selectedFaces.idle[i];
         
         politicianDiv.appendChild(nameDiv);
         politicianDiv.appendChild(faceDiv);
@@ -41,32 +66,58 @@ const UIManager = {
      * @param {number} index - Index du politicien
      * @param {string} state - Nouvel état émotionnel
      * @param {boolean} chaosModeActive - Si le mode chaos est actif
+     * @param {string} customText - Texte personnalisé (pour les cross-responses)
      * @returns {boolean} - Si la mise à jour a réussi
      */
-    updatePoliticianState(index, state, chaosModeActive = false) {
+    updatePoliticianState(index, state, chaosModeActive = false, customText = null) {
       const politicianDiv = document.getElementById(`politician-${index}`);
-      
+
       if (!politicianDiv) return false;
-      
+
+      // Déclencher la secousse d'écran pour les cris
+      if (state === 'screaming' || (chaosModeActive && state !== 'idle')) {
+        this.triggerShake();
+        // Réaction de la foule - hoquet de surprise
+        if (Math.random() < 0.4) { // 40% de chance
+          AudioManager.playCrowdReaction('gasp');
+        }
+      }
+
+      // Murmure de la foule pour les moments de gêne
+      if (state === 'sweating' && Math.random() < 0.3) {
+        AudioManager.playCrowdReaction('murmur');
+      }
+
       // Déterminer le visage à utiliser (en mode chaos, on utilise les visages chaos)
       let faceState = state;
       if (chaosModeActive && state === 'screaming') {
         faceState = 'chaos';
       }
-      
 
-      if (state !== 'idle') {
+      // Si un texte personnalisé est fourni (cross-response), l'utiliser
+      if (state !== 'idle' && customText) {
+        const politicianName = CONFIG.politicians[index];
+        // Ne pas ajouter au terminal ici, c'est géré dans app.js pour les cross-responses
+      } else if (state !== 'idle') {
         let responseArray;
         if (chaosModeActive && state === 'screaming') {
-          responseArray = CONFIG.responses.chaos;
+          // Mode chaos: utiliser les réponses chaos
+          responseArray = CONFIG.chaosResponses || [];
         } else {
-          responseArray = CONFIG.responses[state] || [];
+          // Chercher d'abord dans les réponses spécifiques au politicien
+          const politicianResponses = CONFIG.politicianResponses[index];
+          if (politicianResponses && politicianResponses[state]) {
+            responseArray = politicianResponses[state];
+          } else {
+            // Fallback sur les réponses génériques
+            responseArray = CONFIG.genericResponses[state] || [];
+          }
         }
-        
+
         if (responseArray.length > 0) {
           const response = responseArray[Math.floor(Math.random() * responseArray.length)];
           const politicianName = CONFIG.politicians[index];
-          
+
           // Ajouter au terminal
           this.addTerminalLine(`${politicianName}: "${response}"`, state === 'screaming');
         }
@@ -74,7 +125,7 @@ const UIManager = {
 
       // Mettre à jour le visage
       const faceDiv = politicianDiv.querySelector('.ascii-face');
-      faceDiv.textContent = CONFIG.faces[faceState] ? CONFIG.faces[faceState][index] : CONFIG.faces.idle[index];
+      faceDiv.textContent = CONFIG.selectedFaces[faceState] ? CONFIG.selectedFaces[faceState][index] : CONFIG.selectedFaces.idle[index];
       
       // Ajouter ou supprimer la classe d'animation
       if (state === 'idle') {
@@ -106,17 +157,27 @@ const UIManager = {
           responseDiv.className = `response ${state}`;
         }
         
-        // Obtenir une réponse appropriée pour l'émotion
-        let responseArray;
-        if (chaosModeActive && state === 'screaming') {
-          responseArray = CONFIG.responses.chaos;
+        // Utiliser le texte personnalisé si fourni (cross-response)
+        if (customText) {
+          responseDiv.innerHTML = customText;
         } else {
-          responseArray = CONFIG.responses[state] || [];
-        }
-        
-        if (responseArray.length > 0) {
-          const randomResponse = responseArray[Math.floor(Math.random() * responseArray.length)];
-          responseDiv.innerHTML = randomResponse; // Utiliser innerHTML pour supporter les textes avec glitch
+          // Obtenir une réponse appropriée pour l'émotion (spécifique au politicien)
+          let responseArray;
+          if (chaosModeActive && state === 'screaming') {
+            responseArray = CONFIG.chaosResponses || [];
+          } else {
+            const politicianResponses = CONFIG.politicianResponses[index];
+            if (politicianResponses && politicianResponses[state]) {
+              responseArray = politicianResponses[state];
+            } else {
+              responseArray = CONFIG.genericResponses[state] || [];
+            }
+          }
+
+          if (responseArray.length > 0) {
+            const randomResponse = responseArray[Math.floor(Math.random() * responseArray.length)];
+            responseDiv.innerHTML = randomResponse;
+          }
         }
       }
       

@@ -20,129 +20,188 @@
         return result;
       },
       
+      // Parse slot prefix from command (e.g., "[0] add beer" -> { slot: "0", cmd: "add beer" })
+      parseSlotPrefix: function(cmd) {
+        const slotMatch = cmd.match(/^\[(\d)\]\s*/);
+        if (slotMatch) {
+          const slot = slotMatch[1];
+          const remainingCmd = cmd.slice(slotMatch[0].length);
+          return { slot, cmd: remainingCmd, hasSlot: true };
+        }
+        return { slot: null, cmd: cmd, hasSlot: false };
+      },
+
+      // Validate slot number
+      isValidSlot: function(slot) {
+        return window.state.VALID_SLOTS.includes(slot);
+      },
+
       // Execute command string
       executeCommand: function(cmd) {
+        // Strip comments (// and everything after)
+        if (cmd.includes('//')) {
+          cmd = cmd.split('//')[0];
+        }
+
         // Normalize and trim command
         cmd = cmd.toLowerCase().trim();
-        
+
+        // Skip empty commands
+        if (!cmd) return false;
+
+        // Parse slot prefix first
+        const parsed = this.parseSlotPrefix(cmd);
+        const slot = parsed.slot;
+        const commandBody = parsed.cmd;
+
+        // Validate slot if provided
+        if (parsed.hasSlot && !this.isValidSlot(slot)) {
+          window.log(`❌ Invalid slot [${slot}]! Use [0] through [9]`);
+          return false;
+        }
+
         // Log the command to output
         if (window.log) {
           window.log(`> ${cmd}`);
         } else {
           console.log(`Command: ${cmd}`);
         }
-        
+
         // Store command for story mode tracking
         this.lastCommand = cmd;
-        
-        // Time commands
-        if (this.isClosingTimeCommand(cmd)) {
-          return this.handleClosingTimeCommand(cmd);
+
+        // Break/respiration commands (no slot needed)
+        if (this.isBreakCommand(commandBody)) {
+          return this.handleBreakCommand(commandBody);
+        }
+
+        // Transition commands (no slot needed)
+        if (this.isTransitionCommand(commandBody)) {
+          return this.handleTransitionCommand(commandBody);
+        }
+
+        // Time commands (no slot needed)
+        if (this.isClosingTimeCommand(commandBody)) {
+          return this.handleClosingTimeCommand(commandBody);
+        }
+
+        if (this.isOpeningTimeCommand(commandBody)) {
+          return this.handleOpeningTimeCommand(commandBody);
+        }
+
+        // Cart wheels commands (no slot needed)
+        if (commandBody.startsWith("my cart has")) {
+          return this.handleCartWheelsCommand(commandBody);
+        }
+
+        // Product commands REQUIRE slot prefix
+        // Verb determines shelf height (octave): add=normal, crouch=low(-2), reach=high(+1), grab=mid-low(-1)
+        if (commandBody.startsWith("add") || commandBody.startsWith("crouch") ||
+            commandBody.startsWith("reach") || commandBody.startsWith("grab")) {
+          if (!parsed.hasSlot) {
+            const verb = commandBody.split(" ")[0];
+            window.log(`❌ Slot required! Use [0] through [9], e.g.: [0] ${verb} beer`);
+            return false;
+          }
+
+          // Determine octave shift based on verb (shelf height)
+          let shelfOctave = 0;
+          let verb = "add";
+          if (commandBody.startsWith("crouch")) {
+            shelfOctave = -2;  // Bottom shelf - low, heavy
+            verb = "crouch";
+          } else if (commandBody.startsWith("grab")) {
+            shelfOctave = -1;  // Lower shelf - mid-low
+            verb = "grab";
+          } else if (commandBody.startsWith("reach")) {
+            shelfOctave = 1;   // Top shelf - high, light
+            verb = "reach";
+          }
+
+          return this.handleAddProductCommand(commandBody, slot, verb, shelfOctave);
+        }
+
+        // Remove with slot: "[0] remove" removes that slot
+        // Remove without slot: only "remove all" allowed
+        if (commandBody.startsWith("remove") || commandBody === "remove") {
+          return this.handleRemoveProductCommand(commandBody, slot, parsed.hasSlot);
         }
         
-        if (this.isOpeningTimeCommand(cmd)) {
-          return this.handleOpeningTimeCommand(cmd);
+        // Mode commands (no slot needed)
+        if (this.isDiscountModeCommand(commandBody)) {
+          return this.handleDiscountModeCommand(commandBody);
         }
-        
-        // Cart wheels commands (rhythm section)
-        if (cmd.startsWith("my cart has")) {
-          return this.handleCartWheelsCommand(cmd);
+
+        if (this.isInflationModeCommand(commandBody)) {
+          return this.handleInflationModeCommand(commandBody);
         }
-        
-        // Product commands (add/remove products)
-        if (cmd.startsWith("add")) {
-          return this.handleAddProductCommand(cmd);
+
+        if (this.isConsumerismModeCommand(commandBody)) {
+          return this.handleConsumerismModeCommand(commandBody);
         }
-        
-        if (cmd.startsWith("remove")) {
-          return this.handleRemoveProductCommand(cmd);
+
+        if (this.isBlackFridayModeCommand(commandBody)) {
+          return this.handleBlackFridayModeCommand(commandBody);
         }
-        
-        // Mode commands
-        if (this.isDiscountModeCommand(cmd)) {
-          return this.handleDiscountModeCommand(cmd);
+
+        if (this.isAisle7Command(commandBody)) {
+          return this.handleAisle7Command(commandBody);
         }
-        
-        if (this.isInflationModeCommand(cmd)) {
-          return this.handleInflationModeCommand(cmd);
+
+        if (this.isFluorescentLightsCommand(commandBody)) {
+          return this.handleFluorescentLightsCommand(commandBody);
         }
-        
-        if (this.isConsumerismModeCommand(cmd)) {
-          return this.handleConsumerismModeCommand(cmd);
+
+        if (this.isApocalypseModeCommand(commandBody)) {
+          return this.handleApocalypseModeCommand(commandBody);
         }
-        
-        if (this.isBlackFridayModeCommand(cmd)) {
-          return this.handleBlackFridayModeCommand(cmd);
+
+        // Check for store feature commands (no slot needed)
+        if (this.isCheckoutCommand(commandBody) || this.isFinishCheckoutCommand(commandBody) ||
+            this.isScanBarcodeCommand(commandBody) || this.isSeasonCommand(commandBody) ||
+            this.isAnnouncementCommand(commandBody) || this.isRushHourCommand(commandBody) ||
+            this.isCouponCommand(commandBody) || this.isDecayCommand(commandBody) ||
+            this.isStoreLayoutCommand(commandBody) || this.isMapComposeCommand(commandBody)) {
+          return this.handleStoreFeatureCommand(commandBody);
         }
-        
-        if (this.isAisle7Command(cmd)) {
-          return this.handleAisle7Command(cmd);
-        }
-        
-        if (this.isFluorescentLightsCommand(cmd)) {
-          return this.handleFluorescentLightsCommand(cmd);
-        }
-        
-        if (this.isApocalypseModeCommand(cmd)) {
-          return this.handleApocalypseModeCommand(cmd);
-        }
-        
-        // Check if it's closing time command (increase tempo)
-        if (this.isClosingTimeCommand(cmd)) {
-          return this.handleClosingTimeCommand(cmd);
-        }
-        
-        // Check if it's opening time command (decrease tempo)
-        if (this.isOpeningTimeCommand(cmd)) {
-          return this.handleOpeningTimeCommand(cmd);
-        }
-        
-        // Check for store feature commands
-        if (this.isCheckoutCommand(cmd) || this.isFinishCheckoutCommand(cmd) ||
-            this.isScanBarcodeCommand(cmd) || this.isSeasonCommand(cmd) ||
-            this.isAnnouncementCommand(cmd) || this.isRushHourCommand(cmd) ||
-            this.isCouponCommand(cmd) || this.isDecayCommand(cmd) ||
-            this.isStoreLayoutCommand(cmd) || this.isMapComposeCommand(cmd)) {
-          return this.handleStoreFeatureCommand(cmd);
-        }
-        
-        // Check for performance commands
-        if (cmd === "performance stats" || cmd === "show performance") {
+
+        // Check for performance commands (no slot needed)
+        if (commandBody === "performance stats" || commandBody === "show performance") {
           return this.showPerformanceStats();
         }
-        
-        if (cmd.startsWith("performance mode ")) {
-          const mode = cmd.replace("performance mode ", "").trim();
+
+        if (commandBody.startsWith("performance mode ")) {
+          const mode = commandBody.replace("performance mode ", "").trim();
           return this.setPerformanceMode(mode);
         }
-        
-        // Check for shoplifting commands
-        if (this.isShopliftCommand(cmd)) {
-          return this.handleShopliftCommand(cmd);
+
+        // Check for shoplifting commands (can use slot optionally)
+        if (this.isShopliftCommand(commandBody)) {
+          return this.handleShopliftCommand(commandBody, slot);
         }
-        
-        // Check for story mode commands
-        if (cmd === "story mode" || cmd === "start story") {
+
+        // Check for story mode commands (no slot needed)
+        if (commandBody === "story mode" || commandBody === "start story") {
           if (window.storyMode) {
             window.storyMode.start();
             return true;
           }
           return false;
         }
-        
-        if (cmd === "skip story" || cmd === "story skip") {
+
+        if (commandBody === "skip story" || commandBody === "story skip") {
           if (window.storyMode) {
             window.storyMode.skipStory();
             return true;
           }
           return false;
         }
-        
-        // Check for performance mode commands
-        if (this.isPerformanceModeCommand(cmd)) {
-          return this.handlePerformanceModeCommand(cmd);
+
+        // Check for performance mode commands (no slot needed)
+        if (this.isPerformanceModeCommand(commandBody)) {
+          return this.handlePerformanceModeCommand(commandBody);
         }
-        
+
         // Unknown command
         if (window.log) {
           window.log("Unknown command - the register won't accept that.");
@@ -366,18 +425,33 @@
         return false;
       },
       
-      // Handle add product command
-      handleAddProductCommand: function(cmd) {
-        const addParts = cmd.replace("add", "").trim();
-        
+      // Handle add product command (with shelf height/octave from verb)
+      handleAddProductCommand: function(cmd, slot, verb = "add", shelfOctave = 0) {
+        // Remove the verb (add/crouch/reach/grab) from command
+        const productParts = cmd.replace(/^(add|crouch|reach|grab)\s*/, "").trim();
+
         // Break down the command
-        const parsed = this.parseProductCommand(addParts);
-        
+        const parsed = this.parseProductCommand(productParts);
+
         if (parsed.productName) {
           // Check if product exists and product manager is available
           if (window.productTypes && window.productTypes[parsed.productName]) {
-            if (window.productManager && window.productManager.addProduct) {
-              window.productManager.addProduct(parsed.productName, parsed.modifier);
+            if (window.productManager && window.productManager.addProductToSlot) {
+              // Include shelf octave in modifier string for product manager to parse
+              let fullModifier = parsed.modifier;
+              if (shelfOctave !== 0) {
+                fullModifier = `shelf:${shelfOctave} ${fullModifier}`.trim();
+              }
+              window.productManager.addProductToSlot(slot, parsed.productName, fullModifier);
+
+              // Log with shelf-themed message
+              if (shelfOctave === -2) {
+                window.log(`🔽 Crouched down to grab ${parsed.productName} from the bottom shelf...`);
+              } else if (shelfOctave === -1) {
+                window.log(`👋 Grabbed ${parsed.productName} from the lower shelf...`);
+              } else if (shelfOctave === 1) {
+                window.log(`🔼 Reached up for ${parsed.productName} on the top shelf...`);
+              }
             } else {
               console.log("Product manager not loaded");
               if (window.log) window.log("Product management system not available yet.");
@@ -389,22 +463,42 @@
           }
           return true;
         } else {
-          if (window.log) window.log("Invalid command format. Try 'add [product]'.");
+          if (window.log) window.log(`Invalid command format. Try '[0] ${verb} [product]'.`);
           return false;
         }
       },
-      
+
       // Handle remove product command
-      handleRemoveProductCommand: function(cmd) {
-        const productName = cmd.replace("remove", "").trim();
-        
-        if (window.productManager && window.productManager.removeProduct) {
-          return window.productManager.removeProduct(productName);
-        } else {
-          console.log("Product manager not loaded");
-          if (window.log) window.log("Product management system not available yet.");
+      handleRemoveProductCommand: function(cmd, slot, hasSlot) {
+        const target = cmd.replace("remove", "").trim();
+
+        // "remove all" works without slot
+        if (target === "all") {
+          if (window.productManager && window.productManager.removeAll) {
+            return window.productManager.removeAll();
+          }
           return false;
         }
+
+        // Slot-specific remove: "[0] remove"
+        if (hasSlot) {
+          if (!target || target === "") {
+            // Just "[0] remove" - remove that slot
+            if (window.productManager && window.productManager.removeSlot) {
+              return window.productManager.removeSlot(slot);
+            }
+          } else {
+            // "[0] remove beer" - not supported, just remove slot
+            window.log(`⚠️ To remove slot [${slot}], just use: [${slot}] remove`);
+            return false;
+          }
+        } else {
+          // No slot specified and not "remove all"
+          window.log("❌ Specify slot to remove, e.g.: [0] remove, or use: remove all");
+          return false;
+        }
+
+        return false;
       },
       
       // Parse product command to extract product name and modifiers
@@ -417,25 +511,30 @@
         const shelfLifePos = addParts.toLowerCase().indexOf("shelflife");
         const openProductPos = addParts.toLowerCase().indexOf("open");
         const escalatorPos = addParts.toLowerCase().indexOf("escalator");
-        
+        const volumePos = addParts.toLowerCase().indexOf("volume");
+
         // Determine where to look for the product name
         let cutoffPos = addParts.length;
-        
+
         // Find the earliest special parameter
         if (nutriscorePos !== -1) {
           cutoffPos = Math.min(cutoffPos, nutriscorePos);
         }
-        
+
         if (shelfLifePos !== -1) {
           cutoffPos = Math.min(cutoffPos, shelfLifePos);
         }
-        
+
         if (openProductPos !== -1) {
           cutoffPos = Math.min(cutoffPos, openProductPos);
         }
-        
+
         if (escalatorPos !== -1) {
           cutoffPos = Math.min(cutoffPos, escalatorPos);
+        }
+
+        if (volumePos !== -1) {
+          cutoffPos = Math.min(cutoffPos, volumePos);
         }
         
         // Get the part before any special parameters
@@ -797,6 +896,327 @@
           window.log("Invalid performance mode. Use: performance, balanced, or quality");
           return false;
         }
+      },
+      
+      // Check for break commands
+      isBreakCommand: function(cmd) {
+        return cmd === "checkout line" || cmd === "checkout line break" ||
+               cmd === "lunch break" || cmd === "lunch break on" || cmd === "lunch break off" ||
+               cmd === "store closing" || cmd === "store closing soon" ||
+               cmd === "cleanup time" || cmd === "cleaning time" ||
+               cmd === "intermission" || cmd === "pause shopping" ||
+               cmd === "coffee break" || cmd === "smoke break";
+      },
+      
+      // Handle break commands
+      handleBreakCommand: function(cmd) {
+        if (!window.audioEngine) {
+          window.log("Audio engine not available.");
+          return false;
+        }
+        
+        if (cmd === "checkout line" || cmd === "checkout line break") {
+          // Fade all products to silence over 3 seconds
+          Object.values(window.state.products).forEach(product => {
+            if (product.synth) {
+              product.synth.volume.rampTo(-60, 3);
+            }
+          });
+          window.log("🛒 Waiting in the checkout line... Everything fades to silence...");
+          
+          // Resume after 5 seconds
+          setTimeout(() => {
+            Object.values(window.state.products).forEach(product => {
+              if (product.synth) {
+                product.synth.volume.rampTo(product.originalVolume || -12, 2);
+              }
+            });
+            window.log("✅ Your turn at the register! Music resumes...");
+          }, 5000);
+          return true;
+        }
+        
+        if (cmd === "lunch break" || cmd === "lunch break on") {
+          // Stop cart wheels but keep products playing softly
+          if (window.cartWheels) {
+            window.cartWheels.stopWheels();
+          }
+          // Reduce all product volumes by 50%
+          Object.values(window.state.products).forEach(product => {
+            if (product.synth) {
+              product.originalVolume = product.synth.volume.value;
+              product.synth.volume.rampTo(product.originalVolume - 12, 2);
+            }
+          });
+          window.log("🍕 Taking a lunch break... The drums stop, music softens...");
+          return true;
+        }
+        
+        if (cmd === "lunch break off") {
+          // Resume cart wheels
+          if (window.cartWheels && window.state.cart.wheels !== "none") {
+            window.cartWheels.setWheels(window.state.cart.wheels);
+          }
+          // Restore volumes
+          Object.values(window.state.products).forEach(product => {
+            if (product.synth && product.originalVolume) {
+              product.synth.volume.rampTo(product.originalVolume, 2);
+            }
+          });
+          window.log("🛒 Back to shopping! Full energy restored...");
+          return true;
+        }
+        
+        if (cmd === "store closing" || cmd === "store closing soon") {
+          // Gradually fade everything and slow down tempo
+          window.audioEngine.changeBPM(-20);
+          Object.values(window.state.products).forEach((product, index) => {
+            if (product.synth) {
+              // Stagger the fade outs
+              setTimeout(() => {
+                product.synth.volume.rampTo(-60, 5);
+              }, index * 500);
+            }
+          });
+          // Fade out drums last
+          setTimeout(() => {
+            if (window.cartWheels) {
+              window.cartWheels.stopWheels();
+            }
+          }, 3000);
+          window.log("🌙 The store is closing... Everything slowly fades away...");
+          return true;
+        }
+        
+        if (cmd === "cleanup time" || cmd === "cleaning time") {
+          // Mute everything except a single "muzak" product
+          const products = Object.values(window.state.products);
+          if (products.length > 0) {
+            // Keep one random product playing
+            const keepIndex = Math.floor(Math.random() * products.length);
+            products.forEach((product, index) => {
+              if (product.synth) {
+                if (index === keepIndex) {
+                  product.synth.volume.rampTo(-20, 2);
+                } else {
+                  product.synth.volume.rampTo(-60, 2);
+                }
+              }
+            });
+          }
+          window.log("🧹 Cleanup time... Only the store muzak remains...");
+          return true;
+        }
+        
+        if (cmd === "intermission" || cmd === "pause shopping") {
+          // Pause transport
+          Tone.Transport.pause();
+          window.log("⏸️ Intermission... Time stands still in the aisles...");
+          // Auto resume after 3 seconds
+          setTimeout(() => {
+            Tone.Transport.start();
+            window.log("▶️ Shopping resumes!");
+          }, 3000);
+          return true;
+        }
+        
+        if (cmd === "coffee break" || cmd === "smoke break") {
+          // Quick fade out and back in
+          const masterVol = Tone.Destination.volume.value;
+          Tone.Destination.volume.rampTo(-30, 1);
+          window.log(cmd === "coffee break" ? "☕ Quick coffee break..." : "🚬 Stepping outside for a moment...");
+          setTimeout(() => {
+            Tone.Destination.volume.rampTo(masterVol, 1);
+            window.log("Back to shopping!");
+          }, 2000);
+          return true;
+        }
+        
+        return false;
+      },
+      
+      // Check for transition commands
+      isTransitionCommand: function(cmd) {
+        return cmd.startsWith("conveyor belt") || cmd.startsWith("conveyor ") ||
+               cmd.startsWith("sliding doors") || cmd.startsWith("doors ") ||
+               cmd.startsWith("elevator music") || cmd === "muzak" ||
+               cmd.startsWith("smooth transition") || cmd.startsWith("crossfade") ||
+               cmd.startsWith("fade to ") || cmd.startsWith("morph to ");
+      },
+      
+      // Handle transition commands
+      handleTransitionCommand: function(cmd) {
+        if (!window.audioEngine) {
+          window.log("Audio engine not available.");
+          return false;
+        }
+        
+        if (cmd.startsWith("conveyor belt ") || cmd.startsWith("conveyor ")) {
+          const speed = cmd.includes("fast") ? 0.5 : cmd.includes("slow") ? 3 : 1.5;
+          // Create a conveyor belt effect - products fade in/out in sequence
+          const products = Object.values(window.state.products);
+          products.forEach((product, index) => {
+            if (product.synth) {
+              // Fade out
+              setTimeout(() => {
+                product.synth.volume.rampTo(-60, speed);
+              }, index * speed * 500);
+              // Fade back in
+              setTimeout(() => {
+                product.synth.volume.rampTo(product.originalVolume || -12, speed);
+              }, (index * speed * 500) + (speed * 1000));
+            }
+          });
+          window.log(`🛒 Products rolling on the conveyor belt${speed < 1 ? " quickly" : speed > 2 ? " slowly" : ""}...`);
+          return true;
+        }
+        
+        if (cmd.startsWith("sliding doors") || cmd.startsWith("doors")) {
+          // Stereo pan effect - products pan left to right
+          const products = Object.values(window.state.products);
+          products.forEach((product, index) => {
+            if (product.synth) {
+              const panner = new Tone.Panner(-1).toDestination();
+              product.synth.disconnect();
+              product.synth.connect(panner);
+              panner.pan.rampTo(1, 3);
+              // Pan back to center after 3 seconds
+              setTimeout(() => {
+                panner.pan.rampTo(0, 2);
+              }, 3000);
+            }
+          });
+          window.log("🚪 Walking through the sliding doors... Sound sweeps across the space...");
+          return true;
+        }
+        
+        if (cmd === "elevator music" || cmd === "muzak") {
+          // Apply heavy lowpass filter and volume reduction to all products
+          const products = Object.values(window.state.products);
+          const originalStates = [];
+
+          products.forEach(product => {
+            if (product.synth) {
+              // Save original volume
+              originalStates.push({
+                product: product,
+                volume: product.synth.volume.value
+              });
+              // Muffle and reduce volume
+              product.synth.volume.rampTo(product.synth.volume.value - 15, 1);
+            }
+          });
+
+          window.log("🎵 Elevator music mode... Everything sounds distant and muffled...");
+
+          // Restore after 5 seconds
+          setTimeout(() => {
+            originalStates.forEach(state => {
+              if (state.product.synth && window.state.products[state.product.id]) {
+                state.product.synth.volume.rampTo(state.volume, 1);
+              }
+            });
+            window.log("Back to normal audio quality!");
+          }, 5000);
+          return true;
+        }
+        
+        if (cmd.startsWith("smooth transition") || cmd.startsWith("crossfade")) {
+          // Group products by type and crossfade between groups
+          const products = Object.values(window.state.products);
+          const half = Math.floor(products.length / 2);
+          
+          // Fade out first half
+          products.slice(0, half).forEach(product => {
+            if (product.synth) {
+              product.synth.volume.rampTo(-60, 2);
+            }
+          });
+          
+          // Fade out second half after delay
+          setTimeout(() => {
+            products.slice(0, half).forEach(product => {
+              if (product.synth) {
+                product.synth.volume.rampTo(product.originalVolume || -12, 2);
+              }
+            });
+            products.slice(half).forEach(product => {
+              if (product.synth) {
+                product.synth.volume.rampTo(-60, 2);
+              }
+            });
+          }, 2500);
+          
+          // Restore all after full cycle
+          setTimeout(() => {
+            products.forEach(product => {
+              if (product.synth) {
+                product.synth.volume.rampTo(product.originalVolume || -12, 2);
+              }
+            });
+          }, 5000);
+          
+          window.log("🔄 Smooth transition between product sections...");
+          return true;
+        }
+        
+        if (cmd.startsWith("fade to ")) {
+          const target = cmd.replace("fade to ", "").trim();
+          if (target === "silence") {
+            Tone.Destination.volume.rampTo(-60, 3);
+            window.log("🔇 Fading to silence...");
+          } else if (target === "full") {
+            Tone.Destination.volume.rampTo(0, 3);
+            window.log("🔊 Fading to full volume...");
+          } else if (target === "soft" || target === "quiet") {
+            Tone.Destination.volume.rampTo(-20, 3);
+            window.log("🔉 Fading to soft background level...");
+          }
+          return true;
+        }
+        
+        if (cmd.startsWith("morph to ")) {
+          // Morph current products into different ones
+          const targetProduct = cmd.replace("morph to ", "").trim();
+          if (window.productTypes && window.productTypes[targetProduct]) {
+            window.log(`🔮 Morphing all products into ${targetProduct}...`);
+            const currentProducts = Object.keys(window.state.products);
+            
+            // Fade out current products
+            currentProducts.forEach(id => {
+              if (window.productManager) {
+                const product = window.state.products[id];
+                if (product && product.synth) {
+                  product.synth.volume.rampTo(-60, 1);
+                }
+              }
+            });
+            
+            // Replace with target product after fade
+            setTimeout(() => {
+              // Remove old products
+              currentProducts.forEach(id => {
+                if (window.productManager && window.productManager.removeProductById) {
+                  window.productManager.removeProductById(id);
+                }
+              });
+              
+              // Add new products
+              for (let i = 0; i < Math.min(currentProducts.length, 5); i++) {
+                setTimeout(() => {
+                  if (window.productManager && window.productManager.addProduct) {
+                    window.productManager.addProduct(targetProduct);
+                  }
+                }, i * 200);
+              }
+            }, 1500);
+          } else {
+            window.log(`Unknown product: ${targetProduct}`);
+          }
+          return true;
+        }
+        
+        return false;
       },
       
       // Check if command is shoplifting related

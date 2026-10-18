@@ -4,14 +4,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Retail Therapy: Market Soundscape</title>
+  <title>Rayon - Audio Live Coding</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
   <link rel="stylesheet" href="supermarketjs/_consume-style.css">
 </head>
 <body>
   <div class="header-container">
-    <h1 class="title">ZUPERC0DING</h1>
-    <div class="alpha-notice">Alpha Version - Expect occasional bugs</div>
+    <div class="header-left">
+      <h1 class="title">Rayon</h1>
+      <div class="alpha-notice">Alpha</div>
+    </div>
+    <div class="header-shortcuts">
+      <span class="shortcut"><kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run line</span>
+      <span class="shortcut"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Enter</kbd> Run all</span>
+      <span class="shortcut"><kbd>Esc</kbd> Stop</span>
+      <span class="shortcut"><kbd>Tab</kbd> Autocomplete</span>
+    </div>
+    <div class="header-right">
+      <button class="header-btn" id="about-btn">About</button>
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div id="about-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close" id="close-about">&times;</button>
+      <h2>Rayon</h2>
+      <p class="about-subtitle">Audio Live Coding Environment</p>
+
+      <div class="about-section">
+        <h3>What is Rayon?</h3>
+        <p>Rayon is a browser-based audio synthesis environment that uses shopping metaphors for live coding music. Products become synthesizers, shopping carts provide rhythm, and retail concepts control musical parameters.</p>
+      </div>
+
+      <div class="about-section">
+        <h3>How to use</h3>
+        <ul>
+          <li><strong>Add products</strong> - Type <code>[0] add beer</code> or <code>[1] add fresh salad</code> (slots 0-9)</li>
+          <li><strong>Replace a slot</strong> - Same slot number replaces synth on next bar</li>
+          <li><strong>Add rhythm</strong> - Type <code>my cart has square wheels</code></li>
+          <li><strong>Apply effects</strong> - Use modifiers like <code>cheap</code>, <code>expensive</code>, <code>industrial</code></li>
+          <li><strong>Story mode</strong> - Type <code>story mode</code> for a guided tutorial</li>
+        </ul>
+      </div>
+
+      <div class="about-section">
+        <h3>Credits</h3>
+        <p>Created by <a href="https://crashserver.fr" target="_blank">CrashServer</a></p>
+        <p>Built with <a href="https://tonejs.github.io/" target="_blank">Tone.js</a> for audio synthesis.</p>
+      </div>
+
+      <div class="about-links">
+        <a href="https://crashserver.fr" target="_blank">crashserver.fr</a>
+        <a href="supdoc/en.html" target="_blank">Documentation</a>
+      </div>
+    </div>
   </div>
 
   <div class="quick-ref-compact">
@@ -23,27 +70,35 @@
       <button class="ref-tab" data-tab="cart">Cart Wheels</button>
       <button class="ref-tab" data-tab="store">Store</button>
       <button class="ref-tab" data-tab="special">Special</button>
+      <button class="ref-tab" data-tab="breaks">Breaks</button>
+      <button class="ref-tab" data-tab="transitions">Transitions</button>
       <button class="ref-tab" data-tab="theft">Theft</button>
-      <button class="ref-tab" data-tab="settings">Settings</button>
+      <button class="ref-tab" data-tab="performance">Performance</button>
     </div>
     
     <div class="ref-content">
       <div class="ref-panel active" id="products-panel">
         <div class="ref-grid">
-          <span class="ref-item clickable" data-type="product" data-insert="add beer" title="Mellow FM synth - smooth jazzy tones">beer</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add salad" title="Crisp pluck synth - fresh texture">salad</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add ham" title="Rich fat sawtooth - savory depth">ham</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add milk" title="Soft pluck synth - liquid smooth">milk</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add chips" title="Crispy sawtooth with filter sweep">chips</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add pizza" title="Triangle wave FM synth - warm tones">pizza</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add oil" title="Low frequency sine wave - liquid bass">oil</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add wine" title="Detuned poly synth - complex layers">wine</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add soda" title="High pitched membrane synth - fizzy">soda</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add bread" title="Warm duo synth - soft and full">bread</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add cereal" title="Crunchy granular synth - textured">cereal</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add chocolate" title="Rich square wave AM synth - sweet">chocolate</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add candy" title="Bright sawtooth mono synth - sugary">candy</span>
-          <span class="ref-item clickable" data-type="product" data-insert="add energy_drink" title="Buzzy FM synth - energetic">energy_drink</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[0] add beer" title="Mellow FM synth - smooth jazzy tones">beer</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[1] add salad" title="Crisp pluck synth - fresh texture">salad</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[2] add ham" title="Rich fat sawtooth - savory depth">ham</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[3] add milk" title="Soft pluck synth - liquid smooth">milk</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[4] add chips" title="Crispy sawtooth with filter sweep">chips</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[5] add pizza" title="Triangle wave FM synth - warm tones">pizza</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[6] add oil" title="Low frequency sine wave - liquid bass">oil</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[7] add wine" title="Detuned poly synth - complex layers">wine</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[8] add cheese" title="Warm FM synth - smooth harmonics">cheese</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[9] add soda" title="High pitched membrane synth - fizzy">soda</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[0] add bread" title="Warm duo synth - soft and full">bread</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[1] add cereal" title="Crunchy granular synth - textured">cereal</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[2] add chocolate" title="Rich square wave AM synth - sweet">chocolate</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[3] add candy" title="Bright sawtooth mono synth - sugary">candy</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[4] add energy_drink" title="Buzzy FM synth - energetic">energy_drink</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[5] add coffee" title="Dark filtered sawtooth - caffeinated">coffee</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[6] add butter" title="Creamy detuned duo synth - smooth">butter</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[7] add eggs" title="Plucked string with bright attack">eggs</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[8] add pasta" title="Soft poly synth - Italian warmth">pasta</span>
+          <span class="ref-item clickable" data-type="product" data-insert="[9] add rice" title="Short noise bursts - grainy texture">rice</span>
         </div>
       </div>
       
@@ -65,6 +120,8 @@
           <span class="ref-item clickable" data-type="modifier" data-insert="artificial" title="Vibrato effect, pitch wobble">artificial</span>
           <span class="ref-item clickable" data-type="modifier" data-insert="mass-produced" title="Heavy bitcrusher, ultra lo-fi">mass-produced</span>
           <span class="ref-item clickable" data-type="modifier" data-insert="addictive" title="Ping-pong delay, stereo bounce">addictive</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="packaged" title="Rhythmic tremolo with filter (beer, chocolate, energy_drink)">packaged</span>
+          <span class="ref-item clickable" data-type="modifier" data-insert="glass" title="Shimmering echo effect (beer, chocolate, energy_drink)">glass</span>
         </div>
       </div>
       
@@ -91,9 +148,14 @@
           <span class="ref-item clickable" data-type="parameter" data-insert="escalator fast" title="Fast speed">escalator fast</span>
           <span class="ref-item clickable" data-type="parameter" data-insert="escalator rush" title="Very fast speed">escalator rush</span>
           <span class="ref-item clickable" data-type="parameter" data-insert="escalator broken" title="Irregular timing">escalator broken</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="volume max" title="Maximum volume">volume max</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="volume loud" title="High volume">volume loud</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="volume soft" title="Low volume">volume soft</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="volume quiet" title="Very low volume">volume quiet</span>
+          <span class="ref-item clickable" data-type="parameter" data-insert="volume mute" title="Silent">volume mute</span>
         </div>
       </div>
-      
+
       <div class="ref-panel" id="modes-panel">
         <div class="ref-grid">
           <span class="ref-item clickable" data-type="mode" data-insert="discount mode on" title="Detunes everything slightly">discount on</span>
@@ -165,138 +227,74 @@
           <span class="ref-item clickable" data-type="special" data-insert="spoil all" title="Instantly spoil all products">spoil all</span>
           <span class="ref-item clickable" data-type="special" data-insert="it's closing time" title="Speed up tempo">closing time</span>
           <span class="ref-item clickable" data-type="special" data-insert="it's opening time" title="Slow down tempo">opening time</span>
-          <span class="ref-item clickable" data-type="special" data-insert="beer + chips" title="Friday Night party mode combo" style="color: #ffaa00;">combo: party</span>
-          <span class="ref-item clickable" data-type="special" data-insert="milk + cereal" title="Morning routine combo" style="color: #ffaa00;">combo: morning</span>
-          <span class="ref-item clickable" data-type="special" data-insert="wine + cheese" title="Sophisticated jazz combo" style="color: #ffaa00;">combo: jazz</span>
-          <span class="ref-item clickable" data-type="special" data-insert="bread + ham" title="Lunch break combo" style="color: #ffaa00;">combo: lunch</span>
-          <span class="ref-item clickable" data-type="special" data-insert="energy_drink + candy" title="Sugar rush combo" style="color: #ffaa00;">combo: sugar</span>
-          <span class="ref-item clickable" data-type="special" data-insert="oil + salad" title="Health conscious combo" style="color: #ffaa00;">combo: zen</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add beer&#10;[1] add chips" title="Friday Night party mode - add both for auto combo">combo: party</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add milk&#10;[1] add cereal" title="Morning routine - add both for auto combo">combo: morning</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add wine&#10;[1] add cheese" title="Sophisticated jazz - add both for auto combo">combo: jazz</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add bread&#10;[1] add ham" title="Lunch break - add both for auto combo">combo: lunch</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add energy_drink&#10;[1] add candy" title="Sugar rush - add both for auto combo">combo: sugar</span>
+          <span class="ref-item clickable" data-type="special" data-insert="[0] add oil&#10;[1] add salad" title="Health conscious - add both for auto combo">combo: zen</span>
         </div>
       </div>
       
       <div class="ref-panel" id="theft-panel">
         <div class="ref-grid">
-          <span class="ref-item clickable" data-type="theft" data-insert="shoplift beer" title="Attempt to steal beer" style="color: #ff6666;">shoplift beer</span>
-          <span class="ref-item clickable" data-type="theft" data-insert="steal chips" title="Try to steal chips" style="color: #ff6666;">steal chips</span>
-          <span class="ref-item clickable" data-type="theft" data-insert="pocket candy" title="Pocket some candy" style="color: #ff6666;">pocket candy</span>
-          <span class="ref-item clickable" data-type="theft" data-insert="five finger discount wine" title="The classic theft" style="color: #ff6666;">5 finger wine</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="shoplift beer" title="Attempt to steal beer">shoplift beer</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="steal chips" title="Try to steal chips">steal chips</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="pocket candy" title="Pocket some candy">pocket candy</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="five finger discount wine" title="The classic theft">5 finger wine</span>
           <span class="ref-item clickable" data-type="theft" data-insert="security level low" title="Easy mode - 30% security">security low</span>
           <span class="ref-item clickable" data-type="theft" data-insert="security level medium" title="Normal security - 50%">security medium</span>
           <span class="ref-item clickable" data-type="theft" data-insert="security level high" title="Tough security - 70%">security high</span>
           <span class="ref-item clickable" data-type="theft" data-insert="security level paranoid" title="Maximum security - 95%">security paranoid</span>
-          <span class="ref-item clickable" data-type="theft" data-insert="security chase on" title="Activate pursuit mode" style="color: #ff0000;">chase mode</span>
+          <span class="ref-item clickable" data-type="theft" data-insert="security chase on" title="Activate pursuit mode">chase mode</span>
           <span class="ref-item clickable" data-type="theft" data-insert="security chase off" title="End the chase">chase off</span>
           <span class="ref-item clickable" data-type="theft" data-insert="shoplifting stats" title="View theft statistics">theft stats</span>
         </div>
       </div>
       
-      <div class="ref-panel" id="settings-panel">
-        <div class="settings-content">
-          <h3 style="color: #ffaa00; margin-top: 0;">Audio Performance Settings</h3>
-          
-          <div class="settings-section">
-            <h4 style="color: #888;">Performance Presets</h4>
-            <div class="preset-buttons">
-              <button class="preset-btn" data-preset="quality" title="Maximum audio quality, requires powerful system">
-                🎵 Quality
-                <span class="preset-desc">Best sound, high CPU</span>
-              </button>
-              <button class="preset-btn active" data-preset="balanced" title="Good balance of quality and performance">
-                ⚖️ Balanced
-                <span class="preset-desc">Recommended</span>
-              </button>
-              <button class="preset-btn" data-preset="performance" title="Optimized for stability on slower systems">
-                🚀 Performance
-                <span class="preset-desc">Low CPU, stable</span>
-              </button>
-              <button class="preset-btn" data-preset="custom" title="Configure your own settings">
-                ⚙️ Custom
-                <span class="preset-desc">Manual control</span>
-              </button>
-            </div>
-          </div>
-          
-          <div class="settings-section custom-settings" style="display: none;">
-            <h4 style="color: #888;">Custom Settings</h4>
-            
-            <div class="setting-row">
-              <label>Max Voices (Polyphony)</label>
-              <input type="range" id="setting-polyphony" min="4" max="24" value="12" step="1">
-              <span class="setting-value" id="polyphony-value">12</span>
-            </div>
-            
-            <div class="setting-row">
-              <label>Audio Latency</label>
-              <select id="setting-latency">
-                <option value="interactive">Interactive (low latency)</option>
-                <option value="balanced">Balanced</option>
-                <option value="playback" selected>Playback (stable)</option>
-              </select>
-            </div>
-            
-            <div class="setting-row">
-              <label>Look Ahead (seconds)</label>
-              <input type="range" id="setting-lookahead" min="0.01" max="0.5" value="0.1" step="0.01">
-              <span class="setting-value" id="lookahead-value">0.10</span>
-            </div>
-            
-            <div class="setting-row">
-              <label>Update Interval (seconds)</label>
-              <input type="range" id="setting-update" min="0.01" max="0.2" value="0.05" step="0.01">
-              <span class="setting-value" id="update-value">0.05</span>
-            </div>
-            
-            <div class="setting-row">
-              <label>Effect Quality</label>
-              <select id="setting-effect-quality">
-                <option value="high">High (full quality)</option>
-                <option value="medium" selected>Medium (limited reverb)</option>
-                <option value="low">Low (simplified effects)</option>
-              </select>
-            </div>
-            
-            <div class="setting-row">
-              <label>Voice Stealing</label>
-              <input type="checkbox" id="setting-voice-stealing" checked>
-            </div>
-            
-            <div class="setting-row">
-              <label>Auto Quality Reduction</label>
-              <input type="checkbox" id="setting-auto-reduce" checked>
-            </div>
-            
-            <button class="apply-settings-btn" id="apply-custom-settings">Apply Custom Settings</button>
-          </div>
-          
-          <div class="settings-section">
-            <h4 style="color: #888;">Performance Status</h4>
-            <div class="performance-status">
-              <div class="status-row">
-                <span>Current Mode:</span>
-                <span id="current-mode" style="color: #ffaa00;">Balanced</span>
-              </div>
-              <div class="status-row">
-                <span>Active Voices:</span>
-                <span id="active-voices">0 / 12</span>
-              </div>
-              <div class="status-row">
-                <span>Audio Dropouts:</span>
-                <span id="dropout-count">0</span>
-              </div>
-              <div class="status-row">
-                <span>CPU Load:</span>
-                <span id="cpu-load">Low</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="settings-info">
-            <p style="color: #666; font-size: 11px; margin-top: 20px;">
-              💡 Tip: If you experience audio glitches, try Performance mode or reduce Max Voices in Custom settings.
-            </p>
-          </div>
+      <div class="ref-panel" id="breaks-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="break" data-insert="checkout line" title="Fade to silence in checkout queue">checkout line</span>
+          <span class="ref-item clickable" data-type="break" data-insert="lunch break" title="Drums stop, music softens">lunch break</span>
+          <span class="ref-item clickable" data-type="break" data-insert="lunch break off" title="Resume full energy">lunch break off</span>
+          <span class="ref-item clickable" data-type="break" data-insert="store closing" title="Everything fades away">store closing</span>
+          <span class="ref-item clickable" data-type="break" data-insert="cleanup time" title="Only muzak remains">cleanup time</span>
+          <span class="ref-item clickable" data-type="break" data-insert="intermission" title="Pause time briefly">intermission</span>
+          <span class="ref-item clickable" data-type="break" data-insert="pause shopping" title="Alternative: pause time">pause shopping</span>
+          <span class="ref-item clickable" data-type="break" data-insert="coffee break" title="Quick fade out/in">coffee break</span>
+          <span class="ref-item clickable" data-type="break" data-insert="smoke break" title="Step outside briefly">smoke break</span>
         </div>
       </div>
+      
+      <div class="ref-panel" id="transitions-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="transition" data-insert="conveyor belt" title="Products roll in sequence">conveyor belt</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="conveyor belt fast" title="Quick conveyor effect">conveyor fast</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="conveyor belt slow" title="Slow conveyor effect">conveyor slow</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="sliding doors" title="Stereo pan sweep">sliding doors</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="elevator music" title="Muffled distant sound">elevator music</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="muzak" title="Alternative: elevator music">muzak</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="smooth transition" title="Crossfade between groups">smooth transition</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="crossfade" title="Alternative: smooth transition">crossfade</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="fade to silence" title="Gradual fade to quiet">fade to silence</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="fade to soft" title="Fade to background level">fade to soft</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="fade to full" title="Fade to full volume">fade to full</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="morph to beer" title="Transform all to beer">morph to beer</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="morph to salad" title="Transform all to salad">morph to salad</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="morph to chips" title="Transform all to chips">morph to chips</span>
+          <span class="ref-item clickable" data-type="transition" data-insert="morph to coffee" title="Transform all to coffee">morph to coffee</span>
+        </div>
+      </div>
+
+      <div class="ref-panel" id="performance-panel">
+        <div class="ref-grid">
+          <span class="ref-item clickable" data-type="performance" data-insert="performance mode performance" title="Optimized for stability">performance mode</span>
+          <span class="ref-item clickable" data-type="performance" data-insert="performance mode quality" title="Maximum audio fidelity">quality mode</span>
+          <span class="ref-item clickable" data-type="performance" data-insert="performance mode balanced" title="Balance of quality and performance">balanced mode</span>
+          <span class="ref-item clickable" data-type="performance" data-insert="performance stats" title="Show voice count and dropouts">performance stats</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -305,109 +303,26 @@
     <!-- Left panel - Editor -->
     <div class="editor-panel">
       <div id="editor-container">
-        <textarea id="editor">// COMMAND SYNTAX:
-// add [modifier] product [parameter value]
-// remove product | remove all
-// mode_name mode on/off
-// my cart has [type] wheels
-
-// EXAMPLES - Try these one line at a time:
-
-// Basic products:
-add beer
-add salad
-add chips
-
-// With modifiers (place before product):
-add fresh salad
-add cheap beer
-add expensive wine
-add old industrial ham
-
-// With parameters (place after product):
-add beer nutriscore A
-add chips shelflife forever
-add milk open
-
-// With escalator arpeggiator (flexible order):
-add beer escalator up
-add chips escalator bounce fast
-add salad escalator slow zigzag
-
-// Combine everything:
-add fresh salad nutriscore A escalator up slow
-add cheap old beer shelflife today open
-
-// Cart rhythms:
-my cart has broken wheels
-my cart has square wheels
-my cart has heavy wheels
-my cart has turbo wheels
-my cart has golden wheels
-my cart has no wheels
-
-// Special modes:
-discount mode on
-inflation mode on
-black_friday mode on
-
-// Seasonal themes:
-season halloween
-season christmas
-season normal
-
-// Recording/Checkout:
-checkout
-finish checkout
-scan barcode 123456
-
-// Announcements:
-announcement cleanup
-announcement "Special offer today!"
-
-// Store Management:
-rush hour on
-rush hour off
-apply coupon BOGO
-apply coupon 50OFF
-decay on
-decay off
-preserve beer
-spoil all
-
-// Store Layout:
-store layout
-show layout
-view store
-map compose
-map compose on
-map compose off
-
-// Remove products:
-remove beer
-remove all
-my cart has defective wheels
-my cart has no wheels
-add beer
-add fresh salad
-add old ham
-add old beer nutriscore C shelflife month open
-add bargain cereal
-add luxury chocolate
-add mass-produced candy
-add addictive energy_drink
-discount mode on
-discount mode off
-inflation mode on
-inflation mode off
-consumerism mode on
-</textarea>
+        <div class="editor-tabs">
+          <button class="editor-tab active" data-tab="0">Intro</button>
+          <button class="editor-tab" data-tab="1">Tab 1</button>
+          <button class="editor-tab" data-tab="2">Tab 2</button>
+          <button class="editor-tab" data-tab="3">Tab 3</button>
+          <button class="editor-tab" data-tab="4">Tab 4</button>
+          <button class="editor-tab" data-tab="5">Tab 5</button>
+          <button class="editor-tab" data-tab="6">Tab 6</button>
+          <button class="editor-tab" data-tab="7">Tab 7</button>
+          <button class="editor-tab" data-tab="8">Tab 8</button>
+          <button class="editor-tab" data-tab="9">Tab 9</button>
+        </div>
+        <textarea id="editor"></textarea>
       </div>
 
       <div class="control-panel">
         <button id="run-all" class="control-button green">Run All</button>
         <button id="run-line" class="control-button blue">Run Current Line</button>
         <button id="stop" class="control-button red">Stop All</button>
+        <button id="clear-all" class="control-button orange">Clear Products</button>
         <button id="randomize" class="control-button yellow">🎲 Random Command</button>
       </div>
     </div>
@@ -417,13 +332,126 @@ consumerism mode on
       <div id="output-container">
         <div id="output">Abandoned supermarket awaiting your commands... The products are calling to you...<br><br>
 🆕 NEW: Type 'story mode' to start the guided experience!<br>
-Or dive right in with commands like 'add beer' or check the reference tabs above.</div>
+Or dive right in with commands like '[0] add beer' (slots 0-9) or check the reference tabs above.</div>
         <div id="wheel-pattern" style="display: none;"></div>
       </div>
 
       <div id="visualization-container">
-        <h2 class="section-title">Active Products</h2>
-        <div id="active-synths" class="synth-grid"></div>
+        <div class="viz-tabs">
+          <button class="viz-tab active" data-viz-tab="products">Active Products</button>
+          <button class="viz-tab" data-viz-tab="settings">Settings</button>
+        </div>
+        <div class="viz-panel active" id="viz-products-panel">
+          <div id="cart-wheels-visualizer" class="cart-visualizer" style="display: none;">
+            <div class="cart-icon">🛒</div>
+            <div class="cart-info">
+              <div class="cart-label">Cart Wheels</div>
+              <div class="cart-type" id="cart-wheel-type">none</div>
+            </div>
+            <div class="cart-animation">
+              <div class="wheel wheel-1"></div>
+              <div class="wheel wheel-2"></div>
+            </div>
+            <div class="cart-stop-hint">Click to stop</div>
+          </div>
+          <div id="active-synths" class="synth-grid"></div>
+        </div>
+        <div class="viz-panel" id="viz-settings-panel">
+          <div class="settings-content">
+            <div class="settings-section">
+              <h4>Auto Modes</h4>
+              <label class="toggle-row">
+                <span>Auto-detect combos (party mode, etc.)</span>
+                <input type="checkbox" id="auto-combos-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h4>Visual Feedback</h4>
+              <label class="toggle-row">
+                <span>Show popup messages</span>
+                <input type="checkbox" id="popup-messages-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-section">
+              <h4>Theme</h4>
+              <div class="theme-selector">
+                <button class="theme-btn active" data-theme="default" title="Default">
+                  <span class="theme-preview" style="background: linear-gradient(135deg, #80d8c0, #8fc98a);"></span>
+                  <span>Mint</span>
+                </button>
+                <button class="theme-btn" data-theme="sunset" title="Sunset">
+                  <span class="theme-preview" style="background: linear-gradient(135deg, #f0a890, #e8c878);"></span>
+                  <span>Sunset</span>
+                </button>
+                <button class="theme-btn" data-theme="ocean" title="Ocean">
+                  <span class="theme-preview" style="background: linear-gradient(135deg, #88c8e8, #80d8c0);"></span>
+                  <span>Ocean</span>
+                </button>
+                <button class="theme-btn" data-theme="lavender" title="Lavender">
+                  <span class="theme-preview" style="background: linear-gradient(135deg, #c4a8e0, #f0a890);"></span>
+                  <span>Lavender</span>
+                </button>
+                <button class="theme-btn" data-theme="mono" title="Mono">
+                  <span class="theme-preview" style="background: linear-gradient(135deg, #a8a098, #f0ebe5);"></span>
+                  <span>Mono</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Recording</h4>
+              <div class="record-buttons">
+                <button class="record-btn" id="record-audio-btn">
+                  <span class="record-icon">●</span> Record Audio
+                </button>
+                <button class="record-btn" id="record-video-btn">
+                  <span class="record-icon">●</span> Record Audio + Video
+                </button>
+              </div>
+              <div id="recording-status" class="recording-status"></div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Performance</h4>
+              <div class="preset-buttons">
+                <button class="preset-btn" data-preset="quality" title="Maximum audio quality">
+                  Quality
+                  <span class="preset-desc">Best sound</span>
+                </button>
+                <button class="preset-btn active" data-preset="balanced" title="Good balance">
+                  Balanced
+                  <span class="preset-desc">Recommended</span>
+                </button>
+                <button class="preset-btn" data-preset="performance" title="Optimized for stability">
+                  Performance
+                  <span class="preset-desc">Low CPU</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h4>Status</h4>
+              <div class="performance-status">
+                <div class="status-row">
+                  <span>Mode:</span>
+                  <span id="current-mode">Balanced</span>
+                </div>
+                <div class="status-row">
+                  <span>Voices:</span>
+                  <span id="active-voices">0 / 12</span>
+                </div>
+                <div class="status-row">
+                  <span>Dropouts:</span>
+                  <span id="dropout-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -459,7 +487,6 @@ Or dive right in with commands like 'add beer' or check the reference tabs above
   <div id="horror-elements"></div>
   <div id="neon-flicker"></div>
   <div class="noise-overlay"></div>
-  <div class="vignette-overlay"></div>
 
   <!-- Sound permissions overlay -->
   <div id="sound-permission" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px;">
@@ -527,6 +554,8 @@ Or dive right in with commands like 'add beer' or check the reference tabs above
   <script src="supermarketjs/command-parser.js"></script>
   <script src="supermarketjs/product-types.js"></script>
   <script src="supermarketjs/audio-engine.js"></script>
+  <script src="supermarketjs/processing-chain.js"></script>
+  <script src="supermarketjs/voice-manager.js"></script>
   <script src="supermarketjs/cart-wheels.js"></script>
   <script src="supermarketjs/product-manager.js"></script>
   <script src="supermarketjs/mode-manager.js"></script>
@@ -540,7 +569,9 @@ Or dive right in with commands like 'add beer' or check the reference tabs above
   <script src="supermarketjs/shoplifting-system.js"></script>
   <script src="supermarketjs/story-mode.js"></script>
   <script src="supermarketjs/settings-manager.js"></script>
-  
+  <script src="supermarketjs/autocomplete.js"></script>
+  <script src="supermarketjs/syntax-highlighter.js"></script>
+
   <!-- Audio debugging utility - optional, can be removed in production -->
   <script src="supermarketjs/audio-debug-utility.js"></script>
   

@@ -22,6 +22,9 @@ window.storeLayout = {
     interval: null
   },
   
+  // Storage key for persistence
+  storageKey: 'supermarket_store_layout',
+
   // UI elements
   container: null,
   canvas: null,
@@ -175,7 +178,12 @@ window.storeLayout = {
     
     // Start animation loop
     this.animate();
-    
+
+    // Save layout before page unload
+    window.addEventListener('beforeunload', () => {
+      this.saveLayout();
+    });
+
     // Mark as initialized
     console.log("Store layout initialized successfully");
     this.initialized = true;
@@ -216,10 +224,13 @@ window.storeLayout = {
   // Update product placements based on active products
   updateProductPlacements: function() {
     if (!window.state || !window.state.products) return;
-    
+
     const products = Object.values(window.state.products);
-    
-    // Find all shelf positions
+
+    // Load saved positions from localStorage
+    const savedPositions = this.loadLayout();
+
+    // Find all shelf positions (for products without saved positions)
     const shelfPositions = [];
     for (let y = 0; y < this.grid.height; y++) {
       for (let x = 0; x < this.grid.width; x++) {
@@ -228,7 +239,7 @@ window.storeLayout = {
         }
       }
     }
-    
+
     // Clear existing products from layout
     for (let y = 0; y < this.grid.height; y++) {
       for (let x = 0; x < this.grid.width; x++) {
@@ -238,19 +249,55 @@ window.storeLayout = {
         }
       }
     }
-    
-    // Place products on random shelves
-    products.forEach((product, index) => {
-      if (index < shelfPositions.length) {
-        const pos = shelfPositions[index];
-        this.layout[pos.y][pos.x] = {
-          type: 'product',
-          symbol: '🛒',
-          name: product.name,
-          id: product.id,
-          color: product.color,
-          visited: false
-        };
+
+    // Track which shelf positions are occupied
+    const occupiedPositions = new Set();
+
+    // First pass: place products with saved positions
+    products.forEach(product => {
+      const saved = savedPositions[product.id];
+      if (saved && this.layout[saved.y] && this.layout[saved.y][saved.x]) {
+        const cell = this.layout[saved.y][saved.x];
+        if (cell.type === 'shelf') {
+          this.layout[saved.y][saved.x] = {
+            type: 'product',
+            symbol: '🛒',
+            name: product.name,
+            id: product.id,
+            color: product.color,
+            visited: false
+          };
+          occupiedPositions.add(`${saved.x},${saved.y}`);
+        }
+      }
+    });
+
+    // Second pass: place products without saved positions on available shelves
+    let shelfIndex = 0;
+    products.forEach(product => {
+      const saved = savedPositions[product.id];
+      const alreadyPlaced = saved && occupiedPositions.has(`${saved.x},${saved.y}`);
+
+      if (!alreadyPlaced) {
+        // Find next available shelf
+        while (shelfIndex < shelfPositions.length) {
+          const pos = shelfPositions[shelfIndex];
+          const posKey = `${pos.x},${pos.y}`;
+          if (!occupiedPositions.has(posKey) && this.layout[pos.y][pos.x].type === 'shelf') {
+            this.layout[pos.y][pos.x] = {
+              type: 'product',
+              symbol: '🛒',
+              name: product.name,
+              id: product.id,
+              color: product.color,
+              visited: false
+            };
+            occupiedPositions.add(posKey);
+            shelfIndex++;
+            break;
+          }
+          shelfIndex++;
+        }
       }
     });
     
@@ -285,15 +332,15 @@ window.storeLayout = {
   // Toggle map compose mode
   toggleMapCompose: function() {
     this.mapComposing.enabled = !this.mapComposing.enabled;
-    
+
     const button = document.getElementById('toggle-map-compose');
     const statusText = document.getElementById('status-text');
-    
+
     if (this.mapComposing.enabled) {
       button.textContent = '🎵 MAP COMPOSE: ON';
       button.style.background = '#ff00ff';
       statusText.textContent = 'Map compose mode ACTIVE - Customer path creates sequence';
-      
+
       // Start composing
       this.startMapComposing();
       window.log('🗺️ Map Compose Mode ACTIVATED! Customer journey creates the music...');
@@ -301,10 +348,17 @@ window.storeLayout = {
       button.textContent = '🎵 MAP COMPOSE: OFF';
       button.style.background = '#00ff00';
       statusText.textContent = 'Map compose mode disabled';
-      
+
       // Stop composing
       this.stopMapComposing();
       window.log('🗺️ Map Compose Mode deactivated');
+    }
+
+    // Check story mode goals after toggling map compose
+    if (window.storyMode && window.storyMode.storyActive) {
+      setTimeout(() => {
+        window.storyMode.checkGoal();
+      }, 100);
     }
   },
   
@@ -362,6 +416,16 @@ window.storeLayout = {
     }
   },
   
+  // Convert grid distance to musical time in bars (quantized steps)
+  distanceToMusicalTime: function(distance) {
+    // Map Euclidean distance to beat subdivisions (returned as bars)
+    // Close products = faster rhythm, far products = longer pause
+    if (distance <= 2) return { notation: "8n", bars: 0.125 };   // Half beat
+    if (distance <= 4) return { notation: "4n", bars: 0.25 };    // 1 beat
+    if (distance <= 7) return { notation: "2n", bars: 0.5 };     // 2 beats
+    return { notation: "1m", bars: 1 };                          // Full bar
+  },
+
   // Update sequencer timing based on distances
   updateSequencerTiming: function() {
     if (this.mapComposing.interval) {
@@ -417,31 +481,39 @@ window.storeLayout = {
       console.log("Distances:", distances);
       console.log("Total distance:", totalDistance);
       
-      // Convert distances to time intervals
-      // Map each unit of distance to a musical subdivision
-      const baseTime = "16n"; // Base time unit
-      const timeMultiplier = 0.5; // Adjust this to make timing faster/slower
-      
+      // Convert distances to quantized musical time intervals
       // Create a Part with events at specific times
       let currentTime = 0;
       const events = [];
-      
+
       for (let i = 0; i < this.mapComposing.sequence.length; i++) {
         const product = this.mapComposing.sequence[i];
-        const timeInterval = distances[i] * timeMultiplier; // Convert distance to bars
-        
+        const distance = distances[i];
+        const timing = this.distanceToMusicalTime(distance);
+
+        // Convert bars to bars:beats:sixteenths format for Tone.js
+        const bars = Math.floor(currentTime);
+        const beats = Math.floor((currentTime - bars) * 4);
+        const sixteenths = Math.floor(((currentTime - bars) * 4 - beats) * 4);
+        const timeStr = `${bars}:${beats}:${sixteenths}`;
+
         events.push({
-          time: currentTime,
+          time: timeStr,
           product: product,
           index: i,
-          distance: distances[i]
+          distance: distance,
+          musicalTime: timing.notation
         });
-        
-        currentTime += timeInterval;
+
+        // Add time in bars
+        currentTime += timing.bars;
       }
-      
-      // Store total loop time
-      this.mapComposing.loopDuration = currentTime + (distances[distances.length - 1] * timeMultiplier);
+
+      // Store total loop time (include return trip to entrance)
+      const returnDistance = distances[distances.length - 1];
+      const returnTiming = this.distanceToMusicalTime(returnDistance);
+      const totalBars = currentTime + returnTiming.bars;
+      this.mapComposing.loopDuration = totalBars;
       
       // Create a Part that plays the events
       this.mapComposing.loop = new Tone.Part((time, event) => {
@@ -463,19 +535,30 @@ window.storeLayout = {
             setTimeout(() => {
               event.product.visited = false;
             }, 500);
-            
+
             // Update current step
             this.mapComposing.currentStep = event.index;
-            
-            // Log with distance info
-            window.log(`🎵 Playing ${realProduct.name} (${event.index + 1}/${this.mapComposing.sequence.length}) - distance: ${event.distance.toFixed(1)}`);
+
+            // Sync customer position to current product
+            if (this.customers[0]) {
+              this.customers[0].targetX = event.product.x;
+              this.customers[0].targetY = event.product.y;
+              this.customers[0].targetIndex = event.index;
+            }
+
+            // Log with musical timing info
+            window.log(`🎵 Playing ${realProduct.name} (${event.index + 1}/${this.mapComposing.sequence.length}) [${event.musicalTime}]`);
           }, time);
         }
       }, events);
       
-      // Set loop and start
+      // Set loop and start - convert bars to bars:beats:sixteenths
+      const loopBars = Math.floor(this.mapComposing.loopDuration);
+      const loopBeats = Math.floor((this.mapComposing.loopDuration - loopBars) * 4);
+      const loopSixteenths = Math.floor(((this.mapComposing.loopDuration - loopBars) * 4 - loopBeats) * 4);
+
       this.mapComposing.loop.loop = true;
-      this.mapComposing.loop.loopEnd = this.mapComposing.loopDuration;
+      this.mapComposing.loop.loopEnd = `${loopBars}:${loopBeats}:${loopSixteenths}`;
       this.mapComposing.loop.start(0);
       
       console.log(`Map compose loop started - total duration: ${this.mapComposing.loopDuration.toFixed(2)} bars`);
@@ -727,11 +810,14 @@ window.storeLayout = {
       if (cell && cell.type === 'shelf') {
         this.layout[gridY][gridX] = this.dragState.draggedProduct;
         window.log(`📍 Moved ${this.dragState.draggedProduct.name} to shelf ${gridY + 1}-${gridX + 1}`);
-        
+
         // Update sequence if in compose mode
         if (this.mapComposing.enabled) {
           this.updateComposingSequence();
         }
+
+        // Save layout after drag
+        this.saveLayout();
       } else {
         // Find nearest shelf
         this.placeProductOnNearestShelf(this.dragState.draggedProduct, gridX, gridY);
@@ -794,6 +880,8 @@ window.storeLayout = {
       if (this.mapComposing.enabled) {
         this.updateComposingSequence();
       }
+      // Save layout after placement
+      this.saveLayout();
     }
   },
   
@@ -1026,11 +1114,24 @@ window.storeLayout = {
       console.log("Store layout not initialized, initializing now...");
       this.init();
     }
-    
+
     if (this.container) {
       this.container.style.display = 'block';
       this.updateProductPlacements();
       this.animate();
+
+      // Track for story mode
+      if (window.storyMode && window.storyMode.tracking) {
+        window.storyMode.tracking.storeLayoutOpened = true;
+      }
+
+      // Check story mode goals after opening layout
+      if (window.storyMode && window.storyMode.storyActive) {
+        setTimeout(() => {
+          window.storyMode.checkGoal();
+        }, 100);
+      }
+
       window.log('🏪 Store Layout Visualizer opened - Click products to preview, drag to rearrange!');
     } else {
       window.log('❌ Failed to show store layout - initialization error');
@@ -1040,13 +1141,47 @@ window.storeLayout = {
   // Hide the layout visualizer
   hide: function() {
     this.container.style.display = 'none';
-    
+
     // Stop map composing if active
     if (this.mapComposing.enabled) {
       this.toggleMapCompose();
     }
-    
+
     window.log('🏪 Store Layout Visualizer closed');
+  },
+
+  // Save layout positions to localStorage
+  saveLayout: function() {
+    const positions = {};
+    for (let y = 0; y < this.grid.height; y++) {
+      for (let x = 0; x < this.grid.width; x++) {
+        const cell = this.layout[y][x];
+        if (cell && cell.type === 'product') {
+          positions[cell.id] = { x, y };
+        }
+      }
+    }
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify({ positions }));
+      console.log('Store layout saved:', Object.keys(positions).length, 'products');
+    } catch (e) {
+      console.warn('Failed to save store layout:', e);
+    }
+  },
+
+  // Load layout positions from localStorage
+  loadLayout: function() {
+    try {
+      const saved = localStorage.getItem(this.storageKey);
+      if (saved) {
+        const data = JSON.parse(saved);
+        console.log('Store layout loaded:', Object.keys(data.positions || {}).length, 'positions');
+        return data.positions || {};
+      }
+    } catch (e) {
+      console.warn('Failed to load store layout:', e);
+    }
+    return {};
   }
 };
 

@@ -3,7 +3,7 @@
 window.performanceManager = {
   // Configuration
   config: {
-    maxPolyphony: 12, // Maximum simultaneous voices
+    maxPolyphony: 8, // Maximum simultaneous voices (reduced for performance)
     maxEffectsPerType: 8, // Maximum effects per type in pool
     synthPoolSize: 16, // Pre-allocated synth pool size
     voiceStealingEnabled: true,
@@ -21,11 +21,11 @@ window.performanceManager = {
         limitReverb: false
       },
       balanced: {
-        maxPolyphony: 12,
+        maxPolyphony: 8,
         effectQuality: 'medium',
         lookAhead: 0.1,
         updateInterval: 0.05,
-        simplifyEffects: false,
+        simplifyEffects: true,
         limitReverb: true
       },
       performance: {

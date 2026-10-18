@@ -67,43 +67,71 @@ class PitchDetector {
 
     // Apply Hann window to reduce spectral leakage
     applyHannWindow(buffer) {
-        const length = buffer.length;
-        for (let i = 0; i < length; i++) {
-            const window = 0.5 * (1 - Math.cos(2 * Math.PI * i / (length - 1)));
-            buffer[i] *= window;
-        }
+        AudioUtils.applyHannWindow(buffer);
     }
 
     // Find the peak that most likely corresponds to the fundamental frequency
     findFundamentalPeak(correlations, sampleRate) {
-        const minFreq = 50;  // Minimum frequency to consider (Hz)
-        const maxFreq = 1000; // Maximum frequency to consider (Hz)
-        
+        const minFreq = 50;
+        const maxFreq = 1000;
+
         const minLag = Math.ceil(sampleRate / maxFreq);
         const maxLag = Math.floor(sampleRate / minFreq);
-        
-        let bestIndex = 0;
-        let bestValue = 0;
-        let confidence = 0;
-        
-        // Find the highest peak within the frequency range
-        for (let i = minLag; i < Math.min(maxLag, correlations.length); i++) {
-            if (correlations[i] > bestValue) {
-                bestValue = correlations[i];
-                bestIndex = i;
+
+        // Find the first significant peak after the initial dip
+        // This is more reliable for finding the fundamental frequency
+        let firstPeakIndex = 0;
+        let firstPeakValue = 0;
+        let inDip = false;
+        const threshold = correlations[0] * 0.5;
+
+        // First, find where the correlation dips below threshold
+        for (let i = 1; i < minLag; i++) {
+            if (correlations[i] < threshold) {
+                inDip = true;
+                break;
             }
         }
-        
-        // Calculate confidence based on peak prominence
-        if (bestIndex > 0 && correlations.length > bestIndex) {
-            const localMax = Math.max(...correlations.slice(Math.max(0, bestIndex - 5), bestIndex + 6));
-            const localAvg = correlations.slice(minLag, maxLag).reduce((a, b) => a + b, 0) / (maxLag - minLag);
-            confidence = Math.min(1, (bestValue - localAvg) / Math.max(localAvg, 0.001));
+
+        // Now find the first significant peak after the dip
+        if (inDip) {
+            for (let i = minLag; i < Math.min(maxLag, correlations.length - 1); i++) {
+                // Check if this is a local maximum
+                if (correlations[i] > correlations[i-1] && correlations[i] > correlations[i+1]) {
+                    if (correlations[i] > firstPeakValue) {
+                        // Prefer the first peak that's reasonably high
+                        if (firstPeakIndex === 0 || correlations[i] > correlations[0] * 0.3) {
+                            firstPeakValue = correlations[i];
+                            firstPeakIndex = i;
+                            // Don't break - continue to find better peaks, but give preference to earlier ones
+                            if (correlations[i] > correlations[0] * 0.5) {
+                                break; // Found a good peak, use it
+                            }
+                        }
+                    }
+                }
+            }
         }
-        
+
+        // Fallback: find highest peak if no clear first peak was found
+        if (firstPeakIndex === 0) {
+            for (let i = minLag; i < Math.min(maxLag, correlations.length); i++) {
+                if (correlations[i] > firstPeakValue) {
+                    firstPeakValue = correlations[i];
+                    firstPeakIndex = i;
+                }
+            }
+        }
+
+        // Calculate confidence based on peak prominence relative to initial correlation
+        let confidence = 0;
+        if (firstPeakIndex > 0 && correlations[0] > 0) {
+            confidence = firstPeakValue / correlations[0];
+        }
+
         return {
-            index: bestIndex,
-            value: bestValue,
+            index: firstPeakIndex,
+            value: firstPeakValue,
             confidence: Math.max(0, Math.min(1, confidence))
         };
     }
@@ -201,7 +229,7 @@ class PitchDetector {
         
         const { note, octave, cents, frequency, confidence } = pitchResult;
         
-        if (confidence < 0.3) {
+        if (confidence < 0.2) {
             return '--';
         }
         
@@ -228,7 +256,7 @@ class PitchDetector {
             const segmentStart = startTime + (i * segmentDuration);
             const pitch = this.detectSegmentPitch(audioData, sampleRate, segmentStart, segmentDuration);
             
-            if (pitch.confidence > 0.3) {
+            if (pitch.confidence > 0.2) {
                 pitchResults.push(pitch);
             }
         }
@@ -273,7 +301,7 @@ class PitchDetector {
         this.noteNames.forEach(note => noteCounts[note] = 0);
         
         pitchResults.forEach(pitch => {
-            if (pitch.note !== '--' && pitch.confidence > 0.3) {
+            if (pitch.note !== '--' && pitch.confidence > 0.2) {
                 noteCounts[pitch.note] += pitch.confidence;
             }
         });

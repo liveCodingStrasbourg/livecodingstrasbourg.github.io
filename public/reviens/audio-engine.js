@@ -81,40 +81,32 @@ class AudioEngine {
 
     async playLoop(startTime, duration, crossfadeMs = 20, crossfadeType = 'cosine', clickReduction = false) {
         this.stopPlayback();
-        
+
         if (!this.audioBuffer) {
             throw new Error('No audio loaded');
         }
 
         this.isPlaying = true;
 
-        const playNext = async () => {
-            if (!this.isPlaying) return;
+        // Pre-create the loop buffer once for efficiency
+        const loopBuffer = await this.createSeamlessLoop(startTime, duration, crossfadeMs, crossfadeType, clickReduction);
 
-            try {
-                // Create seamless loop with enhanced crossfade
-                const loopBuffer = await this.createSeamlessLoop(startTime, duration, crossfadeMs, crossfadeType, clickReduction);
-                
-                this.source = this.audioContext.createBufferSource();
-                this.source.buffer = loopBuffer;
-                this.source.connect(this.audioContext.destination);
-                
-                this.source.onended = () => {
-                    if (this.isPlaying) {
-                        // Small delay to prevent audio artifacts
-                        this.loopTimeout = setTimeout(playNext, 1);
-                    }
-                };
-                
-                this.source.start(0);
-                
-            } catch (error) {
-                console.error('Loop playback error:', error);
-                this.isPlaying = false;
-            }
-        };
+        try {
+            this.source = this.audioContext.createBufferSource();
+            this.source.buffer = loopBuffer;
 
-        await playNext();
+            // Use Web Audio's native looping for seamless playback
+            this.source.loop = true;
+            this.source.loopStart = 0;
+            this.source.loopEnd = loopBuffer.duration;
+
+            this.source.connect(this.audioContext.destination);
+            this.source.start(0);
+        } catch (error) {
+            console.error('Loop playback error:', error);
+            this.isPlaying = false;
+        }
+        // Loop runs indefinitely until stopPlayback is called
     }
 
     async createSeamlessLoop(startTime, duration, crossfadeMs = 20, crossfadeType = 'cosine', clickReduction = false) {
@@ -122,12 +114,12 @@ class AudioEngine {
         const startSample = Math.floor(startTime * sampleRate);
         const durationSamples = Math.floor(duration * sampleRate);
         const crossfadeSamples = Math.floor((crossfadeMs / 1000) * sampleRate);
-        
+
         // Ensure crossfade doesn't exceed 25% of loop duration
         const maxCrossfade = Math.floor(durationSamples / 4);
         const actualCrossfade = Math.min(crossfadeSamples, maxCrossfade);
-        
-        // Create new buffer for the seamless loop
+
+        // Create buffer - we keep the same duration but apply crossfade internally
         const loopBuffer = this.audioContext.createBuffer(
             this.audioBuffer.numberOfChannels,
             durationSamples,
@@ -137,96 +129,114 @@ class AudioEngine {
         for (let channel = 0; channel < this.audioBuffer.numberOfChannels; channel++) {
             const inputData = this.audioBuffer.getChannelData(channel);
             const outputData = loopBuffer.getChannelData(channel);
-            
+
             // Copy main audio data
             for (let i = 0; i < durationSamples; i++) {
                 const sourceIndex = startSample + i;
                 outputData[i] = sourceIndex < inputData.length ? inputData[sourceIndex] : 0;
             }
-            
-            // Apply enhanced crossfade for seamless looping
+
+            // Apply seamless loop crossfade
             if (actualCrossfade > 0) {
-                this.applyEnhancedCrossfade(outputData, actualCrossfade, crossfadeType, clickReduction, sampleRate);
+                this.applySeamlessLoopCrossfade(outputData, actualCrossfade, clickReduction, sampleRate);
             }
         }
 
         return loopBuffer;
     }
 
+    applySeamlessLoopCrossfade(audioData, crossfadeSamples, clickReduction = false, sampleRate = 44100) {
+        const length = audioData.length;
+
+        if (crossfadeSamples * 2 >= length) {
+            return;
+        }
+
+        if (clickReduction) {
+            AudioUtils.applyClickReduction(audioData, crossfadeSamples, sampleRate);
+        }
+
+        // For seamless looping with Web Audio's loop=true:
+        // When playback reaches buffer[length-1], it jumps to buffer[0]
+        // We need the END to blend smoothly into the START
+        //
+        // IMPORTANT: Keep the START unchanged so the loop feels correctly timed.
+        // Only modify the END region to crossfade into the start content.
+
+        // Copy the start region (these samples won't be modified)
+        const startCopy = new Float32Array(crossfadeSamples);
+        for (let i = 0; i < crossfadeSamples; i++) {
+            startCopy[i] = audioData[i];
+        }
+
+        // Apply crossfade ONLY to the END region
+        // Fade out the original end while fading in the start content
+        for (let i = 0; i < crossfadeSamples; i++) {
+            const progress = i / crossfadeSamples;
+
+            // Equal-power crossfade curves
+            const fadeIn = Math.sin(progress * Math.PI / 2);
+            const fadeOut = Math.cos(progress * Math.PI / 2);
+
+            const endIndex = length - crossfadeSamples + i;
+            const originalEnd = audioData[endIndex];
+
+            // Blend: fade FROM original end content TO start content
+            // At i=0: mostly originalEnd, at i=crossfadeSamples-1: mostly start
+            audioData[endIndex] = originalEnd * fadeOut + startCopy[i] * fadeIn;
+        }
+
+        // Now: the END smoothly transitions into the START
+        // The START remains unmodified, so the loop feels correctly timed
+    }
+
     applyEnhancedCrossfade(audioData, crossfadeSamples, crossfadeType = 'cosine', clickReduction = false, sampleRate = 44100) {
         const length = audioData.length;
-        
+
         if (crossfadeSamples * 2 >= length) {
-            return; // Skip if crossfade is too long
+            return;
         }
 
-        // Apply click reduction if enabled
         if (clickReduction) {
-            this.applyClickReduction(audioData, crossfadeSamples, sampleRate);
+            AudioUtils.applyClickReduction(audioData, crossfadeSamples, sampleRate);
         }
 
-        // Crossfade beginning with end using specified curve
+        // For seamless looping with Web Audio's loop=true:
+        // We need the END of the buffer to transition smoothly INTO the START
+        // At the loop point: buffer[length-1] -> buffer[0] should be continuous
+        //
+        // Strategy: The crossfade zone at the END fades out the original end
+        // while fading IN a copy of samples from the START of the buffer.
+        // Critically: the LAST sample of the crossfade should be close to buffer[0]
+
+        // Copy the first crossfadeSamples from the start (these won't be modified)
+        const startCopy = new Float32Array(crossfadeSamples);
         for (let i = 0; i < crossfadeSamples; i++) {
-            const fadeRatio = this.calculateFadeRatio(i, crossfadeSamples, crossfadeType);
-            const endIndex = length - crossfadeSamples + i;
-            
-            const startSample = audioData[i];
-            const endSample = audioData[endIndex];
-            
-            // Blend start with end using the calculated fade ratio
-            audioData[i] = startSample * fadeRatio + endSample * (1 - fadeRatio);
+            startCopy[i] = audioData[i];
         }
-        
-        // Fade out the end section to prevent doubling
+
+        // Apply crossfade to the END region only
         for (let i = 0; i < crossfadeSamples; i++) {
-            const fadeRatio = this.calculateFadeRatio(crossfadeSamples - i - 1, crossfadeSamples, crossfadeType);
+            const progress = i / crossfadeSamples;
+
+            // Equal-power crossfade curves
+            const fadeOut = Math.cos(progress * Math.PI / 2);
+            const fadeIn = Math.sin(progress * Math.PI / 2);
+
             const endIndex = length - crossfadeSamples + i;
-            audioData[endIndex] *= fadeRatio;
-        }
-    }
+            const originalEnd = audioData[endIndex];
 
-    calculateFadeRatio(sampleIndex, totalSamples, crossfadeType) {
-        const progress = sampleIndex / totalSamples;
-        
-        switch (crossfadeType) {
-            case 'linear':
-                return progress;
-                
-            case 'cosine':
-                return 0.5 * (1 - Math.cos(Math.PI * progress));
-                
-            case 'logarithmic':
-                return Math.log(1 + progress * (Math.E - 1)) / Math.E;
-                
-            case 'exponential':
-                return (Math.exp(progress) - 1) / (Math.E - 1);
-                
-            default:
-                return 0.5 * (1 - Math.cos(Math.PI * progress)); // Default to cosine
-        }
-    }
+            // Key fix: map the start samples in REVERSE order so that
+            // at the end of crossfade (i=crossfadeSamples-1), we fade into startCopy[0]
+            // This makes buffer[length-1] ≈ buffer[0]
+            const startIndex = crossfadeSamples - 1 - i;
 
-    applyClickReduction(audioData, crossfadeSamples, sampleRate) {
-        // Apply high-frequency filtering to reduce clicks and pops
-        const cutoffFreq = 8000; // 8kHz cutoff
-        const nyquist = sampleRate / 2;
-        const normalizedCutoff = cutoffFreq / nyquist;
-        
-        // Simple first-order low-pass filter
-        const alpha = Math.exp(-2 * Math.PI * normalizedCutoff);
-        
-        // Apply filter to crossfade regions
-        this.applyLowPassFilter(audioData, 0, crossfadeSamples, alpha);
-        this.applyLowPassFilter(audioData, audioData.length - crossfadeSamples, crossfadeSamples, alpha);
-    }
-
-    applyLowPassFilter(audioData, startIndex, length, alpha) {
-        let previousSample = audioData[startIndex];
-        
-        for (let i = startIndex + 1; i < startIndex + length; i++) {
-            audioData[i] = alpha * previousSample + (1 - alpha) * audioData[i];
-            previousSample = audioData[i];
+            audioData[endIndex] = originalEnd * fadeOut + startCopy[startIndex] * fadeIn;
         }
+
+        // Now: audioData[length-1] = originalEnd[last]*0 + startCopy[0]*1 = startCopy[0]
+        // And: audioData[0] = startCopy[0] (unchanged)
+        // So the loop point is continuous!
     }
 
     stopPlayback() {
@@ -274,32 +284,13 @@ class AudioEngine {
         return this.audioData.slice(startSample, Math.min(endSample, this.audioData.length));
     }
 
-    // Calculate RMS energy of audio segment
+    // Calculate RMS energy of audio segment (delegates to shared utility)
     calculateRMS(audioSegment) {
-        if (!audioSegment || audioSegment.length === 0) return 0;
-        
-        let sum = 0;
-        for (let i = 0; i < audioSegment.length; i++) {
-            sum += audioSegment[i] * audioSegment[i];
-        }
-        
-        return Math.sqrt(sum / audioSegment.length);
+        return AudioUtils.calculateRMS(audioSegment);
     }
 
-    // Calculate spectral centroid (brightness measure)
+    // Calculate spectral centroid (delegates to shared utility)
     calculateSpectralCentroid(audioSegment) {
-        if (!audioSegment || audioSegment.length === 0) return 0;
-        
-        // Simple approximation using high-frequency content
-        let totalEnergy = 0;
-        let weightedSum = 0;
-        
-        for (let i = 0; i < audioSegment.length; i++) {
-            const energy = audioSegment[i] * audioSegment[i];
-            totalEnergy += energy;
-            weightedSum += energy * i;
-        }
-        
-        return totalEnergy > 0 ? weightedSum / totalEnergy : 0;
+        return AudioUtils.calculateSpectralCentroid(audioSegment);
     }
 }

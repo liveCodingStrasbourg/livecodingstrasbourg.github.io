@@ -189,83 +189,46 @@ class ExportManager {
 
     applyEnhancedCrossfadeToBuffer(audioData, crossfadeSamples, crossfadeType = 'cosine', clickReduction = false, sampleRate = 44100) {
         const length = audioData.length;
-        
-        // Ensure crossfade doesn't exceed 25% of total length
+
         const maxCrossfade = Math.floor(length / 4);
         const actualCrossfade = Math.min(crossfadeSamples, maxCrossfade);
-        
+
         if (actualCrossfade <= 0 || actualCrossfade * 2 >= length) {
-            return; // Skip crossfade if not feasible
+            return;
         }
 
-        // Apply click reduction if enabled
         if (clickReduction) {
-            this.applyClickReduction(audioData, actualCrossfade, sampleRate);
+            AudioUtils.applyClickReduction(audioData, actualCrossfade, sampleRate);
         }
 
-        // Apply crossfade using specified curve
+        // For seamless looping: make start and end regions IDENTICAL
+        // by crossfading both with the same blend of start+end content
+
+        // Store copies before modification
+        const startRegion = new Float32Array(actualCrossfade);
+        const endRegion = new Float32Array(actualCrossfade);
         for (let i = 0; i < actualCrossfade; i++) {
-            const fadeRatio = this.calculateFadeRatio(i, actualCrossfade, crossfadeType);
-            
-            const startIndex = i;
-            const endIndex = length - actualCrossfade + i;
-            
-            const startSample = audioData[startIndex];
-            const endSample = audioData[endIndex];
-            
-            // Crossfade: blend end into start
-            audioData[startIndex] = startSample * fadeRatio + endSample * (1 - fadeRatio);
-            
-            // Fade out the end to prevent doubling
-            audioData[endIndex] *= (1 - fadeRatio);
+            startRegion[i] = audioData[i];
+            endRegion[i] = audioData[length - actualCrossfade + i];
         }
-    }
 
-    // Enhanced Export Manager - Part 2: Audio Processing & Utils
-// Continue from Part 1...
+        // Apply identical crossfade to BOTH start and end regions
+        for (let i = 0; i < actualCrossfade; i++) {
+            const progress = i / actualCrossfade;
 
-    calculateFadeRatio(sampleIndex, totalSamples, crossfadeType) {
-        const progress = sampleIndex / totalSamples;
-        
-        switch (crossfadeType) {
-            case 'linear':
-                return progress;
-                
-            case 'cosine':
-                return 0.5 * (1 - Math.cos(Math.PI * progress));
-                
-            case 'logarithmic':
-                return Math.log(1 + progress * (Math.E - 1)) / Math.E;
-                
-            case 'exponential':
-                return (Math.exp(progress) - 1) / (Math.E - 1);
-                
-            default:
-                return 0.5 * (1 - Math.cos(Math.PI * progress)); // Default to cosine
+            // Equal-power curves
+            const fadeIn = Math.sin(progress * Math.PI / 2);
+            const fadeOut = Math.cos(progress * Math.PI / 2);
+
+            // Blend end content into start content
+            const blended = endRegion[i] * fadeOut + startRegion[i] * fadeIn;
+
+            // Apply to both regions - they become identical
+            audioData[i] = blended;
+            audioData[length - actualCrossfade + i] = blended;
         }
-    }
 
-    applyClickReduction(audioData, crossfadeSamples, sampleRate) {
-        // Apply high-frequency filtering to reduce clicks and pops
-        const cutoffFreq = 8000; // 8kHz cutoff
-        const nyquist = sampleRate / 2;
-        const normalizedCutoff = cutoffFreq / nyquist;
-        
-        // Simple first-order low-pass filter
-        const alpha = Math.exp(-2 * Math.PI * normalizedCutoff);
-        
-        // Apply filter to crossfade regions
-        this.applyLowPassFilter(audioData, 0, crossfadeSamples, alpha);
-        this.applyLowPassFilter(audioData, audioData.length - crossfadeSamples, crossfadeSamples, alpha);
-    }
-
-    applyLowPassFilter(audioData, startIndex, length, alpha) {
-        let previousSample = audioData[startIndex];
-        
-        for (let i = startIndex + 1; i < startIndex + length; i++) {
-            audioData[i] = alpha * previousSample + (1 - alpha) * audioData[i];
-            previousSample = audioData[i];
-        }
+        // Now start and end regions are identical, making the loop seamless
     }
 
     async audioBufferToWav(audioBuffer) {

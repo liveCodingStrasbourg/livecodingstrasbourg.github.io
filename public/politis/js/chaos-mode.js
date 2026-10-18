@@ -8,6 +8,7 @@ const ChaosManager = {
     pending: false,
     timeout: null,
     randomVoiceTimeout: null,
+    cooldown: false,  // Empêche le re-déclenchement immédiat
     
     /**
      * Vérifie si le mode chaos doit être activé et l'initialise si nécessaire
@@ -16,22 +17,22 @@ const ChaosManager = {
      */
     checkAndInitialize(questionCount) {
       const { minQuestions, maxQuestions } = CONFIG.chaosMode;
-      
-      // Si déjà en mode chaos, ne rien faire
-      if (this.active) return true;
-      
+
+      // Si déjà en mode chaos ou en cooldown, ne rien faire
+      if (this.active || this.cooldown) return this.active;
+
       // Déterminer si on active le mode chaos
       if (questionCount >= minQuestions) {
         // Chance croissante d'activer le mode chaos à mesure qu'on approche du max
         const chanceOfChaos = (questionCount - minQuestions) / (maxQuestions - minQuestions);
-        
+
         if (questionCount >= maxQuestions || Math.random() < chanceOfChaos) {
           this.pending = true;
           this.activate();
           return true;
         }
       }
-      
+
       return false;
     },
     
@@ -80,16 +81,16 @@ const ChaosManager = {
      */
     scheduleRandomVoices() {
       if (!this.active) return;
-      
+
       // Choisir un politicien aléatoire pour hurler
       const randomIndex = Math.floor(Math.random() * CONFIG.politicians.length);
-      
-      // Mettre à jour l'interface et jouer le son
+
+      // Mettre à jour l'interface et jouer le son avec l'émotion 'chaos' (plus intense)
       UIManager.updatePoliticianState(randomIndex, 'screaming', true);
-      AudioManager.playSound(randomIndex, 'screaming', true);
-      
-      // Programmer le prochain hurlement
-      const delay = 300 + Math.random() * 1000; // Entre 300ms et 1300ms
+      AudioManager.playSound(randomIndex, 'chaos', true); // Utilise 'chaos' pour l'audio intense
+
+      // Programmer le prochain hurlement (plus rapide en chaos)
+      const delay = 150 + Math.random() * 400; // Entre 150ms et 550ms (plus rapide)
       this.randomVoiceTimeout = setTimeout(() => this.scheduleRandomVoices(), delay);
     },
     
@@ -118,26 +119,32 @@ const ChaosManager = {
     deactivate() {
       // Désactiver le mode chaos
       this.active = false;
-      
+
+      // Activer le cooldown pour empêcher le re-déclenchement immédiat
+      this.cooldown = true;
+
       // Nettoyer les timeouts
       if (this.timeout) {
         clearTimeout(this.timeout);
         this.timeout = null;
       }
-      
+
       if (this.randomVoiceTimeout) {
         clearTimeout(this.randomVoiceTimeout);
         this.randomVoiceTimeout = null;
       }
-      
+
       // Restaurer l'interface
       UIManager.setChaosMode(false);
-      
+
       // Réinitialiser tous les politiciens
       for (let i = 0; i < CONFIG.politicians.length; i++) {
         UIManager.updatePoliticianState(i, 'idle', false);
       }
-      
+
+      // Réinitialiser le compteur de questions pour éviter le re-déclenchement
+      AppState.questionCount = 0;
+
       // Réinitialiser les métriques
       AppState.setAudienceMetrics({
         outrage: 12,
@@ -145,13 +152,33 @@ const ChaosManager = {
         skepticism: 54,
         engagement: 23
       });
-      
+
       // Rétablir les barres de métriques
       UIManager.updateMetricBars(false);
-      
+
+      // Réinitialiser les barres dynamiques aussi
+      if (typeof BarManager !== 'undefined') {
+        BarManager.init();
+      }
+
       // Ajouter un message dans le terminal
       UIManager.addTerminalLine("Système redémarré...");
       UIManager.addTerminalLine("Retour à la normale.");
+
+      // Applaudissements de soulagement du public
+      setTimeout(() => {
+        AudioManager.playCrowdReaction('applause');
+      }, 500);
+
+      // Désactiver le cooldown après quelques questions
+      // Le cooldown se lève après 3 questions
+      const cooldownQuestions = 3;
+      const checkCooldown = setInterval(() => {
+        if (AppState.questionCount >= cooldownQuestions) {
+          this.cooldown = false;
+          clearInterval(checkCooldown);
+        }
+      }, 1000);
     },
     
     /**

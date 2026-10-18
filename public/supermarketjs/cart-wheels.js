@@ -394,7 +394,12 @@ window.cartWheels = {
     
     // Update state with the primary wheel type
     window.state.cart.wheels = type;
-    
+
+    // Track for story mode
+    if (window.storyMode && window.storyMode.tracking && type !== "none") {
+      window.storyMode.tracking.wheelTypesUsed.add(type);
+    }
+
     // Debug log
     console.log("Setting cart wheels to:", type, "with attributes:", attributes);
     
@@ -405,6 +410,10 @@ window.cartWheels = {
       const patternDiv = document.getElementById('wheel-pattern');
       if (patternDiv) {
         patternDiv.style.display = 'none';
+      }
+      // Update cart visualizer
+      if (window.updateCartVisualizer) {
+        window.updateCartVisualizer('none');
       }
       return;
     }
@@ -441,7 +450,12 @@ window.cartWheels = {
       
       // Generate the log message
       this.logWheelChange(type, attributes);
-      
+
+      // Update cart visualizer
+      if (window.updateCartVisualizer) {
+        window.updateCartVisualizer(type);
+      }
+
       // Start the transport if it's not already started and we have wheels
       if (Tone.Transport.state !== "started") {
         Tone.Transport.start();
@@ -471,22 +485,9 @@ window.cartWheels = {
     
     // Parse the input to extract wheel type and attributes
     const parts = inputStr.split(" ");
-    
-    // Find material attributes (currently none - all are wheel types)
-    // This is kept for future expansion if we want to add material modifiers
-    const materialTypes = [];
-    for (const material of materialTypes) {
-      if (parts.includes(material)) {
-        result.attributes.material = material;
-        // Remove this attribute from parts
-        const index = parts.indexOf(material);
-        if (index !== -1) {
-          parts.splice(index, 1);
-        }
-      }
-    }
-    
+
     // Find wheel type (square, broken, premium, etc.)
+    // Note: heavy, iron, steel are treated as wheel types that have their own patterns
     const wheelTypes = ["square", "broken", "premium", "defective", "bargain", "luxury", 
                        "heavy", "iron", "steel", "chrome", "turbo", "plastic", "wobbly", 
                        "squeaky", "rubber", "smooth", "rusty", "vintage", "stolen", "golden"];
@@ -1014,7 +1015,30 @@ window.cartWheels = {
     // Reset BPM to default
     Tone.Transport.bpm.value = CONFIG.audio.defaultBPM;
   },
-  
+
+  // Stop wheels without full cleanup (for breaks/pauses)
+  stopWheels: function() {
+    console.log("Stopping cart wheels...");
+
+    // Stop the sequencer
+    if (this.sequencer) {
+      this.sequencer.stop();
+    }
+
+    // Mute all drum sounds
+    if (this.kickSynth) {
+      this.kickSynth.volume.rampTo(-Infinity, 0.5);
+    }
+    if (this.snareSynth) {
+      this.snareSynth.volume.rampTo(-Infinity, 0.5);
+    }
+    if (this.hihatSynth) {
+      this.hihatSynth.volume.rampTo(-Infinity, 0.5);
+    }
+
+    window.log("🛒 Cart wheels stopped...");
+  },
+
   // Update cart wheel parameters based on active modes
   updateEffects: function() {
     try {

@@ -3,13 +3,27 @@ class LoopAnalyzer {
         this.audioEngine = audioEngine;
         this.beatPositions = [];
         this.detectedBPM = null;
-        
+
         // Performance optimization: caching
         this.analysisCache = new Map();
         this.onsetFeaturesCache = null;
         this.phrasesCache = null;
         this.lastAnalyzedAudio = null;
         this.isAnalyzing = false;
+
+        // Deep analysis state
+        this.deepAnalysisResults = null;
+        this.analysisAborted = false;
+    }
+
+    // Helper to yield to browser and check for abort
+    async yieldToBrowser() {
+        return new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    // Cancel any running deep analysis
+    abortDeepAnalysis() {
+        this.analysisAborted = true;
     }
 
     // Find perfect loop suggestions based on duration (optimized)
@@ -514,32 +528,15 @@ class LoopAnalyzer {
     }
 
     applyHannWindow(buffer) {
-        const length = buffer.length;
-        for (let i = 0; i < length; i++) {
-            const window = 0.5 * (1 - Math.cos(2 * Math.PI * i / (length - 1)));
-            buffer[i] *= window;
-        }
+        AudioUtils.applyHannWindow(buffer);
     }
 
     calculateRMSEnergy(window) {
-        let sum = 0;
-        for (let i = 0; i < window.length; i++) {
-            sum += window[i] * window[i];
-        }
-        return Math.sqrt(sum / window.length);
+        return AudioUtils.calculateRMS(window);
     }
 
     calculateSpectralCentroid(window) {
-        let totalEnergy = 0;
-        let weightedSum = 0;
-        
-        for (let i = 0; i < window.length; i++) {
-            const energy = window[i] * window[i];
-            totalEnergy += energy;
-            weightedSum += energy * i;
-        }
-        
-        return totalEnergy > 0 ? weightedSum / totalEnergy : 0;
+        return AudioUtils.calculateSpectralCentroid(window);
     }
 
     calculateHighFrequencyContent(window) {
@@ -643,117 +640,95 @@ class LoopAnalyzer {
     }
 
     calculateBPM(beats) {
-        if (beats.length < 4) return null; // Need more beats for reliable BPM
-        
+        if (beats.length < 4) return null;
+
         // Focus on strong beats first for more reliable BPM detection
         const strongBeats = beats.filter(beat => beat.isStrong);
-        console.log('Total beats:', beats.length, 'Strong beats:', strongBeats.length);
-        
-        // Try with strong beats first
         let targetBeats = strongBeats.length >= 4 ? strongBeats : beats;
-        
+
         // Calculate intervals between consecutive beats
         const intervals = [];
         for (let i = 1; i < targetBeats.length; i++) {
             intervals.push(targetBeats[i].time - targetBeats[i-1].time);
         }
-        
-        console.log('Beat intervals:', intervals.slice(0, 10)); // Log first 10 intervals
-        
-        // Filter for realistic musical intervals (focusing on typical song BPMs)
-        const musicalIntervals = intervals.filter(interval => 
-            interval >= 0.4 && interval <= 1.5 // 40-150 BPM range - more conservative
+
+        // Filter for realistic musical intervals (40-150 BPM range)
+        const musicalIntervals = intervals.filter(interval =>
+            interval >= 0.4 && interval <= 1.5
         );
-        
-        console.log('Musical intervals:', musicalIntervals.slice(0, 10));
-        
+
         if (musicalIntervals.length < 3) {
-            console.log('Not enough musical intervals found, trying all beats with wider range');
             // Fallback: try all beats with wider range
             const allIntervals = [];
             for (let i = 1; i < beats.length; i++) {
                 allIntervals.push(beats[i].time - beats[i-1].time);
             }
-            const fallbackIntervals = allIntervals.filter(interval => 
-                interval >= 0.3 && interval <= 2.0 // Wider range as fallback
+            const fallbackIntervals = allIntervals.filter(interval =>
+                interval >= 0.3 && interval <= 2.0
             );
             if (fallbackIntervals.length < 3) return null;
             return this.calculateBPMFromIntervals(fallbackIntervals);
         }
-        
+
         return this.calculateBPMFromIntervals(musicalIntervals);
     }
-    
+
     calculateBPMFromIntervals(intervals) {
         // Use median instead of mode for more robust BPM calculation
         const sortedIntervals = [...intervals].sort((a, b) => a - b);
         const medianInterval = sortedIntervals[Math.floor(sortedIntervals.length / 2)];
-        
-        console.log('Sorted intervals:', sortedIntervals.slice(0, 10));
-        console.log('Median interval:', medianInterval);
-        
+
         // Also check the mode for validation
         const histogram = {};
-        const tolerance = 0.1; // 100ms tolerance for grouping
-        
+        const tolerance = 0.1;
+
         intervals.forEach(interval => {
             const rounded = Math.round(interval / tolerance) * tolerance;
             histogram[rounded] = (histogram[rounded] || 0) + 1;
         });
-        
+
         let maxCount = 0;
         let mostCommonInterval = 0;
-        
+
         for (const [interval, count] of Object.entries(histogram)) {
             if (count > maxCount) {
                 maxCount = count;
                 mostCommonInterval = parseFloat(interval);
             }
         }
-        
-        console.log('Most common interval:', mostCommonInterval, 'count:', maxCount);
-        
+
         // Use median if it's close to mode, otherwise use mode
-        const targetInterval = Math.abs(medianInterval - mostCommonInterval) < 0.1 ? 
+        const targetInterval = Math.abs(medianInterval - mostCommonInterval) < 0.1 ?
             medianInterval : mostCommonInterval;
-        
+
         if (targetInterval > 0) {
             const bpm = Math.round(60 / targetInterval);
-            console.log('Calculated BPM:', bpm, 'from interval:', targetInterval);
-            
+
             // More reasonable BPM range and better validation
             if (bpm >= 60 && bpm <= 180) {
-                console.log('BPM accepted:', bpm);
                 return bpm;
             }
+
             // If calculated BPM is unrealistic, try to find a musical subdivision
             if (bpm > 180) {
-                console.log('BPM too high, trying subdivisions...');
-                // Try half-time
                 const halfTimeBpm = Math.round(bpm / 2);
                 if (halfTimeBpm >= 60 && halfTimeBpm <= 180) {
-                    console.log('Using half-time BPM:', halfTimeBpm);
                     return halfTimeBpm;
                 }
-                // Try quarter-time
                 const quarterTimeBpm = Math.round(bpm / 4);
                 if (quarterTimeBpm >= 60 && quarterTimeBpm <= 180) {
-                    console.log('Using quarter-time BPM:', quarterTimeBpm);
                     return quarterTimeBpm;
                 }
             }
+
             if (bpm < 60) {
-                console.log('BPM too low, trying double-time...');
-                // Try double-time
                 const doubleTimeBpm = Math.round(bpm * 2);
                 if (doubleTimeBpm >= 60 && doubleTimeBpm <= 180) {
-                    console.log('Using double-time BPM:', doubleTimeBpm);
                     return doubleTimeBpm;
                 }
             }
-            console.log('No valid BPM found');
         }
-        
+
         return null;
     }
 
@@ -1008,5 +983,689 @@ class LoopAnalyzer {
                 ...suggestion,
                 rank: index + 1
             }));
+    }
+
+    // ========== DEEP ANALYSIS: Hybrid Loop Structure Detection ==========
+
+    /**
+     * Deep analysis to find loopable structures in the track
+     * Uses beat-aligned segmentation, spectral similarity, and waveform correlation
+     * Non-blocking with chunked processing and abort support
+     * @param {Function} progressCallback - Optional callback for progress updates (0-100)
+     * @returns {Array} Ranked loop suggestions with detailed scoring
+     */
+    async deepAnalysis(progressCallback = null) {
+        // Reset abort flag
+        this.analysisAborted = false;
+
+        const audioData = this.audioEngine.getAudioData();
+        const sampleRate = this.audioEngine.getSampleRate();
+        const totalDuration = this.audioEngine.getDuration();
+
+        if (!audioData || totalDuration < 1) {
+            return [];
+        }
+
+        const report = async (pct, msg) => {
+            if (progressCallback) progressCallback(pct, msg);
+            // Yield to browser to keep UI responsive
+            await this.yieldToBrowser();
+        };
+
+        const checkAbort = () => {
+            if (this.analysisAborted) {
+                throw new Error('Analysis cancelled');
+            }
+        };
+
+        try {
+            await report(0, 'Detecting beats...');
+            checkAbort();
+
+            // Step 1: Ensure beats are detected
+            if (this.beatPositions.length === 0) {
+                this.detectBeats();
+            }
+
+            await report(10, 'Segmenting audio...');
+            checkAbort();
+
+            // Step 2: Create segments aligned to beats (or fixed intervals if no beats)
+            const segments = this.createAnalysisSegments(audioData, sampleRate, totalDuration);
+
+            await report(20, 'Computing spectral features...');
+            checkAbort();
+
+            // Step 3: Compute spectral features for each segment (chunked)
+            const features = await this.computeSegmentFeaturesAsync(segments, audioData, sampleRate, async (pct) => {
+                await report(20 + pct * 0.2, `Computing features... ${Math.round(pct * 100)}%`);
+                checkAbort();
+            });
+
+            await report(40, 'Building similarity matrix...');
+            checkAbort();
+
+            // Step 4: Build similarity matrix (chunked)
+            const similarityMatrix = await this.buildSimilarityMatrixAsync(features, async (pct) => {
+                await report(40 + pct * 0.2, `Building matrix... ${Math.round(pct * 100)}%`);
+                checkAbort();
+            });
+
+            await report(60, 'Finding loop candidates...');
+            checkAbort();
+
+            // Step 5: Find loop candidates from similar segment pairs
+            const candidates = this.findLoopCandidates(segments, similarityMatrix, totalDuration);
+
+            await report(80, 'Scoring and ranking...');
+            checkAbort();
+
+            // Step 6: Score each candidate with detailed analysis (chunked)
+            const scoredCandidates = await this.scoreLoopCandidatesAsync(candidates, audioData, sampleRate, async (pct) => {
+                await report(80 + pct * 0.15, `Scoring... ${Math.round(pct * 100)}%`);
+                checkAbort();
+            });
+
+            await report(95, 'Finalizing results...');
+            checkAbort();
+
+            // Step 7: Sort and return top results
+            const results = scoredCandidates
+                .sort((a, b) => b.totalScore - a.totalScore)
+                .slice(0, 20)
+                .map((candidate, index) => ({
+                    ...candidate,
+                    rank: index + 1,
+                    description: this.getDeepAnalysisDescription(candidate)
+                }));
+
+            await report(100, 'Analysis complete');
+
+            // Cache results
+            this.deepAnalysisResults = results;
+
+            return results;
+
+        } catch (error) {
+            if (error.message === 'Analysis cancelled') {
+                return [];
+            }
+            throw error;
+        }
+    }
+
+    /**
+     * Async version of computeSegmentFeatures with chunking
+     */
+    async computeSegmentFeaturesAsync(segments, audioData, sampleRate, progressCallback) {
+        const features = [];
+        const chunkSize = 10; // Process 10 segments at a time
+
+        for (let i = 0; i < segments.length; i += chunkSize) {
+            const chunk = segments.slice(i, Math.min(i + chunkSize, segments.length));
+
+            for (const segment of chunk) {
+                const startSample = Math.floor(segment.startTime * sampleRate);
+                const endSample = Math.floor(segment.endTime * sampleRate);
+                const segmentData = audioData.slice(startSample, endSample);
+
+                const rms = AudioUtils.calculateRMS(segmentData);
+                const zcr = this.computeZeroCrossingRate(segmentData);
+                const spectralCentroid = AudioUtils.calculateSpectralCentroid(segmentData);
+                const spectralFlux = this.computeSpectralFlux(segmentData, sampleRate);
+                const mfccLike = this.computeSimpleMFCC(segmentData, sampleRate);
+
+                features.push({
+                    segment,
+                    rms,
+                    zcr,
+                    spectralCentroid,
+                    spectralFlux,
+                    mfccLike,
+                    firstSamples: segmentData.slice(0, Math.min(100, segmentData.length)),
+                    lastSamples: segmentData.slice(-Math.min(100, segmentData.length))
+                });
+            }
+
+            // Report progress and yield
+            if (progressCallback) {
+                await progressCallback(i / segments.length);
+            }
+        }
+
+        return features;
+    }
+
+    /**
+     * Async version of buildSimilarityMatrix with chunking
+     */
+    async buildSimilarityMatrixAsync(features, progressCallback) {
+        const n = features.length;
+        const matrix = [];
+
+        // Initialize matrix
+        for (let i = 0; i < n; i++) {
+            matrix[i] = new Array(n).fill(0);
+            matrix[i][i] = 1;
+        }
+
+        const chunkSize = 50; // Process 50 comparisons at a time
+        let comparisons = 0;
+        const totalComparisons = (n * (n - 1)) / 2;
+
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                matrix[i][j] = this.computeFeatureSimilarity(features[i], features[j]);
+                matrix[j][i] = matrix[i][j];
+
+                comparisons++;
+
+                // Yield periodically
+                if (comparisons % chunkSize === 0) {
+                    if (progressCallback) {
+                        await progressCallback(comparisons / totalComparisons);
+                    }
+                }
+            }
+        }
+
+        return matrix;
+    }
+
+    /**
+     * Async version of scoreLoopCandidates with chunking
+     */
+    async scoreLoopCandidatesAsync(candidates, audioData, sampleRate, progressCallback) {
+        const scored = [];
+        const chunkSize = 5;
+
+        for (let i = 0; i < candidates.length; i += chunkSize) {
+            const chunk = candidates.slice(i, Math.min(i + chunkSize, candidates.length));
+
+            for (const candidate of chunk) {
+                const startSample = Math.floor(candidate.startTime * sampleRate);
+                const durationSamples = Math.floor(candidate.duration * sampleRate);
+                const segment = audioData.slice(startSample, startSample + durationSamples);
+
+                const seamlessness = this.calculateOptimizedSeamlessness(segment);
+                const energyConsistency = this.calculateOptimizedEnergyConsistency(segment);
+                const spectralMatch = this.calculateOptimizedSpectralMatching(segment);
+                const rhythmicFit = this.calculateRhythmicFit(candidate.startTime, candidate.duration);
+
+                const beatBonus = candidate.isStrong ? 0.1 : 0;
+                const repetitionBonus = Math.min(0.15, candidate.similarSegments.length * 0.03);
+
+                const totalScore = Math.min(1, (
+                    seamlessness * 0.3 +
+                    energyConsistency * 0.2 +
+                    spectralMatch * 0.2 +
+                    rhythmicFit * 0.15 +
+                    candidate.selfLoopScore * 0.15 +
+                    beatBonus +
+                    repetitionBonus
+                ));
+
+                scored.push({
+                    ...candidate,
+                    seamlessness,
+                    energyConsistency,
+                    spectralMatch,
+                    rhythmicFit,
+                    beatBonus,
+                    repetitionBonus,
+                    totalScore
+                });
+            }
+
+            if (progressCallback) {
+                await progressCallback(i / candidates.length);
+            }
+        }
+
+        return scored;
+    }
+
+    /**
+     * Create analysis segments aligned to beats or fixed intervals
+     */
+    createAnalysisSegments(audioData, sampleRate, totalDuration) {
+        const segments = [];
+        const bpm = this.detectedBPM || 120;
+        const beatDuration = 60 / bpm;
+
+        // Use beat positions if available, otherwise use fixed intervals
+        if (this.beatPositions.length >= 8) {
+            // Create segments of varying lengths (1, 2, 4, 8 beats)
+            const beatLengths = [4, 8, 16, 32]; // Common musical lengths in beats
+
+            for (const numBeats of beatLengths) {
+                const segmentDuration = numBeats * beatDuration;
+                if (segmentDuration > totalDuration * 0.5) continue; // Skip if too long
+
+                for (let i = 0; i < this.beatPositions.length; i++) {
+                    const startTime = this.beatPositions[i].time;
+                    const endTime = startTime + segmentDuration;
+
+                    if (endTime <= totalDuration) {
+                        segments.push({
+                            startTime,
+                            endTime,
+                            duration: segmentDuration,
+                            numBeats,
+                            beatIndex: i,
+                            isStrong: this.beatPositions[i].isStrong || false
+                        });
+                    }
+                }
+            }
+        } else {
+            // Fallback: fixed interval segments
+            const segmentLengths = [1, 2, 4, 8]; // seconds
+
+            for (const duration of segmentLengths) {
+                if (duration > totalDuration * 0.5) continue;
+
+                const stepSize = Math.max(0.5, duration / 4);
+                for (let startTime = 0; startTime + duration <= totalDuration; startTime += stepSize) {
+                    segments.push({
+                        startTime,
+                        endTime: startTime + duration,
+                        duration,
+                        numBeats: Math.round(duration / beatDuration),
+                        beatIndex: -1,
+                        isStrong: false
+                    });
+                }
+            }
+        }
+
+        return segments;
+    }
+
+    /**
+     * Compute spectral features for each segment
+     */
+    computeSegmentFeatures(segments, audioData, sampleRate) {
+        return segments.map(segment => {
+            const startSample = Math.floor(segment.startTime * sampleRate);
+            const endSample = Math.floor(segment.endTime * sampleRate);
+            const segmentData = audioData.slice(startSample, endSample);
+
+            // Compute multiple features
+            const rms = AudioUtils.calculateRMS(segmentData);
+            const zcr = this.computeZeroCrossingRate(segmentData);
+            const spectralCentroid = AudioUtils.calculateSpectralCentroid(segmentData);
+            const spectralFlux = this.computeSpectralFlux(segmentData, sampleRate);
+            const mfccLike = this.computeSimpleMFCC(segmentData, sampleRate);
+
+            return {
+                segment,
+                rms,
+                zcr,
+                spectralCentroid,
+                spectralFlux,
+                mfccLike,
+                // First and last samples for waveform continuity check
+                firstSamples: segmentData.slice(0, Math.min(100, segmentData.length)),
+                lastSamples: segmentData.slice(-Math.min(100, segmentData.length))
+            };
+        });
+    }
+
+    /**
+     * Compute zero crossing rate
+     */
+    computeZeroCrossingRate(data) {
+        let crossings = 0;
+        for (let i = 1; i < data.length; i++) {
+            if ((data[i] >= 0) !== (data[i - 1] >= 0)) {
+                crossings++;
+            }
+        }
+        return crossings / data.length;
+    }
+
+    /**
+     * Compute spectral flux (change in spectral content over time)
+     */
+    computeSpectralFlux(data, sampleRate) {
+        const windowSize = Math.floor(sampleRate * 0.05); // 50ms windows
+        const hopSize = Math.floor(windowSize / 2);
+        let totalFlux = 0;
+        let numWindows = 0;
+        let prevEnergy = 0;
+
+        for (let i = 0; i < data.length - windowSize; i += hopSize) {
+            let energy = 0;
+            for (let j = 0; j < windowSize; j++) {
+                energy += data[i + j] * data[i + j];
+            }
+            energy = Math.sqrt(energy / windowSize);
+
+            if (numWindows > 0) {
+                totalFlux += Math.abs(energy - prevEnergy);
+            }
+
+            prevEnergy = energy;
+            numWindows++;
+        }
+
+        return numWindows > 1 ? totalFlux / (numWindows - 1) : 0;
+    }
+
+    /**
+     * Compute simplified MFCC-like features (band energies)
+     */
+    computeSimpleMFCC(data, sampleRate) {
+        // Divide spectrum into bands and compute energy in each
+        const numBands = 8;
+        const bands = new Array(numBands).fill(0);
+        const bandSize = Math.floor(data.length / numBands);
+
+        for (let b = 0; b < numBands; b++) {
+            let bandEnergy = 0;
+            const start = b * bandSize;
+            const end = Math.min(start + bandSize, data.length);
+
+            for (let i = start; i < end; i++) {
+                bandEnergy += data[i] * data[i];
+            }
+
+            bands[b] = Math.sqrt(bandEnergy / (end - start));
+        }
+
+        return bands;
+    }
+
+    /**
+     * Build similarity matrix between all segment pairs
+     */
+    buildSimilarityMatrix(features) {
+        const n = features.length;
+        const matrix = [];
+
+        for (let i = 0; i < n; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < n; j++) {
+                if (i === j) {
+                    matrix[i][j] = 1;
+                } else if (j < i) {
+                    matrix[i][j] = matrix[j][i]; // Symmetric
+                } else {
+                    matrix[i][j] = this.computeFeatureSimilarity(features[i], features[j]);
+                }
+            }
+        }
+
+        return matrix;
+    }
+
+    /**
+     * Compute similarity between two feature sets
+     */
+    computeFeatureSimilarity(f1, f2) {
+        // Skip if segments are the same duration class but different lengths
+        if (Math.abs(f1.segment.duration - f2.segment.duration) > 0.1) {
+            return 0;
+        }
+
+        // RMS similarity (energy level)
+        const rmsDiff = Math.abs(f1.rms - f2.rms) / Math.max(f1.rms, f2.rms, 0.001);
+        const rmsSim = 1 - Math.min(1, rmsDiff);
+
+        // ZCR similarity (brightness/noisiness)
+        const zcrDiff = Math.abs(f1.zcr - f2.zcr) / Math.max(f1.zcr, f2.zcr, 0.001);
+        const zcrSim = 1 - Math.min(1, zcrDiff);
+
+        // Spectral centroid similarity
+        const scDiff = Math.abs(f1.spectralCentroid - f2.spectralCentroid) /
+            Math.max(f1.spectralCentroid, f2.spectralCentroid, 0.001);
+        const scSim = 1 - Math.min(1, scDiff);
+
+        // MFCC-like similarity (cosine similarity)
+        const mfccSim = this.cosineSimilarity(f1.mfccLike, f2.mfccLike);
+
+        // Waveform boundary similarity (important for seamless loops)
+        const boundarySim = this.computeBoundarySimilarity(f1, f2);
+
+        // Weighted combination
+        return (
+            rmsSim * 0.15 +
+            zcrSim * 0.15 +
+            scSim * 0.2 +
+            mfccSim * 0.3 +
+            boundarySim * 0.2
+        );
+    }
+
+    /**
+     * Cosine similarity between two vectors
+     */
+    cosineSimilarity(a, b) {
+        if (a.length !== b.length) return 0;
+
+        let dotProduct = 0;
+        let normA = 0;
+        let normB = 0;
+
+        for (let i = 0; i < a.length; i++) {
+            dotProduct += a[i] * b[i];
+            normA += a[i] * a[i];
+            normB += b[i] * b[i];
+        }
+
+        const denom = Math.sqrt(normA) * Math.sqrt(normB);
+        return denom > 0 ? dotProduct / denom : 0;
+    }
+
+    /**
+     * Check if segment boundaries would make a good loop point
+     */
+    computeBoundarySimilarity(f1, f2) {
+        // Compare end of f1 with start of f1 (self-loop quality)
+        // and end of f2 with start of f2
+        const selfLoop1 = this.correlate(f1.lastSamples, f1.firstSamples);
+        const selfLoop2 = this.correlate(f2.lastSamples, f2.firstSamples);
+
+        return (selfLoop1 + selfLoop2) / 2;
+    }
+
+    /**
+     * Simple correlation between two sample arrays
+     */
+    correlate(a, b) {
+        const len = Math.min(a.length, b.length);
+        if (len === 0) return 0;
+
+        let sum = 0;
+        let sumA = 0;
+        let sumB = 0;
+
+        for (let i = 0; i < len; i++) {
+            sum += a[i] * b[i];
+            sumA += a[i] * a[i];
+            sumB += b[i] * b[i];
+        }
+
+        const denom = Math.sqrt(sumA * sumB);
+        return denom > 0 ? Math.abs(sum / denom) : 0;
+    }
+
+    /**
+     * Find loop candidates from similarity matrix
+     */
+    findLoopCandidates(segments, similarityMatrix, totalDuration) {
+        const candidates = [];
+        const n = segments.length;
+        const minSimilarity = 0.6; // Threshold for considering a match
+
+        // Group segments by duration
+        const durationGroups = {};
+        segments.forEach((seg, idx) => {
+            const durKey = seg.duration.toFixed(1);
+            if (!durationGroups[durKey]) durationGroups[durKey] = [];
+            durationGroups[durKey].push(idx);
+        });
+
+        // For each duration group, find self-similar segments
+        for (const durKey of Object.keys(durationGroups)) {
+            const indices = durationGroups[durKey];
+
+            for (let i = 0; i < indices.length; i++) {
+                const idx = indices[i];
+                const segment = segments[idx];
+
+                // Check self-loop quality (how well this segment loops with itself)
+                const selfLoopScore = this.evaluateSelfLoop(segment, this.audioEngine.getAudioData(), this.audioEngine.getSampleRate());
+
+                if (selfLoopScore > 0.3) {
+                    candidates.push({
+                        startTime: segment.startTime,
+                        duration: segment.duration,
+                        endTime: segment.endTime,
+                        numBeats: segment.numBeats,
+                        isStrong: segment.isStrong,
+                        selfLoopScore,
+                        similarSegments: []
+                    });
+                }
+
+                // Find other similar segments (for potential extended loops)
+                for (let j = i + 1; j < indices.length; j++) {
+                    const jdx = indices[j];
+                    const similarity = similarityMatrix[idx][jdx];
+
+                    if (similarity >= minSimilarity) {
+                        // These segments are similar - could be a repeating section
+                        const otherSegment = segments[jdx];
+
+                        // Check if they're not overlapping
+                        if (Math.abs(segment.startTime - otherSegment.startTime) > segment.duration * 0.5) {
+                            candidates[candidates.length - 1]?.similarSegments.push({
+                                startTime: otherSegment.startTime,
+                                similarity
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        return candidates;
+    }
+
+    /**
+     * Evaluate how well a segment loops with itself
+     */
+    evaluateSelfLoop(segment, audioData, sampleRate) {
+        const startSample = Math.floor(segment.startTime * sampleRate);
+        const endSample = Math.floor(segment.endTime * sampleRate);
+        const segmentData = audioData.slice(startSample, endSample);
+
+        if (segmentData.length < 200) return 0;
+
+        // Compare start and end regions
+        const compareLength = Math.min(200, Math.floor(segmentData.length / 10));
+        const startRegion = segmentData.slice(0, compareLength);
+        const endRegion = segmentData.slice(-compareLength);
+
+        // Correlation
+        const correlation = this.correlate(startRegion, endRegion);
+
+        // Amplitude match
+        const startRMS = AudioUtils.calculateRMS(startRegion);
+        const endRMS = AudioUtils.calculateRMS(endRegion);
+        const ampMatch = 1 - Math.min(1, Math.abs(startRMS - endRMS) / Math.max(startRMS, endRMS, 0.001));
+
+        // Zero crossing alignment (bonus if both near zero)
+        const startNearZero = Math.abs(startRegion[0]) < 0.1 ? 0.1 : 0;
+        const endNearZero = Math.abs(endRegion[endRegion.length - 1]) < 0.1 ? 0.1 : 0;
+
+        return correlation * 0.5 + ampMatch * 0.3 + startNearZero + endNearZero;
+    }
+
+    /**
+     * Score loop candidates with detailed analysis
+     */
+    scoreLoopCandidates(candidates, audioData, sampleRate) {
+        return candidates.map(candidate => {
+            const startSample = Math.floor(candidate.startTime * sampleRate);
+            const durationSamples = Math.floor(candidate.duration * sampleRate);
+            const segment = audioData.slice(startSample, startSample + durationSamples);
+
+            // Seamlessness score (how well it loops)
+            const seamlessness = this.calculateOptimizedSeamlessness(segment);
+
+            // Energy consistency
+            const energyConsistency = this.calculateOptimizedEnergyConsistency(segment);
+
+            // Spectral match between start and end
+            const spectralMatch = this.calculateOptimizedSpectralMatching(segment);
+
+            // Rhythmic fit (alignment with beats)
+            const rhythmicFit = this.calculateRhythmicFit(candidate.startTime, candidate.duration);
+
+            // Bonus for strong beat alignment
+            const beatBonus = candidate.isStrong ? 0.1 : 0;
+
+            // Bonus for having similar segments (indicates repeating structure)
+            const repetitionBonus = Math.min(0.15, candidate.similarSegments.length * 0.03);
+
+            // Total score
+            const totalScore = Math.min(1, (
+                seamlessness * 0.3 +
+                energyConsistency * 0.2 +
+                spectralMatch * 0.2 +
+                rhythmicFit * 0.15 +
+                candidate.selfLoopScore * 0.15 +
+                beatBonus +
+                repetitionBonus
+            ));
+
+            return {
+                ...candidate,
+                seamlessness,
+                energyConsistency,
+                spectralMatch,
+                rhythmicFit,
+                beatBonus,
+                repetitionBonus,
+                totalScore
+            };
+        });
+    }
+
+    /**
+     * Generate description for deep analysis result
+     */
+    getDeepAnalysisDescription(candidate) {
+        const score = candidate.totalScore;
+        const beats = candidate.numBeats;
+        const bars = beats >= 4 ? `${beats / 4} bar${beats > 4 ? 's' : ''}` : `${beats} beat${beats > 1 ? 's' : ''}`;
+
+        let quality;
+        if (score >= 0.85) quality = 'Excellent';
+        else if (score >= 0.7) quality = 'Very Good';
+        else if (score >= 0.55) quality = 'Good';
+        else if (score >= 0.4) quality = 'Fair';
+        else quality = 'Possible';
+
+        let extras = [];
+        if (candidate.isStrong) extras.push('starts on downbeat');
+        if (candidate.similarSegments.length > 0) {
+            extras.push(`repeats ${candidate.similarSegments.length}x`);
+        }
+        if (candidate.seamlessness > 0.8) extras.push('seamless');
+
+        const extraStr = extras.length > 0 ? ` (${extras.join(', ')})` : '';
+
+        return `${quality} ${bars} loop${extraStr}`;
+    }
+
+    /**
+     * Get cached deep analysis results
+     */
+    getDeepAnalysisResults() {
+        return this.deepAnalysisResults || [];
     }
 }

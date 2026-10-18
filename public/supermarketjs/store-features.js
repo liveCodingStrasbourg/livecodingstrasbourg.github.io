@@ -103,9 +103,15 @@ window.storeFeatures = {
       window.log("❌ Invalid barcode! Use at least 3 digits.");
       return;
     }
-    
+
+    // Validate barcode contains only digits
+    if (!/^\d+$/.test(barcode)) {
+      window.log("❌ Invalid barcode! Use only numeric digits (0-9).");
+      return;
+    }
+
     // Convert barcode to rhythm pattern
-    const digits = barcode.split('').map(d => parseInt(d));
+    const digits = barcode.split('').map(d => parseInt(d, 10));
     const productMap = ['beer', 'salad', 'ham', 'milk', 'chips', 'pizza', 'oil', 'wine', 'soda', 'bread'];
     
     // Add products based on digits
@@ -433,13 +439,16 @@ window.storeFeatures = {
         };
         
         utterance.onerror = (event) => {
-          console.error("Speech synthesis error:", event);
+          // Only log real errors, not interruptions
+          if (event.error && event.error !== 'interrupted' && event.error !== 'canceled') {
+            console.error("Speech synthesis error:", event.error);
+            window.log("❌ PA system error!");
+          }
           // Restore music volume
           Tone.Destination.volume.rampTo(originalVolume, 0.5);
           this.announcements.isPlaying = false;
-          window.log("❌ PA system error!");
         };
-        
+
         // Play announcement
         window.speechSynthesis.speak(utterance);
         window.log(`📢 "Attention shoppers: ${announcement}"`);
@@ -657,14 +666,19 @@ window.storeFeatures = {
   },
   
   checkProductCombos: function() {
+    // Check if auto-combos are enabled (default to true if not set)
+    if (window.autoCombosEnabled === false) {
+      return;
+    }
+
     const activeProducts = Object.values(window.state.products).map(p => p.name);
     const uniqueProducts = [...new Set(activeProducts)];
-    
+
     // Check each combo
     for (const [combo, config] of Object.entries(this.productCombos)) {
       const required = combo.split('+');
       const hasCombo = required.every(product => uniqueProducts.includes(product));
-      
+
       if (hasCombo && !window.state.activeCombo) {
         this.activateCombo(combo, config);
         break;
@@ -713,13 +727,34 @@ window.storeFeatures = {
           }
         });
         break;
-        
+
+      case 'lunch':
+        // Lunch break - relaxed midday vibes
+        Tone.Transport.bpm.rampTo(95, 2);
+        if (window.cartWheels && window.cartWheels.setWheels) {
+          window.cartWheels.setWheels('rubber');
+        }
+        // Add a warm, mellow effect to all products
+        Object.keys(window.state.products).forEach(id => {
+          const product = window.state.products[id];
+          if (product.synth && !product.lunchEffect) {
+            const chorus = window.createEffect('chorus', { frequency: 2, delayTime: 3, depth: 0.5, wet: 0.4 });
+            if (chorus) {
+              product.synth.disconnect();
+              product.synth.connect(chorus);
+              chorus.toDestination();
+              product.lunchEffect = chorus;
+            }
+          }
+        });
+        break;
+
       case 'hyperactive':
         // Sugar rush chaos
         this.startRushHour();
-        window.modeManager.setMode('black_friday', true);
+        window.modeManager.toggleBlackFridayMode(true);
         break;
-        
+
       case 'zen':
         // Calm healthy mode
         Tone.Transport.bpm.rampTo(80, 2);
@@ -791,25 +826,49 @@ window.storeFeatures = {
         
       case 'halfspeed':
         // Half speed everything
-        Tone.Transport.bpm.rampTo(Tone.Transport.bpm.value * 0.5, 2);
-        
+        const originalBPM = Tone.Transport.bpm.value;
+        Tone.Transport.bpm.rampTo(originalBPM * 0.5, 2);
+
         // Lower pitch of all products
         Object.values(window.state.products).forEach(product => {
           if (product.synth && product.synth.detune) {
+            product.originalDetune = product.synth.detune.value;
             product.synth.detune.rampTo(-1200, 2); // One octave down
           }
         });
+
+        // Restore after coupon expires
+        setTimeout(() => {
+          Tone.Transport.bpm.rampTo(originalBPM, 2);
+          Object.values(window.state.products).forEach(product => {
+            if (product.synth && product.synth.detune && product.originalDetune !== undefined) {
+              product.synth.detune.rampTo(product.originalDetune, 2);
+            }
+          });
+        }, 15000);
         break;
         
       case 'reverb':
-        // Add spacious reverb to everything
-        const globalReverb = new Tone.Reverb({ decay: 8, wet: 0.5 }).toDestination();
-        Tone.Destination.disconnect();
-        Tone.Destination.chain(globalReverb);
-        
+        // Add spacious reverb to all products
+        const reverbEffects = [];
+        Object.values(window.state.products).forEach(product => {
+          if (product.synth) {
+            const reverb = new Tone.Reverb({ decay: 8, wet: 0.5 }).toDestination();
+            product.synth.disconnect();
+            product.synth.connect(reverb);
+            reverbEffects.push({ product, reverb });
+          }
+        });
+
+        // Remove reverb after 20 seconds
         setTimeout(() => {
-          globalReverb.dispose();
-          Tone.Destination.toDestination();
+          reverbEffects.forEach(({ product, reverb }) => {
+            if (product.synth && window.state.products[product.id]) {
+              product.synth.disconnect();
+              product.synth.toDestination();
+            }
+            reverb.dispose();
+          });
         }, 20000);
         break;
         

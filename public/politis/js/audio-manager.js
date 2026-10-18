@@ -17,9 +17,12 @@ const AudioManager = {
         if (!this.audioContext) {
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
           this.initialized = true;
-          
+
           // Créer les filtres formants pour les voix synthétiques
           this.createFormantFilters();
+
+          // Démarrer l'ambiance sonore du studio
+          setTimeout(() => this.startAmbiance(), 500);
         }
         document.getElementById('audio-warning').style.display = 'none';
       } catch (error) {
@@ -71,89 +74,178 @@ const AudioManager = {
         const initialized = this.init();
         if (!initialized) return;
       }
-      
+
       // Arrête tout son existant
       this.stopSound(index);
-      
-      // Obtient la fréquence pour cette émotion et ce politicien
+
+      // Obtient la fréquence de base pour cette émotion et ce politicien
       const frequencies = CONFIG.audio.frequencies;
-      const frequency = frequencies[emotion][index % frequencies[emotion].length];
-      
+      const baseFrequency = frequencies[emotion] ?
+        frequencies[emotion][index % frequencies[emotion].length] :
+        frequencies['idle'][index % frequencies['idle'].length];
+
+      // Obtient le type d'oscillateur pour cette émotion
+      const waveform = CONFIG.audio.waveforms[emotion] || 'sine';
+
+      // Obtient le temps d'attaque pour cette émotion
+      const attackTime = CONFIG.audio.attackTime[emotion] || 0.05;
+
+      // Obtient la fréquence de coupure du filtre passe-bas
+      const lowpassCutoff = CONFIG.audio.lowpassCutoff[emotion] || 3000;
+
+      // Obtient les intervalles d'accord pour cette émotion
+      const chordIntervals = CONFIG.audio.chordIntervals[emotion] || [1];
+
+      // Volume de base (plus élevé pour chaos, réduit par le nombre de voix)
+      let baseVolume;
+      if (emotion === 'chaos') {
+        baseVolume = CONFIG.audio.chaosVolume || 0.5;
+      } else if (useVoiceEffect) {
+        baseVolume = CONFIG.audio.voiceEffectVolume;
+      } else {
+        baseVolume = CONFIG.audio.baseVolume;
+      }
+      const voiceVolume = baseVolume / chordIntervals.length;
+
       try {
-        // Crée l'oscillateur
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        // Type d'oscillateur selon l'émotion
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
-        
-        // Enveloppe de volume
-        const volume = useVoiceEffect ? 0.6 : 0.3;
-        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, this.audioContext.currentTime + 0.01);
-        
-        // Déclin plus long pour l'effet de voix
-        const releaseDuration = useVoiceEffect ? 
-          CONFIG.audio.noteDuration * 1.5 : 
+        const oscillators = [];
+        const gainNodes = [];
+        const vibratos = [];
+
+        // Durée de la note
+        const releaseDuration = useVoiceEffect ?
+          CONFIG.audio.noteDuration * 1.5 :
           CONFIG.audio.noteDuration;
-        
-        gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + releaseDuration);
-        
-        // Ajouter des filtres pour les effets de voix
-        if (useVoiceEffect && this.formantFilters[index]) {
-          // Créer un noeud d'onde modulante pour simuler une vibration vocale
-          const vibrato = this.audioContext.createOscillator();
-          const vibratoGain = this.audioContext.createGain();
-          vibrato.frequency.value = 8 + (Math.random() * 3); // Augmenté de 6 à 8
-          vibratoGain.gain.value = 5 + (Math.random() * 3); 
+
+        // Créer un filtre passe-bas global pour adoucir le son
+        const lowpassFilter = this.audioContext.createBiquadFilter();
+        lowpassFilter.type = 'lowpass';
+        lowpassFilter.frequency.value = lowpassCutoff;
+        lowpassFilter.Q.value = 1; // Q bas pour une transition douce
+
+        // Gain master pour tous les oscillateurs
+        const masterGain = this.audioContext.createGain();
+        masterGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+        masterGain.gain.linearRampToValueAtTime(baseVolume, this.audioContext.currentTime + attackTime);
+        masterGain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + releaseDuration);
+
+        // Créer un oscillateur pour chaque note de l'accord
+        chordIntervals.forEach((interval, voiceIndex) => {
+          const oscillator = this.audioContext.createOscillator();
+          const gainNode = this.audioContext.createGain();
+
+          // Type d'oscillateur selon l'émotion
+          oscillator.type = waveform;
+
+          // Fréquence avec l'intervalle d'accord
+          const freq = baseFrequency * interval;
+          oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+
+          // Volume individuel
+          gainNode.gain.setValueAtTime(voiceVolume, this.audioContext.currentTime);
+
+          // Ajouter un léger désaccord pour plus de richesse (sauf pour la fondamentale)
+          if (voiceIndex > 0) {
+            const detune = (Math.random() - 0.5) * 10; // ±5 cents
+            oscillator.detune.setValueAtTime(detune, this.audioContext.currentTime);
+          }
+
+          oscillators.push(oscillator);
+          gainNodes.push(gainNode);
+        });
+
+        // Ajouter vibrato pour les effets de voix
+        let vibrato = null;
+        let vibratoGain = null;
+        if (useVoiceEffect) {
+          vibrato = this.audioContext.createOscillator();
+          vibratoGain = this.audioContext.createGain();
+          // Vibrato plus subtil
+          vibrato.frequency.value = 5 + (Math.random() * 2); // 5-7 Hz
+          vibratoGain.gain.value = 2 + (Math.random() * 2);  // 2-4 Hz de profondeur
           vibrato.connect(vibratoGain);
-          vibratoGain.connect(oscillator.frequency);
+
+          // Connecter le vibrato à tous les oscillateurs
+          oscillators.forEach(osc => {
+            vibratoGain.connect(osc.frequency);
+          });
+
           vibrato.start();
           vibrato.stop(this.audioContext.currentTime + releaseDuration);
-          
-          // Ajouter du bruit pour les consonnes
-          let noiseGain = null;
-          if (Math.random() < 0.4) { // 40% de chance d'ajouter du bruit
-            const noiseBuffer = this.createNoiseBuffer();
-            const noise = this.audioContext.createBufferSource();
-            noise.buffer = noiseBuffer;
-            noiseGain = this.audioContext.createGain();
-            noiseGain.gain.setValueAtTime(0.03, this.audioContext.currentTime);
-            noiseGain.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.2);
-            noise.connect(noiseGain);
-            noiseGain.connect(this.audioContext.destination);
-            noise.start();
-            noise.stop(this.audioContext.currentTime + 0.2);
-          }
-          
-          // Appliquer les filtres formants
-          let currentNode = oscillator;
-          this.formantFilters[index].forEach(filter => {
-            currentNode.connect(filter);
-            currentNode = filter;
-          });
-          currentNode.connect(gainNode);
-          
-          // Enregistrer tous les noeuds pour pouvoir les arrêter
-          this.oscillators[index] = { 
-            oscillator, gainNode, vibrato, vibratoGain, formants: this.formantFilters[index], noiseGain 
-          };
-        } else {
-          // Connecter directement sans filtres formants
-          oscillator.connect(gainNode);
-          this.oscillators[index] = { oscillator, gainNode };
+          vibratos.push(vibrato);
         }
-        
-        // Connecter à la destination
-        gainNode.connect(this.audioContext.destination);
-        
-        // Démarrer l'oscillateur
-        oscillator.start();
-        oscillator.stop(this.audioContext.currentTime + releaseDuration);
-        
+
+        // Ajouter du bruit filtré pour les consonnes (effets de voix uniquement)
+        let noiseGain = null;
+        if (useVoiceEffect && Math.random() < 0.3) { // 30% de chance
+          const noiseBuffer = this.createNoiseBuffer();
+          const noise = this.audioContext.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          // Filtre le bruit pour le rendre moins strident
+          const noiseFilter = this.audioContext.createBiquadFilter();
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.value = 2000;
+          noiseFilter.Q.value = 2;
+
+          noiseGain = this.audioContext.createGain();
+          noiseGain.gain.setValueAtTime(0.02, this.audioContext.currentTime);
+          noiseGain.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.15);
+
+          noise.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(masterGain);
+          noise.start();
+          noise.stop(this.audioContext.currentTime + 0.15);
+        }
+
+        // Connecter la chaîne audio
+        if (useVoiceEffect && this.formantFilters[index]) {
+          // Avec filtres formants
+          oscillators.forEach((osc, i) => {
+            osc.connect(gainNodes[i]);
+
+            // Appliquer les filtres formants
+            let currentNode = gainNodes[i];
+            this.formantFilters[index].forEach(filter => {
+              currentNode.connect(filter);
+              currentNode = filter;
+            });
+            currentNode.connect(lowpassFilter);
+          });
+        } else {
+          // Sans filtres formants
+          oscillators.forEach((osc, i) => {
+            osc.connect(gainNodes[i]);
+            gainNodes[i].connect(lowpassFilter);
+          });
+        }
+
+        // Connecter le filtre passe-bas au gain master puis à la destination
+        lowpassFilter.connect(masterGain);
+        masterGain.connect(this.audioContext.destination);
+
+        // Démarrer tous les oscillateurs
+        oscillators.forEach(osc => {
+          osc.start();
+          osc.stop(this.audioContext.currentTime + releaseDuration);
+        });
+
+        // Enregistrer tous les noeuds pour pouvoir les arrêter
+        this.oscillators[index] = {
+          oscillators,
+          gainNodes,
+          masterGain,
+          lowpassFilter,
+          vibrato,
+          vibratoGain,
+          vibratos,
+          formants: useVoiceEffect ? this.formantFilters[index] : null,
+          noiseGain
+        };
+
         // Nettoie après la fin
-        oscillator.onended = () => {
+        oscillators[0].onended = () => {
           if (this.oscillators[index]) {
             delete this.oscillators[index];
           }
@@ -187,19 +279,32 @@ const AudioManager = {
       if (this.oscillators[index]) {
         try {
           const nodes = this.oscillators[index];
-          
-          // Réduire progressivement le gain pour éviter les clics
-          if (nodes.gainNode) {
-            nodes.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.05);
+
+          // Réduire progressivement le gain master pour éviter les clics
+          if (nodes.masterGain) {
+            nodes.masterGain.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.05);
           }
-          
+
           // Arrêter tous les oscillateurs et nettoyage
           setTimeout(() => {
-            if (nodes.oscillator) nodes.oscillator.stop();
-            if (nodes.vibrato) nodes.vibrato.stop();
+            // Arrêter tous les oscillateurs d'accord
+            if (nodes.oscillators) {
+              nodes.oscillators.forEach(osc => {
+                try { osc.stop(); } catch (e) { /* déjà arrêté */ }
+              });
+            }
+            // Arrêter le vibrato
+            if (nodes.vibrato) {
+              try { nodes.vibrato.stop(); } catch (e) { /* déjà arrêté */ }
+            }
+            if (nodes.vibratos) {
+              nodes.vibratos.forEach(v => {
+                try { v.stop(); } catch (e) { /* déjà arrêté */ }
+              });
+            }
             delete this.oscillators[index];
           }, 100);
-          
+
         } catch (error) {
           console.error(`Échec de l'arrêt du son pour le politicien ${index}:`, error);
         }
@@ -231,36 +336,222 @@ const AudioManager = {
       sequence.forEach((item, index) => {
         const { politicianIndex, emotion } = item;
         
-        // En mode chaos, tous les politiciens sont en colère et hurlent
-        const finalEmotion = chaosModeActive ? 'screaming' : emotion;
+        // En mode chaos, utiliser l'émotion 'chaos' pour des sons plus intenses
+        const finalEmotion = chaosModeActive ? 'chaos' : emotion;
         
         setTimeout(() => {
-          // 30% de chance d'utiliser l'effet de voix pour les hurlements
+          // 60% de chance d'utiliser l'effet de voix pour les hurlements
           // 100% en mode chaos
-          const useVoiceEffect = (finalEmotion === 'screaming' && (Math.random() < 0.3 || chaosModeActive));
-          
+          const useVoiceEffect = ((finalEmotion === 'screaming' || finalEmotion === 'chaos') &&
+            (Math.random() < 0.6 || chaosModeActive));
+
           this.playSound(politicianIndex, finalEmotion, useVoiceEffect);
-         
-         
+
+          // Ajouter une légère variation de fréquence pour plus de naturel
           if (this.audioContext && this.oscillators[politicianIndex]) {
-            const variation = (Math.random() * 50) - 25; // +/- 25 Hz
+            const variation = (Math.random() * 20) - 10; // +/- 10 Hz (réduit de 25)
             const nodes = this.oscillators[politicianIndex];
-            if (nodes.oscillator) {
-              const currentFreq = nodes.oscillator.frequency.value;
-              nodes.oscillator.frequency.setValueAtTime(
-                currentFreq + variation, 
-                this.audioContext.currentTime + 0.1
-              );
+            if (nodes.oscillators && nodes.oscillators.length > 0) {
+              nodes.oscillators.forEach(osc => {
+                const currentFreq = osc.frequency.value;
+                osc.frequency.setValueAtTime(
+                  currentFreq + variation,
+                  this.audioContext.currentTime + 0.1
+                );
+              });
             }
-          } 
-          
+          }
 
           if (onNoteCallback) {
             onNoteCallback(politicianIndex, finalEmotion);
           }
         }, index * noteSpacing);
       });
-      
+
       return sequence;
+    },
+
+    // ==========================================
+    // AMBIANCE ET SONS D'ATMOSPHÈRE
+    // ==========================================
+
+    ambianceInterval: null,
+
+    /**
+     * Démarre l'ambiance sonore du studio TV
+     * Sons occasionnels subtils (pas de drone constant)
+     */
+    startAmbiance() {
+      if (!this.initialized || this.ambianceInterval) return;
+
+      // Jouer des sons d'ambiance occasionnels
+      this.ambianceInterval = setInterval(() => {
+        if (Math.random() < 0.3) { // 30% de chance toutes les 4-8 secondes
+          this.playAmbianceSound();
+        }
+      }, 4000 + Math.random() * 4000);
+    },
+
+    /**
+     * Joue un son d'ambiance aléatoire
+     */
+    playAmbianceSound() {
+      if (!this.initialized) return;
+
+      const sounds = ['camera', 'paper', 'cough'];
+      const sound = sounds[Math.floor(Math.random() * sounds.length)];
+
+      try {
+        const gain = this.audioContext.createGain();
+        gain.connect(this.audioContext.destination);
+
+        switch (sound) {
+          case 'camera':
+            // Flash/clic d'appareil photo - bruit court et net
+            const clickBuffer = this.createNoiseBuffer();
+            const click = this.audioContext.createBufferSource();
+            click.buffer = clickBuffer;
+
+            const clickFilter = this.audioContext.createBiquadFilter();
+            clickFilter.type = 'highpass';
+            clickFilter.frequency.value = 3000;
+
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.04, this.audioContext.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.08);
+
+            click.connect(clickFilter);
+            clickFilter.connect(gain);
+            click.start();
+            click.stop(this.audioContext.currentTime + 0.1);
+            break;
+
+          case 'paper':
+            // Bruissement de papier
+            const paperBuffer = this.createNoiseBuffer();
+            const paper = this.audioContext.createBufferSource();
+            paper.buffer = paperBuffer;
+
+            const paperFilter = this.audioContext.createBiquadFilter();
+            paperFilter.type = 'bandpass';
+            paperFilter.frequency.value = 4000;
+            paperFilter.Q.value = 1;
+
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.02, this.audioContext.currentTime + 0.05);
+            gain.gain.linearRampToValueAtTime(0.015, this.audioContext.currentTime + 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.3);
+
+            paper.connect(paperFilter);
+            paperFilter.connect(gain);
+            paper.start();
+            paper.stop(this.audioContext.currentTime + 0.3);
+            break;
+
+          case 'cough':
+            // Toussotement distant - bruit grave court
+            const coughBuffer = this.createNoiseBuffer();
+            const cough = this.audioContext.createBufferSource();
+            cough.buffer = coughBuffer;
+
+            const coughFilter = this.audioContext.createBiquadFilter();
+            coughFilter.type = 'lowpass';
+            coughFilter.frequency.value = 800;
+
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.025, this.audioContext.currentTime + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.15);
+
+            cough.connect(coughFilter);
+            coughFilter.connect(gain);
+            cough.start();
+            cough.stop(this.audioContext.currentTime + 0.2);
+            break;
+        }
+      } catch (error) {
+        // Silencieux en cas d'erreur
+      }
+    },
+
+    /**
+     * Arrête l'ambiance sonore
+     */
+    stopAmbiance() {
+      if (this.ambianceInterval) {
+        clearInterval(this.ambianceInterval);
+        this.ambianceInterval = null;
+      }
+    },
+
+    /**
+     * Joue une réaction de la foule
+     * @param {string} type - Type de réaction: 'gasp', 'murmur', 'applause'
+     */
+    playCrowdReaction(type) {
+      if (!this.initialized) return;
+
+      try {
+        const noiseBuffer = this.createNoiseBuffer();
+        const noise = this.audioContext.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        const filter = this.audioContext.createBiquadFilter();
+        const gain = this.audioContext.createGain();
+
+        switch (type) {
+          case 'gasp':
+            // Hoquet de surprise - bruit court et aigu
+            filter.type = 'bandpass';
+            filter.frequency.value = 1500;
+            filter.Q.value = 3;
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.08, this.audioContext.currentTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 0.3);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.audioContext.destination);
+            noise.start();
+            noise.stop(this.audioContext.currentTime + 0.3);
+            break;
+
+          case 'murmur':
+            // Murmure de désapprobation - bruit grave et long
+            filter.type = 'lowpass';
+            filter.frequency.value = 300;
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.04, this.audioContext.currentTime + 0.2);
+            gain.gain.linearRampToValueAtTime(0.03, this.audioContext.currentTime + 0.8);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 1.5);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.audioContext.destination);
+            noise.start();
+            noise.stop(this.audioContext.currentTime + 1.5);
+            break;
+
+          case 'applause':
+            // Applaudissements - bruit filtré rythmique
+            filter.type = 'highpass';
+            filter.frequency.value = 2000;
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+
+            // Créer un effet de vagues d'applaudissements
+            for (let i = 0; i < 5; i++) {
+              const t = this.audioContext.currentTime + i * 0.15;
+              gain.gain.linearRampToValueAtTime(0.06, t);
+              gain.gain.linearRampToValueAtTime(0.03, t + 0.1);
+            }
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 1.2);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(this.audioContext.destination);
+            noise.start();
+            noise.stop(this.audioContext.currentTime + 1.2);
+            break;
+        }
+      } catch (error) {
+        console.error("Échec de la réaction de foule:", error);
+      }
     }
   };

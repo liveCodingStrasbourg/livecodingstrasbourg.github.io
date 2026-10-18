@@ -7,6 +7,13 @@ window.storyMode = {
   storyActive: false,
   completedChapters: [],
   unlockedFeatures: [],
+
+  // Tracking for validation
+  tracking: {
+    productsRemoved: 0,
+    wheelTypesUsed: new Set(),
+    storeLayoutOpened: false
+  },
   
   // Story progression
   chapters: [
@@ -17,25 +24,25 @@ window.storyMode = {
       steps: [
         {
           text: "You enter an abandoned supermarket. The fluorescent lights flicker weakly. Something feels... alive here.",
-          hint: "The shelves are empty, but you sense potential. Try adding your first product.",
-          goal: "add beer",
+          hint: "The shelves have 10 slots [0]-[9]. Try '[0] add beer' to fill slot 0.",
+          goal: "[0] add beer",
           validate: () => Object.keys(window.state.products).length > 0,
-          success: "The beer materializes on the shelf, humming with an otherworldly tone. The supermarket awakens!",
+          success: "The beer materializes in slot 0, humming with an otherworldly tone. The supermarket awakens!",
           unlocks: ["basic_products"]
         },
         {
           text: "The product calls out for companions. The shelves yearn to be filled.",
-          hint: "Add more products to create a sonic landscape. Try 'add chips' or 'add salad'.",
-          goal: "add 3 products",
+          hint: "Fill more slots! Try '[1] add chips' and '[2] add salad'.",
+          goal: "add 3 products in different slots",
           validate: () => Object.keys(window.state.products).length >= 3,
           success: "The products harmonize together. The supermarket's soul is returning!",
           unlocks: ["remove_command"]
         },
         {
           text: "Sometimes products spoil or need to be cleared. You sense the power to remove them.",
-          hint: "Try removing a product with 'remove beer' or clear everything with 'remove all'.",
+          hint: "Try '[0] remove' to clear slot 0, or 'remove all' to clear everything.",
           goal: "remove any product",
-          validate: () => true, // Will check in execution
+          validate: () => window.storyMode.tracking.productsRemoved > 0,
           success: "You've learned to control the sonic inventory. But there's more to discover...",
           unlocks: ["modifiers_basic"]
         }
@@ -49,10 +56,10 @@ window.storyMode = {
       steps: [
         {
           text: "You notice labels on the shelves: 'fresh', 'old', 'cheap', 'expensive'. What do they mean?",
-          hint: "Modifiers change how products sound. Try 'add fresh salad' or 'add old ham'.",
+          hint: "Modifiers change how products sound. Try '[0] add fresh salad' or '[1] add old ham'.",
           goal: "add modified product",
           validate: () => {
-            return Object.values(window.state.products).some(p => 
+            return Object.values(window.state.products).some(p =>
               Object.keys(p.modifiers || {}).length > 0
             );
           },
@@ -61,10 +68,10 @@ window.storyMode = {
         },
         {
           text: "Multiple modifiers can stack, creating complex sonic textures.",
-          hint: "Try combining modifiers: 'add cheap old beer' or 'add expensive fresh wine'.",
+          hint: "Try combining modifiers: '[0] add cheap old beer' or '[1] add expensive fresh wine'.",
           goal: "add double-modified product",
           validate: () => {
-            return Object.values(window.state.products).some(p => 
+            return Object.values(window.state.products).some(p =>
               Object.keys(p.modifiers || {}).length >= 2
             );
           },
@@ -91,7 +98,7 @@ window.storyMode = {
           text: "Different wheels create different rhythms. The cart yearns for experimentation.",
           hint: "Try different wheels: broken, premium, heavy, turbo, golden...",
           goal: "try 3 wheel types",
-          validate: () => true, // Track in execution
+          validate: () => window.storyMode.tracking.wheelTypesUsed.size >= 3,
           success: "Each wheel tells a different story, drives a different groove!",
           unlocks: ["special_modes"]
         }
@@ -153,19 +160,22 @@ window.storyMode = {
       steps: [
         {
           text: "You find a store map. The layout itself could be an instrument.",
-          hint: "Open the store layout with 'store layout', then try 'map compose'.",
-          goal: "activate map compose",
-          validate: () => window.storeLayout && window.storeLayout.mapComposing.enabled,
-          success: "The customer's path becomes a sequence! Space becomes time!",
-          unlocks: ["spatial_composition"]
+          hint: "First add some products, then open the store layout with 'store layout'.",
+          goal: "open store layout with products",
+          validate: () => {
+            return window.storyMode.tracking.storeLayoutOpened &&
+                   Object.keys(window.state.products || {}).length >= 2;
+          },
+          success: "The products appear on the map! Now let's make them play in sequence...",
+          unlocks: ["map_compose"]
         },
         {
-          text: "Distance determines rhythm. Arrangement creates composition.",
-          hint: "Drag products around in the map to change the sequence timing.",
-          goal: "create spatial sequence",
-          validate: () => true, // Just experience it
-          success: "You've mastered spatial composition. The supermarket is your instrument!",
-          unlocks: ["performance_stats"]
+          text: "Map Compose mode turns the customer's path into a musical sequence.",
+          hint: "Click 'MAP COMPOSE: OFF' button to turn it ON. Products will play in order!",
+          goal: "activate map compose",
+          validate: () => window.storeLayout && window.storeLayout.mapComposing.enabled,
+          success: "Space becomes time! The sequence plays based on product positions!",
+          unlocks: ["spatial_composition"]
         }
       ]
     },

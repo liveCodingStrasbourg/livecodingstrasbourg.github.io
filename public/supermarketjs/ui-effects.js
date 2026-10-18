@@ -183,7 +183,7 @@ const spookyMessages = [
       shortcutInfo.innerHTML = `
         <div class="shortcut-tooltip">
           <span>⌨️ Shortcuts:</span>
-          <span>Ctrl+Enter = Execute current line</span>
+          <span>Ctrl+Enter = Run line / New [slot] add</span>
           <span>Ctrl+Shift+Enter = Execute all</span>
           <span>Ctrl+R = Random command</span>
           <span>Esc = Stop all</span>
@@ -254,9 +254,71 @@ const spookyMessages = [
         }, i * 200);
       }
     },
-    
+
+    // Spawn random themed elements (used for seasons like Halloween)
+    spawnRandomElements: function(count, theme) {
+      const themeConfigs = {
+        spooky: {
+          emojis: ['🎃', '👻', '🦇', '🕷️', '💀', '🕸️', '🌙', '⚰️'],
+          colors: ['#ff6600', '#800080', '#000000', '#2d2d2d'],
+          className: 'spooky-element'
+        },
+        hearts: {
+          emojis: ['❤️', '💕', '💖', '💗', '💝', '💘'],
+          colors: ['#ff1493', '#ff69b4', '#ff0000'],
+          className: 'heart-element'
+        },
+        easter: {
+          emojis: ['🐰', '🥚', '🌸', '🌷', '🐣', '🦋'],
+          colors: ['#ffb6c1', '#98fb98', '#87ceeb', '#dda0dd'],
+          className: 'easter-element'
+        },
+        summer: {
+          emojis: ['☀️', '🌴', '🏖️', '🌊', '🍹', '🕶️'],
+          colors: ['#ffd700', '#00bfff', '#ff6347'],
+          className: 'summer-element'
+        }
+      };
+
+      const config = themeConfigs[theme] || themeConfigs.spooky;
+
+      // Remove existing elements of this theme
+      document.querySelectorAll(`.${config.className}`).forEach(el => el.remove());
+
+      // Spawn new elements
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          const element = document.createElement('div');
+          element.className = `floating-element ${config.className}`;
+          element.textContent = config.emojis[Math.floor(Math.random() * config.emojis.length)];
+          element.style.position = 'fixed';
+          element.style.left = Math.random() * 90 + 5 + '%';
+          element.style.top = Math.random() * 90 + 5 + '%';
+          element.style.fontSize = (Math.random() * 20 + 20) + 'px';
+          element.style.opacity = Math.random() * 0.5 + 0.3;
+          element.style.pointerEvents = 'none';
+          element.style.zIndex = '1000';
+          element.style.animation = `float ${Math.random() * 5 + 5}s ease-in-out infinite`;
+          element.style.filter = `drop-shadow(0 0 10px ${config.colors[Math.floor(Math.random() * config.colors.length)]})`;
+          document.body.appendChild(element);
+
+          // Remove after some time
+          setTimeout(() => {
+            element.style.opacity = '0';
+            element.style.transition = 'opacity 2s';
+            setTimeout(() => element.remove(), 2000);
+          }, 30000 + Math.random() * 30000);
+        }, i * 500);
+      }
+    },
+
     // Show temporary message
     showMessage: function(text, duration, colorClass) {
+      // Check if popup messages are enabled (default to true if not set)
+      if (window.popupMessagesEnabled === false) {
+        return;
+      }
+
       const message = document.createElement('div');
       message.className = `spooky-message ${colorClass || ''}`;
       message.textContent = text;
@@ -266,7 +328,7 @@ const spookyMessages = [
       message.style.fontSize = '24px';
       message.style.fontWeight = 'bold';
       document.body.appendChild(message);
-      
+
       setTimeout(() => {
         message.remove();
       }, duration || 3000);

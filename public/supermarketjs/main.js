@@ -2,14 +2,21 @@
 
 // Global state object
 window.state = {
-  // Products in the system, keyed by ID
-  products: {},
-  
+  // Synth slots [0-9], keyed by slot number string
+  slots: {},
+
+  // Pending slot changes (for beat-sync transitions)
+  pendingChanges: {},
+
+  // Backward compatibility alias (points to slots)
+  get products() { return this.slots; },
+  set products(val) { this.slots = val; },
+
   // Cart wheel state
   cart: {
     wheels: "none"
   },
-  
+
   // Active special modes
   modes: {
     discount: false,
@@ -20,23 +27,41 @@ window.state = {
     fluorescent_lights: false,
     apocalypse: false
   },
-  
+
   // Master effects
-  masterEffects: {}
+  masterEffects: {},
+
+  // Slot constants
+  MAX_SLOTS: 10,
+  VALID_SLOTS: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 };
 
 // Main initialization function
 function initializeApplication() {
   console.log("Initializing Retail Therapy: Market Soundscape...");
-  
+
   try {
-    // Initialize performance manager first
+    // Initialize processing chain FIRST (frequency buses)
+    if (window.processingChain && typeof window.processingChain.init === 'function') {
+      window.processingChain.init();
+    } else {
+      console.warn("Processing chain not available - init skipped");
+    }
+
+    // Initialize voice manager (synth pools)
+    if (window.voiceManager && typeof window.voiceManager.init === 'function') {
+      window.voiceManager.init();
+    } else {
+      console.warn("Voice manager not available - init skipped");
+    }
+
+    // Initialize performance manager
     if (window.performanceManager && typeof window.performanceManager.init === 'function') {
       window.performanceManager.init();
     } else {
       console.warn("Performance manager not available - init skipped");
     }
-    
+
     // Set up global audio effects
     if (window.audioEngine && typeof window.audioEngine.setupGlobalEffects === 'function') {
       window.audioEngine.setupGlobalEffects();
@@ -92,7 +117,14 @@ function initializeApplication() {
     } else {
       console.warn("Store layout not available - init skipped");
     }
-    
+
+    // Initialize autocomplete
+    if (window.autocomplete && typeof window.autocomplete.init === 'function') {
+      window.autocomplete.init();
+    } else {
+      console.warn("Autocomplete not available - init skipped");
+    }
+
     console.log("Application initialization complete.");
   } catch (error) {
     console.error("Error during application initialization:", error);
@@ -105,7 +137,7 @@ window.log = function(message) {
   
   // Format product names with highlighting
   const formattedMessage = message.replace(
-    /beer|salad|ham|milk|chips|pizza|oil|wine|soda|bread|cereal|chocolate|candy|energy_drink|huitsix|rotting/gi, 
+    /beer|salad|ham|milk|chips|pizza|oil|wine|cheese|soda|bread|cereal|chocolate|candy|energy_drink|coffee|butter|eggs|pasta|rice|huitsix|rotting/gi,
     match => `<span class="product">${match}</span>`
   );
   

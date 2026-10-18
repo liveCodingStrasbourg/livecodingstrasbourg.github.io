@@ -130,10 +130,16 @@ window.modeManager = {
             clearInterval(product.inflationInterval);
             product.inflationInterval = null;
           }
-          
+
           // Reset detune
           if (product && product.synth && product.synth.detune) {
             product.synth.detune.value = 0;
+          }
+
+          // Restore original volume
+          if (product && product.synth && product._originalVolume !== undefined) {
+            product.synth.volume.value = product._originalVolume;
+            delete product._originalVolume;
           }
         });
       }
@@ -531,7 +537,7 @@ window.modeManager = {
       const showAd = (index) => {
         setTimeout(() => {
           // Get a random product name
-          const productKeys = Object.keys(productTypes);
+          const productKeys = Object.keys(window.productTypes);
           const randomProductName = productKeys[Math.floor(Math.random() * productKeys.length)];
           
           // Show ad
@@ -653,7 +659,7 @@ window.modeManager = {
     
     // Random apocalypse product changes
     randomApocalypseProductChange: function() {
-      const productKeys = Object.keys(productTypes);
+      const productKeys = Object.keys(window.productTypes);
       const currentProducts = Object.keys(window.state.products).map(id => window.state.products[id].name);
       
       // Chance to add a random product

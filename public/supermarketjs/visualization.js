@@ -8,8 +8,8 @@ window.visualization = {
     // Animation frame request ID
     animationFrameId: null,
     
-    // Fade-out duration in milliseconds
-    fadeOutDuration: 3000,
+    // Fade-out duration in milliseconds (reduced for better responsiveness)
+    fadeOutDuration: 500,
     
     // Initialize visualization system
     init: function() {
@@ -21,16 +21,32 @@ window.visualization = {
     addProductVisualizer: function(productId) {
       const product = window.state.products[productId];
       if (!product) return;
-      
+
       // Get container
       const container = document.getElementById('active-synths');
       if (!container) return;
-      
+
+      // If a visualizer already exists for this ID, remove it immediately first
+      if (this.visualizers[productId]) {
+        const oldVisualizer = this.visualizers[productId];
+        if (oldVisualizer.element) {
+          oldVisualizer.element.remove();
+        }
+        delete this.visualizers[productId];
+      }
+
+      // Also check for any DOM elements with matching ID (cleanup orphaned elements)
+      const existingEl = document.getElementById(`visualizer-${productId}`);
+      if (existingEl) {
+        existingEl.remove();
+      }
+
       // Create visualizer element
       const visualizerEl = document.createElement('div');
       visualizerEl.className = `synth-item ${product.name}`;
       visualizerEl.id = `visualizer-${productId}`;
       visualizerEl.dataset.productId = productId;
+      visualizerEl.title = 'Double-click to remove';
       
       // Apply product-specific styling
       if (product.color) {
@@ -44,27 +60,77 @@ window.visualization = {
         });
       }
       
+      // Get current volume (default -12 dB)
+      const currentVol = product.synth?.volume?.value ?? -12;
+      const sliderVal = Math.round(((currentVol + 40) / 40) * 100); // Map -40 to 0 dB => 0 to 100
+
+      // Check if this is a slot-based product (ID is 0-9)
+      const isSlot = window.state.VALID_SLOTS && window.state.VALID_SLOTS.includes(productId);
+      const slotLabel = isSlot ? `[${productId}] ` : '';
+
       // Add content
       visualizerEl.innerHTML = `
-        <div class="synth-name">${product.name}</div>
-        <div class="synth-type">${productTypes[product.name]?.description || 'Synth'}</div>
+        <div class="synth-header">
+          <div class="synth-name"><span class="slot-label">${slotLabel}</span>${product.name}</div>
+          <div class="synth-remove" title="Click to remove">×</div>
+        </div>
+        <div class="synth-type">${window.productTypes[product.name]?.description || 'Synth'}</div>
         <div class="synth-properties">
           ${this.formatProductProperties(product)}
+        </div>
+        <div class="synth-volume">
+          <input type="range" class="volume-slider" id="vol-${productId}"
+                 min="0" max="100" value="${sliderVal}" title="Volume">
         </div>
         <div class="synth-visualizer">
           <div class="visualizer-bar" id="bar-${productId}"></div>
         </div>
       `;
-      
-      // Add click handler to remove product
-      visualizerEl.addEventListener('click', () => {
+
+      // Click handler function for removing product
+      const removeProduct = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        // Check if already being removed
+        const viz = this.visualizers[productId];
+        if (viz && viz.isRemovePending) {
+          return; // Already removing
+        }
+
         // Start fade-out animation
         this.startFadeOut(productId);
-        
-        // Actual removal happens after the fade-out in removeProductVisualizer
-        window.productManager.removeProductById(productId);
+
+        // Actual removal
+        if (window.productManager && window.productManager.removeProductById) {
+          window.productManager.removeProductById(productId);
+        }
         window.log(`Removing ${product.name}...`);
-      });
+      };
+
+      // Add click handler to remove button
+      const removeBtn = visualizerEl.querySelector('.synth-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', removeProduct);
+      }
+
+      // Also add double-click on the whole card to remove
+      visualizerEl.addEventListener('dblclick', removeProduct);
+
+      // Add volume slider handler
+      const volumeSlider = visualizerEl.querySelector('.volume-slider');
+      if (volumeSlider) {
+        volumeSlider.addEventListener('click', (e) => e.stopPropagation());
+        volumeSlider.addEventListener('input', (e) => {
+          e.stopPropagation();
+          const val = parseInt(e.target.value);
+          // Map 0-100 to -40 to 0 dB
+          const dbVal = (val / 100) * 40 - 40;
+          if (product.synth && product.synth.volume) {
+            product.synth.volume.value = dbVal;
+          }
+        });
+      }
       
       // Apply initial fade-in animation
       visualizerEl.style.opacity = "0";
@@ -271,3 +337,125 @@ startVisualizationLoop: function() {
       }
     }
   };
+
+// Pending changes progress visualization
+window.pendingChangesViz = {
+  containerElement: null,
+  isVisible: false,
+
+  // Initialize the pending changes display
+  init: function() {
+    // Create container element
+    this.containerElement = document.createElement('div');
+    this.containerElement.id = 'pending-changes-container';
+    this.containerElement.className = 'pending-changes-container';
+    this.containerElement.style.display = 'none';
+
+    // Insert after the active-synths container or at top of main area
+    const activeSynths = document.getElementById('active-synths');
+    if (activeSynths && activeSynths.parentNode) {
+      activeSynths.parentNode.insertBefore(this.containerElement, activeSynths);
+    } else {
+      document.body.appendChild(this.containerElement);
+    }
+
+    // Start update loop
+    this.startUpdateLoop();
+  },
+
+  // Start the update loop for pending changes
+  startUpdateLoop: function() {
+    const self = this;
+    let lastUpdate = 0;
+
+    const updateLoop = () => {
+      const now = Date.now();
+      // Update every 50ms for smooth progress bar animation
+      if (now - lastUpdate > 50) {
+        self.updateDisplay();
+        lastUpdate = now;
+      }
+      requestAnimationFrame(updateLoop);
+    };
+
+    requestAnimationFrame(updateLoop);
+  },
+
+  // Update the pending changes display
+  updateDisplay: function() {
+    const pendingChanges = window.state.pendingChanges;
+    const pendingSlots = Object.keys(pendingChanges);
+
+    // Hide if no pending changes
+    if (pendingSlots.length === 0) {
+      if (this.isVisible) {
+        this.containerElement.style.display = 'none';
+        this.isVisible = false;
+      }
+      return;
+    }
+
+    // Show container
+    if (!this.isVisible) {
+      this.containerElement.style.display = 'block';
+      this.isVisible = true;
+    }
+
+    // Calculate progress to next half note (2n subdivision)
+    let progressPercent = 0;
+    if (Tone.Transport.state === "started") {
+      // Get current position within the bar
+      const position = Tone.Transport.position;
+      // Position format is "bars:beats:sixteenths" like "1:2:3"
+      const parts = position.split(':');
+      const beats = parseFloat(parts[1]) || 0;
+      const sixteenths = parseFloat(parts[2]) || 0;
+
+      // Calculate progress through current half note (2 beats = 8 sixteenths)
+      const totalSixteenths = ((beats % 2) * 4) + sixteenths;
+      const maxSixteenths = 8; // 2 beats * 4 sixteenths per half note
+      progressPercent = (totalSixteenths / maxSixteenths) * 100;
+    }
+
+    // Build HTML for pending changes
+    let html = '<div class="pending-changes-header">';
+    html += '<span class="pending-icon">⏳</span>';
+    html += '<span class="pending-label">Queued changes</span>';
+    html += '</div>';
+
+    html += '<div class="pending-progress-bar">';
+    html += `<div class="pending-progress-fill" style="width: ${progressPercent}%"></div>`;
+    html += '</div>';
+
+    html += '<div class="pending-changes-list">';
+
+    pendingSlots.forEach(slot => {
+      const change = pendingChanges[slot];
+      const currentProduct = window.state.slots[slot];
+      const oldName = currentProduct ? currentProduct.name : '(empty)';
+
+      html += `<div class="pending-change-item">`;
+      html += `<span class="pending-slot">[${slot}]</span>`;
+      html += `<span class="pending-old">${oldName}</span>`;
+      html += `<span class="pending-arrow">→</span>`;
+      html += `<span class="pending-new">${change.name}</span>`;
+      html += `</div>`;
+    });
+
+    html += '</div>';
+
+    this.containerElement.innerHTML = html;
+  }
+};
+
+// Initialize pending changes visualization when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    window.pendingChangesViz.init();
+  });
+} else {
+  // DOM already loaded
+  setTimeout(function() {
+    window.pendingChangesViz.init();
+  }, 100);
+}

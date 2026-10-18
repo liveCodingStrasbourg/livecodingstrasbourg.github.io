@@ -7,7 +7,24 @@
   <link rel="stylesheet" href="./politis/css/_style.css">
 </head>
 <body>
-  <div class="container">
+  <!-- Écran de démarrage -->
+  <div id="start-screen" class="start-screen">
+    <div class="start-screen-content">
+      <h1 class="start-title">CONFÉRENCE DE PRESSE</h1>
+      <p class="start-subtitle">Les invités du jour:</p>
+
+      <div class="start-characters" id="start-characters">
+        <!-- Filled by JavaScript -->
+      </div>
+
+      <div class="start-buttons">
+        <button id="reroll-button" class="start-button reroll-button">AUTRES INVITÉS</button>
+        <button id="start-button" class="start-button begin-button">COMMENCER</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container hidden">
     <div id="audio-warning" class="audio-warning">
       <p><strong>Note:</strong> Cliquez pour démarrer le plateau TV.</p>
     </div>
@@ -89,6 +106,11 @@
           </div>
         </div>
         
+        <div class="controls">
+          <button id="run-button" class="run-button">Poser la Question</button>
+          <div class="output" id="output"></div>
+        </div>
+        
         <div class="question-metrics">
           <div class="hash-value" id="question-hash">Valeur de question: 0000</div>
           <div class="melody-preview" id="melody-preview">Mélodie: ...</div>
@@ -102,10 +124,6 @@
           <div class="terminal-line">> <span class="cursor"></span></div>
         </div>
         
-        <div class="controls">
-          <button id="run-button" class="run-button">Poser la Question</button>
-          <div class="output" id="output"></div>
-        </div>
         
         
       </div>

@@ -5,12 +5,12 @@ window.productTypes = {
     // Beverages
     beer: {
       create: () => new Tone.FMSynth({
-        harmonicity: 3,
-        modulationIndex: 10,
+        harmonicity: 2,
+        modulationIndex: 4,
         oscillator: { type: "sine" },
-        envelope: { attack: 0.01, decay: 0.2, sustain: 0.2, release: 0.5 },
-      }).toDestination(),
-      note: "C4",
+        envelope: { attack: 0.01, decay: 0.3, sustain: 0.3, release: 0.6 },
+      }),
+      note: "C3",
       pattern: "8n",
       color: "#f28e1c", // Amber
       description: "FM synth with harmonics",
@@ -42,11 +42,11 @@ salad: {
   create: () => new Tone.MonoSynth({
     oscillator: { type: "triangle" },
     envelope: { attack: 0.01, decay: 0.1, sustain: 0.3, release: 0.2 },
-    filter: { Q: 2, frequency: 2000, type: "highpass" },
-    filterEnvelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 1500, octaves: 2 }
-  }).toDestination(),
-  note: "E5",
-  pattern: "8t",           // Changed from "8t" to "8n" for more regular timing
+    filter: { Q: 1.5, frequency: 1200, type: "bandpass" },
+    filterEnvelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 600, octaves: 2 }
+  }),
+  note: "E3",
+  pattern: "8n",
   color: "#7fb800",        // Green
   description: "Crisp pluck synth for fresh texture",
   category: "vegetable",
@@ -71,11 +71,11 @@ salad: {
     
     ham: {
       create: () => new Tone.MonoSynth({
-        oscillator: { type: "fatsawtooth", count: 4, spread: 40 },
+        oscillator: { type: "fatsawtooth", count: 2, spread: 20 },
         envelope: { attack: 0.02, decay: 0.4, sustain: 0.6, release: 0.5 },
-        filter: { Q: 2, frequency: 600, type: "lowpass" },
-        filterEnvelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.5, baseFrequency: 500, octaves: 2.5 }
-      }).toDestination(),
+        filter: { Q: 1.5, frequency: 600, type: "lowpass" },
+        filterEnvelope: { attack: 0.01, decay: 0.3, sustain: 0.4, release: 0.5, baseFrequency: 500, octaves: 2 }
+      }),
       note: "C2",
       pattern: "4n.",
       color: "#ff6b6b", // Pink
@@ -108,9 +108,9 @@ milk: {
     envelope: { attack: 0.02, decay: 0.3, sustain: 0.4, release: 0.6 },
     filter: { Q: 1, frequency: 1200, type: "lowpass" },
     filterEnvelope: { attack: 0.02, decay: 0.2, sustain: 0.3, release: 0.4, baseFrequency: 800, octaves: 1.5 }
-  }).toDestination(),
-  note: "A4",
-  pattern: "16n",
+  }),
+  note: "A3",
+  pattern: "8n",
   color: "#ffffff", // White
   description: "Smooth liquid synth with gentle filtering",
   category: "dairy",
@@ -138,11 +138,11 @@ milk: {
   create: () => new Tone.MonoSynth({
     oscillator: { type: "sawtooth" },
     envelope: { attack: 0.001, decay: 0.1, sustain: 0.3, release: 0.1 },
-    filter: { Q: 2, frequency: 2500, type: "highpass" },
-    filterEnvelope: { attack: 0.001, decay: 0.2, sustain: 0.5, release: 0.2, baseFrequency: 2000, octaves: 2 }
-  }).toDestination(),
-  note: "C5", // Higher pitched for crispness
-  pattern: "8n.", // Dotted 8th notes - less frantic than 16th triplets
+    filter: { Q: 1.5, frequency: 1000, type: "bandpass" },
+    filterEnvelope: { attack: 0.001, decay: 0.2, sustain: 0.5, release: 0.2, baseFrequency: 400, octaves: 2 }
+  }),
+  note: "C3",
+  pattern: "8n",
   color: "#ffd700", // Gold
   description: "Crispy sawtooth synth with filter sweep",
   category: "snack",
@@ -178,8 +178,8 @@ milk: {
           oscillator: { type: "sine" },
           envelope: { attack: 0.1, decay: 0.3, sustain: 0.4, release: 0.8 }
         }
-      }).toDestination(),
-      note: "D4",
+      }),
+      note: "D3",
       pattern: "8n",
       color: "#ff4500", // Red-Orange
       description: "Layered duo synth",
@@ -209,7 +209,7 @@ milk: {
         octaves: 8,
         oscillator: { type: "sine" },
         envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4 }
-      }).toDestination(),
+      }),
       note: "F2",
       pattern: "2n",
       color: "#8b4513", // Brown
@@ -235,14 +235,23 @@ milk: {
     },
     
     wine: {
-      create: () => new Tone.PolySynth(Tone.Synth, {
-        oscillator: { type: "triangle" },
-        envelope: { attack: 0.1, decay: 0.1, sustain: 0.8, release: 1.5 }
-      }).toDestination(),
-      note: ["B3", "D4", "F#4"], // Chord
-      pattern: "4n",
+      create: () => new Tone.DuoSynth({
+        vibratoAmount: 0.3,
+        vibratoRate: 3,
+        harmonicity: 1.5,
+        voice0: {
+          oscillator: { type: "sine" },
+          envelope: { attack: 0.15, decay: 0.3, sustain: 0.5, release: 0.8 }
+        },
+        voice1: {
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.2, decay: 0.25, sustain: 0.4, release: 0.9 }
+        }
+      }),
+      note: "D3",
+      pattern: "2n",
       color: "#722f37", // Burgundy
-      description: "Triangle poly synth",
+      description: "Rich warm duo synth",
       category: "beverage",
       // Modifiers
       fresh: { octave: 1, filter: null },
@@ -262,14 +271,47 @@ milk: {
       "mass-produced": { effect: "bitcrusher", settings: { bits: 3, wet: 0.5 } },
       addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.25, feedback: 0.5, wet: 0.3 } }
     },
-    
+
+    cheese: {
+      create: () => new Tone.FMSynth({
+        harmonicity: 2,
+        modulationIndex: 5,
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.2, decay: 0.3, sustain: 0.7, release: 1.2 },
+        modulation: { type: "triangle" },
+        modulationEnvelope: { attack: 0.3, decay: 0.2, sustain: 0.5, release: 0.8 }
+      }),
+      note: "E3",
+      pattern: "2n",
+      color: "#f4d03f", // Cheese yellow
+      description: "Smooth FM synth with warm harmonics",
+      category: "dairy",
+      // Modifiers
+      fresh: { octave: 1, filter: null },
+      old: { octave: -1, filter: "lowpass" },
+      strong: { octave: -1, filter: "lowpass" },
+      flavorless: { octave: 1, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 5, wet: 0.3 } },
+      expensive: { effect: "reverb", settings: { decay: 6, wet: 0.7 } },
+      processed: { effect: "chorus", settings: { frequency: 1.5, delayTime: 4, depth: 0.5, wet: 0.4 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.4, wet: 0.3 } },
+      overpriced: { effect: "phaser", settings: { frequency: 0.3, octaves: 2, wet: 0.7 } },
+      vomit: { effect: "chebyshev", settings: { order: 40, wet: 0.5 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 3, depth: 0.4, wet: 0.5 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.35, feedback: 0.25, wet: 0.2 } },
+      luxury: { effect: "reverb", settings: { decay: 10, wet: 0.85 } },
+      artificial: { effect: "vibrato", settings: { frequency: 2, depth: 0.25, wet: 0.4 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 4, wet: 0.4 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.3, feedback: 0.4, wet: 0.25 } }
+    },
+
     soda: {
       create: () => new Tone.AMSynth({
         harmonicity: 2.5,
         oscillator: { type: "square8" },
         envelope: { attack: 0.05, decay: 0.3, sustain: 0.5, release: 0.8 },
         modulation: { type: "sawtooth" }
-      }).toDestination(),
+      }),
       note: "G2",
       pattern: "8t",
       color: "#e4000f", // Coca-Cola Red
@@ -308,7 +350,7 @@ milk: {
           oscillator: { type: "sine" },
           envelope: { attack: 0.15, decay: 0.3, sustain: 0.6, release: 1.2 }
         }
-      }).toDestination(),
+      }),
       note: "E3",
       pattern: "4n",
       color: "#deb887", // Tan
@@ -334,14 +376,14 @@ milk: {
     },
     
         cereal: {
-      create: () => new Tone.PolySynth(Tone.Synth, {
-        oscillator: { type: "fatsawtooth", count: 3, spread: 30 },
+      create: () => new Tone.MonoSynth({
+        oscillator: { type: "fatsawtooth", count: 2, spread: 15 },
         envelope: { attack: 0.002, decay: 0.08, sustain: 0.2, release: 0.1 },
-        filter: { Q: 1, frequency: 3000, type: "highpass" },
-        filterEnvelope: { attack: 0.001, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 2500, octaves: 1.5 }
-      }).toDestination(),
-      note: "G5",
-      pattern: "16n",
+        filter: { Q: 1, frequency: 1200, type: "lowpass" },
+        filterEnvelope: { attack: 0.001, decay: 0.1, sustain: 0.5, release: 0.2, baseFrequency: 400, octaves: 2 }
+      }),
+      note: "G3",
+      pattern: "8n",
       color: "#ffdb58", // Mustard
       description: "Crunchy granular synth with filter modulation",
       category: "breakfast",
@@ -369,7 +411,7 @@ milk: {
         oscillator: { type: "sine" },
         envelope: { attack: 0.08, decay: 0.4, sustain: 0.5, release: 1 },
         filterEnvelope: { attack: 0.1, decay: 0.5, sustain: 0.5, release: 1, baseFrequency: 300, octaves: 3 }
-      }).toDestination(),
+      }),
       note: "D3",
       pattern: "8n",
       color: "#6b4226", // Chocolate
@@ -403,9 +445,9 @@ milk: {
         envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.3 },
         modulation: { type: "sine" },
         modulationEnvelope: { attack: 0.5, decay: 0, sustain: 1, release: 0.5 }
-      }).toDestination(),
-      note: "G5",
-      pattern: "32n",
+      }),
+      note: "G4",
+      pattern: "8n",
       color: "#ff69b4", // Hot Pink
       description: "High-pitched AM synth",
       category: "sweets",
@@ -430,15 +472,15 @@ milk: {
     
 energy_drink: {
       create: () => new Tone.FMSynth({
-        harmonicity: 3,
-        modulationIndex: 10,
-        oscillator: { type: "square" },
-        envelope: { attack: 0.001, decay: 0.2, sustain: 0.4, release: 0.1 },
+        harmonicity: 2,
+        modulationIndex: 5,
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.005, decay: 0.2, sustain: 0.4, release: 0.3 },
         modulation: { type: "sine" },
-        modulationEnvelope: { attack: 0.001, decay: 0.1, sustain: 0.5, release: 0.1 }
-      }).toDestination(),
-      note: "G4", // Higher pitch for energy
-      pattern: "8n", // Changed from 16t to 8th notes for better rhythm
+        modulationEnvelope: { attack: 0.005, decay: 0.1, sustain: 0.5, release: 0.2 }
+      }),
+      note: "G3",
+      pattern: "8n",
       color: "#39ff14", // Neon Green
       description: "Buzzy FM synth with energy",
       category: "beverage",
@@ -462,5 +504,178 @@ energy_drink: {
       // New effects - perfect for energy drink's intense character
       packaged: { effect: "packaged", settings: { frequency: 16, depth: 1, wet: 0.9 } },
       glass: { effect: "glass", settings: { delayTime: 0.06, feedback: 0.9, wet: 0.6 } }
+    },
+    
+    // New products for more variety
+    coffee: {
+      create: () => new Tone.MonoSynth({
+        oscillator: { type: "sawtooth" },
+        envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 0.4 },
+        filter: { Q: 3, frequency: 800, type: "bandpass" },
+        filterEnvelope: { attack: 0.005, decay: 0.2, sustain: 0.5, release: 0.3, baseFrequency: 600, octaves: 3 }
+      }),
+      note: "Bb2",
+      pattern: "8n",
+      color: "#6f4e37", // Coffee brown
+      description: "Dark, filtered sawtooth with bite",
+      category: "beverage",
+      // Modifiers
+      fresh: { octave: 1, filter: null },
+      old: { octave: -1, filter: "lowpass" },
+      strong: { octave: -1, filter: "lowpass" },
+      flavorless: { octave: 1, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 3, wet: 0.7 } },
+      expensive: { effect: "reverb", settings: { decay: 3, wet: 0.5 } },
+      processed: { effect: "chorus", settings: { frequency: 2, delayTime: 2, depth: 0.6, wet: 0.5 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.6, wet: 0.5 } },
+      overpriced: { effect: "phaser", settings: { frequency: 0.8, octaves: 3, wet: 0.6 } },
+      vomit: { effect: "chebyshev", settings: { order: 30, wet: 0.5 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 6, depth: 0.7, wet: 0.6 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.125, feedback: 0.5, wet: 0.3 } },
+      luxury: { effect: "reverb", settings: { decay: 5, wet: 0.7 } },
+      artificial: { effect: "vibrato", settings: { frequency: 4, depth: 0.5, wet: 0.5 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 2, wet: 0.8 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.1, feedback: 0.7, wet: 0.4 } }
+    },
+    
+    butter: {
+      create: () => new Tone.DuoSynth({
+        vibratoAmount: 0.3,
+        vibratoRate: 2,
+        harmonicity: 0.99, // Very slight detuning for creaminess
+        voice0: {
+          oscillator: { type: "sine" },
+          envelope: { attack: 0.2, decay: 0.5, sustain: 0.8, release: 1.5 },
+          filter: { Q: 0.5, frequency: 600, type: "lowpass" }
+        },
+        voice1: {
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.3, decay: 0.4, sustain: 0.7, release: 1.8 }
+        }
+      }),
+      note: "F3",
+      pattern: "2n",
+      color: "#fffacd", // Light yellow
+      description: "Creamy detuned duo synth",
+      category: "dairy",
+      // Modifiers
+      fresh: { octave: 0, filter: null },
+      old: { octave: -1, filter: "lowpass" },
+      strong: { octave: -1, filter: "lowpass" },
+      flavorless: { octave: 1, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 6, wet: 0.3 } },
+      expensive: { effect: "reverb", settings: { decay: 4, wet: 0.6 } },
+      processed: { effect: "chorus", settings: { frequency: 1, delayTime: 4, depth: 0.4, wet: 0.4 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.3, wet: 0.3 } },
+      overpriced: { effect: "phaser", settings: { frequency: 0.3, octaves: 2, wet: 0.5 } },
+      vomit: { effect: "chebyshev", settings: { order: 15, wet: 0.3 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 3, depth: 0.4, wet: 0.5 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.5, feedback: 0.2, wet: 0.15 } },
+      luxury: { effect: "reverb", settings: { decay: 6, wet: 0.7 } },
+      artificial: { effect: "vibrato", settings: { frequency: 2, depth: 0.3, wet: 0.4 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 5, wet: 0.4 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.33, feedback: 0.3, wet: 0.2 } }
+    },
+    
+    eggs: {
+      create: () => {
+        const synth = new Tone.PluckSynth({
+          attackNoise: 4,
+          dampening: 4000,
+          resonance: 0.98
+        });
+        // PluckSynth is quieter by default, boost its volume
+        synth.volume.value = 6;
+        return synth;
+      },
+      note: "C4",
+      pattern: "4n",
+      color: "#ffd700", // Golden yellow
+      description: "Plucked string with bright attack",
+      category: "dairy",
+      // Modifiers
+      fresh: { octave: 1, filter: null },
+      old: { octave: -1, filter: "lowpass" },
+      strong: { octave: 0, filter: "lowpass" },
+      flavorless: { octave: 1, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 4, wet: 0.5 } },
+      expensive: { effect: "reverb", settings: { decay: 3, wet: 0.5 } },
+      processed: { effect: "chorus", settings: { frequency: 3, delayTime: 2, depth: 0.7, wet: 0.5 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.5, wet: 0.4 } },
+      overpriced: { effect: "phaser", settings: { frequency: 0.7, octaves: 3, wet: 0.5 } },
+      vomit: { effect: "chebyshev", settings: { order: 25, wet: 0.4 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 7, depth: 0.6, wet: 0.5 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.2, feedback: 0.4, wet: 0.2 } },
+      luxury: { effect: "reverb", settings: { decay: 5, wet: 0.6 } },
+      artificial: { effect: "vibrato", settings: { frequency: 5, depth: 0.5, wet: 0.5 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 3, wet: 0.6 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.16, feedback: 0.5, wet: 0.3 } }
+    },
+    
+    pasta: {
+      create: () => new Tone.DuoSynth({
+        vibratoAmount: 0.15,
+        vibratoRate: 2,
+        harmonicity: 1.01,
+        voice0: {
+          oscillator: { type: "triangle" },
+          envelope: { attack: 0.02, decay: 0.25, sustain: 0.4, release: 0.6 }
+        },
+        voice1: {
+          oscillator: { type: "sine" },
+          envelope: { attack: 0.03, decay: 0.2, sustain: 0.35, release: 0.5 }
+        }
+      }),
+      note: "G3",
+      pattern: "4n",
+      color: "#ffd966", // Pasta yellow
+      description: "Soft warm duo synth",
+      category: "ingredient",
+      // Modifiers
+      fresh: { octave: 0, filter: null },
+      old: { octave: -1, filter: "lowpass" },
+      strong: { octave: -1, filter: "lowpass" },
+      flavorless: { octave: 1, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 5, wet: 0.4 } },
+      expensive: { effect: "reverb", settings: { decay: 4, wet: 0.6 } },
+      processed: { effect: "chorus", settings: { frequency: 1.5, delayTime: 3, depth: 0.5, wet: 0.4 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.4, wet: 0.3 } },
+      overpriced: { effect: "phaser", settings: { frequency: 0.5, octaves: 2, wet: 0.5 } },
+      vomit: { effect: "chebyshev", settings: { order: 20, wet: 0.3 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 4, depth: 0.5, wet: 0.5 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.25, feedback: 0.3, wet: 0.2 } },
+      luxury: { effect: "reverb", settings: { decay: 6, wet: 0.7 } },
+      artificial: { effect: "vibrato", settings: { frequency: 3, depth: 0.4, wet: 0.4 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 4, wet: 0.5 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.2, feedback: 0.4, wet: 0.25 } }
+    },
+    
+    rice: {
+      create: () => new Tone.NoiseSynth({
+        noise: { type: "white" },
+        envelope: { attack: 0.001, decay: 0.05, sustain: 0.01, release: 0.1 }
+      }),
+      note: null, // NoiseSynth doesn't use notes
+      pattern: "16n",
+      color: "#f5f5dc", // Beige
+      description: "Short noise bursts like grains",
+      category: "ingredient",
+      // Modifiers
+      fresh: { octave: 0, filter: "bandpass" },
+      old: { octave: 0, filter: "lowpass" },
+      strong: { octave: 0, filter: "lowpass" },
+      flavorless: { octave: 0, filter: "highpass" },
+      cheap: { effect: "bitcrusher", settings: { bits: 2, wet: 0.8 } },
+      expensive: { effect: "reverb", settings: { decay: 2, wet: 0.4 } },
+      processed: { effect: "chorus", settings: { frequency: 5, delayTime: 1, depth: 0.8, wet: 0.6 } },
+      industrial: { effect: "distortion", settings: { distortion: 0.7, wet: 0.5 } },
+      overpriced: { effect: "phaser", settings: { frequency: 1, octaves: 4, wet: 0.6 } },
+      vomit: { effect: "chebyshev", settings: { order: 40, wet: 0.5 } },
+      artisanal: { effect: "tremolo", settings: { frequency: 8, depth: 0.7, wet: 0.6 } },
+      bargain: { effect: "feedback-delay", settings: { delayTime: 0.08, feedback: 0.6, wet: 0.3 } },
+      luxury: { effect: "reverb", settings: { decay: 3, wet: 0.5 } },
+      artificial: { effect: "vibrato", settings: { frequency: 6, depth: 0.6, wet: 0.6 } },
+      "mass-produced": { effect: "bitcrusher", settings: { bits: 1, wet: 0.9 } },
+      addictive: { effect: "ping-pong-delay", settings: { delayTime: 0.06, feedback: 0.7, wet: 0.4 } }
     }
   };

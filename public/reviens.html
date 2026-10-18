@@ -9,224 +9,212 @@
 <body>
     <div class="container">
         <h1>reviens://loop.maker</h1>
-        
+
         <div class="credits">
             <a href="https://livecodingstrasbourg.github.io" target="_blank" class="credit-link">
                 TOPLAP Strasbourg
             </a>
-            <span class="version">alpha version</span>
         </div>
 
-        <div class="upload-section">
-            <div class="terminal-prompt">$> load_audio_file</div>
-            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                [ SELECT FILE ]
-            </button>
-            <input type="file" id="fileInput" accept="audio/*">
-            <div id="fileName" class="terminal-output"></div>
+        <!-- Step 1: Load Audio -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">♫</div>
+                <div class="upload-text">Drop audio file or click to browse</div>
+                <input type="file" id="fileInput" accept="audio/*">
+            </div>
+            <div id="fileName" class="file-name"></div>
             <div class="progress-bar" id="loadingProgress" style="display: none;">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
 
-        <div class="audio-info" id="audioInfo">
-            <div class="terminal-section">
-                <div class="terminal-header">[ TRACK_INFO ]</div>
-                <div class="track-info" id="trackInfo"></div>
-            </div>
-        </div>
+        <!-- Main Workspace (hidden until file loaded) -->
+        <div class="workspace" id="workspace" style="display: none;">
 
-        <div class="track-visualization" id="trackVisualization">
-            <div class="terminal-section">
-                <div class="terminal-header">[ WAVEFORM_ANALYSIS ]</div>
-                <div class="visualization-controls">
-                    <div class="main-controls">
-                        <div class="control-buttons">
-                            <button id="playBtn" class="terminal-btn primary">[ PLAY ]</button>
-                            <button id="loopBtn" class="terminal-btn primary">[ LOOP ]</button>
-                            <button id="analyzeBtn" class="terminal-btn">[ ANALYZE ]</button>
-                            <div class="beat-length-control">
-                                <label>length:</label>
-                                <select id="beatLength">
-                                    <option value="0.25">1/4</option>
-                                    <option value="0.5">1/2</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="4" selected>4</option>
-                                    <option value="8">8</option>
-                                    <option value="16">16</option>
-                                    <option value="32">32</option>
-                                    <option value="custom">custom</option>
-                                </select>
-                                <input type="number" id="manualBeats" step="0.25" min="0.25" max="64" value="4" style="display: none; width: 60px; margin-left: 5px;">
-                                <button id="snapToNearestBeat" class="terminal-btn compact">APPLY</button>
-                            </div>
-                            <button id="exportBtn" class="terminal-btn success">[ EXPORT ]</button>
-                            <button id="resetViewBtn" class="terminal-btn">[ RESET_VIEW ]</button>
-                            <button id="helpBtn" class="terminal-btn">[ ? ]</button>
-                        </div>
-                        <div class="key-info">
-                            <div class="info-display">
-                                <span class="info-label">BPM:</span>
-                                <span id="bpmDisplay" class="info-value">--</span>
-                            </div>
-                            <div class="info-display">
-                                <span class="info-label">PITCH:</span>
-                                <span id="pitchDisplay" class="info-value">--</span>
-                            </div>
-                            <div class="info-display">
-                                <span class="info-label">QUALITY:</span>
-                                <span id="qualityDisplay" class="info-value">--</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="snap-controls-inline">
-                        <label class="checkbox-label compact">
-                            <input type="checkbox" id="snapToBeat" checked> 
-                            snap_to_beat
-                        </label>
-                        <label class="checkbox-label compact">
-                            <input type="checkbox" id="snapToZero"> 
-                            snap_to_zero
-                        </label>
-                        <label class="checkbox-label compact">
-                            <input type="checkbox" id="precisionMode"> 
-                            precision_mode
-                        </label>
-                    </div>
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-item file-info">
+                    <span class="status-label">FILE</span>
+                    <span class="status-value" id="fileNameDisplay">--</span>
                 </div>
-                <div class="time-ruler" id="timeRuler"></div>
-                <div class="navigation-slider-container">
-                    <input type="range" id="navigationSlider" class="navigation-slider" min="0" max="100" value="0">
-                    <div class="slider-labels">
-                        <span class="slider-start">0:00.000</span>
-                        <span class="slider-end">0:00.000</span>
-                    </div>
+                <div class="status-item">
+                    <span class="status-label">BPM</span>
+                    <span class="status-value" id="bpmDisplay">--</span>
                 </div>
+                <div class="status-item">
+                    <span class="status-label">KEY</span>
+                    <span class="status-value" id="pitchDisplay">--</span>
+                </div>
+                <div class="status-item" id="qualityStatus">
+                    <span class="status-label">LOOP</span>
+                    <span class="status-value quality-indicator" id="qualityDisplay">--</span>
+                </div>
+                <div class="status-item selection-info">
+                    <span class="status-label">SELECTION</span>
+                    <span class="status-value" id="selectionDisplay">--</span>
+                </div>
+            </div>
+
+            <!-- Waveform -->
+            <div class="waveform-section">
                 <div class="waveform-container">
                     <canvas id="waveformCanvas" height="150"></canvas>
                     <div class="beat-markers" id="beatMarkers"></div>
-                    <div id="selectionOverlay" class="selection-overlay" style="display: none;"></div>
-                    <div id="playbackCursor" class="playback-cursor" style="display: none;"></div>
+                    <div id="selectionOverlay" class="selection-overlay"></div>
+                    <div id="playbackCursor" class="playback-cursor"></div>
                 </div>
-            </div>
-        </div>
-
-        <div class="controls" id="controls">
-            <div class="control-tabs">
-                <button class="tab-button active" data-tab="selection">SELECTION</button>
-                <button class="tab-button" data-tab="config">CONFIG</button>
-                <button class="tab-button" data-tab="finder">AUTO-FIND</button>
-            </div>
-            
-            <div class="tab-content active" data-tab="selection">
-                <div class="control-row">
-                    <div class="input-group">
-                        <label>start_time (s)</label>
-                        <input type="number" id="startTime" step="0.01" min="0" value="0">
-                    </div>
-                    <div class="input-group">
-                        <label>duration (s)</label>
-                        <input type="number" id="duration" step="0.01" min="0.1" value="4">
-                    </div>
-                    <div class="input-group">
-                        <label>zoom_level</label>
-                        <input type="range" id="zoomLevel" min="1" max="50" value="1" step="0.5">
-                        <span id="zoomValue" class="terminal-value">1x</span>
-                    </div>
-                </div>
-                <div class="loop-analysis" id="loopAnalysis">
-                    <div class="terminal-output">select region for quality analysis</div>
-                </div>
+                <div class="waveform-hint" id="waveformHint">Click on waveform to set loop start point</div>
             </div>
 
-            <div class="tab-content" data-tab="config">
-                <div class="control-row">
-                    <div class="input-group">
-                        <label>crossfade_ms</label>
-                        <input type="range" id="crossfade" min="5" max="2000" value="20" step="5">
-                        <span id="crossfadeValue" class="terminal-value">20ms</span>
+            <!-- Loop Length Buttons -->
+            <div class="loop-length-section">
+                <div class="section-label">LOOP LENGTH</div>
+                <div class="length-buttons" id="lengthButtons">
+                    <button class="length-btn" data-beats="1">1 beat</button>
+                    <button class="length-btn" data-beats="2">2 beats</button>
+                    <button class="length-btn" data-beats="4" data-default="true">1 bar</button>
+                    <button class="length-btn" data-beats="8">2 bars</button>
+                    <button class="length-btn" data-beats="16">4 bars</button>
+                    <button class="length-btn" data-beats="32">8 bars</button>
+                </div>
+                <div class="length-info" id="lengthInfo">@ 120 BPM: 1 bar = 2.00s</div>
+            </div>
+
+            <!-- Beat Navigation -->
+            <div class="beat-nav-section">
+                <button class="nav-btn" id="prevBeatBtn" title="Move to previous beat (←)">◀ PREV BEAT</button>
+                <div class="current-position" id="currentPosition">Bars 1-4</div>
+                <button class="nav-btn" id="nextBeatBtn" title="Move to next beat (→)">NEXT BEAT ▶</button>
+            </div>
+
+            <!-- Main Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn loop-btn" id="loopBtn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">LOOP</span>
+                </button>
+                <button class="action-btn analyze-btn" id="deepAnalyzeBtn">
+                    <span class="btn-icon">◎</span>
+                    <span class="btn-text">FIND LOOPS</span>
+                </button>
+                <button class="action-btn export-btn" id="exportBtn">
+                    <span class="btn-icon">↓</span>
+                    <span class="btn-text">EXPORT</span>
+                </button>
+            </div>
+
+            <!-- Analysis Results Section -->
+            <div class="analysis-results" id="analysisResults" style="display: none;">
+                <div class="results-header">
+                    <span class="results-title">Found Loops</span>
+                    <button class="small-btn" id="clearResultsBtn">Clear</button>
+                </div>
+                <div class="results-list" id="resultsList"></div>
+            </div>
+
+            <!-- Zoom Control -->
+            <div class="zoom-section">
+                <label>ZOOM</label>
+                <input type="range" id="zoomLevel" min="1" max="500" value="1" step="1">
+                <span id="zoomValue">1x</span>
+                <button class="small-btn" id="resetViewBtn">RESET</button>
+            </div>
+
+            <!-- Advanced Settings (Collapsible) -->
+            <details class="advanced-section" id="advancedSection">
+                <summary>Advanced Settings</summary>
+                <div class="advanced-content">
+                    <div class="setting-row">
+                        <label>Crossfade (smoothness)</label>
+                        <input type="range" id="crossfade" min="0" max="200" value="20" step="5">
+                        <span id="crossfadeValue">20ms</span>
                     </div>
-                    <div class="input-group">
-                        <label>crossfade_type</label>
+                    <div class="setting-row">
+                        <label>Crossfade Type</label>
                         <select id="crossfadeType">
-                            <option value="linear">linear</option>
-                            <option value="cosine" selected>cosine</option>
-                            <option value="logarithmic">logarithmic</option>
-                            <option value="exponential">exponential</option>
+                            <option value="cosine" selected>Smooth (cosine)</option>
+                            <option value="linear">Linear</option>
+                            <option value="logarithmic">Logarithmic</option>
+                            <option value="exponential">Exponential</option>
                         </select>
                     </div>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="clickReduction"> 
-                        click_reduction
-                    </label>
+                    <div class="setting-row checkboxes">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="snapToBeat">
+                            Snap to beat
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="snapToZero">
+                            Snap to zero crossing
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="clickReduction" checked>
+                            Click reduction
+                        </label>
+                    </div>
+                    <div class="setting-row">
+                        <label>Start (s)</label>
+                        <input type="number" id="startTime" step="0.001" min="0" value="0">
+                    </div>
+                    <div class="setting-row">
+                        <label>End (s)</label>
+                        <input type="number" id="endTime" step="0.001" min="0.1" value="2">
+                    </div>
+                    <div class="setting-row">
+                        <label>Duration (s)</label>
+                        <input type="number" id="duration" step="0.001" min="0.1" value="2" readonly>
+                    </div>
                 </div>
-                <div class="hidden-inputs">
-                    <input type="number" id="bpm" min="60" max="200" value="120" readonly style="display: none;">
-                    <input type="text" id="pitch" value="--" readonly style="display: none;">
-                </div>
-            </div>
+            </details>
 
-            <div class="tab-content" data-tab="finder">
-                <div class="control-row">
-                    <div class="input-group">
-                        <label>search_mode</label>
-                        <select id="searchMode">
-                            <option value="full_track" selected>entire track</option>
-                            <option value="around_selection">around current selection</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>min_duration (s)</label>
-                        <input type="number" id="minDuration" step="0.5" min="0.5" max="30" value="2">
-                    </div>
-                    <div class="input-group">
-                        <label>max_duration (s)</label>
-                        <input type="number" id="maxDuration" step="0.5" min="1" max="60" value="8">
-                    </div>
-                    <button id="findLoopsBtn" class="terminal-btn">[ FIND_BEST_LOOP ]</button>
-                </div>
-                <div class="loop-suggestions" id="loopSuggestions">
-                    <div class="terminal-output">waiting for analysis...</div>
-                    <div id="suggestionsList"></div>
-                </div>
-            </div>
         </div>
 
-        <div class="button-group" id="buttonGroup">
-            <button id="exportBtn" class="terminal-btn success">[ EXPORT ]</button>
-        </div>
-
+        <!-- Export Progress -->
         <div id="exportProgress" class="export-progress" style="display: none;">
-            <div class="terminal-section">
-                <div class="terminal-header">[ EXPORT_STATUS ]</div>
-                <div class="export-status">
-                    <div id="exportStatus" class="terminal-output">preparing export...</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="exportProgressFill"></div>
-                    </div>
+            <div class="export-content">
+                <div class="export-title">Exporting...</div>
+                <div id="exportStatus">Preparing...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="exportProgressFill"></div>
                 </div>
             </div>
-        <!-- Global loading overlay -->
+        </div>
+
+        <!-- Loading Overlay -->
         <div id="globalLoading" class="global-loading" style="display: none;">
             <div class="loading-content">
-                <div class="terminal-header">[ PROCESSING ]</div>
-                <div id="loadingMessage" class="loading-message">working...</div>
                 <div class="loading-spinner">
-                    <div class="spinner-line"></div>
-                    <div class="spinner-line"></div>
-                    <div class="spinner-line"></div>
+                    <div class="spinner"></div>
                 </div>
+                <div id="loadingMessage" class="loading-message">Processing...</div>
             </div>
         </div>
 
-    <!-- Load dependencies first -->
+        <!-- Hidden inputs for compatibility -->
+        <input type="hidden" id="bpm" value="120">
+        <input type="hidden" id="pitch" value="--">
+        <input type="hidden" id="beatLength" value="4">
+        <input type="hidden" id="manualBeats" value="4">
+        <input type="hidden" id="minDuration" value="1">
+        <input type="hidden" id="maxDuration" value="16">
+        <input type="hidden" id="searchMode" value="full_track">
+        <input type="hidden" id="precisionMode" value="false">
+        <div id="loopAnalysis" style="display:none;"></div>
+        <div id="loopSuggestions" style="display:none;"></div>
+        <div id="suggestionsList" style="display:none;"></div>
+        <div id="trackInfo" style="display:none;"></div>
+        <input type="range" id="navigationSlider" style="display:none;" min="0" max="100" value="0">
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="reviens/audio-utils.js"></script>
     <script src="reviens/audio-engine.js"></script>
     <script src="reviens/loop-analyzer.js"></script>
     <script src="reviens/pitch-detector.js"></script>
     <script src="reviens/playback-manager.js"></script>
     <script src="reviens/export-manager.js"></script>
-    <!-- Load main application last -->
     <script src="reviens/main.js"></script>
 </body>
 </html>

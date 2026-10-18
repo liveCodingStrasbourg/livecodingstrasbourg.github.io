@@ -47,12 +47,9 @@ class PlaybackManager {
     // Show the playback cursor
     showCursor() {
         if (this.cursorElement) {
-            console.log('Showing cursor element:', this.cursorElement);
             this.cursorElement.style.display = 'block';
             this.cursorElement.style.opacity = '1';
             this.cursorElement.style.visibility = 'visible';
-        } else {
-            console.error('No cursor element available');
         }
     }
 
@@ -146,11 +143,8 @@ class PlaybackManager {
 
     // Seek to specific position (for future implementation)
     seekTo(position) {
-        if (this.isPlaying) {
-            // Would require restarting audio source at new position
-            // This is complex with Web Audio API and may require buffering
-            console.log(`Seek to ${position}s requested`);
-        }
+        // Would require restarting audio source at new position
+        // This is complex with Web Audio API and may require buffering
     }
 
     // Set up loop playback cursor (for continuous loops)
@@ -161,13 +155,7 @@ class PlaybackManager {
         this.zoomLevel = zoomLevel;
         this.isPlaying = true;
         this.playbackStartTime = this.audioEngine.audioContext.currentTime;
-        
-        console.log('Starting loop playback manager:', {
-            startTime: startTime,
-            duration: duration,
-            currentTime: this.audioEngine.audioContext.currentTime
-        });
-        
+
         this.showCursor();
         this.animateLoopPlayback();
     }
@@ -175,27 +163,16 @@ class PlaybackManager {
     // Animate cursor for looping playback
     animateLoopPlayback() {
         if (!this.isPlaying || !this.cursorElement) {
-            console.log('Animation stopped:', {isPlaying: this.isPlaying, hasCursor: !!this.cursorElement});
             return;
         }
 
         const currentTime = this.audioEngine.audioContext.currentTime;
         const elapsed = currentTime - this.playbackStartTime;
-        
+
         // Calculate position within the loop
         const loopPosition = elapsed % this.duration;
         const currentPosition = this.startTime + loopPosition;
-        
-        // Debug every second
-        if (Math.floor(elapsed) % 1 === 0 && Math.floor(elapsed * 10) % 10 === 0) {
-            console.log('Loop animation running:', {
-                elapsed: elapsed.toFixed(2),
-                loopPosition: loopPosition.toFixed(2),
-                currentPosition: currentPosition.toFixed(2),
-                cursorDisplay: this.cursorElement.style.display
-            });
-        }
-        
+
         // Update cursor position
         this.updateCursorPosition(currentPosition);
         
@@ -234,9 +211,7 @@ class PlaybackManager {
 
     // Format time for display
     formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = (seconds % 60).toFixed(1);
-        return `${mins}:${secs.padStart(4, '0')}`;
+        return AudioUtils.formatTimeShort(seconds);
     }
 
     // Get playback status info

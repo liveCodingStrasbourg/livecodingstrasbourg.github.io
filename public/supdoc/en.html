@@ -3,363 +3,601 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIVE MARKET CODING - Documentation EN</title>
+  <title>Rayon Documentation</title>
   <style>
+    :root {
+      --bg-dark: #1a1d21;
+      --bg-panel: #252a30;
+      --bg-hover: #2f363e;
+      --text-primary: #f0ebe5;
+      --text-muted: #a8a098;
+      --text-dim: #6a665f;
+      --accent-sage: #8fc98a;
+      --accent-peach: #f0a890;
+      --accent-lavender: #c4a8e0;
+      --accent-cream: #f5ead8;
+      --accent-sky: #88c8e8;
+      --accent-mint: #80d8c0;
+      --accent-coral: #f08888;
+      --accent-gold: #e8c878;
+      --border: #3a4048;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Courier New', monospace;
-      background-color: #1a1a1a;
-      color: #cccccc;
+      font-family: 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
       line-height: 1.6;
-      margin: 0;
-      padding: 2rem;
     }
-    
-    header {
-      text-align: center;
-      margin-bottom: 2rem;
-      border-bottom: 2px solid #ff2a6d;
-      padding-bottom: 1rem;
-    }
-    
-    h1 {
-      color: #ff2a6d;
-      font-family: 'Arial Black', Impact, sans-serif;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      margin: 0;
-      text-shadow: 0 0 10px rgba(255, 42, 109, 0.5);
-    }
-    
-    h2 {
-      color: #05d9e8;
-      font-size: 1.8rem;
-      border-bottom: 1px solid #05d9e8;
-      padding-bottom: 0.5rem;
-      margin-top: 2rem;
-    }
-    
-    h3 {
-      color: #39ff14;
-      font-size: 1.4rem;
-      margin-top: 1.5rem;
-    }
-    
+
     .container {
       max-width: 900px;
       margin: 0 auto;
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      padding: 40px 20px;
     }
-    
-    .section {
-      margin-bottom: 2rem;
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
     }
-    
+
+    h1 {
+      color: var(--accent-mint);
+      font-size: 2.5em;
+      margin: 0 0 10px 0;
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1em;
+    }
+
+    h2 {
+      color: var(--accent-gold);
+      font-size: 1.4em;
+      margin: 40px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h3 {
+      color: var(--accent-peach);
+      font-size: 1.1em;
+      margin: 25px 0 15px 0;
+    }
+
+    p {
+      color: var(--text-primary);
+      margin: 10px 0;
+    }
+
     code {
-      background-color: #121212;
-      color: #39ff14;
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
+      background: var(--bg-panel);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: var(--accent-cream);
+      font-size: 0.95em;
     }
-    
+
     pre {
-      background-color: #121212;
-      padding: 1rem;
-      border-radius: 4px;
+      background: var(--bg-panel);
+      padding: 15px;
+      border-radius: 6px;
       overflow-x: auto;
-      border-left: 4px solid #05d9e8;
+      border: 1px solid var(--border);
     }
-    
+
     pre code {
-      background-color: transparent;
+      background: none;
       padding: 0;
     }
-    
-    .important {
-      border-left: 4px solid #ff2a6d;
-      padding-left: 1rem;
-      font-weight: bold;
-    }
-    
-    a {
-      color: #05d9e8;
-      text-decoration: none;
-    }
-    
-    a:hover {
-      text-decoration: underline;
-      text-shadow: 0 0 8px rgba(5, 217, 232, 0.5);
-    }
-    
-    table {
+
+    .command-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 1rem 0;
+      margin: 15px 0;
     }
-    
-    th, td {
-      padding: 0.5rem;
+
+    .command-table th,
+    .command-table td {
+      padding: 10px 12px;
       text-align: left;
-      border-bottom: 1px solid #333;
+      border: 1px solid var(--border);
     }
-    
-    th {
-      background-color: #222;
-      color: #05d9e8;
+
+    .command-table th {
+      background: var(--bg-panel);
+      color: var(--accent-mint);
+      font-weight: 600;
     }
-    
-    tr:hover {
-      background-color: #222;
+
+    .command-table td {
+      background: var(--bg-dark);
     }
-    
-    .back-button {
+
+    .command-table td:first-child {
+      color: var(--accent-cream);
+      font-family: monospace;
+      white-space: nowrap;
+    }
+
+    .command-table td:last-child {
+      color: var(--text-muted);
+    }
+
+    .tip {
+      background: var(--bg-panel);
+      border-left: 3px solid var(--accent-mint);
+      padding: 12px 15px;
+      margin: 15px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .tip-label {
+      color: var(--accent-mint);
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .warning {
+      background: var(--bg-panel);
+      border-left: 3px solid var(--accent-coral);
+      padding: 12px 15px;
+      margin: 15px 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .warning-label {
+      color: var(--accent-coral);
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .back-link {
       display: inline-block;
-      background-color: #ff2a6d;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      margin-top: 2rem;
-      transition: all 0.3s;
+      color: var(--accent-sky);
+      text-decoration: none;
+      margin-bottom: 20px;
     }
-    
-    .back-button:hover {
-      background-color: #ff6b9d;
+
+    .back-link:hover {
+      color: var(--accent-mint);
+    }
+
+    .toc {
+      background: var(--bg-panel);
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+    }
+
+    .toc h3 {
+      margin-top: 0;
+      color: var(--accent-cream);
+    }
+
+    .toc ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 8px 0;
+    }
+
+    .toc a {
+      color: var(--accent-sky);
       text-decoration: none;
     }
-    
+
+    .toc a:hover {
+      color: var(--accent-mint);
+    }
+
+    .keyboard {
+      display: inline-block;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.9em;
+      color: var(--text-muted);
+    }
+
     footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
       text-align: center;
-      margin-top: 3rem;
-      padding-top: 1rem;
-      border-top: 1px solid #333;
-      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    footer a {
+      color: var(--accent-sky);
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <a href="../supermarket.html" class="back-link">&larr; Back to Rayon</a>
+
     <header>
-      <h1>LIVE MARKET CODING</h1>
-      <p>English Documentation</p>
+      <h1>Rayon</h1>
+      <p class="subtitle">Audio Live Coding Documentation</p>
     </header>
-    
-    <div class="section">
-      <h2>Introduction</h2>
-      <p>LIVE MARKET CODING is a sound generation environment based on the theme of a capitalist supermarket. 
-      Use text commands to create a live sound composition by manipulating your cart and adding products with 
-      different attributes. This sonic experience provides a playful critique of consumerism and capitalism, 
-      transforming the act of shopping into musical creation.</p>
-      
-      <div class="important">
-        <p>⚠️ WARNING: This is an alpha version. Bugs may occur, especially in special modes.</p>
-      </div>
-    </div>
-    
-    <div class="section">
-      <h2>Basic Commands</h2>
-      
-      <h3>Cart Manipulation</h3>
-      <p>The cart represents the rhythm section of your composition. Different wheel types produce different rhythms.</p>
-      <pre><code>my cart has square wheels    // Basic square rhythm
-my cart has broken wheels   // Irregular rhythm
-my cart has premium wheels  // Precise, consistent rhythm
-my cart has defective wheels // Glitchy rhythm
-my cart has bargain wheels  // Fast but inconsistent
-my cart has luxury wheels   // Precise with subtle variations
-my cart has no wheels       // Silence</code></pre>
-      
-      <h3>Adding Products</h3>
-      <p>Products are synths that create the melody and sound textures. Each product has its own distinctive sound.</p>
-      <pre><code>add beer                    // Adds a beer (FM synth with harmonics)
-add salad                   // Adds a salad (square wave AM synth)
-add ham                     // Adds ham (sawtooth mono synth)
-add milk                    // Adds milk (plucked string synth)
-add chips                   // Adds chips (white noise synth)
-// etc.</code></pre>
-      
-      <h3>Special Modes</h3>
-      <p>Modes affect the overall sound and ambiance.</p>
-      <pre><code>discount mode on            // Discount mode - random detuning
-inflation mode on           // Inflation mode - gradually increasing pitch
-consumerism mode on         // Consumerism mode - product enhancement
-black_friday mode on        // Black Friday mode - total chaos
-aisle_7 ambience on         // Aisle 7 mode - eerie reverb
-fluorescent_lights flicker on // Flicker mode - subtle tremolo</code></pre>
-      <p>All modes can be deactivated by replacing <code>on</code> with <code>off</code>.</p>
-    </div>
-    
-    <div class="section">
-      <h2>Product Modifiers</h2>
-      <p>Modifiers change the sound characteristics of products. Add them before the product name.</p>
-      
-      <h3>Pitch Modifiers</h3>
-      <table>
-        <tr>
-          <th>Modifier</th>
-          <th>Effect</th>
-        </tr>
-        <tr>
-          <td><code>fresh</code></td>
-          <td>Increases pitch by one octave</td>
-        </tr>
-        <tr>
-          <td><code>old</code></td>
-          <td>Decreases pitch by one octave</td>
-        </tr>
-      </table>
-      
-      <h3>Filter Modifiers</h3>
-      <table>
-        <tr>
-          <th>Modifier</th>
-          <th>Effect</th>
-        </tr>
-        <tr>
-          <td><code>strong</code></td>
-          <td>Low-pass filter, emphasizes bass</td>
-        </tr>
-        <tr>
-          <td><code>flavorless</code></td>
-          <td>High-pass filter, emphasizes treble</td>
-        </tr>
-      </table>
-      
-      <h3>Effect Modifiers</h3>
-      <table>
-        <tr>
-          <th>Modifier</th>
-          <th>Effect</th>
-        </tr>
-        <tr>
-          <td><code>cheap</code></td>
-          <td>Bitcrusher effect, quality reduction</td>
-        </tr>
-        <tr>
-          <td><code>expensive</code></td>
-          <td>Reverb, more spacious sound</td>
-        </tr>
-        <tr>
-          <td><code>processed</code></td>
-          <td>Chorus, thicker sound</td>
-        </tr>
-        <tr>
-          <td><code>industrial</code></td>
-          <td>Distortion, dirty sound</td>
-        </tr>
-        <tr>
-          <td><code>overpriced</code></td>
-          <td>Phaser, sweeping sound</td>
-        </tr>
-        <tr>
-          <td><code>vomit</code></td>
-          <td>Chebyshev, extreme distortion</td>
-        </tr>
-        <tr>
-          <td><code>artisanal</code></td>
-          <td>Tremolo, undulating volume</td>
-        </tr>
-        <tr>
-          <td><code>bargain</code></td>
-          <td>Delay with moderate feedback</td>
-        </tr>
-        <tr>
-          <td><code>luxury</code></td>
-          <td>Significant reverb</td>
-        </tr>
-        <tr>
-          <td><code>artificial</code></td>
-          <td>Vibrato, undulating pitch</td>
-        </tr>
-        <tr>
-          <td><code>mass-produced</code></td>
-          <td>Intensive bitcrusher</td>
-        </tr>
-        <tr>
-          <td><code>addictive</code></td>
-          <td>Ping-pong delay, stereo repetitions</td>
-        </tr>
-      </table>
-      
-      <h3>Combined Examples</h3>
-      <pre><code>add fresh strong beer        // Fresh, strong beer
-add old flavorless expensive milk // Old, flavorless, expensive milk
-add cheap processed industrial ham // Cheap, processed, industrial ham</code></pre>
-    </div>
-    
-    <div class="section">
-      <h2>Special Parameters</h2>
-      <p>These parameters add specific characteristics to products.</p>
-      
-      <h3>Nutriscore</h3>
-      <p>Modifies the key of the product.</p>
-      <pre><code>add beer nutriscore A       // Beer in A key
-add ham nutriscore C        // Ham in C key</code></pre>
-      
-      <h3>Shelf Life</h3>
-      <p>Sets the repetition frequency of the product.</p>
-      <pre><code>add milk shelflife today    // Very fast repetition
-add wine shelflife decade   // Very slow repetition</code></pre>
-      <p>Options: <code>today</code>, <code>week</code>, <code>month</code>, <code>year</code>, <code>decade</code>, <code>forever</code></p>
-      
-      <h3>Product State</h3>
-      <pre><code>add beer open              // Open product, unpredictable behavior</code></pre>
-      
-      <h3>Complex Combinations</h3>
-      <pre><code>add old beer nutriscore C shelflife month open</code></pre>
-    </div>
-    
-    <div class="section">
-      <h2>Keyboard Shortcuts</h2>
-      <table>
-        <tr>
-          <th>Shortcut</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td><code>Ctrl + Enter</code></td>
-          <td>Execute current line</td>
-        </tr>
-        <tr>
-          <td><code>Ctrl + Shift + Enter</code></td>
-          <td>Execute all lines</td>
-        </tr>
-        <tr>
-          <td><code>Ctrl + R</code></td>
-          <td>Generate a random command</td>
-        </tr>
-        <tr>
-          <td><code>Escape</code></td>
-          <td>Stop everything</td>
-        </tr>
-      </table>
-    </div>
-    
-    <div class="section">
-      <h2>Practical Tips</h2>
+
+    <div class="toc">
+      <h3>Table of Contents</h3>
       <ul>
-        <li>Start by setting your cart wheels to establish a basic rhythm.</li>
-        <li>Add products one by one to understand their specific sound.</li>
-        <li>Experiment with different modifiers to create interesting sound textures.</li>
-        <li>Special modes can create powerful effects but are also more unstable.</li>
-        <li>Use the random command generation to discover new combinations.</li>
-        <li>If the sound becomes too chaotic, use the "Stop All" button and start over.</li>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#keyboard-shortcuts">Keyboard Shortcuts</a></li>
+        <li><a href="#products">Products (Synthesizers)</a></li>
+        <li><a href="#modifiers">Modifiers (Effects)</a></li>
+        <li><a href="#parameters">Parameters</a></li>
+        <li><a href="#cart-wheels">Cart Wheels (Drums)</a></li>
+        <li><a href="#modes">Global Modes</a></li>
+        <li><a href="#store-features">Store Features</a></li>
+        <li><a href="#breaks">Breaks &amp; Transitions</a></li>
+        <li><a href="#shoplifting">Shoplifting System</a></li>
+        <li><a href="#performance">Performance Settings</a></li>
+        <li><a href="#story-mode">Story Mode</a></li>
       </ul>
     </div>
-    
-    <div class="section">
-      <h2>About</h2>
-      <p>LIVE MARKET CODING is a livecoding art project developed by TOPLAP Strasbourg. It is part of a critical approach to capitalism and consumerism through an interactive sound experience.</p>
-      <p>For more information about TOPLAP Strasbourg and livecoding events, visit 
-      <a href="https://livecodingstrasbourg.github.io" target="_blank">livecodingstrasbourg.github.io</a></p>
+
+    <h2 id="getting-started">Getting Started</h2>
+    <p>Rayon is a browser-based audio synthesis environment that uses shopping metaphors for live coding music. Products become synthesizers, shopping carts provide rhythm, and retail concepts control musical parameters.</p>
+
+    <h3>Quick Start</h3>
+    <ol>
+      <li>Open <code>supermarket.html</code> in a modern browser</li>
+      <li>Click "Enable Sound" to start the audio context</li>
+      <li>Type commands in the editor and press <span class="keyboard">Ctrl</span>+<span class="keyboard">Enter</span> to run</li>
+    </ol>
+
+    <div class="tip">
+      <div class="tip-label">Tip</div>
+      Type <code>story mode</code> to start a guided tutorial that teaches you the basics step by step.
     </div>
-    
-    <a href="javascript:history.back()" class="back-button">Back to Application</a>
-    
+
+    <h3>Basic Example</h3>
+    <pre><code>[0] add beer              // Add a synth to slot 0
+[1] add fresh salad       // Add a modified synth to slot 1
+my cart has square wheels // Add drums
+</code></pre>
+
+    <h2 id="keyboard-shortcuts">Keyboard Shortcuts</h2>
+    <table class="command-table">
+      <tr>
+        <th>Shortcut</th>
+        <th>Action</th>
+      </tr>
+      <tr>
+        <td><span class="keyboard">Ctrl</span>+<span class="keyboard">Enter</span></td>
+        <td>Run the current line</td>
+      </tr>
+      <tr>
+        <td><span class="keyboard">Ctrl</span>+<span class="keyboard">Shift</span>+<span class="keyboard">Enter</span></td>
+        <td>Run all lines in the editor</td>
+      </tr>
+      <tr>
+        <td><span class="keyboard">Esc</span></td>
+        <td>Stop all sounds and clear products</td>
+      </tr>
+      <tr>
+        <td><span class="keyboard">Tab</span></td>
+        <td>Accept autocomplete suggestion</td>
+      </tr>
+      <tr>
+        <td><span class="keyboard">&uarr;</span> / <span class="keyboard">&darr;</span></td>
+        <td>Navigate autocomplete suggestions</td>
+      </tr>
+    </table>
+
+    <h2 id="products">Products (Synthesizers)</h2>
+    <p>Products are synthesizers assigned to slots [0] through [9]. Each slot can hold one synth at a time.</p>
+
+    <h3>Adding Products</h3>
+    <pre><code>[N] add [modifiers] product [parameters]</code></pre>
+
+    <h3>Available Products</h3>
+    <table class="command-table">
+      <tr><th>Product</th><th>Sound Description</th></tr>
+      <tr><td>beer</td><td>Mellow FM synth - smooth jazzy tones</td></tr>
+      <tr><td>salad</td><td>Crisp pluck synth - fresh texture</td></tr>
+      <tr><td>ham</td><td>Rich fat sawtooth - savory depth</td></tr>
+      <tr><td>milk</td><td>Soft pluck synth - liquid smooth</td></tr>
+      <tr><td>chips</td><td>Crispy sawtooth with filter sweep</td></tr>
+      <tr><td>pizza</td><td>Triangle wave FM synth - warm tones</td></tr>
+      <tr><td>oil</td><td>Low frequency sine wave - liquid bass</td></tr>
+      <tr><td>wine</td><td>Detuned poly synth - complex layers</td></tr>
+      <tr><td>cheese</td><td>Warm FM synth - smooth harmonics</td></tr>
+      <tr><td>soda</td><td>High pitched membrane synth - fizzy</td></tr>
+      <tr><td>bread</td><td>Warm duo synth - soft and full</td></tr>
+      <tr><td>cereal</td><td>Crunchy granular synth - textured</td></tr>
+      <tr><td>chocolate</td><td>Rich square wave AM synth - sweet</td></tr>
+      <tr><td>candy</td><td>Bright sawtooth mono synth - sugary</td></tr>
+      <tr><td>energy_drink</td><td>Buzzy FM synth - energetic</td></tr>
+      <tr><td>coffee</td><td>Dark filtered sawtooth - caffeinated</td></tr>
+      <tr><td>butter</td><td>Creamy detuned duo synth - smooth</td></tr>
+      <tr><td>eggs</td><td>Plucked string with bright attack</td></tr>
+      <tr><td>pasta</td><td>Soft poly synth - Italian warmth</td></tr>
+      <tr><td>rice</td><td>Short noise bursts - grainy texture</td></tr>
+    </table>
+
+    <h3>Removing Products</h3>
+    <pre><code>[N] remove    // Remove product from slot N
+remove all    // Clear all slots</code></pre>
+
+    <div class="tip">
+      <div class="tip-label">Beat-Synced Transitions</div>
+      When you replace a product in an occupied slot, the change happens on the next bar for smooth musical transitions. A progress indicator shows when the change will occur.
+    </div>
+
+    <h2 id="modifiers">Modifiers (Effects)</h2>
+    <p>Add modifiers before the product name to apply effects.</p>
+
+    <h3>Pitch Modifiers</h3>
+    <table class="command-table">
+      <tr><th>Modifier</th><th>Effect</th></tr>
+      <tr><td>fresh</td><td>Higher pitch, brighter sound</td></tr>
+      <tr><td>old</td><td>Lower pitch, darker sound</td></tr>
+    </table>
+
+    <h3>Filter Modifiers</h3>
+    <table class="command-table">
+      <tr><th>Modifier</th><th>Effect</th></tr>
+      <tr><td>strong</td><td>Lowpass filter, deeper tone</td></tr>
+      <tr><td>flavorless</td><td>Highpass filter, thin sound</td></tr>
+    </table>
+
+    <h3>Effect Modifiers</h3>
+    <table class="command-table">
+      <tr><th>Modifier</th><th>Effect</th></tr>
+      <tr><td>cheap</td><td>Bitcrusher effect, lo-fi digital</td></tr>
+      <tr><td>expensive</td><td>Reverb effect, spacious sound</td></tr>
+      <tr><td>processed</td><td>Chorus effect, thick texture</td></tr>
+      <tr><td>industrial</td><td>Distortion effect, harsh tone</td></tr>
+      <tr><td>overpriced</td><td>Phaser effect, swirling motion</td></tr>
+      <tr><td>vomit</td><td>Chebyshev waveshaper, extreme distortion</td></tr>
+      <tr><td>artisanal</td><td>Tremolo effect, amplitude wobble</td></tr>
+      <tr><td>bargain</td><td>Feedback delay, echoing repeats</td></tr>
+      <tr><td>luxury</td><td>Long reverb, premium space</td></tr>
+      <tr><td>artificial</td><td>Vibrato effect, pitch wobble</td></tr>
+      <tr><td>mass-produced</td><td>Heavy bitcrusher, ultra lo-fi</td></tr>
+      <tr><td>addictive</td><td>Ping-pong delay, stereo bounce</td></tr>
+      <tr><td>packaged</td><td>Rhythmic tremolo with filter</td></tr>
+      <tr><td>glass</td><td>Shimmering echo effect</td></tr>
+    </table>
+
+    <h3>Examples</h3>
+    <pre><code>[0] add fresh expensive wine     // High pitch wine with reverb
+[1] add old industrial ham       // Low pitch ham with distortion
+[2] add cheap processed cheese   // Bitcrushed cheese with chorus</code></pre>
+
+    <h2 id="parameters">Parameters</h2>
+
+    <h3>Nutriscore (Key Change)</h3>
+    <p>Change the musical key of a product.</p>
+    <pre><code>[0] add beer nutriscore A    // Beer in key of A
+[1] add salad nutriscore C   // Salad in key of C</code></pre>
+    <p>Available keys: A, B, C, D, E</p>
+
+    <h3>Shelf Life (Note Duration)</h3>
+    <p>Control how long each note plays.</p>
+    <table class="command-table">
+      <tr><th>Value</th><th>Duration</th></tr>
+      <tr><td>shelflife today</td><td>Very short (32n)</td></tr>
+      <tr><td>shelflife week</td><td>Short (16n)</td></tr>
+      <tr><td>shelflife month</td><td>Medium (8n)</td></tr>
+      <tr><td>shelflife year</td><td>Long (4n)</td></tr>
+      <tr><td>shelflife forever</td><td>Very long (1n)</td></tr>
+    </table>
+
+    <h3>Escalator (Arpeggiator)</h3>
+    <p>Create arpeggiated patterns.</p>
+    <pre><code>[0] add beer escalator up fast
+[1] add wine escalator bounce slow</code></pre>
+
+    <p><strong>Patterns:</strong> up, down, bounce, zigzag, express, checkout</p>
+    <p><strong>Speeds:</strong> slow, normal, fast, rush, broken</p>
+
+    <h3>Volume Control</h3>
+    <pre><code>[0] add beer volume loud
+[1] add wine volume 50       // 0-100 scale
+[2] add cheese volume mute</code></pre>
+    <p><strong>Presets:</strong> max, loud, soft, quiet, whisper, min, mute</p>
+
+    <h3>Open Products</h3>
+    <p>Products marked as "open" play unpredictably (~60% of the time).</p>
+    <pre><code>[0] add open beer</code></pre>
+
+    <h2 id="cart-wheels">Cart Wheels (Drums)</h2>
+    <p>The shopping cart provides drum patterns. Different wheel types create different rhythms.</p>
+
+    <pre><code>my cart has [type] wheels</code></pre>
+
+    <table class="command-table">
+      <tr><th>Wheel Type</th><th>Rhythm Style</th></tr>
+      <tr><td>square</td><td>Steady 4/4 beat</td></tr>
+      <tr><td>broken</td><td>Glitchy irregular rhythm</td></tr>
+      <tr><td>premium</td><td>Smooth swing rhythm</td></tr>
+      <tr><td>defective</td><td>Chaotic polyrhythm</td></tr>
+      <tr><td>bargain</td><td>Simple minimal beat</td></tr>
+      <tr><td>luxury</td><td>Complex jazz rhythm</td></tr>
+      <tr><td>heavy</td><td>Kick-heavy techno pattern</td></tr>
+      <tr><td>chrome</td><td>Crisp digital beats</td></tr>
+      <tr><td>turbo</td><td>Fast breakbeat rhythm</td></tr>
+      <tr><td>plastic</td><td>Synthetic artificial drums</td></tr>
+      <tr><td>wobbly</td><td>Dubstep wobble bass</td></tr>
+      <tr><td>squeaky</td><td>Hi-hat focused shuffle</td></tr>
+      <tr><td>rubber</td><td>Bouncy funk rhythm</td></tr>
+      <tr><td>smooth</td><td>Liquid drum'n'bass flow</td></tr>
+      <tr><td>rusty</td><td>Industrial metallic</td></tr>
+      <tr><td>vintage</td><td>Classic 808/909</td></tr>
+      <tr><td>stolen</td><td>Erratic unpredictable</td></tr>
+      <tr><td>golden</td><td>Luxurious trap hi-hats</td></tr>
+      <tr><td>no</td><td>No rhythm (stops drums)</td></tr>
+    </table>
+
+    <h2 id="modes">Global Modes</h2>
+    <p>Modes apply effects to all sounds globally.</p>
+
+    <pre><code>[mode] mode on/off</code></pre>
+
+    <table class="command-table">
+      <tr><th>Mode</th><th>Effect</th></tr>
+      <tr><td>discount</td><td>Detunes everything slightly - unstable, lo-fi feel</td></tr>
+      <tr><td>inflation</td><td>Pitch gradually shifts upward over time</td></tr>
+      <tr><td>consumerism</td><td>Adds delays and echo to everything</td></tr>
+      <tr><td>black_friday</td><td>Chaotic distortion and random volume changes</td></tr>
+    </table>
+
+    <h2 id="store-features">Store Features</h2>
+
+    <h3>Recording (Checkout)</h3>
+    <pre><code>checkout           // Start recording
+finish checkout    // Stop and save recording</code></pre>
+
+    <h3>Seasons</h3>
+    <p>Apply seasonal audio themes to all products.</p>
+    <pre><code>season halloween   // Spooky effects
+season christmas   // Festive holiday
+season summer      // Bright vibes
+season winter      // Cold crisp sounds
+season easter      // Bouncy spring
+season valentines  // Romantic ambience
+season normal      // Reset to default</code></pre>
+
+    <h3>Announcements</h3>
+    <p>Text-to-speech PA system announcements.</p>
+    <pre><code>announcement cleanup    // "Cleanup on aisle 3"
+announcement closing    // "Store closing soon"
+announcement sale       // Special offer
+announcement [text]     // Custom message</code></pre>
+
+    <h3>Rush Hour</h3>
+    <pre><code>rush hour on    // Tempo increases frantically
+rush hour off   // Return to normal</code></pre>
+
+    <h3>Coupons</h3>
+    <pre><code>apply coupon BOGO       // Buy one get one - duplicates products
+apply coupon 50OFF      // Half speed
+apply coupon FREESHIP   // Spacious reverb
+apply coupon VIP        // Luxury effects</code></pre>
+
+    <h3>Product Decay</h3>
+    <pre><code>decay on         // Products gradually expire
+decay off        // Stop decay
+preserve beer    // Protect specific product from decay
+spoil all        // Instantly spoil all products</code></pre>
+
+    <h3>Tempo Control</h3>
+    <pre><code>it's closing time   // Speed up tempo
+it's opening time   // Slow down tempo</code></pre>
+
+    <h3>Barcode Scanner</h3>
+    <pre><code>scan barcode 123456   // Generate products from digits</code></pre>
+
+    <h3>Store Layout / Map Compose</h3>
+    <pre><code>store layout   // Open spatial view
+map compose    // Spatial sequencer mode</code></pre>
+
+    <h2 id="breaks">Breaks &amp; Transitions</h2>
+
+    <h3>Breaks</h3>
+    <table class="command-table">
+      <tr><th>Command</th><th>Effect</th></tr>
+      <tr><td>checkout line</td><td>Fade to silence</td></tr>
+      <tr><td>lunch break</td><td>Drums stop, music softens</td></tr>
+      <tr><td>lunch break off</td><td>Resume full energy</td></tr>
+      <tr><td>store closing</td><td>Everything fades away</td></tr>
+      <tr><td>cleanup time</td><td>Only muzak remains</td></tr>
+      <tr><td>intermission</td><td>Pause briefly</td></tr>
+      <tr><td>coffee break</td><td>Quick fade out/in</td></tr>
+      <tr><td>smoke break</td><td>Step outside briefly</td></tr>
+    </table>
+
+    <h3>Transitions</h3>
+    <table class="command-table">
+      <tr><th>Command</th><th>Effect</th></tr>
+      <tr><td>conveyor belt</td><td>Products roll in sequence</td></tr>
+      <tr><td>conveyor belt fast/slow</td><td>Speed variants</td></tr>
+      <tr><td>sliding doors</td><td>Stereo pan sweep</td></tr>
+      <tr><td>elevator music</td><td>Muffled distant sound</td></tr>
+      <tr><td>smooth transition</td><td>Crossfade between groups</td></tr>
+      <tr><td>fade to silence</td><td>Gradual fade to quiet</td></tr>
+      <tr><td>fade to soft</td><td>Fade to background level</td></tr>
+      <tr><td>fade to full</td><td>Fade to full volume</td></tr>
+      <tr><td>morph to [product]</td><td>Transform all products</td></tr>
+    </table>
+
+    <h2 id="shoplifting">Shoplifting System</h2>
+    <p>A risk/reward game mechanic for stealing products.</p>
+
+    <h3>Stealing</h3>
+    <pre><code>shoplift beer           // Attempt to steal
+steal chips             // Alternative syntax
+pocket candy            // Another alternative
+five finger discount wine</code></pre>
+
+    <h3>Security Levels</h3>
+    <pre><code>security level low       // 30% catch rate
+security level medium    // 50% catch rate
+security level high      // 70% catch rate
+security level paranoid  // 95% catch rate</code></pre>
+
+    <h3>Chase Mode</h3>
+    <pre><code>security chase on    // Activate pursuit mode
+security chase off   // End the chase
+shoplifting stats    // View theft statistics</code></pre>
+
+    <h2 id="performance">Performance Settings</h2>
+
+    <h3>Performance Modes</h3>
+    <pre><code>performance mode performance   // Optimized for stability
+performance mode quality       // Maximum audio fidelity
+performance mode balanced      // Balance of both</code></pre>
+
+    <h3>Statistics</h3>
+    <pre><code>performance stats   // Show voice count and audio dropouts</code></pre>
+
+    <h2 id="story-mode">Story Mode</h2>
+    <p>A guided tutorial campaign that teaches you Rayon step by step.</p>
+
+    <pre><code>story mode</code></pre>
+
+    <p>Story mode takes you through progressive chapters that unlock features and teach the supermarket metaphor through narrative gameplay.</p>
+
+    <div class="tip">
+      <div class="tip-label">Tip</div>
+      Your progress is automatically saved. You can continue where you left off by typing <code>story mode</code> again.
+    </div>
+
+    <h2>Product Combos</h2>
+    <p>Certain product combinations trigger special effects:</p>
+    <table class="command-table">
+      <tr><th>Combo</th><th>Products</th><th>Effect</th></tr>
+      <tr><td>Party</td><td>beer + chips</td><td>Friday night mode</td></tr>
+      <tr><td>Morning</td><td>milk + cereal</td><td>Morning routine</td></tr>
+      <tr><td>Jazz</td><td>wine + cheese</td><td>Sophisticated jazz</td></tr>
+      <tr><td>Lunch</td><td>bread + ham</td><td>Lunch break</td></tr>
+      <tr><td>Sugar Rush</td><td>energy_drink + candy</td><td>Hyperactive</td></tr>
+      <tr><td>Zen</td><td>oil + salad</td><td>Health conscious</td></tr>
+    </table>
+
     <footer>
-      <p>© 2025 TOPLAP Strasbourg | Alpha Version</p>
+      <p>Rayon - Audio Live Coding Environment</p>
+      <p>Created by <a href="https://crashserver.fr" target="_blank">CrashServer</a> | Built with <a href="https://tonejs.github.io/" target="_blank">Tone.js</a></p>
     </footer>
   </div>
 </body>

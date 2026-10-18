@@ -73,6 +73,7 @@ class ReviensApp {
         
         // Control inputs
         this.startTimeInput = document.getElementById('startTime');
+        this.endTimeInput = document.getElementById('endTime');
         this.durationInput = document.getElementById('duration');
         this.zoomInput = document.getElementById('zoomLevel');
         this.bpmInput = document.getElementById('bpm');
@@ -114,7 +115,35 @@ class ReviensApp {
         this.exportProgress = document.getElementById('exportProgress');
         this.exportStatus = document.getElementById('exportStatus');
         this.exportProgressFill = document.getElementById('exportProgressFill');
-        
+
+        // New simplified UI elements
+        this.workspace = document.getElementById('workspace');
+        this.uploadSection = document.getElementById('uploadSection');
+        this.lengthButtons = document.getElementById('lengthButtons');
+        this.lengthInfo = document.getElementById('lengthInfo');
+        this.prevBeatBtn = document.getElementById('prevBeatBtn');
+        this.nextBeatBtn = document.getElementById('nextBeatBtn');
+        this.currentPosition = document.getElementById('currentPosition');
+        this.qualityDisplay = document.getElementById('qualityDisplay');
+        this.selectionDisplay = document.getElementById('selectionDisplay');
+        this.waveformHint = document.getElementById('waveformHint');
+        this.bpmDisplay = document.getElementById('bpmDisplay');
+        this.pitchDisplay = document.getElementById('pitchDisplay');
+        this.fileNameDisplay = document.getElementById('fileNameDisplay');
+
+        // Deep analysis UI elements
+        this.deepAnalyzeBtn = document.getElementById('deepAnalyzeBtn');
+        this.analysisResults = document.getElementById('analysisResults');
+        this.resultsList = document.getElementById('resultsList');
+        this.clearResultsBtn = document.getElementById('clearResultsBtn');
+
+        // Current loop length in beats
+        this.currentLengthBeats = 4;
+
+        // Deep analysis state
+        this.deepAnalysisResults = [];
+        this.isAnalyzing = false;
+
         // Initialize playback manager
         this.playbackManager.initialize(this.playbackCursor, (position) => {
             // Optional: update any UI elements based on playback position
@@ -122,9 +151,17 @@ class ReviensApp {
     }
 
     setupEventListeners() {
+        // Cleanup on page close/navigation
+        window.addEventListener('beforeunload', () => {
+            this.cleanup();
+        });
+        window.addEventListener('unload', () => {
+            this.cleanup();
+        });
+
         // File upload
         this.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
-        
+
         // Canvas interaction
         this.waveformCanvas.addEventListener('mousedown', (e) => this.startSelection(e));
         this.waveformCanvas.addEventListener('mousemove', (e) => this.updateSelection(e));
@@ -132,51 +169,101 @@ class ReviensApp {
         this.waveformCanvas.addEventListener('mouseleave', () => this.endSelection());
         this.waveformCanvas.addEventListener('wheel', (e) => this.handleWheelZoom(e));
         
-        // Control inputs
-        this.startTimeInput.addEventListener('input', () => this.updateSelectionFromInput());
-        this.durationInput.addEventListener('input', () => this.updateSelectionFromInput());
-        this.zoomInput.addEventListener('input', () => this.updateZoom());
-        this.crossfadeInput.addEventListener('input', () => this.updateCrossfadeDisplay());
-        this.navigationSlider.addEventListener('input', (e) => this.handleNavigationSlider(e));
-        
+        // Control inputs (with null checks for simplified UI)
+        if (this.startTimeInput) this.startTimeInput.addEventListener('input', () => this.updateSelectionFromInput('start'));
+        if (this.endTimeInput) this.endTimeInput.addEventListener('input', () => this.updateSelectionFromInput('end'));
+        if (this.durationInput) this.durationInput.addEventListener('input', () => this.updateSelectionFromInput('duration'));
+        if (this.zoomInput) this.zoomInput.addEventListener('input', () => this.updateZoom());
+        if (this.crossfadeInput) this.crossfadeInput.addEventListener('input', () => this.updateCrossfadeDisplay());
+        if (this.navigationSlider) this.navigationSlider.addEventListener('input', (e) => this.handleNavigationSlider(e));
+
         // Enhanced controls
-        this.snapToZeroInput.addEventListener('change', (e) => {
-            this.snapToZero = e.target.checked;
-        });
-        this.precisionModeInput.addEventListener('change', (e) => {
-            this.precisionMode = e.target.checked;
-            this.redrawVisualization();
-        });
-        
+        if (this.snapToZeroInput) {
+            this.snapToZeroInput.addEventListener('change', (e) => {
+                this.snapToZero = e.target.checked;
+            });
+        }
+        if (this.precisionModeInput) {
+            this.precisionModeInput.addEventListener('change', (e) => {
+                this.precisionMode = e.target.checked;
+                this.redrawVisualization();
+            });
+        }
+
         // Beat length controls
-        this.beatLengthInput.addEventListener('change', (e) => {
-            if (e.target.value === 'custom') {
-                this.manualBeatsInput.style.display = 'inline-block';
-            } else {
-                this.manualBeatsInput.style.display = 'none';
-            }
-        });
+        if (this.beatLengthInput) {
+            this.beatLengthInput.addEventListener('change', (e) => {
+                if (e.target.value === 'custom') {
+                    if (this.manualBeatsInput) this.manualBeatsInput.style.display = 'inline-block';
+                } else {
+                    if (this.manualBeatsInput) this.manualBeatsInput.style.display = 'none';
+                }
+            });
+        }
         
-        // Buttons
-        this.playBtn.addEventListener('click', () => this.togglePlayback());
-        this.loopBtn.addEventListener('click', () => this.toggleLoop());
-        this.analyzeBtn.addEventListener('click', () => this.analyzeCurrentSelection());
-        this.exportBtn.addEventListener('click', () => this.exportCurrentLoop());
-        this.resetViewBtn.addEventListener('click', () => this.resetView());
-        this.helpBtn.addEventListener('click', () => this.toggleHelpPanel());
-        this.findLoopsBtn.addEventListener('click', () => this.findPerfectLoops());
-        this.snapToNearestBeatBtn.addEventListener('click', () => this.snapSelectionToBeat());
+        // Buttons (with null checks for simplified UI)
+        if (this.playBtn) this.playBtn.addEventListener('click', () => this.togglePlayback());
+        if (this.loopBtn) this.loopBtn.addEventListener('click', () => this.toggleLoop());
+        if (this.analyzeBtn) this.analyzeBtn.addEventListener('click', () => this.analyzeCurrentSelection());
+        if (this.exportBtn) this.exportBtn.addEventListener('click', () => this.exportCurrentLoop());
+        if (this.resetViewBtn) this.resetViewBtn.addEventListener('click', () => this.resetView());
+        if (this.helpBtn) this.helpBtn.addEventListener('click', () => this.toggleHelpPanel());
+        if (this.findLoopsBtn) this.findLoopsBtn.addEventListener('click', () => this.findPerfectLoops());
+        if (this.snapToNearestBeatBtn) this.snapToNearestBeatBtn.addEventListener('click', () => this.snapSelectionToBeat());
         
-        // Smart duration suggestions
-        this.durationInput.addEventListener('focus', () => this.showDurationSuggestions());
-        this.durationInput.addEventListener('blur', () => this.hideDurationSuggestions());
+        // Smart duration suggestions (with null check)
+        if (this.durationInput) {
+            this.durationInput.addEventListener('focus', () => this.showDurationSuggestions());
+            this.durationInput.addEventListener('blur', () => this.hideDurationSuggestions());
+        }
         
         // Window resize
         window.addEventListener('resize', () => this.redrawVisualization());
         
         // Prevent context menu on canvas
         this.waveformCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
-        
+
+        // Selection overlay - detect clicks vs drags
+        // Click on overlay sets new start point, drag moves the selection
+        this.selectionOverlay.addEventListener('mousedown', (e) => {
+            if (!e.target.classList.contains('selection-handle')) {
+                e.preventDefault();
+                // Store click position to detect if user drags or just clicks
+                this._overlayClickX = e.clientX;
+                this._overlayClickY = e.clientY;
+                this._overlayClickEvent = e;
+                this._overlayMoved = false;
+
+                // Add temporary listeners for move and up
+                const handleOverlayMove = (moveEvent) => {
+                    const dx = Math.abs(moveEvent.clientX - this._overlayClickX);
+                    const dy = Math.abs(moveEvent.clientY - this._overlayClickY);
+                    if (dx > 5 || dy > 5) {
+                        this._overlayMoved = true;
+                        // Start dragging the selection
+                        this.startEdgeDrag(this._overlayClickEvent, 'selection');
+                        // Remove temporary listeners
+                        document.removeEventListener('mousemove', handleOverlayMove);
+                        document.removeEventListener('mouseup', handleOverlayUp);
+                    }
+                };
+
+                const handleOverlayUp = () => {
+                    document.removeEventListener('mousemove', handleOverlayMove);
+                    document.removeEventListener('mouseup', handleOverlayUp);
+
+                    // If user just clicked (didn't drag), set new start point
+                    if (!this._overlayMoved && this._overlayClickEvent) {
+                        this.setStartFromClick(this._overlayClickEvent);
+                    }
+                    this._overlayClickEvent = null;
+                };
+
+                document.addEventListener('mousemove', handleOverlayMove);
+                document.addEventListener('mouseup', handleOverlayUp);
+            }
+        });
+
         // Tab functionality
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
@@ -184,19 +271,294 @@ class ReviensApp {
         
         // Arrow key navigation for beats - only when no form element is focused
         document.addEventListener('keydown', (e) => this.handleKeyNavigation(e));
-        
+
         // Add focus/blur handlers to show which control is active
         this.addFocusIndicators();
+
+        // NEW: Simplified UI event listeners
+        this.setupSimplifiedUI();
+    }
+
+    setupSimplifiedUI() {
+        // Length buttons
+        if (this.lengthButtons) {
+            this.lengthButtons.querySelectorAll('.length-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const beats = parseInt(btn.dataset.beats);
+                    this.setLoopLength(beats);
+                    // Update active state
+                    this.lengthButtons.querySelectorAll('.length-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+            // Set default active
+            const defaultBtn = this.lengthButtons.querySelector('[data-default="true"]');
+            if (defaultBtn) defaultBtn.classList.add('active');
+        }
+
+        // Prev/Next beat navigation
+        if (this.prevBeatBtn) {
+            this.prevBeatBtn.addEventListener('click', () => this.moveToPrevBeat());
+        }
+        if (this.nextBeatBtn) {
+            this.nextBeatBtn.addEventListener('click', () => this.moveToNextBeat());
+        }
+
+        // Deep analysis buttons
+        if (this.deepAnalyzeBtn) {
+            this.deepAnalyzeBtn.addEventListener('click', () => this.runDeepAnalysis());
+        }
+        if (this.clearResultsBtn) {
+            this.clearResultsBtn.addEventListener('click', () => this.clearDeepAnalysisResults());
+        }
+
+        // Click on waveform is now handled in endSelection() - detects click vs drag
+    }
+
+    setLoopLength(beats) {
+        this.currentLengthBeats = beats;
+        const bpm = this.loopAnalyzer.getDetectedBPM() || 120;
+        const beatDuration = 60 / bpm;
+        this.selectionDuration = beats * beatDuration;
+
+        // Snap to beat if enabled
+        if (this.snapToBeatInput && this.snapToBeatInput.checked) {
+            this.snapStartToBeat();
+        }
+
+        this.updateInputValues();
+        this.updateSelectionOverlay();
+        this.updateSimplifiedUI();
+        this.analyzeSelectionQuality();
+        this.onSelectionChanged();
+    }
+
+    setStartFromClick(event) {
+        const rect = this.waveformCanvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        // Use offsetWidth (CSS width) not width (canvas pixel width which may be scaled)
+        const canvasWidth = this.waveformCanvas.offsetWidth;
+        const viewDuration = this.getViewDuration();
+
+        // Calculate time from click position
+        let clickTime = this.viewStartTime + (x / canvasWidth) * viewDuration;
+
+        // Snap to nearest beat if enabled
+        if (this.snapToBeatInput && this.snapToBeatInput.checked) {
+            const beatPositions = this.loopAnalyzer.getBeatPositions();
+            if (beatPositions && beatPositions.length > 0) {
+                let nearestBeat = beatPositions[0];
+                let minDist = Math.abs(beatPositions[0].time - clickTime);
+                for (const beat of beatPositions) {
+                    const dist = Math.abs(beat.time - clickTime);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearestBeat = beat;
+                    }
+                }
+                clickTime = nearestBeat.time;
+            }
+        }
+
+        // Set selection start, keep duration
+        this.selectionStart = Math.max(0, Math.min(clickTime, this.audioEngine.getDuration() - this.selectionDuration));
+
+        this.updateInputValues();
+        this.updateSelectionOverlay();
+        this.updateSimplifiedUI();
+        this.analyzeSelectionQuality();
+        this.onSelectionChanged();
+
+        // Update hint
+        if (this.waveformHint) {
+            this.waveformHint.textContent = 'Use buttons below to change loop length, or drag selection edges';
+        }
+    }
+
+    snapStartToBeat() {
+        const beatPositions = this.loopAnalyzer.getBeatPositions();
+        if (!beatPositions || beatPositions.length === 0) return;
+
+        let nearestBeat = beatPositions[0];
+        let minDist = Math.abs(beatPositions[0].time - this.selectionStart);
+        for (const beat of beatPositions) {
+            const dist = Math.abs(beat.time - this.selectionStart);
+            if (dist < minDist) {
+                minDist = dist;
+                nearestBeat = beat;
+            }
+        }
+        this.selectionStart = nearestBeat.time;
+    }
+
+    moveToPrevBeat() {
+        const beatPositions = this.loopAnalyzer.getBeatPositions();
+        if (!beatPositions || beatPositions.length === 0) return;
+
+        // Find the beat before current start
+        let prevBeat = null;
+        for (const beat of beatPositions) {
+            if (beat.time < this.selectionStart - 0.01) {
+                prevBeat = beat;
+            } else {
+                break;
+            }
+        }
+
+        if (prevBeat) {
+            this.selectionStart = prevBeat.time;
+            this.updateInputValues();
+            this.updateSelectionOverlay();
+            this.updateSimplifiedUI();
+            this.analyzeSelectionQuality();
+            this.onSelectionChanged();
+        }
+    }
+
+    moveToNextBeat() {
+        const beatPositions = this.loopAnalyzer.getBeatPositions();
+        if (!beatPositions || beatPositions.length === 0) return;
+
+        // Find the beat after current start
+        let nextBeat = null;
+        for (const beat of beatPositions) {
+            if (beat.time > this.selectionStart + 0.01) {
+                nextBeat = beat;
+                break;
+            }
+        }
+
+        if (nextBeat && nextBeat.time + this.selectionDuration <= this.audioEngine.getDuration()) {
+            this.selectionStart = nextBeat.time;
+            this.updateInputValues();
+            this.updateSelectionOverlay();
+            this.updateSimplifiedUI();
+            this.analyzeSelectionQuality();
+            this.onSelectionChanged();
+        }
+    }
+
+    updateSimplifiedUI() {
+        const bpm = this.loopAnalyzer.getDetectedBPM() || 120;
+        const beatDuration = 60 / bpm;
+
+        // Update length info
+        if (this.lengthInfo) {
+            const barDuration = beatDuration * 4;
+            this.lengthInfo.textContent = `@ ${bpm} BPM: 1 bar = ${barDuration.toFixed(2)}s`;
+        }
+
+        // Update BPM display
+        if (this.bpmDisplay) {
+            this.bpmDisplay.textContent = bpm;
+        }
+
+        // Update selection display
+        if (this.selectionDisplay) {
+            const bars = this.currentLengthBeats / 4;
+            const barsText = bars >= 1 ? `${bars} bar${bars > 1 ? 's' : ''}` : `${this.currentLengthBeats} beat${this.currentLengthBeats > 1 ? 's' : ''}`;
+            this.selectionDisplay.textContent = `${barsText} (${this.selectionDuration.toFixed(2)}s)`;
+        }
+
+        // Update current position
+        if (this.currentPosition) {
+            const startBar = Math.floor(this.selectionStart / (beatDuration * 4)) + 1;
+            const endBar = Math.floor((this.selectionStart + this.selectionDuration) / (beatDuration * 4)) + 1;
+            this.currentPosition.textContent = `Bars ${startBar}-${endBar}`;
+        }
+
+        // Update quality display with colors
+        this.updateQualityDisplay();
+    }
+
+    updateQualityDisplay() {
+        if (!this.qualityDisplay || !this.audioEngine.getAudioData()) return;
+
+        const quality = this.loopAnalyzer.analyzeLoopQuality(this.selectionStart, this.selectionDuration);
+        const score = quality.score;
+        const percentage = Math.round(score * 100);
+
+        // Update text
+        if (score >= 0.8) {
+            this.qualityDisplay.textContent = 'Perfect';
+            this.qualityDisplay.className = 'status-value quality-indicator good';
+        } else if (score >= 0.5) {
+            this.qualityDisplay.textContent = 'Good';
+            this.qualityDisplay.className = 'status-value quality-indicator ok';
+        } else {
+            this.qualityDisplay.textContent = 'Adjust';
+            this.qualityDisplay.className = 'status-value quality-indicator poor';
+        }
+
+        // Update selection overlay color
+        if (this.selectionOverlay) {
+            this.selectionOverlay.classList.remove('quality-good', 'quality-ok', 'quality-poor');
+            if (score >= 0.8) {
+                this.selectionOverlay.classList.add('quality-good');
+            } else if (score >= 0.5) {
+                this.selectionOverlay.classList.add('quality-ok');
+            } else {
+                this.selectionOverlay.classList.add('quality-poor');
+            }
+        }
+    }
+
+    showWorkspace() {
+        if (this.workspace) {
+            this.workspace.style.display = 'block';
+        }
+        // Hide upload section or minimize it
+        if (this.uploadSection) {
+            this.uploadSection.style.display = 'none';
+        }
+    }
+
+    autoSelectInitialLoop() {
+        const bpm = this.loopAnalyzer.getDetectedBPM() || 120;
+        const beatDuration = 60 / bpm;
+        const totalDuration = this.audioEngine.getDuration();
+
+        // Default to 4 beats (1 bar) or 2 seconds if BPM unknown
+        this.currentLengthBeats = 4;
+        this.selectionDuration = Math.min(this.currentLengthBeats * beatDuration, totalDuration * 0.5);
+
+        // Start at beginning - simpler and more predictable
+        this.selectionStart = 0;
+
+        // Ensure selection doesn't exceed audio duration
+        if (this.selectionStart + this.selectionDuration > totalDuration) {
+            this.selectionDuration = Math.max(0.5, totalDuration - this.selectionStart);
+        }
+
+        // Update UI
+        this.updateInputValues();
+        this.updateSelectionOverlay();
+        this.updateSimplifiedUI();
+
+        // Set default active length button
+        if (this.lengthButtons) {
+            this.lengthButtons.querySelectorAll('.length-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.beats) === this.currentLengthBeats) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Update hint
+        if (this.waveformHint) {
+            this.waveformHint.textContent = 'Click waveform to set start point, drag edges to adjust';
+        }
     }
 
     // Enhanced loading management
     showGlobalLoading(message = 'working...') {
-        this.loadingMessage.textContent = message;
-        this.globalLoading.style.display = 'flex';
+        if (this.loadingMessage) this.loadingMessage.textContent = message;
+        if (this.globalLoading) this.globalLoading.style.display = 'flex';
     }
 
     hideGlobalLoading() {
-        this.globalLoading.style.display = 'none';
+        if (this.globalLoading) this.globalLoading.style.display = 'none';
     }
 
     async handleFileUpload(event) {
@@ -207,25 +569,30 @@ class ReviensApp {
         this.loopAnalyzer.clearCache();
 
         try {
-            this.fileName.innerHTML = `<div class="terminal-output">loading: ${file.name}</div>`;
+            if (this.fileName) this.fileName.innerHTML = `<div class="terminal-output">loading: ${file.name}</div>`;
             this.showProgress(0);
             this.showGlobalLoading('decoding audio file...')
 
             const fileInfo = await this.audioEngine.loadAudioFile(file);
             this.showProgress(100);
 
-            this.fileName.innerHTML = `<div class="terminal-output">loaded: ${file.name}</div>`;
+            if (this.fileName) this.fileName.innerHTML = `<div class="terminal-output">loaded: ${file.name}</div>`;
+            if (this.fileNameDisplay) this.fileNameDisplay.textContent = file.name;
             this.displayTrackInfo(fileInfo);
             this.showVisualization();
             this.showControls();
             this.updateInputLimits(fileInfo.duration);
-            
+
             // Reset view
             this.viewStartTime = 0;
             this.zoomLevel = 1;
-            this.zoomInput.value = 1;
+            if (this.zoomInput) this.zoomInput.value = 1;
             this.updateZoomDisplay();
-            
+
+            // Show workspace FIRST so canvas has dimensions before drawing
+            this.showWorkspace();
+
+            // Draw initial waveform immediately (beat markers will be added after analysis)
             this.redrawVisualization();
 
             // Automatically run analysis for BPM and pitch detection
@@ -234,38 +601,36 @@ class ReviensApp {
                 this.hideGlobalLoading();
                 // Focus the canvas to enable keyboard navigation
                 this.waveformCanvas.focus();
-                
+
+                // Small delay to ensure DOM has updated with correct dimensions
+                await new Promise(resolve => setTimeout(resolve, 50));
+
                 // Auto-analyze for BPM and pitch
                 try {
-                    console.log('Auto-analyzing loaded audio...');
                     const beatResults = this.loopAnalyzer.detectBeats();
-                    console.log('Beat detection results:', beatResults);
-                    
+
                     if (beatResults.bpm) {
-                        this.bpmInput.value = beatResults.bpm;
+                        if (this.bpmInput) this.bpmInput.value = beatResults.bpm;
+                        if (this.bpmDisplay) this.bpmDisplay.textContent = Math.round(beatResults.bpm);
                     }
-                    
+
                     // Update pitch for default selection
                     this.updatePitchDisplay();
                     this.updateKeyInfoDisplays();
-                    
+
                     // Enable snap controls if beats were detected
                     if (beatResults.beats && beatResults.beats.length > 0) {
-                        this.snapToBeatInput.disabled = false;
-                        this.snapToNearestBeatBtn.disabled = false;
+                        if (this.snapToBeatInput) this.snapToBeatInput.disabled = false;
+                        if (this.snapToNearestBeatBtn) this.snapToNearestBeatBtn.disabled = false;
                     }
-                    
-                    // Redraw with beat markers
-                    this.redrawVisualization();
-                    
-                    // Clear debug logs after 5 seconds
-                    setTimeout(() => {
-                        console.clear();
-                        console.log('Reviens: Analysis complete. Console cleared for cleaner output.');
-                    }, 5000);
+
                 } catch (error) {
                     console.error('Auto-analysis failed:', error);
                 }
+
+                // Always select initial loop and redraw
+                this.autoSelectInitialLoop();
+                this.redrawVisualization();
             }, 800);
 
         } catch (error) {
@@ -277,57 +642,64 @@ class ReviensApp {
     }
 
     showError(message) {
-        this.fileName.innerHTML = `<div class="terminal-output" style="color: #ff0000;">error: ${message}</div>`;
+        if (this.fileName) {
+            this.fileName.innerHTML = `<div class="terminal-output" style="color: #ff0000;">error: ${message}</div>`;
+        }
+        console.error('Reviens error:', message);
     }
 
     showProgress(percentage) {
-        this.loadingProgress.style.display = 'block';
-        this.progressFill.style.width = `${percentage}%`;
+        if (this.loadingProgress) this.loadingProgress.style.display = 'block';
+        if (this.progressFill) this.progressFill.style.width = `${percentage}%`;
     }
 
     hideProgress() {
-        this.loadingProgress.style.display = 'none';
+        if (this.loadingProgress) this.loadingProgress.style.display = 'none';
     }
 
     displayTrackInfo(fileInfo) {
-        this.trackInfo.innerHTML = `
-            <div class="info-card">
-                <h4>duration</h4>
-                <p>${this.formatTime(fileInfo.duration)}</p>
-            </div>
-            <div class="info-card">
-                <h4>sample_rate</h4>
-                <p>${fileInfo.sampleRate} Hz</p>
-            </div>
-            <div class="info-card">
-                <h4>channels</h4>
-                <p>${fileInfo.channels}</p>
-            </div>
-            <div class="info-card">
-                <h4>samples</h4>
-                <p>${fileInfo.samples.toLocaleString()}</p>
-            </div>
-            <div class="info-card">
-                <h4>bit_depth</h4>
-                <p>32-bit float</p>
-            </div>
-        `;
-        this.audioInfo.style.display = 'block';
+        if (this.trackInfo) {
+            this.trackInfo.innerHTML = `
+                <div class="info-card">
+                    <h4>duration</h4>
+                    <p>${this.formatTime(fileInfo.duration)}</p>
+                </div>
+                <div class="info-card">
+                    <h4>sample_rate</h4>
+                    <p>${fileInfo.sampleRate} Hz</p>
+                </div>
+                <div class="info-card">
+                    <h4>channels</h4>
+                    <p>${fileInfo.channels}</p>
+                </div>
+                <div class="info-card">
+                    <h4>samples</h4>
+                    <p>${fileInfo.samples.toLocaleString()}</p>
+                </div>
+                <div class="info-card">
+                    <h4>bit_depth</h4>
+                    <p>32-bit float</p>
+                </div>
+            `;
+        }
+        if (this.audioInfo) this.audioInfo.style.display = 'block';
     }
 
     showVisualization() {
-        this.trackVisualization.style.display = 'block';
+        if (this.trackVisualization) this.trackVisualization.style.display = 'block';
     }
 
     showControls() {
-        this.controls.style.display = 'grid';
-        this.buttonGroup.style.display = 'flex';
+        if (this.controls) this.controls.style.display = 'grid';
+        if (this.buttonGroup) this.buttonGroup.style.display = 'flex';
     }
 
     updateInputLimits(duration) {
-        this.startTimeInput.max = Math.max(0, duration - 0.1).toFixed(2);
-        this.durationInput.max = duration.toFixed(2);
-        this.durationInput.min = "0.1";
+        if (this.startTimeInput) this.startTimeInput.max = Math.max(0, duration - 0.1).toFixed(2);
+        if (this.durationInput) {
+            this.durationInput.max = duration.toFixed(2);
+            this.durationInput.min = "0.1";
+        }
     }
 
     // Enhanced time conversion methods
@@ -343,7 +715,7 @@ class ReviensApp {
     }
 
     canvasXToTime(x) {
-        const canvasWidth = this.waveformCanvas.offsetWidth;
+        const canvasWidth = this.waveformCanvas.offsetWidth || this.waveformCanvas.width || 400;
         const ratio = Math.max(0, Math.min(1, x / canvasWidth));
         const viewDuration = this.getViewDuration();
         return this.viewStartTime + (ratio * viewDuration);
@@ -351,8 +723,9 @@ class ReviensApp {
 
     timeToCanvasX(time) {
         const viewDuration = this.getViewDuration();
+        const canvasWidth = this.waveformCanvas.offsetWidth || this.waveformCanvas.width || 400;
         const ratio = (time - this.viewStartTime) / viewDuration;
-        return ratio * this.waveformCanvas.offsetWidth;
+        return ratio * canvasWidth;
     }
 
     // Find nearest zero crossing for precise loop points
@@ -396,14 +769,12 @@ class ReviensApp {
     }
 
     updateZoomDisplay() {
-        this.zoomValue.textContent = `${this.zoomLevel}x`;
+        if (this.zoomValue) this.zoomValue.textContent = `${this.zoomLevel}x`;
     }
 
     // Utility functions
     formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = (seconds % 60).toFixed(3);
-        return `${mins}:${secs.padStart(6, '0')}`;
+        return AudioUtils.formatTime(seconds);
     }
 
     // Enhanced Main Application - Part 2: Visualization & Controls
@@ -423,21 +794,23 @@ class ReviensApp {
     }
 
     drawTimeRuler() {
+        if (!this.timeRuler) return;
+
         const totalDuration = this.audioEngine.getDuration();
         const viewDuration = this.getViewDuration();
         const viewEndTime = this.getViewEndTime();
-        
+
         this.timeRuler.innerHTML = '';
-        
+
         const numMarkers = this.precisionMode ? 20 : 10;
         const timeStep = viewDuration / numMarkers;
-        
+
         for (let i = 0; i <= numMarkers; i++) {
             const time = this.viewStartTime + (i * timeStep);
             if (time > totalDuration) break;
-            
+
             const position = (i / numMarkers) * 100;
-            
+
             const marker = document.createElement('div');
             marker.style.position = 'absolute';
             marker.style.left = `${position}%`;
@@ -452,12 +825,23 @@ class ReviensApp {
     drawWaveform() {
         const canvas = this.waveformCanvas;
         const ctx = this.waveformCtx;
-        
+
+        // Get the canvas container width for proper sizing
+        const container = canvas.parentElement;
+        const containerWidth = container ? container.offsetWidth : 0;
+
+        // Use container width, fallback to canvas offsetWidth, minimum 400px
+        let canvasWidth = containerWidth || canvas.offsetWidth;
+        if (canvasWidth < 10) {
+            // If still no width, use a reasonable default
+            canvasWidth = Math.max(400, window.innerWidth - 100);
+        }
+
         // Set canvas size with higher resolution for precision mode
         const pixelRatio = this.precisionMode ? 2 : 1;
-        canvas.width = canvas.offsetWidth * pixelRatio;
+        canvas.width = canvasWidth * pixelRatio;
         canvas.height = 150 * pixelRatio;
-        canvas.style.width = canvas.offsetWidth + 'px';
+        canvas.style.width = canvasWidth + 'px';
         canvas.style.height = '150px';
         ctx.scale(pixelRatio, pixelRatio);
         
@@ -780,109 +1164,154 @@ class ReviensApp {
     // Enhanced selection handling with zero crossing snap
     startSelection(event) {
         if (!this.audioEngine.getAudioData()) return;
-        
+
         // Don't start new selection if we're dragging edges
         if (this.isDraggingEdge) return;
-        
+
         this.isSelecting = true;
+        this._selectionMoved = false; // Track if user dragged or just clicked
         const rect = this.waveformCanvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
-        
+
         this.selectionStartX = x;
-        
+        this._clickStartX = x; // Store for click detection
+        this._clickEvent = event; // Store the event for setStartFromClick
+
+        // Store original duration so we can restore it if user just clicks (not drags)
+        this._originalDuration = this.selectionDuration;
+
         let clickTime = this.canvasXToTime(x);
         const totalDuration = this.audioEngine.getDuration();
-        
+
         // Apply zero crossing snap
         if (this.snapToZero) {
             clickTime = this.findNearestZeroCrossing(clickTime);
         }
-        
-        this.selectionStart = Math.max(0, Math.min(clickTime, totalDuration - 0.1));
-        this.selectionDuration = 0.1;
-        
-        this.updateInputValues();
-        this.updateSelectionOverlay();
-        
+
+        // Store the click time but don't change selection yet - wait for drag or click
+        this._pendingStartTime = Math.max(0, Math.min(clickTime, totalDuration - 0.1));
+
         event.preventDefault();
     }
 
     updateSelection(event) {
         if (!this.isSelecting || !this.audioEngine.getAudioData() || this.isDraggingEdge) return;
-        
+
         const rect = this.waveformCanvas.getBoundingClientRect();
         const currentX = event.clientX - rect.left;
-        
-        let startTime = this.canvasXToTime(this.selectionStartX);
-        let currentTime = this.canvasXToTime(currentX);
-        
-        // Apply zero crossing snap
-        if (this.snapToZero) {
-            startTime = this.findNearestZeroCrossing(startTime);
-            currentTime = this.findNearestZeroCrossing(currentTime);
+
+        // Track if user moved mouse significantly (more than 5px = drag, not click)
+        if (Math.abs(currentX - this._clickStartX) > 5) {
+            this._selectionMoved = true;
+
+            // Now that we're dragging, use the pending start time
+            let startTime = this._pendingStartTime !== undefined ? this._pendingStartTime : this.canvasXToTime(this.selectionStartX);
+            let currentTime = this.canvasXToTime(currentX);
+
+            // Apply zero crossing snap
+            if (this.snapToZero) {
+                startTime = this.findNearestZeroCrossing(startTime);
+                currentTime = this.findNearestZeroCrossing(currentTime);
+            }
+
+            const totalDuration = this.audioEngine.getDuration();
+
+            if (currentTime >= startTime) {
+                this.selectionStart = Math.max(0, Math.min(startTime, totalDuration - 0.1));
+                this.selectionDuration = Math.max(0.1, Math.min(currentTime - this.selectionStart, totalDuration - this.selectionStart));
+            } else {
+                this.selectionStart = Math.max(0, Math.min(currentTime, totalDuration - 0.1));
+                this.selectionDuration = Math.max(0.1, Math.min(startTime - this.selectionStart, totalDuration - this.selectionStart));
+            }
+
+            this.updateInputValues();
+            this.updateSelectionOverlay();
+            this.debouncedUpdatePitchDisplay();
         }
-        
-        const totalDuration = this.audioEngine.getDuration();
-        
-        if (currentTime >= startTime) {
-            this.selectionStart = Math.max(0, Math.min(startTime, totalDuration - 0.1));
-            this.selectionDuration = Math.max(0.1, Math.min(currentTime - this.selectionStart, totalDuration - this.selectionStart));
-        } else {
-            this.selectionStart = Math.max(0, Math.min(currentTime, totalDuration - 0.1));
-            this.selectionDuration = Math.max(0.1, Math.min(startTime - this.selectionStart, totalDuration - this.selectionStart));
-        }
-        
-        this.updateInputValues();
-        this.updateSelectionOverlay();
-        this.debouncedUpdatePitchDisplay();
-        
+
         event.preventDefault();
     }
 
     endSelection() {
         if (!this.isSelecting) return;
-        
+
         this.isSelecting = false;
-        
+
+        // If user just clicked (didn't drag), set start point instead of creating new selection
+        if (!this._selectionMoved && this._clickEvent) {
+            // Restore original duration since we didn't drag
+            if (this._originalDuration !== undefined) {
+                this.selectionDuration = this._originalDuration;
+            }
+            this.setStartFromClick(this._clickEvent);
+            this._clickEvent = null;
+            this._pendingStartTime = undefined;
+            this._originalDuration = undefined;
+            return;
+        }
+        this._clickEvent = null;
+        this._pendingStartTime = undefined;
+        this._originalDuration = undefined;
+
         // Save to history when selection is finalized
         this.saveSelectionToHistory();
-        
+
         if (this.selectionDuration >= 0.5) {
             this.analyzeSelectionQuality();
             this.updatePitchDisplay();
         }
+
+        // Auto-restart loop if playing
+        this.onSelectionChanged();
     }
 
-    updateSelectionFromInput() {
-        let newStart = parseFloat(this.startTimeInput.value) || 0;
-        let newDuration = parseFloat(this.durationInput.value) || 0.1;
-        
+    updateSelectionFromInput(source = 'start') {
+        const maxDuration = this.audioEngine.getDuration();
+        let newStart = parseFloat(this.startTimeInput?.value) || 0;
+        let newEnd = parseFloat(this.endTimeInput?.value) || 0.1;
+        let newDuration = parseFloat(this.durationInput?.value) || 0.1;
+
+        // Calculate based on which input changed
+        if (source === 'end') {
+            // End changed: keep start, calculate duration
+            newDuration = newEnd - newStart;
+        } else if (source === 'start') {
+            // Start changed: keep duration, calculate end
+            newEnd = newStart + newDuration;
+        } else {
+            // Duration changed: keep start, calculate end
+            newEnd = newStart + newDuration;
+        }
+
         // Apply zero crossing snap to input values
         if (this.snapToZero) {
             newStart = this.findNearestZeroCrossing(newStart);
-            const newEnd = this.findNearestZeroCrossing(newStart + newDuration);
+            newEnd = this.findNearestZeroCrossing(newEnd);
             newDuration = newEnd - newStart;
         }
-        
-        const maxDuration = this.audioEngine.getDuration();
+
         this.selectionStart = Math.max(0, Math.min(newStart, maxDuration - 0.1));
         this.selectionDuration = Math.max(0.1, Math.min(newDuration, maxDuration - this.selectionStart));
-        
+
         this.updateInputValues();
         this.updateSelectionOverlay();
         this.debouncedUpdatePitchDisplay();
-        
+
         // Save to history for manual input changes
         this.saveSelectionToHistory();
-        
+
         if (this.selectionDuration >= 0.5) {
             this.debouncedAnalyzeSelectionQuality();
         }
+
+        // Auto-restart loop if playing
+        this.onSelectionChanged();
     }
 
     updateInputValues() {
-        this.startTimeInput.value = this.selectionStart.toFixed(3);
-        this.durationInput.value = this.selectionDuration.toFixed(3);
+        if (this.startTimeInput) this.startTimeInput.value = this.selectionStart.toFixed(3);
+        if (this.endTimeInput) this.endTimeInput.value = (this.selectionStart + this.selectionDuration).toFixed(3);
+        if (this.durationInput) this.durationInput.value = this.selectionDuration.toFixed(3);
     }
 
     updateSelectionOverlay() {
@@ -917,65 +1346,44 @@ class ReviensApp {
     }
 
     addSelectionHandles() {
-        // Remove existing handles and event listeners
+        // Remove only the handle elements, not the overlay itself
         const existingHandles = this.selectionOverlay.querySelectorAll('.selection-handle');
         existingHandles.forEach(handle => handle.remove());
-        
-        // Remove existing selection overlay event listeners
-        const newOverlay = this.selectionOverlay.cloneNode(true);
-        this.selectionOverlay.parentNode.replaceChild(newOverlay, this.selectionOverlay);
-        this.selectionOverlay = newOverlay;
-        
+
         // Only add handles if selection is visible and has reasonable width
         const overlayWidth = parseFloat(this.selectionOverlay.style.width);
-        if (overlayWidth < 1) return; // Too narrow to show handles
-        
-        console.log('Adding selection handles, overlay width:', overlayWidth);
-        
+        if (overlayWidth < 1) return;
+
         // Create start handle
         const startHandle = document.createElement('div');
         startHandle.className = 'selection-handle start';
         startHandle.title = 'Drag to adjust start time';
         this.selectionOverlay.appendChild(startHandle);
-        
+
         // Create end handle
         const endHandle = document.createElement('div');
         endHandle.className = 'selection-handle end';
         endHandle.title = 'Drag to adjust end time';
         this.selectionOverlay.appendChild(endHandle);
-        
-        // Add event listeners for handles with proper binding
+
+        // Add event listeners for handles
         startHandle.addEventListener('mousedown', (e) => {
             e.preventDefault();
             e.stopPropagation();
             this.startEdgeDrag(e, 'start');
         });
-        
+
         endHandle.addEventListener('mousedown', (e) => {
             e.preventDefault();
             e.stopPropagation();
             this.startEdgeDrag(e, 'end');
         });
-        
-        // Add event listener for selection body (to move entire selection)
-        this.selectionOverlay.addEventListener('mousedown', (e) => {
-            // Only if not clicking on a handle
-            if (!e.target.classList.contains('selection-handle')) {
-                e.preventDefault();
-                e.stopPropagation();
-                this.startEdgeDrag(e, 'selection');
-            }
-        });
-        
-        console.log('Selection handles added successfully');
     }
 
     // Edge dragging methods
     startEdgeDrag(event, edgeType) {
         event.preventDefault();
         event.stopPropagation();
-        
-        console.log('Starting edge drag:', edgeType);
         
         this.isDraggingEdge = true;
         this.dragEdgeType = edgeType;
@@ -1057,35 +1465,36 @@ class ReviensApp {
 
     endEdgeDrag(event) {
         if (!this.isDraggingEdge) return;
-        
-        console.log('Ending edge drag:', this.dragEdgeType);
-        
+
         this.isDraggingEdge = false;
         this.dragEdgeType = null;
-        
-        // Remove global mouse listeners - store references to remove properly
+
+        // Remove global mouse listeners
         if (this.boundHandleEdgeDrag) {
             document.removeEventListener('mousemove', this.boundHandleEdgeDrag);
         }
         if (this.boundEndEdgeDrag) {
             document.removeEventListener('mouseup', this.boundEndEdgeDrag);
         }
-        
+
         // Reset cursor
         document.body.style.cursor = '';
-        
+
         // Save to history
         this.saveSelectionToHistory();
-        
+
         // Analyze quality if duration is sufficient
         if (this.selectionDuration >= 0.5) {
             this.debouncedAnalyzeSelectionQuality();
         }
-        
-        // Refresh handles to ensure they're still responsive
+
+        // Refresh handles
         setTimeout(() => {
             this.updateSelectionOverlay();
         }, 10);
+
+        // Auto-restart loop if playing
+        this.onSelectionChanged();
     }
 
     // Enhanced Main Application - Part 3: Analysis & Playback
@@ -1094,45 +1503,46 @@ class ReviensApp {
     // Enhanced pitch analysis
     updatePitchDisplay() {
         if (!this.audioEngine.getAudioData() || this.selectionDuration < 0.2) {
-            this.pitchInput.value = '--';
+            if (this.pitchInput) this.pitchInput.value = '--';
+            if (this.pitchDisplay) this.pitchDisplay.textContent = '--';
             this.detectedPitch = null;
             return;
         }
 
         const audioData = this.audioEngine.getAudioData();
         const sampleRate = this.audioEngine.getSampleRate();
-        
+
         try {
             this.detectedPitch = this.pitchDetector.getAveragePitch(
                 audioData, sampleRate, this.selectionStart, this.selectionDuration
             );
-            
-            console.log('Pitch detection result:', this.detectedPitch);
-            
+
             const formattedPitch = this.pitchDetector.formatPitchResult(this.detectedPitch);
-            this.pitchInput.value = formattedPitch;
-            
-            console.log('Formatted pitch:', formattedPitch);
+            if (this.pitchInput) this.pitchInput.value = formattedPitch;
+            if (this.pitchDisplay) this.pitchDisplay.textContent = formattedPitch;
         } catch (error) {
             console.error('Pitch detection failed:', error);
-            this.pitchInput.value = '--';
+            if (this.pitchInput) this.pitchInput.value = '--';
+            if (this.pitchDisplay) this.pitchDisplay.textContent = '--';
             this.detectedPitch = null;
         }
     }
 
     updateZoom() {
+        if (!this.zoomInput) return;
+
         const newZoom = parseFloat(this.zoomInput.value);
         const oldViewDuration = this.getViewDuration();
-        
+
         this.zoomLevel = newZoom;
         this.updateZoomDisplay();
-        
+
         const newViewDuration = this.getViewDuration();
         const totalDuration = this.audioEngine.getDuration();
-        
+
         const viewCenter = this.viewStartTime + (oldViewDuration / 2);
         this.viewStartTime = Math.max(0, Math.min(viewCenter - (newViewDuration / 2), totalDuration - newViewDuration));
-        
+
         this.redrawVisualization();
     }
 
@@ -1141,8 +1551,10 @@ class ReviensApp {
         
         event.preventDefault();
         
-        const zoomDelta = event.deltaY > 0 ? -1 : 1;
-        const newZoom = Math.max(1, Math.min(50, this.zoomLevel + zoomDelta));
+        // Scale zoom delta based on current zoom level for smoother control
+        const baseZoomDelta = event.deltaY > 0 ? -1 : 1;
+        const zoomDelta = baseZoomDelta * Math.max(1, Math.floor(this.zoomLevel / 10));
+        const newZoom = Math.max(1, Math.min(500, this.zoomLevel + zoomDelta));
         
         if (newZoom !== this.zoomLevel) {
             const rect = this.waveformCanvas.getBoundingClientRect();
@@ -1376,8 +1788,6 @@ class ReviensApp {
         
         // Visual feedback
         this.highlightBeatMarker(beat);
-        
-        console.log(`Jumped to ${beat.isStrong ? 'strong ' : ''}beat at ${newStart.toFixed(3)}s`);
     }
 
     ensureBeatIsVisible(beatTime) {
@@ -1460,15 +1870,13 @@ class ReviensApp {
         if (this.historyIndex > 0) {
             this.historyIndex--;
             this.restoreSelectionFromHistory();
-            console.log(`Undo: restored selection ${this.historyIndex + 1}/${this.selectionHistory.length}`);
         }
     }
-    
+
     redo() {
         if (this.historyIndex < this.selectionHistory.length - 1) {
             this.historyIndex++;
             this.restoreSelectionFromHistory();
-            console.log(`Redo: restored selection ${this.historyIndex + 1}/${this.selectionHistory.length}`);
         }
     }
     
@@ -1523,8 +1931,6 @@ class ReviensApp {
                     this.viewStartTime = state.viewStartTime || 0;
                     this.snapToZero = state.snapToZero || false;
                     this.precisionMode = state.precisionMode || false;
-                    
-                    console.log(`Restored session with ${this.selectionHistory.length} history entries`);
                     return true;
                 }
             }
@@ -1611,8 +2017,9 @@ class ReviensApp {
     }
 
     updateCrossfadeDisplay() {
-        const value = this.crossfadeInput.value;
-        this.crossfadeValue.textContent = `${value}ms`;
+        if (!this.crossfadeInput || !this.crossfadeValue) return;
+        const value = parseInt(this.crossfadeInput.value);
+        this.crossfadeValue.textContent = value === 0 ? 'OFF' : `${value}ms`;
     }
 
     // Navigation slider methods
@@ -1634,17 +2041,19 @@ class ReviensApp {
     }
 
     updateNavigationSlider() {
+        if (!this.navigationSlider) return;
+
         if (!this.audioEngine.getAudioData()) {
             this.navigationSlider.style.display = 'none';
             return;
         }
-        
+
         this.navigationSlider.style.display = 'block';
-        
+
         const totalDuration = this.audioEngine.getDuration();
         const viewDuration = this.getViewDuration();
         const viewEndTime = this.getViewEndTime();
-        
+
         // Update slider position based on current view
         if (viewDuration >= totalDuration) {
             // Viewing entire track
@@ -1655,10 +2064,10 @@ class ReviensApp {
             const sliderPosition = (this.viewStartTime / (totalDuration - viewDuration)) * 100;
             this.navigationSlider.value = Math.max(0, Math.min(100, sliderPosition));
         }
-        
+
         // Update labels
-        this.sliderStart.textContent = this.formatTime(this.viewStartTime);
-        this.sliderEnd.textContent = this.formatTime(viewEndTime);
+        if (this.sliderStart) this.sliderStart.textContent = this.formatTime(this.viewStartTime);
+        if (this.sliderEnd) this.sliderEnd.textContent = this.formatTime(viewEndTime);
     }
 
     // Enhanced playback with better cursor tracking
@@ -1666,37 +2075,43 @@ class ReviensApp {
         if (this.audioEngine.isPlaying || this.playbackManager.isPlaybackActive()) {
             this.audioEngine.stopPlayback();
             this.playbackManager.stopPlayback();
-            this.playBtn.textContent = '[ PLAY ]';
-            this.playBtn.disabled = false;
+            if (this.playBtn) {
+                this.playBtn.textContent = '[ PLAY ]';
+                this.playBtn.disabled = false;
+            }
         } else {
             if (!this.audioEngine.getAudioData()) {
                 this.showError('no audio loaded');
                 return;
             }
-            
+
             try {
-                this.playBtn.textContent = '[ STOP ]';
+                if (this.playBtn) this.playBtn.textContent = '[ STOP ]';
                 this.showGlobalLoading('starting playback...');
-                
+
                 // Start playback cursor - ensure it's visible
                 this.playbackManager.startPlayback(
-                    this.selectionStart, 
+                    this.selectionStart,
                     this.selectionDuration,
                     this.viewStartTime,
                     this.zoomLevel
                 );
-                
+
                 this.hideGlobalLoading();
                 await this.audioEngine.playSelection(this.selectionStart, this.selectionDuration);
-                
-                this.playBtn.textContent = '[ PLAY ]';
-                this.playBtn.disabled = false;
+
+                if (this.playBtn) {
+                    this.playBtn.textContent = '[ PLAY ]';
+                    this.playBtn.disabled = false;
+                }
                 this.playbackManager.stopPlayback();
             } catch (error) {
                 console.error('Playback failed:', error);
                 this.showError(`playback failed: ${error.message}`);
-                this.playBtn.textContent = '[ PLAY ]';
-                this.playBtn.disabled = false;
+                if (this.playBtn) {
+                    this.playBtn.textContent = '[ PLAY ]';
+                    this.playBtn.disabled = false;
+                }
                 this.playbackManager.stopPlayback();
                 this.hideGlobalLoading();
             }
@@ -1704,47 +2119,110 @@ class ReviensApp {
     }
 
     async toggleLoop() {
-        if (this.audioEngine.isPlaying || this.playbackManager.isPlaybackActive()) {
+        if (!this.audioEngine.getAudioData()) {
+            this.showError('no audio loaded');
+            return;
+        }
+
+        // If currently playing, stop
+        if (this.audioEngine.isPlaying) {
+            this.stopLoop();
+            return;
+        }
+
+        // Start loop
+        await this.startLoop();
+    }
+
+    async startLoop() {
+        // Stop any existing playback first - ensure complete stop
+        this.audioEngine.stopPlayback();
+        this.playbackManager.stopPlayback();
+
+        // Clear any pending restart
+        if (this._loopRestartTimeout) {
+            clearTimeout(this._loopRestartTimeout);
+            this._loopRestartTimeout = null;
+        }
+
+        try {
+            // Update button visual state
+            if (this.loopBtn) {
+                this.loopBtn.classList.add('playing');
+                const btnIcon = this.loopBtn.querySelector('.btn-icon');
+                const btnText = this.loopBtn.querySelector('.btn-text');
+                if (btnIcon) btnIcon.textContent = '■';
+                if (btnText) btnText.textContent = 'STOP';
+            }
+
+            this.showGlobalLoading('preparing loop...');
+
+            // Get crossfade settings with defaults for simplified UI
+            const crossfadeMs = this.crossfadeInput ? parseInt(this.crossfadeInput.value) : 50;
+            const crossfadeType = this.crossfadeTypeInput ? this.crossfadeTypeInput.value : 'cosine';
+            const clickReduction = this.clickReductionInput ? this.clickReductionInput.checked : true;
+
+            // Start loop with current selection
+            await this.audioEngine.playLoop(
+                this.selectionStart,
+                this.selectionDuration,
+                crossfadeMs,
+                crossfadeType,
+                clickReduction
+            );
+
+            // Start loop playback cursor
+            this.playbackManager.startLoopPlayback(
+                this.selectionStart,
+                this.selectionDuration,
+                this.viewStartTime,
+                this.zoomLevel
+            );
+
+            this.hideGlobalLoading();
+        } catch (error) {
+            console.error('Loop playback failed:', error);
+            this.showError(`loop playback failed: ${error.message}`);
+            this.stopLoop();
+            this.hideGlobalLoading();
+        }
+    }
+
+    stopLoop() {
+        // Clear any pending restart
+        if (this._loopRestartTimeout) {
+            clearTimeout(this._loopRestartTimeout);
+            this._loopRestartTimeout = null;
+        }
+
+        this.audioEngine.stopPlayback();
+        this.playbackManager.stopPlayback();
+
+        // Restore button visual state
+        if (this.loopBtn) {
+            this.loopBtn.classList.remove('playing');
+            const btnIcon = this.loopBtn.querySelector('.btn-icon');
+            const btnText = this.loopBtn.querySelector('.btn-text');
+            if (btnIcon) btnIcon.textContent = '▶';
+            if (btnText) btnText.textContent = 'LOOP';
+            this.loopBtn.disabled = false;
+        }
+    }
+
+    // Auto-restart loop when selection changes during playback
+    onSelectionChanged() {
+        if (this.audioEngine.isPlaying) {
+            // Stop current playback immediately to prevent overlap
             this.audioEngine.stopPlayback();
             this.playbackManager.stopPlayback();
-            this.loopBtn.textContent = '[ LOOP ]';
-            this.loopBtn.disabled = false;
-        } else {
-            if (!this.audioEngine.getAudioData()) {
-                this.showError('no audio loaded');
-                return;
+
+            // Debounce the restart to avoid too many restarts during dragging
+            if (this._loopRestartTimeout) {
+                clearTimeout(this._loopRestartTimeout);
             }
-            
-            try {
-                this.loopBtn.textContent = '[ STOP_LOOP ]';
-                this.showGlobalLoading('preparing loop...');
-                
-                const crossfadeMs = parseInt(this.crossfadeInput.value);
-                const crossfadeType = this.crossfadeTypeInput.value;
-                const clickReduction = this.clickReductionInput.checked;
-                
-                // Start loop playback cursor - this should make it visible
-                this.playbackManager.startLoopPlayback(
-                    this.selectionStart,
-                    this.selectionDuration,
-                    this.viewStartTime,
-                    this.zoomLevel
-                );
-                
-                this.hideGlobalLoading();
-                await this.audioEngine.playLoop(this.selectionStart, this.selectionDuration, crossfadeMs, crossfadeType, clickReduction);
-                
-                this.loopBtn.textContent = '[ LOOP ]';
-                this.loopBtn.disabled = false;
-                this.playbackManager.stopPlayback();
-            } catch (error) {
-                console.error('Loop playback failed:', error);
-                this.showError(`loop playback failed: ${error.message}`);
-                this.loopBtn.textContent = '[ LOOP ]';
-                this.loopBtn.disabled = false;
-                this.playbackManager.stopPlayback();
-                this.hideGlobalLoading();
-            }
+            this._loopRestartTimeout = setTimeout(() => {
+                this.startLoop();
+            }, 150);
         }
     }
 
@@ -1755,15 +2233,17 @@ class ReviensApp {
             return;
         }
 
-        this.analyzeBtn.textContent = '[ ANALYZING... ]';
-        this.analyzeBtn.disabled = true;
+        if (this.analyzeBtn) {
+            this.analyzeBtn.textContent = '[ ANALYZING... ]';
+            this.analyzeBtn.disabled = true;
+        }
         this.showGlobalLoading('analyzing audio patterns...')
 
         try {
             // Detect beats and BPM
             const beatResults = this.loopAnalyzer.detectBeats();
-            
-            if (beatResults.bpm) {
+
+            if (beatResults.bpm && this.bpmInput) {
                 this.bpmInput.value = beatResults.bpm;
             }
 
@@ -1772,8 +2252,8 @@ class ReviensApp {
 
             // Enable snap controls if beats were detected
             if (beatResults.beats && beatResults.beats.length > 0) {
-                this.snapToBeatInput.disabled = false;
-                this.snapToNearestBeatBtn.disabled = false;
+                if (this.snapToBeatInput) this.snapToBeatInput.disabled = false;
+                if (this.snapToNearestBeatBtn) this.snapToNearestBeatBtn.disabled = false;
             }
 
             this.redrawVisualization();
@@ -1781,17 +2261,23 @@ class ReviensApp {
             this.updateKeyInfoDisplays();
             this.hideGlobalLoading();
 
-            this.analyzeBtn.textContent = '[ ANALYSIS_COMPLETE ]';
-            setTimeout(() => {
-                this.analyzeBtn.textContent = '[ ANALYZE ]';
-                this.analyzeBtn.disabled = false;
-            }, 2000);
+            if (this.analyzeBtn) {
+                this.analyzeBtn.textContent = '[ ANALYSIS_COMPLETE ]';
+                setTimeout(() => {
+                    if (this.analyzeBtn) {
+                        this.analyzeBtn.textContent = '[ ANALYZE ]';
+                        this.analyzeBtn.disabled = false;
+                    }
+                }, 2000);
+            }
 
         } catch (error) {
             console.error('Analysis failed:', error);
             this.showError(`analysis failed: ${error.message}`);
-            this.analyzeBtn.textContent = '[ ANALYZE ]';
-            this.analyzeBtn.disabled = false;
+            if (this.analyzeBtn) {
+                this.analyzeBtn.textContent = '[ ANALYZE ]';
+                this.analyzeBtn.disabled = false;
+            }
             this.hideGlobalLoading();
         }
     }
@@ -1950,8 +2436,6 @@ class ReviensApp {
         const quality = this.loopAnalyzer.analyzeLoopQuality(loop.startTime, loop.duration);
         this.displayLoopAnalysis(quality);
         this.updatePitchDisplay();
-        
-        console.log(`Auto-selected best loop: ${loop.startTime.toFixed(2)}s, ${loop.duration.toFixed(2)}s (${(loop.quality * 100).toFixed(0)}% quality)`);
     }
 
     // Enhanced beat snapping with musical intelligence
@@ -2152,15 +2636,6 @@ class ReviensApp {
         this.analyzeSelectionQuality();
         this.updatePitchDisplay();
         
-        // Enhanced feedback
-        let message = `snapped to ${snapResult.type}`;
-        if (snapResult.startBar && snapResult.endBar) {
-            message += ` (bars ${snapResult.startBar}-${snapResult.endBar})`;
-        }
-        message += ` at ${newStart.toFixed(3)}s, duration: ${newDuration.toFixed(3)}s`;
-        message += ` (confidence: ${(snapResult.confidence * 100).toFixed(0)}%)`;
-        
-        console.log(message);
     }
 
     findNearestBeat(targetTime, beatPositions) {
@@ -2262,10 +2737,10 @@ class ReviensApp {
         const padding = this.selectionDuration * 0.5;
         const neededDuration = this.selectionDuration + (padding * 2);
         
-        const maxZoom = Math.min(50, totalDuration / neededDuration);
-        
+        const maxZoom = Math.min(500, totalDuration / neededDuration);
+
         if (maxZoom > this.zoomLevel) {
-            this.zoomLevel = Math.min(maxZoom, 20);
+            this.zoomLevel = Math.min(maxZoom, 100);
             this.zoomInput.value = this.zoomLevel;
         }
         
@@ -2510,7 +2985,7 @@ class ReviensApp {
             
             item.addEventListener('click', () => {
                 this.durationInput.value = suggestion.duration.toFixed(3);
-                this.updateSelectionFromInput();
+                this.updateSelectionFromInput('duration');
                 this.removeDurationSuggestions();
             });
             
@@ -2675,21 +3150,17 @@ class ReviensApp {
         const bpmDisplay = document.getElementById('bpmDisplay');
         const pitchDisplay = document.getElementById('pitchDisplay');
         const qualityDisplay = document.getElementById('qualityDisplay');
-        
-        console.log('Updating key info displays...');
-        
+
         // Update BPM
         if (bpmDisplay) {
             const bpm = this.loopAnalyzer.getDetectedBPM();
-            console.log('BPM from analyzer:', bpm);
             bpmDisplay.textContent = bpm ? `${bpm}` : '--';
         }
-        
+
         // Update pitch
         if (pitchDisplay) {
-            const formattedPitch = this.detectedPitch ? 
+            const formattedPitch = this.detectedPitch ?
                 this.pitchDetector.formatPitchResult(this.detectedPitch) : '--';
-            console.log('Formatted pitch for display:', formattedPitch);
             pitchDisplay.textContent = formattedPitch;
         }
         
@@ -2710,6 +3181,272 @@ class ReviensApp {
                 qualityDisplay.style.color = '#ff4444';
             }
         }
+    }
+
+    // ========== DEEP ANALYSIS METHODS ==========
+
+    async runDeepAnalysis() {
+        if (!this.audioEngine.getAudioData()) {
+            this.showError('Load an audio file first');
+            return;
+        }
+
+        // If already analyzing, cancel it
+        if (this.isAnalyzing) {
+            this.cancelDeepAnalysis();
+            return;
+        }
+
+        this.isAnalyzing = true;
+
+        // Update button state to show CANCEL option
+        if (this.deepAnalyzeBtn) {
+            this.deepAnalyzeBtn.classList.add('analyzing');
+            const btnIcon = this.deepAnalyzeBtn.querySelector('.btn-icon');
+            const btnText = this.deepAnalyzeBtn.querySelector('.btn-text');
+            if (btnIcon) btnIcon.textContent = '✕';
+            if (btnText) btnText.textContent = 'CANCEL';
+        }
+
+        this.showGlobalLoading('Starting deep analysis...');
+
+        try {
+            // Run deep analysis with progress updates
+            const results = await this.loopAnalyzer.deepAnalysis((progress, message) => {
+                if (this.loadingMessage) {
+                    this.loadingMessage.textContent = `${message}`;
+                }
+            });
+
+            // Only process results if not cancelled
+            if (results.length > 0) {
+                this.deepAnalysisResults = results;
+                this.displayDeepAnalysisResults(results);
+
+                // Show waveform highlights for top results
+                this.currentSuggestions = results.slice(0, 10).map(r => ({
+                    startTime: r.startTime,
+                    duration: r.duration,
+                    quality: r.totalScore
+                }));
+                this.redrawVisualization();
+            }
+
+        } catch (error) {
+            if (error.message !== 'Analysis cancelled') {
+                console.error('Deep analysis failed:', error);
+                this.showError('Deep analysis failed: ' + error.message);
+            }
+        } finally {
+            this.isAnalyzing = false;
+            this.hideGlobalLoading();
+
+            // Restore button state
+            if (this.deepAnalyzeBtn) {
+                this.deepAnalyzeBtn.classList.remove('analyzing');
+                const btnIcon = this.deepAnalyzeBtn.querySelector('.btn-icon');
+                const btnText = this.deepAnalyzeBtn.querySelector('.btn-text');
+                if (btnIcon) btnIcon.textContent = '◎';
+                if (btnText) btnText.textContent = 'FIND LOOPS';
+            }
+        }
+    }
+
+    cancelDeepAnalysis() {
+        if (this.isAnalyzing) {
+            this.loopAnalyzer.abortDeepAnalysis();
+            this.hideGlobalLoading();
+
+            // Update button immediately
+            if (this.deepAnalyzeBtn) {
+                this.deepAnalyzeBtn.classList.remove('analyzing');
+                const btnIcon = this.deepAnalyzeBtn.querySelector('.btn-icon');
+                const btnText = this.deepAnalyzeBtn.querySelector('.btn-text');
+                if (btnIcon) btnIcon.textContent = '◎';
+                if (btnText) btnText.textContent = 'FIND LOOPS';
+            }
+        }
+    }
+
+    // Cleanup when page closes
+    cleanup() {
+        // Cancel any running analysis
+        if (this.isAnalyzing) {
+            this.loopAnalyzer.abortDeepAnalysis();
+        }
+
+        // Stop any audio playback
+        if (this.audioEngine) {
+            this.audioEngine.stopPlayback();
+        }
+
+        // Stop playback manager
+        if (this.playbackManager) {
+            this.playbackManager.stopPlayback();
+        }
+    }
+
+    displayDeepAnalysisResults(results) {
+        if (!this.analysisResults || !this.resultsList) return;
+
+        // Show results section
+        this.analysisResults.style.display = 'block';
+
+        // Clear previous results
+        this.resultsList.innerHTML = '';
+
+        if (results.length === 0) {
+            this.resultsList.innerHTML = '<div class="result-item"><span class="result-info">No loopable sections found. Try with a different track.</span></div>';
+            return;
+        }
+
+        // Create result items
+        results.forEach((result, index) => {
+            const item = document.createElement('div');
+            item.className = 'result-item';
+            item.dataset.index = index;
+
+            // Score class
+            let scoreClass = 'poor';
+            if (result.totalScore >= 0.85) scoreClass = 'excellent';
+            else if (result.totalScore >= 0.7) scoreClass = 'good';
+            else if (result.totalScore >= 0.5) scoreClass = 'fair';
+
+            // Time formatting
+            const startTime = AudioUtils.formatTimeShort(result.startTime);
+            const duration = result.duration.toFixed(2);
+
+            item.innerHTML = `
+                <span class="result-rank">#${result.rank}</span>
+                <span class="result-score ${scoreClass}">${Math.round(result.totalScore * 100)}%</span>
+                <div class="result-info">
+                    <div class="result-description">${result.description}</div>
+                    <div class="result-details">Start: ${startTime} | Duration: ${duration}s</div>
+                </div>
+                <div class="result-actions">
+                    <button class="result-btn play-btn" title="Preview this loop">▶</button>
+                    <button class="result-btn use-btn" title="Use this loop">USE</button>
+                </div>
+            `;
+
+            // Click on item to highlight on waveform
+            item.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('result-btn')) {
+                    this.highlightResult(result, index);
+                }
+            });
+
+            // Play button
+            const playBtn = item.querySelector('.play-btn');
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.previewResult(result);
+            });
+
+            // Use button
+            const useBtn = item.querySelector('.use-btn');
+            useBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.useResult(result);
+            });
+
+            this.resultsList.appendChild(item);
+        });
+    }
+
+    highlightResult(result, index) {
+        // Update selection to match this result
+        this.selectionStart = result.startTime;
+        this.selectionDuration = result.duration;
+        this.currentLengthBeats = result.numBeats;
+
+        // Center view on the result
+        const viewDuration = this.getViewDuration();
+        this.viewStartTime = Math.max(0, result.startTime - viewDuration * 0.1);
+
+        // Update UI
+        this.updateInputValues();
+        this.updateSelectionOverlay();
+        this.updateSimplifiedUI();
+        this.redrawVisualization();
+
+        // Highlight selected item in results list
+        const items = this.resultsList.querySelectorAll('.result-item');
+        items.forEach((item, i) => {
+            item.classList.toggle('selected', i === index);
+        });
+    }
+
+    async previewResult(result) {
+        // Stop any current playback
+        this.audioEngine.stopPlayback();
+        this.playbackManager.stopPlayback();
+
+        // Get crossfade settings
+        const crossfadeMs = this.crossfadeInput ? parseInt(this.crossfadeInput.value) : 50;
+        const crossfadeType = this.crossfadeTypeInput ? this.crossfadeTypeInput.value : 'cosine';
+        const clickReduction = this.clickReductionInput ? this.clickReductionInput.checked : true;
+
+        try {
+            await this.audioEngine.playLoop(
+                result.startTime,
+                result.duration,
+                crossfadeMs,
+                crossfadeType,
+                clickReduction
+            );
+
+            // Start playback cursor
+            this.playbackManager.startLoopPlayback(
+                result.startTime,
+                result.duration,
+                this.viewStartTime,
+                this.zoomLevel
+            );
+        } catch (error) {
+            console.error('Preview failed:', error);
+        }
+    }
+
+    useResult(result) {
+        // Set selection to this result
+        this.selectionStart = result.startTime;
+        this.selectionDuration = result.duration;
+        this.currentLengthBeats = result.numBeats;
+
+        // Update all UI
+        this.updateInputValues();
+        this.updateSelectionOverlay();
+        this.updateSimplifiedUI();
+        this.analyzeSelectionQuality();
+        this.redrawVisualization();
+
+        // Center view on selection
+        const viewDuration = this.getViewDuration();
+        if (this.selectionStart < this.viewStartTime ||
+            this.selectionStart + this.selectionDuration > this.viewStartTime + viewDuration) {
+            this.viewStartTime = Math.max(0, this.selectionStart - viewDuration * 0.1);
+            this.redrawVisualization();
+        }
+
+        // Update hint
+        if (this.waveformHint) {
+            this.waveformHint.textContent = `Selected: ${result.description}`;
+        }
+    }
+
+    clearDeepAnalysisResults() {
+        this.deepAnalysisResults = [];
+        this.currentSuggestions = [];
+
+        if (this.analysisResults) {
+            this.analysisResults.style.display = 'none';
+        }
+        if (this.resultsList) {
+            this.resultsList.innerHTML = '';
+        }
+
+        this.redrawVisualization();
     }
 
 }

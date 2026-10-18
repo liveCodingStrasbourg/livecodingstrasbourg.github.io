@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toplap Strasbourg - Atelier de Visualisation Audio</title>
+    
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="soudviz/styles/_main.css">
+    <link rel="stylesheet" href="soudviz/styles/_controls.css">
+    <link rel="stylesheet" href="soudviz/styles/_visualizations.css">
+    <link rel="stylesheet" href="soudviz/styles/_info-panels.css">
+    <link rel="stylesheet" href="soudviz/styles/_themes.css">
+</head>
+<body>
+    <header>
+        <h1>TOPLAP STRASBOURG - ATELIER DE VISUALISATION AUDIO</h1>
+        <p>version alpha !!! TOPLAP STRASBOURG -- SUPPORT pour l'atelier'</p>
+
+
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <h3>Source Audio</h3>
+                <div class="control-item">
+                    <button id="startAudio">
+                        <span class="connection-status" id="micStatus"></span>
+                        Activer le Microphone
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Paramètres FFT</h3>
+                <div class="control-item">
+                    <label for="fftSize">Taille FFT: <span class="range-value" id="fftSizeValue">2048</span></label>
+                    <input type="range" id="fftSize" min="5" max="15" value="11" step="1">
+                    <small>Échantillons: 32 à 32768 (puissances de 2)</small>
+                </div>
+                <div class="control-item">
+                    <label for="smoothingTimeConstant">Lissage temporel: <span class="range-value" id="smoothingValue">0.8</span></label>
+                    <input type="range" id="smoothingTimeConstant" min="0" max="0.99" value="0.8" step="0.01">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Analyse des Fréquences</h3>
+                <div class="control-item">
+                    <label for="bassScale">Amplification des Graves: <span class="range-value" id="bassScaleValue">1.5</span></label>
+                    <input type="range" id="bassScale" min="0.1" max="3" value="1.5" step="0.1">
+                </div>
+                <div class="control-item">
+                    <label for="trebleScale">Amplification des Aigus: <span class="range-value" id="trebleScaleValue">1.0</span></label>
+                    <input type="range" id="trebleScale" min="0.1" max="3" value="1.0" step="0.1">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Détection de Battements</h3>
+                <div class="control-item">
+                    <label for="beatSensitivity">Sensibilité: <span class="range-value" id="beatSensitivityValue">1.5</span></label>
+                    <input type="range" id="beatSensitivity" min="0.5" max="3" value="1.5" step="0.1">
+                </div>
+                <div class="control-item">
+                    <label for="beatDecay">Délai de décroissance: <span class="range-value" id="beatDecayValue">0.98</span></label>
+                    <input type="range" id="beatDecay" min="0.9" max="0.999" value="0.98" step="0.001">
+                </div>
+                <div class="control-item">
+                    <label for="beatThreshold">Seuil: <span class="range-value" id="beatThresholdValue">0.15</span></label>
+                    <input type="range" id="beatThreshold" min="0.05" max="0.5" value="0.15" step="0.01">
+                </div>
+                <div class="control-item">
+                    <button id="tapBpm">Tap BPM</button>
+                    <div>
+                        <label>BPM manuel: <span id="manualBpmValue">0</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Visualisation</h3>
+                <div class="control-item">
+                    <label for="visualizationType1">Visualisation Supérieure:</label>
+                    <select id="visualizationType1">
+                        <option value="frequencyBars">Spectre de Fréquences (Barres)</option>
+                        <option value="waveform">Forme d'Onde</option>
+                        <option value="spectralFlux">Flux Spectral</option>
+                        <option value="spectrogram">Spectrogramme</option>
+                        <option value="centroidVisualizer">Centroïde Spectral</option>
+                        <option value="abstractArt">Art Abstrait</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="visualizationType2">Visualisation Inférieure:</label>
+                    <select id="visualizationType2">
+                        <option value="waveform">Forme d'Onde</option>
+                        <option value="frequencyBars">Spectre de Fréquences (Barres)</option>
+                        <option value="bpmTracker">Analyseur de BPM</option>
+                        <option value="energyCircle">Cercle Énergétique</option>
+                        <option value="centroidVisualizer">Centroïde Spectral</option>
+                        <option value="abstractArt">Art Abstrait</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group" id="abstractMappingControls">
+                <h3>Mapping Signaux-Paramètres</h3>
+                <div class="control-item">
+                    <label for="colorMapping">Couleur contrôlée par:</label>
+                    <select id="colorMapping">
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="centroid">Centroïde Spectral</option>
+                        <option value="energy">Énergie Totale</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticColorControl" style="display: none;">
+                    <label for="staticColorValue">Valeur de Couleur: <span class="range-value" id="staticColorValueValue">0.50</span></label>
+                    <input type="range" id="staticColorValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="sizeMapping">Taille contrôlée par:</label>
+                    <select id="sizeMapping">
+                        <option value="energy">Énergie Totale</option>
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="flux">Flux Spectral</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticSizeControl" style="display: none;">
+                    <label for="staticSizeValue">Valeur de Taille: <span class="range-value" id="staticSizeValueValue">0.50</span></label>
+                    <input type="range" id="staticSizeValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="positionMapping">Position contrôlée par:</label>
+                    <select id="positionMapping">
+                        <option value="flux">Flux Spectral</option>
+                        <option value="centroid">Centroïde Spectral</option>
+                        <option value="bass">Graves (20-250Hz)</option>
+                        <option value="mid">Médiums (250-2000Hz)</option>
+                        <option value="treble">Aigus (2000-20000Hz)</option>
+                        <option value="static">Valeur Statique</option>
+                    </select>
+                </div>
+                <div class="control-item" id="staticPositionControl" style="display: none;">
+                    <label for="staticPositionXValue">Position X: <span class="range-value" id="staticPositionXValueValue">0.50</span></label>
+                    <input type="range" id="staticPositionXValue" min="0" max="1" value="0.5" step="0.01">
+                    <label for="staticPositionYValue">Position Y: <span class="range-value" id="staticPositionYValueValue">0.50</span></label>
+                    <input type="range" id="staticPositionYValue" min="0" max="1" value="0.5" step="0.01">
+                </div>
+                <div class="control-item">
+                    <label for="styleMapping">Style Visuel:</label>
+                    <select id="styleMapping">
+                        <option value="mondrian">Mondrian</option>
+                        <option value="kandinsky">Kandinsky</option>
+                        <option value="minimal">Minimaliste</option>
+                    </select>
+                </div>
+                <div class="control-item">
+                    <label for="reactivityFactor">Réactivité: <span class="range-value" id="reactivityFactorValue">2.0</span></label>
+                    <input type="range" id="reactivityFactor" min="0.1" max="5" value="2.0" step="0.1">
+                </div>
+                <div class="control-item">
+                    <label for="cpuSensitivity">Usage CPU: <span class="range-value" id="cpuSensitivityValue">0.7</span></label>
+                    <input type="range" id="cpuSensitivity" min="0.1" max="1.0" value="0.7" step="0.1">
+                    <small>Réduire pour améliorer les performances</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="visualization-container">
+            <div class="viz-panel">
+                <div class="viz-header">
+                    <h2 class="viz-title" id="viz1Title">Spectre de Fréquences</h2>
+                    <button class="info-button" id="info1Button">?</button>
+                </div>
+                <div class="info-panel" id="info1Panel">
+                    <!-- Content will be added via JavaScript -->
+                </div>
+                <canvas id="visualization1"></canvas>
+                <div class="metrics-display" id="metrics1">
+                    <div class="metric-box">
+                        <div class="metric-label">Graves (20-250Hz)</div>
+                        <div class="metric-value" id="bassEnergy">0.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Médiums (250-2000Hz)</div>
+                        <div class="metric-value" id="midEnergy">0.00</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Aigus (2000-20000Hz)</div>
+                        <div class="metric-value" id="trebleEnergy">0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-panel">
+                <div class="viz-header">
+                    <h2 class="viz-title" id="viz2Title">Forme d'Onde</h2>
+                    <button class="info-button" id="info2Button">?</button>
+                </div>
+                <div class="info-panel" id="info2Panel">
+                    <!-- Content will be added via JavaScript -->
+                </div>
+                <canvas id="visualization2"></canvas>
+                <div class="metrics-display" id="metrics2">
+                    <div class="metric-box">
+                        <div class="metric-label">BPM</div>
+                        <div class="metric-value" id="bpmValue">0</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Confiance BPM</div>
+                        <div class="metric-value" id="bpmConfidence">0%</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Énergie</div>
+                        <div class="metric-value" id="energyLevel">0.00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        TOPLAP Strasbourg &copy; 2025 - Atelier de Visualisation Audio
+    </footer>
+
+    <!-- Scripts - Ordre important pour les dépendances -->
+    <!-- Chargement des classes de base en premier -->
+    <script src="soudviz/js/visualization/visualizer.js"></script>
+    <script src="soudviz/js/audio/analyzer.js"></script>
+    <script src="soudviz/js/audio/processor.js"></script>
+    <script src="soudviz/js/audio/bpm-detector.js"></script>
+    
+    <!-- Visualisations -->
+    <script src="soudviz/js/visualization/frequency-bars.js"></script>
+    <script src="soudviz/js/visualization/waveform.js"></script>
+    <script src="soudviz/js/visualization/spectral-flux.js"></script>
+    <script src="soudviz/js/visualization/spectrogram.js"></script>
+    <script src="soudviz/js/visualization/bpm-tracker.js"></script>
+    <script src="soudviz/js/visualization/energy-circle.js"></script>
+    <script src="soudviz/js/visualization/abstract-art.js"></script>
+    <script src="soudviz/js/visualization/centroid-visualizer.js"></script>
+    
+    <!-- UI et contrôles -->
+    <script src="soudviz/js/ui/controls.js"></script>
+    <script src="soudviz/js/ui/mapping-ui.js"></script>
+    <script src="soudviz/js/ui/info-panels.js"></script>
+    <script src="soudviz/js/ui/manual-bpm.js"></script>
+    
+    <!-- Point d'entrée chargé en dernier -->
+    <script src="soudviz/js/main.js"></script>
+</body>
+</html>

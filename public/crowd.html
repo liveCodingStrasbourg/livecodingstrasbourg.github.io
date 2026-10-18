@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Données Avancée d'Extraction de Données de Foule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-section {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            padding: 15px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .clear-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .filter-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .filter-group h3 {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-tag {
+            background: #e9ecef;
+            color: #495057;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .filter-tag:hover {
+            background: #dee2e6;
+            transform: translateY(-1px);
+        }
+
+        .filter-tag.active {
+            background: #667eea;
+            color: white;
+            border-color: #5a6fd8;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .stats {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+            gap: 25px;
+        }
+
+        .method-card {
+            background: rgba(255,255,255,0.98);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .method-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .method-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        .method-description {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .method-details {
+            margin-bottom: 25px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            background: rgba(102, 126, 234, 0.02);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .detail-title {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .detail-content {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .detail-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .detail-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .detail-list li::before {
+            content: "▶";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            font-size: 12px;
+        }
+
+        .scenario-section {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .scenario-title {
+            font-weight: 600;
+            color: #0c5460;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .scenario-content {
+            color: #0c5460;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .implementation-section {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .implementation-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .implementation-content {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .references {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .references h4 {
+            font-size: 13px;
+            margin-bottom: 12px;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .reference-link {
+            display: block;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 6px;
+            word-break: break-all;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .reference-link:hover {
+            background: rgba(102, 126, 234, 0.1);
+            text-decoration: underline;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .privacy-critique { background: linear-gradient(135deg, #dc3545, #c82333); }
+        .privacy-elevee { background: linear-gradient(135deg, #fd7e14, #e55a00); }
+        .privacy-moyenne { background: linear-gradient(135deg, #ffc107, #e0a800); }
+        .privacy-faible { background: linear-gradient(135deg, #28a745, #1e7e34); }
+
+        .participation-dedique { background: linear-gradient(135deg, #007bff, #0056b3); }
+        .participation-actif { background: linear-gradient(135deg, #6f42c1, #5a2d91); }
+        .participation-minimal { background: linear-gradient(135deg, #6c757d, #545b62); }
+        .participation-aucune { background: linear-gradient(135deg, #343a40, #23272b); }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .search-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .method-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 Base de Données Avancée d'Extraction de Données de Foule</h1>
+            <p>Collection complète de techniques pour extraire des données comportementales, physiologiques et sociales des foules avec implémentations détaillées et scénarios d'usage</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-section">
+                <input type="text" id="searchInput" class="search-box" placeholder="Rechercher par méthode, technologie, matériel, ou application...">
+                <button onclick="clearFilters()" class="clear-btn">Effacer Tout</button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <h3>Type de Données</h3>
+                    <div class="filter-options" id="dataTypeFilter">
+                        <span class="filter-tag" data-filter="comportemental">Comportemental</span>
+                        <span class="filter-tag" data-filter="physiologique">Physiologique</span>
+                        <span class="filter-tag" data-filter="spatial">Spatial</span>
+                        <span class="filter-tag" data-filter="acoustique">Acoustique</span>
+                        <span class="filter-tag" data-filter="biometrique">Biométrique</span>
+                        <span class="filter-tag" data-filter="electromagnetique">Électromagnétique</span>
+                        <span class="filter-tag" data-filter="environnemental">Environnemental</span>
+                        <span class="filter-tag" data-filter="social">Social</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Niveau de Confidentialité</h3>
+                    <div class="filter-options" id="privacyFilter">
+                        <span class="filter-tag" data-filter="faible">Faible</span>
+                        <span class="filter-tag" data-filter="moyenne">Moyenne</span>
+                        <span class="filter-tag" data-filter="elevee">Élevée</span>
+                        <span class="filter-tag" data-filter="critique">Critique</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Participation Requise</h3>
+                    <div class="filter-options" id="participationFilter">
+                        <span class="filter-tag" data-filter="aucune">Aucune</span>
+                        <span class="filter-tag" data-filter="minimal">Minimale</span>
+                        <span class="filter-tag" data-filter="actif">Active</span>
+                        <span class="filter-tag" data-filter="dedique">Dédiée</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Type de Technologie</h3>
+                    <div class="filter-options" id="technologyFilter">
+                        <span class="filter-tag" data-filter="capteurs">Capteurs</span>
+                        <span class="filter-tag" data-filter="vision-par-ordinateur">Vision par Ordinateur</span>
+                        <span class="filter-tag" data-filter="signaux-rf">Signaux RF</span>
+                        <span class="filter-tag" data-filter="appareils-mobiles">Appareils Mobiles</span>
+                        <span class="filter-tag" data-filter="infrastructure-serveur">Infrastructure Serveur</span>
+                        <span class="filter-tag" data-filter="ia-ml">IA/ML</span>
+                        <span class="filter-tag" data-filter="raspberry-pi">Raspberry Pi</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Implémentation</h3>
+                    <div class="filter-options" id="implementationFilter">
+                        <span class="filter-tag" data-filter="passif">Passif</span>
+                        <span class="filter-tag" data-filter="actif">Actif</span>
+                        <span class="filter-tag" data-filter="interactif">Interactif</span>
+                        <span class="filter-tag" data-filter="infrastructure">Infrastructure</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Applications Spectacle</h3>
+                    <div class="filter-options" id="showFilter">
+                        <span class="filter-tag" data-filter="temps-reel">Temps Réel</span>
+                        <span class="filter-tag" data-filter="interactif-public">Interactif Public</span>
+                        <span class="filter-tag" data-filter="adaptatif">Adaptatif</span>
+                        <span class="filter-tag" data-filter="visualisation">Visualisation</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats" id="statsDisplay">
+                Affichage de <span id="visibleCount">0</span> sur <span id="totalCount">0</span> méthodes
+            </div>
+        </div>
+
+        <div class="methods-grid" id="methodsGrid">
+            <!-- Methods will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Début du JavaScript - sera complété dans les parties suivantes
+        // PARTIE 2 - Données des méthodes
+        const methods = [
+            {
+                title: "Analyse des Vibrations Piézoélectriques du Sol",
+                description: "Installation de capteurs piézoélectriques sous le plancher pour détecter et analyser les mouvements de foule, les pas, les sauts et les comportements rythmiques collectifs à travers les patterns de vibrations structurelles.",
+                dataTypes: ["comportemental", "spatial"],
+                privacy: "faible",
+                participation: "aucune",
+                implementation: "infrastructure",
+                technology: "capteurs",
+                showApplications: ["temps-reel", "visualisation", "adaptatif"],
+                hardware: [
+                    "Accéléromètres PCB Piezotronics 393A03 (plage ±50g)",
+                    "Géophones Geospace GS-20DX (sensibilité 28.8V/m/s)",
+                    "Acquisition de données National Instruments cDAQ-9178 (250kS/s)",
+                    "Montage structurel sur dalles béton/poutres acier"
+                ],
+                scenarios: [
+                    "Concert : Détection automatique des moments de danse collective, mesure de l'intensité rythmique du public synchronisée avec la musique",
+                    "Festival : Cartographie en temps réel des zones d'activité, détection des mouvements de foule entre scènes",
+                    "Théâtre : Mesure des réactions physiques du public (applaudissements, mouvements de surprise)",
+                    "Spectacle interactif : Contrôle de l'éclairage et des effets visuels basé sur l'énergie collective mesurée"
+                ],
+                implementations: [
+                    "Raspberry Pi avec HAT d'acquisition analogique pour traitement local",
+                    "Filtrage numérique en temps réel pour séparer pas humains du bruit ambiant",
+                    "Algorithmes de détection d'événements (saut, applaudissement, danse)",
+                    "Interface OSC/MIDI pour contrôle de logiciels de spectacle (Ableton Live, TouchDesigner)"
+                ],
+                interactiveShows: [
+                    "Mur LED réactif à l'intensité de danse du public",
+                    "Système sonore adaptatif qui ajuste le volume selon l'engagement corporel",
+                    "Effets pyrotechniques déclenchés par des pics d'activité collective",
+                    "Composition musicale générative basée sur les rythmes détectés du public"
+                ],
+                technicalSpecs: [
+                    "Plage de fréquence : 0.1-1000Hz avec traitement FFT",
+                    "Résolution spatiale : 2-5m selon densité des capteurs",
+                    "Résolution temporelle : Timestamps de 1ms",
+                    "Détection multi-modale : marche, course, saut, danse"
+                ],
+                limitations: [
+                    "Interférences des systèmes HVAC et vibrations externes",
+                    "Atténuation du signal avec la distance de la source",
+                    "Nécessite installation permanente dans structure du bâtiment"
+                ],
+                references: [
+                    "https://doi.org/10.1016/j.engstruct.2018.12.084",
+                    "https://www.pcb.com/products?model=393a03",
+                    "https://geospace.com/products/geophones/gs-20dx/",
+                    "https://www.ni.com/en-us/support/model.cdaq-9178.html"
+                ]
+            },
+            {
+                title: "Analyse Collective du Mouvement par Gyroscope Mobile",
+                description: "Exploitation des gyroscopes intégrés dans les smartphones pour détecter les balancements collectifs, rotations et mouvements synchronisés lors d'événements, fournissant une détection de mouvement distribuée à travers la foule.",
+                dataTypes: ["comportemental", "physiologique"],
+                privacy: "moyenne",
+                participation: "actif",
+                implementation: "interactif",
+                technology: "appareils-mobiles",
+                showApplications: ["temps-reel", "interactif-public", "adaptatif"],
+                hardware: [
+                    "Gyroscopes MEMS intégrés (plage ±2000°/s)",
+                    "Accéléromètres pour compensation de mouvement",
+                    "WebRTC pour streaming de données temps réel",
+                    "Edge computing pour traitement local"
+                ],
+                scenarios: [
+                    "Concert symphonique : Détection du balancement collectif du public pendant les passages lyriques",
+                    "Match sportif : Mesure de l'intensité des célébrations et de la synchronisation des supporteurs",
+                    "Rave party : Analyse des patterns de danse collectifs et création de visualisations synchronisées",
+                    "Méditation collective : Monitoring des mouvements de respiration groupée"
+                ],
+                implementations: [
+                    "Application web progressive avec API DeviceOrientationEvent",
+                    "WebSocket server pour agrégation temps réel des données gyroscopiques",
+                    "Algorithmes de détection de synchronisation basés sur corrélation croisée",
+                    "Interface de visualisation 3D des mouvements collectifs"
+                ],
+                interactiveShows: [
+                    "Éclairage qui suit les mouvements collectifs du public en temps réel",
+                    "Synthèse sonore modulée par l'intensité et la direction des mouvements",
+                    "Projection mapping réagissant aux oscillations et rotations détectées",
+                    "Jeu interactif où le public contrôle des éléments visuels par mouvement coordonné"
+                ],
+                technicalSpecs: [
+                    "Fréquence d'échantillonnage : 60Hz typique, jusqu'à 200Hz possible",
+                    "Précision vélocité angulaire : 0.1°/s",
+                    "Latence : 50-200ms selon réseau",
+                    "Consommation batterie : 15-30% par heure"
+                ],
+                limitations: [
+                    "Nécessite participation active et installation d'application",
+                    "L'orientation de l'appareil affecte la précision",
+                    "La latence réseau impacte la synchronisation temps réel"
+                ],
+                references: [
+                    "https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent",
+                    "https://doi.org/10.1145/3210240.3210334",
+                    "https://developers.google.com/web/fundamentals/native-hardware/device-orientation",
+                    "https://caniuse.com/deviceorientation"
+                ]
+            },
+            {
+                title: "Serveur de Triangulation WiFi Dédié",
+                description: "Configuration de multiples points d'accès WiFi avec firmware personnalisé pour effectuer une triangulation précise des positions d'appareils basée sur les mesures de force du signal et calculs de temps de vol.",
+                dataTypes: ["spatial", "comportemental"],
+                privacy: "elevee",
+                participation: "aucune",
+                implementation: "infrastructure",
+                technology: "infrastructure-serveur",
+                showApplications: ["temps-reel", "visualisation"],
+                hardware: [
+                    "Routeurs compatibles OpenWrt (TP-Link Archer C7, Netgear R7800)",
+                    "Antennes directionnelles haute gain (8-15dBi)",
+                    "Infrastructure serveur dédiée (Intel NUC, cluster Raspberry Pi)",
+                    "Synchronisation réseau via NTP/PTP"
+                ],
+                scenarios: [
+                    "Festival multi-scènes : Tracking anonyme des flux de public entre différentes attractions",
+                    "Musée interactif : Analyse des parcours de visite et temps d'arrêt devant les œuvres",
+                    "Conférence : Cartographie des zones de networking et interactions sociales",
+                    "Club nocturne : Optimisation de l'agencement basée sur les patterns de circulation"
+                ],
+                implementations: [
+                    "Cluster Raspberry Pi 4 avec antennes WiFi externes pour triangulation",
+                    "Base de données time-series (InfluxDB) pour stockage des positions",
+                    "Algorithmes de trilatération avec filtres de Kalman pour trajectoires fluides",
+                    "Dashboard temps réel avec cartes de chaleur de densité"
+                ],
+                interactiveShows: [
+                    "Éclairage architectural qui s'adapte aux zones de forte densité",
+                    "Diffusion audio localisée suivant les mouvements du public",
+                    "Révélation progressive d'œuvres selon les patterns d'exploration",
+                    "Interactions sonores déclenchées par la proximité entre participants"
+                ],
+                technicalSpecs: [
+                    "Précision triangulation : 1-5m selon densité des AP",
+                    "Fréquence de mise à jour : 1-10Hz par appareil",
+                    "Tracking simultané : 500+ appareils",
+                    "Zone de couverture : 100-500m² par AP"
+                ],
+                limitations: [
+                    "Les appareils modernes utilisent la randomisation d'adresse MAC",
+                    "Interférences signal en environnements RF denses",
+                    "Nécessite investissement infrastructure substantiel"
+                ],
+                references: [
+                    "https://openwrt.org/",
+                    "https://doi.org/10.1109/TMC.2016.2632715",
+                    "https://github.com/openwrt/openwrt",
+                    "https://www.kernel.org/doc/html/latest/networking/mac80211-injection.html"
+                ]
+            },
+            {
+                title: "Estimation de Pose Multi-Caméras par Vision par Ordinateur",
+                description: "Réseau de caméras synchronisées utilisant l'estimation de pose alimentée par IA pour tracker les positions corporelles individuelles, gestes et patterns de mouvement collectifs en temps réel.",
+                dataTypes: ["comportemental", "biometrique"],
+                privacy: "critique",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "vision-par-ordinateur",
+                showApplications: ["temps-reel", "adaptatif", "visualisation"],
+                hardware: [
+                    "Caméras IP 4K avec objectifs varifocaux (2.8-12mm)",
+                    "NVIDIA Jetson AGX Orin pour traitement edge",
+                    "Enregistreurs vidéo réseau avec connectivité 10GbE",
+                    "Clusters GPU pour estimation de pose temps réel"
+                ],
+                scenarios: [
+                    "Performance de danse : Analyse des patterns chorégraphiques et synchronisation des danseurs",
+                    "Concert classique : Mesure de l'engagement corporel du public (posture, applaudissements)",
+                    "Théâtre immersif : Adaptation de la performance selon les réactions gestuelles du public",
+                    "Installation artistique : Création de visualisations basées sur les poses et mouvements collectifs"
+                ],
+                implementations: [
+                    "OpenPose ou MediaPipe pour détection de points-clés corporels",
+                    "Raspberry Pi clusters avec Coral USB Accelerator pour traitement distribué",
+                    "Fusion multi-caméras pour reconstruction 3D des poses",
+                    "Anonymisation temps réel par floutage automatique des visages"
+                ],
+                interactiveShows: [
+                    "Projection mapping réactive aux gestes et postures du public",
+                    "Environnement sonore spatial modulé par les mouvements corporels",
+                    "Éclairage qui accentue et amplifie les gestuelles collectives",
+                    "Avatar numérique collectif représentant l'énergie gestuelle de la foule"
+                ],
+                technicalSpecs: [
+                    "Points-clés de pose : 17-133 landmarks corporels par personne",
+                    "Vitesse de traitement : 30fps pour 10+ personnes simultanément",
+                    "Précision : ±5cm pour articulations clés du corps",
+                    "Portée : 5-50m selon configuration caméras"
+                ],
+                limitations: [
+                    "Implications de confidentialité sévères nécessitant consentement",
+                    "Performance dégradée dans foules très denses",
+                    "Exigences computationnelles élevées pour traitement temps réel"
+                ],
+                references: [
+                    "https://github.com/CMU-Perceptual-Computing-Lab/openpose",
+                    "https://mediapipe.dev/solutions/pose",
+                    "https://doi.org/10.1109/TPAMI.2019.2929257",
+                    "https://developer.nvidia.com/embedded/jetson-agx-orin"
+                ]
+            },
+            {
+                title: "Surveillance Thermique de Densité et Température de Foule",
+                description: "Déploiement de caméras thermiques pour surveiller la densité de foule, détecter la fièvre/températures élevées, et analyser les patterns de chaleur pour détection de stress et gestion de foule.",
+                dataTypes: ["physiologique", "spatial", "environnemental"],
+                privacy: "moyenne",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "capteurs",
+                showApplications: ["temps-reel", "visualisation"],
+                hardware: [
+                    "Caméras thermiques FLIR A655sc (résolution 640×480)",
+                    "Optris PI 1M avec résolution thermique 382×288",
+                    "Sources de corps noir pour calibration thermique",
+                    "Capteurs de compensation environnementale"
+                ],
+                scenarios: [
+                    "Festival d'été : Monitoring de la température corporelle collective pour prévention des coups de chaleur",
+                    "Salle de concert : Visualisation de l'échauffement émotionnel pendant les climax musicaux",
+                    "Convention : Détection automatique des zones de surcharge thermique",
+                    "Performance sportive : Analyse de l'intensité physique des spectateurs"
+                ],
+                implementations: [
+                    "Raspberry Pi avec caméra thermique MLX90640 pour monitoring low-cost",
+                    "Traitement d'image thermique avec OpenCV et gradient mapping",
+                    "Détection automatique de fièvre avec seuils adaptatifs",
+                    "Visualisation temps réel des cartes de chaleur sur écrans publics"
+                ],
+                interactiveShows: [
+                    "Visualisation artistique des 'auras' thermiques du public en temps réel",
+                    "Modulation de la température ambiante basée sur l'échauffement collectif",
+                    "Éclairage coloré représentant les variations thermiques de la foule",
+                    "Installation interactive où les zones chaudes déclenchent des effets visuels"
+                ],
+                technicalSpecs: [
+                    "Précision température : ±0.02°C avec calibration",
+                    "Sensibilité thermique : <0.02°C NETD",
+                    "Fréquence d'images : 50Hz pleine résolution",
+                    "Plage opérationnelle : -20°C à +150°C"
+                ],
+                limitations: [
+                    "Affecté par température ambiante et humidité",
+                    "Portée limitée pour mesure précise de température",
+                    "Ne peut identifier les individus, seulement signatures thermiques"
+                ],
+                references: [
+                    "https://www.flir.com/products/a655sc/",
+                    "https://www.optris.com/thermal-imager-pi-1m",
+                    "https://doi.org/10.1016/j.buildenv.2020.107025",
+                    "https://ieeexplore.ieee.org/document/9001197"
+                ]
+            },
+            {
+                title: "Réseau Maillé de Balises Bluetooth Low Energy",
+                description: "Déploiement dense de balises BLE créant un réseau maillé pour détection de proximité précise, traçage de contacts et conscience de micro-localisation à travers le lieu.",
+                dataTypes: ["spatial", "comportemental"],
+                privacy: "moyenne",
+                participation: "minimal",
+                implementation: "infrastructure",
+                technology: "signaux-rf",
+                showApplications: ["temps-reel", "interactif-public"],
+                hardware: [
+                    "Balises Nordic nRF52840 SoC",
+                    "Balises de localisation Estimote avec batterie 5+ ans",
+                    "Nœuds passerelle Raspberry Pi",
+                    "Réseau maillé Bluetooth 5.0+"
+                ],
+                scenarios: [
+                    "Exposition interactive : Déclenchement de contenu personnalisé selon proximité des œuvres",
+                    "Concert en plein air : Navigation indoor et livraison de contenu basée sur position",
+                    "Festival gastronomique : Recommandations de stands selon parcours et préférences",
+                    "Théâtre immersif : Adaptation de l'expérience selon position du spectateur"
+                ],
+                implementations: [
+                    "Raspberry Pi Zero W comme récepteurs BLE avec antennes externes",
+                    "Protocole de mesh networking pour topologie auto-réparatrice",
+                    "Base de données de proximité temps réel avec Redis",
+                    "Application mobile avec SDK de détection de proximité"
+                ],
+                interactiveShows: [
+                    "Audio spatialisé qui suit le public dans l'espace",
+                    "Éclairage personnel qui accompagne chaque spectateur",
+                    "Déclenchement d'effets interactifs par proximité entre participants",
+                    "Narration adaptative selon le parcours choisi par le public"
+                ],
+                technicalSpecs: [
+                    "Portée : 1-70m puissance de transmission ajustable",
+                    "Autonomie batterie : 2-5 ans selon configuration",
+                    "Précision : 1-3m détection de proximité",
+                    "Réseau maillé : Topologie auto-réparatrice"
+                ],
+                limitations: [
+                    "Nécessite Bluetooth activé sur appareil utilisateur",
+                    "Absorption signal par corps humains affecte précision",
+                    "Préoccupations de confidentialité avec tracking persistant d'appareils"
+                ],
+                references: [
+                    "https://www.nordicsemi.com/Products/nRF52840",
+                    "https://estimote.com/products/",
+                    "https://www.bluetooth.com/specifications/mesh-specifications/",
+                    "https://doi.org/10.1109/JIOT.2019.2918240"
+                ]
+            },
+            {
+                title: "Triangulation Acoustique avec Réseaux de Microphones",
+                description: "Réseaux de microphones distribués utilisant la triangulation acoustique pour localiser les sources sonores, tracker les voix individuelles et analyser les patterns audio de foule pour inférence comportementale.",
+                dataTypes: ["acoustique", "spatial", "comportemental"],
+                privacy: "elevee",
+                participation: "aucune",
+                implementation: "infrastructure",
+                technology: "capteurs",
+                showApplications: ["temps-reel", "adaptatif"],
+                hardware: [
+                    "Réseaux de microphones MEMS (32-64 éléments)",
+                    "Microphones professionnels Audio-Technica AT4050",
+                    "Processeurs de beamforming (Texas Instruments C674x DSP)",
+                    "Systèmes ADC synchronisés avec timing GPS"
+                ],
+                scenarios: [
+                    "Concert interactif : Localisation des applaudissements et cris d'encouragement",
+                    "Débat public : Analyse de l'intensité des réactions par zone de la salle",
+                    "Performance théâtrale : Mesure de l'engagement émotionnel par analyse vocale collective",
+                    "Festival : Cartographie sonore des différentes ambiances par zone"
+                ],
+                implementations: [
+                    "Raspberry Pi avec cartes d'acquisition audio multi-canaux",
+                    "Algorithmes de beamforming en temps réel avec GNU Radio",
+                    "Détection d'événements acoustiques (applaudissements, rires, cris)",
+                    "Visualisation 3D des sources sonores dans l'espace"
+                ],
+                interactiveShows: [
+                    "Retour audio adaptatif amplifiant les réactions positives du public",
+                    "Visualisation en temps réel de l'énergie sonore collective",
+                    "Modulation des effets selon l'intensité et la localisation des réactions",
+                    "Composition musicale générative basée sur les patterns acoustiques détectés"
+                ],
+                technicalSpecs: [
+                    "Précision de localisation : ±30cm en conditions optimales",
+                    "Plage de fréquence : 20Hz-20kHz",
+                    "Gamme dynamique : 120dB SNR",
+                    "Latence de traitement : <10ms temps réel"
+                ],
+                limitations: [
+                    "Implications de confidentialité sévères avec enregistrement vocal",
+                    "Performance dégradée avec bruit ambiant élevé",
+                    "Nécessite calibration acoustique complexe"
+                ],
+                references: [
+                    "https://www.ti.com/product/TLV320ADC5140",
+                    "https://doi.org/10.1121/1.5042348",
+                    "https://github.com/respeaker/mic_array",
+                    "https://www.analog.com/en/technical-articles/mems-microphone-array-beamforming.html"
+                ]
+            },
+            {
+                title: "Beamforming Audio Multi-Canaux pour Localisation de Locuteurs",
+                description: "Réseaux avancés de microphones utilisant des algorithmes de beamforming pour isoler et tracker des locuteurs individuels dans les foules, analyser les patterns de conversation et détecter les indices vocaux émotionnels.",
+                dataTypes: ["acoustique", "comportemental", "spatial"],
+                privacy: "critique",
+                participation: "aucune",
+                implementation: "infrastructure",
+                technology: "capteurs",
+                showApplications: ["temps-reel", "adaptatif"],
+                hardware: [
+                    "Réseau circulaire 32 éléments (Eigenmike EM32)",
+                    "Réseaux linéaires 8-16 microphones MEMS (SPH0645LM4H)",
+                    "Processeurs beamforming temps réel (SHARC ADSP-21573)",
+                    "Systèmes caméra acoustique (CAE Acoustic Camera)",
+                    "Systèmes ADC haute vitesse (24-bit/192kHz)"
+                ],
+                scenarios: [
+                    "Débat politique : Analyse de l'intensité des réactions par zone géographique",
+                    "Concert interactif : Amplification sélective des encouragements du public",
+                    "Conférence : Détection automatique des questions depuis l'audience",
+                    "Théâtre participatif : Intégration des réactions vocales dans la performance"
+                ],
+                implementations: [
+                    "Raspberry Pi 4 avec carte audio multi-canaux pour arrays simples",
+                    "GNU Radio pour traitement de signal et beamforming temps réel",
+                    "Algorithmes de séparation de sources aveugle (ICA, FastICA)",
+                    "Classification automatique d'événements acoustiques"
+                ],
+                interactiveShows: [
+                    "Spatialisation audio suivant les réactions vocales du public",
+                    "Amplification sélective des zones les plus engagées",
+                    "Composition musicale intégrant les rythmes vocaux détectés",
+                    "Visualisation 3D temps réel de l'énergie acoustique spatiale"
+                ],
+                technicalSpecs: [
+                    "Résolution spatiale : ±5° précision angulaire",
+                    "Plage de fréquence : 100Hz-8kHz pour analyse vocale",
+                    "Traitement temps réel : <50ms latence",
+                    "Sources simultanées : 10+ locuteurs concurrents",
+                    "Gamme dynamique : 60dB avec suppression de bruit"
+                ],
+                limitations: [
+                    "Implications de confidentialité extrêmes avec isolation vocale",
+                    "Performance dégradée avec forte réverbération",
+                    "Complexité computationnelle augmente avec taille du réseau"
+                ],
+                references: [
+                    "https://mhacoustics.com/products/eigenmike-em32",
+                    "https://doi.org/10.1109/TSP.2018.2877403",
+                    "https://github.com/BinauralSH/Spherical-Harmonic-Transform",
+                    "https://www.analog.com/en/products/adsp-21573.html"
+                ]
+            },
+            {
+                title: "Classification de Signatures Acoustiques de Foule",
+                description: "Classification basée machine learning des signatures audio de foule pour identifier différents états comportementaux comme excitation, tension, satisfaction ou détresse sans reconnaissance vocale.",
+                dataTypes: ["acoustique", "comportemental"],
+                privacy: "moyenne",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "ia-ml",
+                showApplications: ["temps-reel", "adaptatif"],
+                hardware: [
+                    "Réseaux de microphones MEMS distribués",
+                    "Processeurs AI edge (Google Coral TPU, Intel Movidius)",
+                    "Accélérateurs d'extraction de caractéristiques acoustiques",
+                    "Analyseurs de spectre temps réel (Rohde & Schwarz FSW)"
+                ],
+                scenarios: [
+                    "Match sportif : Classification automatique de l'intensité des supporteurs",
+                    "Concert : Mesure de l'engagement émotionnel selon les morceaux",
+                    "Festival : Détection précoce de situations de stress ou panique",
+                    "Spectacle pour enfants : Adaptation du rythme selon niveau d'excitation"
+                ],
+                implementations: [
+                    "Raspberry Pi avec USB Coral Accelerator pour inférence locale",
+                    "Extraction de caractéristiques MFCC, centroïde spectral, taux de passage par zéro",
+                    "Modèles CNN entraînés sur datasets de foules annotées",
+                    "API de classification avec scores de confiance temps réel"
+                ],
+                interactiveShows: [
+                    "Adaptation automatique du tempo musical selon énergie acoustique",
+                    "Modulation de l'intensité lumineuse basée sur l'excitation détectée",
+                    "Déclenchement d'effets spéciaux lors de pics d'enthousiasme",
+                    "Retour visuel amplifiant les moments de communion collective"
+                ],
+                technicalSpecs: [
+                    "Précision classification : 85-92% pour états de foule",
+                    "Extraction caractéristiques : MFCC, centroïde spectral, ZCR",
+                    "Fenêtre de traitement : Segments audio 1-5 secondes",
+                    "Fréquence de mise à jour : 10Hz classification continue",
+                    "Robustesse au bruit : SNR jusqu'à 10dB"
+                ],
+                limitations: [
+                    "Biais des données d'entraînement vers types d'événements spécifiques",
+                    "Variations culturelles dans expressions vocales de foule",
+                    "Interférences bruit ambiant en lieux extérieurs"
+                ],
+                references: [
+                    "https://doi.org/10.1109/TASLP.2019.2947741",
+                    "https://coral.ai/products/dev-board/",
+                    "https://librosa.org/doc/main/feature.html",
+                    "https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/micro"
+                ]
+            },
+            {
+                title: "Reconnaissance Gestuelle Collective basée Kinect",
+                description: "Multiples capteurs Kinect pour détecter et analyser les gestes collectifs, mouvements synchronisés et comportements de groupe à travers tracking de squelette et estimation de pose.",
+                dataTypes: ["comportemental", "spatial", "biometrique"],
+                privacy: "elevee",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "vision-par-ordinateur",
+                showApplications: ["temps-reel", "interactif-public", "adaptatif"],
+                hardware: [
+                    "Capteurs Azure Kinect DK (unités multiples)",
+                    "Kinect v2 avec détection de profondeur IR",
+                    "Clusters GPU pour traitement de squelette temps réel",
+                    "Systèmes de déclenchement synchronisé multi-caméras",
+                    "Stockage réseau pour données de nuages de points"
+                ],
+                scenarios: [
+                    "Festival de danse : Analyse des patterns de mouvement chorégraphique collectifs",
+                    "Cours de fitness : Mesure de synchronisation d'exercices de groupe",
+                    "Concert pop : Reconnaissance de gestes de foule (salut, applaudissement)",
+                    "Installation interactive : Contrôle gestuel collectif d'éléments numériques"
+                ],
+                implementations: [
+                    "Raspberry Pi 4 avec Azure Kinect SDK pour détection de base",
+                    "OpenPose ou MediaPipe pour estimation de pose robuste",
+                    "Fusion multi-capteurs pour reconstruction 3D précise",
+                    "Algorithmes de reconnaissance de gestes basés sur séquences temporelles"
+                ],
+                interactiveShows: [
+                    "Projection mapping suivant exactement les mouvements du public",
+                    "Génération musicale basée sur la complexité gestuelle détectée",
+                    "Avatar numérique géant représentant les gestes collectifs",
+                    "Jeu interactif contrôlé par coordination gestuelle de groupe"
+                ],
+                technicalSpecs: [
+                    "Tracking de squelette : 25 articulations par personne, jusqu'à 6 corps",
+                    "Précision de profondeur : ±2mm à distance 1m",
+                    "Fréquence d'images : 30fps synchronisé entre caméras",
+                    "Champ de vue : 120°×120° avec optimisation de recouvrement",
+                    "Portée : 0.5-5.5m distance de tracking efficace"
+                ],
+                limitations: [
+                    "Tracking limité dans foules très denses (>4 personnes/m²)",
+                    "Nécessite ligne de vue directe vers sujets",
+                    "Performance dégradée avec conditions d'éclairage extrêmes"
+                ],
+                references: [
+                    "https://docs.microsoft.com/en-us/azure/kinect-dk/",
+                    "https://github.com/microsoft/Azure-Kinect-Samples",
+                    "https://doi.org/10.1109/CVPR.2019.00584",
+                    "https://www.microsoft.com/en-us/research/project/kinect-for-windows/"
+                ]
+            },
+            {
+                title: "Interface de Vote Émotionnel en Temps Réel",
+                description: "Système d'interfaces tactiles permettant au public d'exprimer ses émotions en temps réel pendant un spectacle, créant une boucle de feedback immédiate entre audience et performance.",
+                dataTypes: ["social", "comportemental"],
+                privacy: "faible",
+                participation: "actif",
+                implementation: "interactif",
+                technology: "appareils-mobiles",
+                showApplications: ["temps-reel", "interactif-public", "adaptatif"],
+                hardware: [
+                    "Applications web progressives (PWA) multi-plateformes",
+                    "Tablettes tactiles distribuées dans l'audience",
+                    "Boîtiers de vote physiques avec boutons colorés",
+                    "Écrans interactifs muraux pour vote collectif"
+                ],
+                scenarios: [
+                    "Concert interactif : Le public influence la setlist en temps réel",
+                    "Spectacle immersif : L'audience vote pour diriger le déroulement narratif",
+                    "Performance de jazz : Les musiciens adaptent leur improvisation aux réactions",
+                    "Théâtre expérimental : Les émotions du public modifient l'éclairage et la scénographie"
+                ],
+                implementations: [
+                    "Raspberry Pi comme serveurs de vote avec interfaces web simples",
+                    "WebSocket pour transmission temps réel des votes émotionnels",
+                    "Visualisation en direct des tendances émotionnelles collectives",
+                    "APIs de contrôle pour équipements de spectacle (DMX, OSC, MIDI)"
+                ],
+                interactiveShows: [
+                    "Éclairage qui reflète instantanément l'humeur collective votée",
+                    "Sélection musicale adaptative basée sur préférences exprimées",
+                    "Effets visuels modulés par l'intensité émotionnelle mesurée",
+                    "Personnages virtuels réagissant aux émotions du public"
+                ],
+                technicalSpecs: [
+                    "Échelles valence/arousal : -5 à +5 résolution émotionnelle",
+                    "Latence de vote : <100ms de l'interaction à l'affichage",
+                    "Capacité : 1000+ participants simultanés",
+                    "Types d'émotions : 8 émotions de base + intensité"
+                ],
+                limitations: [
+                    "Participation volontaire uniquement",
+                    "Biais d'auto-sélection des participants",
+                    "Fatigue de participation sur longue durée"
+                ],
+                references: [
+                    "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps",
+                    "https://socket.io/docs/v4/",
+                    "https://www.openlighting.org/ola/",
+                    "https://opensoundcontrol.stanford.edu/"
+                ]
+            },
+            {
+                title: "Analyse de Flux de Foule par Smartphone",
+                description: "Application mobile distribuée utilisant GPS, accéléromètres et capteurs de proximité pour créer une carte collaborative des mouvements de foule et patterns de circulation.",
+                dataTypes: ["spatial", "comportemental"],
+                privacy: "moyenne",
+                participation: "actif",
+                implementation: "interactif",
+                technology: "appareils-mobiles",
+                showApplications: ["temps-reel", "visualisation"],
+                hardware: [
+                    "GPS intégré avec précision 3-5m",
+                    "Accéléromètres et gyroscopes pour détection de mouvement",
+                    "Capteurs de proximité Bluetooth/WiFi",
+                    "Boussole magnétique pour orientation"
+                ],
+                scenarios: [
+                    "Grand festival : Optimisation des flux entre scènes en temps réel",
+                    "Manifestation : Monitoring de sécurité et prévention d'embouteillages",
+                    "Marathon : Analyse des patterns de course et points de ralentissement",
+                    "Centre commercial : Études de comportement d'achat et de circulation"
+                ],
+                implementations: [
+                    "Application React Native avec géolocalisation temps réel",
+                    "Serveur Node.js avec base de données géospatiale (PostGIS)",
+                    "Algorithmes de clustering pour détection de groupes mobiles",
+                    "Cartes de chaleur temps réel avec Leaflet.js ou Mapbox"
+                ],
+                interactiveShows: [
+                    "Guidage lumineux dynamique optimisant les flux de public",
+                    "Révélation progressive d'installations selon patterns d'exploration",
+                    "Musique ambiante qui évolue selon densité et vitesse de circulation",
+                    "Jeux de piste collectifs basés sur géolocalisation collaborative"
+                ],
+                technicalSpecs: [
+                    "Précision GPS : 3-5m en conditions normales, 1m avec correction",
+                    "Fréquence de mise à jour : 1-5Hz selon consommation batterie",
+                    "Détection de proximité : 10-100m portée Bluetooth/WiFi",
+                    "Autonomie : Optimisée pour 8+ heures d'usage continu"
+                ],
+                limitations: [
+                    "Consommation batterie significative avec GPS continu",
+                    "Précision dégradée en intérieur ou zones urbaines denses",
+                    "Nécessite participation active et installation d'application"
+                ],
+                references: [
+                    "https://reactnative.dev/docs/geolocation",
+                    "https://postgis.net/",
+                    "https://leafletjs.com/",
+                    "https://docs.mapbox.com/help/tutorials/"
+                ]
+            },
+            {
+                title: "Réseaux de Capteurs Environnementaux Collaboratifs",
+                description: "Exploitation des capteurs environnementaux des smartphones (baromètre, thermomètre, capteur de lumière) pour créer un réseau de surveillance environnementale distribué à travers la foule.",
+                dataTypes: ["environnemental", "spatial"],
+                privacy: "faible",
+                participation: "actif",
+                implementation: "interactif",
+                technology: "appareils-mobiles",
+                showApplications: ["temps-reel", "visualisation"],
+                hardware: [
+                    "Capteurs de pression barométrique smartphones (±1 hPa)",
+                    "Capteurs de lumière ambiante (mesure LUX)",
+                    "Capteurs de température (si disponibles)",
+                    "Magnétomètre pour positionnement indoor"
+                ],
+                scenarios: [
+                    "Festival en plein air : Cartographie microclimatique en temps réel",
+                    "Concert en salle : Surveillance qualité de l'air et confort thermique",
+                    "Événement sportif : Monitoring des conditions météo localisées",
+                    "Installation artistique : Création d'œuvres réactives aux conditions ambiantes"
+                ],
+                implementations: [
+                    "Raspberry Pi comme hubs de collecte avec capteurs BME280",
+                    "Base de données time-series (InfluxDB) pour données environnementales",
+                    "Dashboard Grafana pour visualisation temps réel des conditions",
+                    "API de prédiction météo basée sur données collaboratives"
+                ],
+                interactiveShows: [
+                    "Éclairage adaptatif compensant les variations de luminosité naturelle",
+                    "Effets visuels modulés par pression atmosphérique (sensation d'altitude)",
+                    "Climatisation interactive réagissant aux mesures de température collective",
+                    "Compositions sonores évoluant avec les conditions météorologiques"
+                ],
+                technicalSpecs: [
+                    "Précision pression : ±1 hPa (±8m altitude)",
+                    "Plage capteur de lumière : 0.1-100,000 LUX",
+                    "Fréquence de mise à jour : 1-10Hz par appareil",
+                    "Résolution spatiale : 1-5m selon densité de foule"
+                ],
+                limitations: [
+                    "Qualité capteurs varie significativement entre appareils",
+                    "Affecté par placement de l'appareil (poche, main, sac)",
+                    "Nécessite participation active utilisateur et usage batterie"
+                ],
+                references: [
+                    "https://developer.android.com/guide/topics/sensors/sensors_environment",
+                    "https://developer.apple.com/documentation/coremotion/cmaltimeter",
+                    "https://doi.org/10.1145/3241539.3241572",
+                    "https://grafana.com/docs/"
+                ]
+            },
+            {
+                title: "Détection Infrasonore Générée par la Foule",
+                description: "Détection et analyse d'infrasons (en dessous de 20Hz) générés par les mouvements de foule large, fournissant alerte précoce pour conditions dangereuses de foule et patterns de mouvement de masse.",
+                dataTypes: ["acoustique", "comportemental", "environnemental"],
+                privacy: "faible",
+                participation: "aucune",
+                implementation: "infrastructure",
+                technology: "capteurs",
+                showApplications: ["temps-reel"],
+                hardware: [
+                    "Microphones infrasonores (Chaparral Physics Model 5)",
+                    "Accéléromètres basse fréquence pour couplage au sol",
+                    "Systèmes de réduction de bruit de vent",
+                    "Systèmes ADC haute résolution 24-bit",
+                    "Synchronisation GPS pour traitement de réseau"
+                ],
+                scenarios: [
+                    "Grand stade : Détection précoce de mouvements de foule dangereux",
+                    "Festival massif : Monitoring des vagues humaines et synchronisation",
+                    "Événement en plein air : Surveillance de la réponse de foule aux catastrophes",
+                    "Concert symphonique : Détection de l'immersion collective profonde"
+                ],
+                implementations: [
+                    "Raspberry Pi avec ADC 24-bit pour capture infrasonore simple",
+                    "Filtrage numérique pour isolation signaux 0.01-20Hz",
+                    "Corrélation croisée pour localisation de sources infrasonores",
+                    "Système d'alerte automatique pour patterns dangereux"
+                ],
+                interactiveShows: [
+                    "Basses fréquences musicales synchronisées avec infrasons de foule",
+                    "Éclairage ambiant réagissant aux vagues infrasonores détectées",
+                    "Effets haptiques transmis via infrastructure pour amplifier immersion",
+                    "Création d'instruments musicaux basés sur résonance collective"
+                ],
+                technicalSpecs: [
+                    "Plage de fréquence : 0.01-20Hz avec réponse plate",
+                    "Gamme dynamique : 140dB minimum détectable",
+                    "Résolution spatiale : 100m+ pour grands événements de foule",
+                    "Seuil de détection : <0.1 Pa variations de pression"
+                ],
+                limitations: [
+                    "Interférences du vent, trafic et machines",
+                    "Nécessite foules importantes (1000+ personnes) pour signaux clairs",
+                    "Précision dépendante des conditions météo pour événements extérieurs"
+                ],
+                references: [
+                    "https://www.chaparralphysics.com/",
+                    "https://doi.org/10.1121/1.4976050",
+                    "https://www.dtcc.edu/seismology/infrasound.html",
+                    "https://www.ctbto.org/verification-regime/monitoring-technologies-how-they-work/infrasound-monitoring/"
+                ]
+            },
+            {
+                title: "Analyse Proxémique et Espace Personnel basée Kinect",
+                description: "Analyse des distances interpersonnelles, violations d'espace personnel et patterns de groupage social utilisant détection de proximité basée profondeur de multiples capteurs Kinect.",
+                dataTypes: ["spatial", "comportemental", "social"],
+                privacy: "elevee",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "vision-par-ordinateur",
+                showApplications: ["visualisation", "adaptatif"],
+                hardware: [
+                    "Capteurs Kinect v2 avec couverture grand angle",
+                    "Unités de traitement fusion de profondeur",
+                    "Matériel d'inférence machine learning",
+                    "Nœuds de calcul edge préservant la confidentialité"
+                ],
+                scenarios: [
+                    "Étude anthropologique : Analyse des normes culturelles d'espace personnel",
+                    "Installation artistique : Visualisation des bulles sociales et territoires",
+                    "Événement networking : Facilitation des interactions par proximité",
+                    "Théâtre immersif : Adaptation de l'intimité selon confort spatial du public"
+                ],
+                implementations: [
+                    "Raspberry Pi 4 avec Azure Kinect SDK pour détection de base",
+                    "Algorithmes de clustering DBSCAN pour détection de groupes",
+                    "Anonymisation temps réel par floutage de caractéristiques faciales",
+                    "Visualisation de réseaux sociaux basée sur proximité physique"
+                ],
+                interactiveShows: [
+                    "Éclairage personnel créant des bulles lumineuses adaptées à chaque individu",
+                    "Sons spatialisés réagissant aux distances interpersonnelles",
+                    "Interactions déclenchées par rapprochement volontaire entre participants",
+                    "Visualisation artistique des connexions sociales émergentes"
+                ],
+                technicalSpecs: [
+                    "Précision mesure distance : ±5cm entre individus",
+                    "Détection espace personnel : Analyse rayon 0.5-3m",
+                    "Algorithme détection groupe : Clustering DBSCAN",
+                    "Tracking temporel : Historiques d'interaction 10 minutes"
+                ],
+                limitations: [
+                    "Ne peut distinguer types de relations entre personnes",
+                    "Précision diminue avec occlusions partielles",
+                    "Biais culturels dans interprétation espace personnel"
+                ],
+                references: [
+                    "https://doi.org/10.1016/j.chb.2018.12.025",
+                    "https://github.com/microsoft/kinect-2-libfreenect2",
+                    "https://scikit-learn.org/stable/modules/clustering.html#dbscan",
+                    "https://docs.opencv.org/master/d7/d4d/tutorial_py_thresholding.html"
+                ]
+            },
+            {
+                title: "Interface de Contrôle Gestuel Collaboratif",
+                description: "Système permettant au public de contrôler collectivement des éléments du spectacle par gestes détectés, créant une performance collaborative entre artistes et audience.",
+                dataTypes: ["comportemental", "social"],
+                privacy: "moyenne",
+                participation: "actif",
+                implementation: "interactif",
+                technology: "vision-par-ordinateur",
+                showApplications: ["temps-reel", "interactif-public", "adaptatif"],
+                hardware: [
+                    "Caméras de profondeur distribuées (Azure Kinect, RealSense)",
+                    "Capteurs de mouvement infrarouges",
+                    "Processeurs edge pour reconnaissance gestuelle",
+                    "Système de projection ou écrans LED responsifs"
+                ],
+                scenarios: [
+                    "Concert électronique : Le public contrôle filtres et effets par gestes collectifs",
+                    "Spectacle pour enfants : Participation gestuelle pour faire évoluer l'histoire",
+                    "Performance artistique : Co-création en temps réel entre artiste et audience",
+                    "Installation urbaine : Contrôle de l'éclairage public par mouvements des passants"
+                ],
+                implementations: [
+                    "Raspberry Pi avec caméra PiCam et modèles TensorFlow Lite",
+                    "Reconnaissance gestuelle avec MediaPipe Hands et Pose",
+                    "Système de vote gestuel avec agrégation temps réel",
+                    "Interface DMX/OSC pour contrôle équipements scéniques"
+                ],
+                interactiveShows: [
+                    "Éclairage contrôlé par mouvements de bras collectifs du public",
+                    "Génération musicale basée sur complexité gestuelle détectée",
+                    "Projection mapping réagissant aux gestes directionnels",
+                    "Personnages virtuels mimant et amplifiant les gestes du public"
+                ],
+                technicalSpecs: [
+                    "Gestes reconnus : 10-20 gestes de base prédéfinis",
+                    "Latence reconnaissance : <200ms du geste à la réaction",
+                    "Participants simultanés : 50-200 selon zone de couverture",
+                    "Précision : 90%+ pour gestes simples en conditions optimales"
+                ],
+                limitations: [
+                    "Nécessite apprentissage des gestes par le public",
+                    "Performance dégradée avec éclairage inadéquat",
+                    "Confusion possible avec gestes involontaires"
+                ],
+                references: [
+                    "https://mediapipe.dev/solutions/hands",
+                    "https://tensorflow.org/lite/models/pose_estimation/overview",
+                    "https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples",
+                    "https://www.openlighting.org/ola/getting-started/"
+                ]
+            },
+            {
+                title: "Analyse de Nuages de Points 3D LiDAR",
+                description: "Scanners LiDAR haute résolution créant des nuages de points 3D détaillés pour analyse précise de foule, tracking de mouvement et estimation de densité sans préoccupations de confidentialité.",
+                dataTypes: ["spatial", "comportemental"],
+                privacy: "faible",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "capteurs",
+                showApplications: ["temps-reel", "visualisation"],
+                hardware: [
+                    "Velodyne VLP-32C Ultra Puck (portée 200m)",
+                    "Ouster OS1-128 LiDAR solid-state",
+                    "Livox Horizon LiDAR industriel",
+                    "Clusters de calcul haute performance pour traitement nuages de points"
+                ],
+                scenarios: [
+                    "Stade sportif : Analyse 3D des mouvements de vague dans les gradins",
+                    "Place publique : Monitoring des flux piétonniers et optimisation urbaine",
+                    "Salon professionnel : Cartographie 3D des zones de congestion",
+                    "Installation artistique : Création de sculptures numériques basées sur formes de foule"
+                ],
+                implementations: [
+                    "Raspberry Pi 4 avec LiDAR 2D RPLiDAR A1M8 pour applications simples",
+                    "Point Cloud Library (PCL) pour traitement et analyse",
+                    "Algorithmes de clustering pour détection de groupes humains",
+                    "Visualisation temps réel avec Three.js et WebGL"
+                ],
+                interactiveShows: [
+                    "Projection mapping 3D suivant exactement les contours de la foule",
+                    "Génération procédurale d'environnements 3D basés sur positions du public",
+                    "Sculpture lumineuse virtuelle moulée sur la forme collective",
+                    "Effets particulaires interagissant physiquement avec l'espace occupé"
+                ],
+                technicalSpecs: [
+                    "Densité nuage de points : 2+ millions points/seconde",
+                    "Précision de portée : ±2cm à 100m",
+                    "Champ de vue : 360° horizontal, 40° vertical",
+                    "Traitement temps réel : 10-20Hz fréquence de mise à jour"
+                ],
+                limitations: [
+                    "Coût élevé des systèmes LiDAR industriels",
+                    "Sensible aux conditions météorologiques (pluie, brouillard)",
+                    "Exigences massives de traitement de données"
+                ],
+                references: [
+                    "https://velodynelidar.com/products/vlp-32c/",
+                    "https://ouster.com/products/os1-lidar-sensor/",
+                    "https://www.livoxtech.com/horizon",
+                    "https://doi.org/10.1109/TITS.2020.2991573"
+                ]
+            },
+            {
+                title: "Reconnaissance d'Expressions Faciales et Analyse Émotionnelle",
+                description: "Systèmes avancés de vision par ordinateur pour détecter et analyser les expressions faciales afin de comprendre les états émotionnels collectifs et réactions individuelles dans les foules.",
+                dataTypes: ["biometrique", "comportemental"],
+                privacy: "critique",
+                participation: "aucune",
+                implementation: "passif",
+                technology: "ia-ml",
+                showApplications: ["temps-reel", "adaptatif"],
+                hardware: [
+                    "Caméras haute résolution avec objectifs téléobjectif",
+                    "GPU NVIDIA RTX 4090 pour traitement temps réel",
+                    "Caméras Intel RealSense pour analyse faciale 3D",
+                    "Nœuds de calcul edge pour traitement distribué"
+                ],
+                scenarios: [
+                    "Spectacle humoristique : Mesure en temps réel de l'efficacité des blagues",
+                    "Présentation TED : Analyse de l'engagement émotionnel de l'audience",
+                    "Concert classique : Détection des moments d'émotion intense",
+                    "Théâtre : Adaptation subtile de la performance selon réactions émotionnelles"
+                ],
+                implementations: [
+                    "Raspberry Pi 4 avec Google Coral TPU pour inférence locale",
+                    "Modèles CNN optimisés (MobileNet, EfficientNet) pour edge computing",
+                    "Anonymisation temps réel par brouillage des caractéristiques faciales",
+                    "API de classification émotionnelle avec confidence scores"
+                ],
+                interactiveShows: [
+                    "Éclairage ambiant qui reflète l'humeur collective dominante",
+                    "Modulation musicale basée sur l'intensité émotionnelle mesurée",
+                    "Feedback visuel amplifiant les émotions positives détectées",
+                    "Adaptation narrative interactive selon état émotionnel du public"
+                ],
+                technicalSpecs: [
+                    "Reconnaissance d'émotions : 7 émotions de base + neutre",
+                    "Précision : 85-95% en conditions optimales",
+                    "Vitesse de traitement : 30fps pour visages multiples",
+                    "Distance de détection : 2-20m selon caméra"
+                ],
+                limitations: [
+                    "Implications de confidentialité extrêmement élevées",
+                    "Biais culturels dans algorithmes de reconnaissance d'émotions",
+                    "Performance affectée par éclairage et angles"
+                ],
+                references: [
+                    "https://github.com/serengil/deepface",
+                    "https://azure.microsoft.com/en-us/services/cognitive-services/face/",
+                    "https://doi.org/10.1109/TAFFC.2019.2946540",
+                    "https://mediapipe.dev/solutions/face_mesh"
+                ]
+            },
+            {
+                title: "Intégration d'Unités de Mesure Inertielle (IMU) Portables",
+                description: "Intégration avec trackers de fitness, montres connectées et appareils IMU dédiés pour collecter des données précises de mouvement, orientation et activité de participants volontaires.",
+                dataTypes: ["physiologique", "comportemental"],
+                privacy: "elevee",
+                participation: "dedique",
+                implementation: "actif",
+                technology: "appareils-mobiles",
+                showApplications: ["temps-reel", "interactif-public", "adaptatif"],
+                hardware: [
+                    "Apple Watch Series 8/9 avec intégration HealthKit",
+                    "Garmin Forerunner avec applications Connect IQ",
+                    "Modules IMU personnalisés (BMI160, LSM6DSO)",
+                    "Agrégation de données Bluetooth Low Energy"
+                ],
+                scenarios: [
+                    "Cours de fitness collectif : Synchronisation précise des mouvements et encouragements",
+                    "Festival de danse : Analyse de la complexité et intensité des mouvements",
+                    "Méditation guidée : Monitoring de la stabilité et relaxation corporelle",
+                    "Performance participative : Le public devient partie intégrante du spectacle"
+                ],
+                implementations: [
+                    "Raspberry Pi avec dongle Bluetooth pour agrégation de données IMU",
+                    "Algorithmes de fusion de capteurs pour estimation de pose précise",
+                    "Interface de contrôle gestuel pour participation directe au spectacle",
+                    "Feedback haptique via montres connectées pour guidance"
+                ],
+                interactiveShows: [
+                    "Orchestration musicale contrôlée par les mouvements collectifs du public",
+                    "Chorégraphie lumineuse qui amplifie et guide les gestes des participants",
+                    "Création collaborative d'œuvres visuelles par le mouvement",
+                    "Jeux interactifs à grande échelle basés sur coordination gestuelle"
+                ],
+                technicalSpecs: [
+                    "Fréquence d'échantillonnage IMU : 50-200Hz",
+                    "Précision fréquence cardiaque : ±2 BPM pendant activité",
+                    "Autonomie batterie : 18+ heures surveillance continue",
+                    "Transmission données : Temps réel via BLE ou WiFi"
+                ],
+                limitations: [
+                    "Nécessite possession d'appareils compatibles par utilisateurs",
+                    "Préoccupations de confidentialité avec collecte de données de santé",
+                    "Limité aux participants volontaires pour partage de données"
+                ],
+                references: [
+                    "https://developer.apple.com/documentation/healthkit",
+                    "https://developer.garmin.com/connect-iq/",
+                    "https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi160/",
+                    "https://doi.org/10.1109/JBHI.2020.2988269"
+                ]
+            }
+        ];
+
+        // PARTIE 4 - Fonctions JavaScript et fermeture du document
+
+        function renderMethods() {
+            const grid = document.getElementById('methodsGrid');
+            grid.innerHTML = '';
+
+            filteredMethods.forEach(method => {
+                const card = document.createElement('div');
+                card.className = 'method-card';
+
+                const privacyClass = `privacy-${method.privacy}`;
+                const participationClass = `participation-${method.participation}`;
+
+                card.innerHTML = `
+                    <div class="method-title">${method.title}</div>
+                    <div class="method-description">${method.description}</div>
+
+                    <div class="method-details">
+                        <div class="detail-section">
+                            <div class="detail-title">Matériel & Équipement</div>
+                            <div class="detail-content">
+                                <ul class="detail-list">
+                                    ${method.hardware.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        ${method.scenarios ? `
+                        <div class="scenario-section">
+                            <div class="scenario-title">Scénarios d'Usage</div>
+                            <div class="scenario-content">
+                                <ul class="detail-list">
+                                    ${method.scenarios.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${method.implementations ? `
+                        <div class="implementation-section">
+                            <div class="implementation-title">Implémentations Techniques</div>
+                            <div class="implementation-content">
+                                <ul class="detail-list">
+                                    ${method.implementations.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        ${method.interactiveShows ? `
+                        <div class="detail-section">
+                            <div class="detail-title">Applications Spectacle Interactif</div>
+                            <div class="detail-content">
+                                <ul class="detail-list">
+                                    ${method.interactiveShows.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="detail-section">
+                            <div class="detail-title">Spécifications Techniques</div>
+                            <div class="detail-content">
+                                <ul class="detail-list">
+                                    ${method.technicalSpecs.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <div class="detail-title">Limitations</div>
+                            <div class="detail-content">
+                                <ul class="detail-list">
+                                    ${method.limitations.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="references">
+                        <h4>Références & Documentation</h4>
+                        ${method.references.map(ref => `<a href="${ref}" target="_blank" class="reference-link">${ref}</a>`).join('')}
+                    </div>
+
+                    <div class="tags-container">
+                        ${method.dataTypes.map(type => `<span class="tag">${type}</span>`).join('')}
+                        <span class="tag ${privacyClass}">Confidentialité: ${method.privacy}</span>
+                        <span class="tag ${participationClass}">Participation: ${method.participation}</span>
+                        <span class="tag">${method.technology}</span>
+                        <span class="tag">${method.implementation}</span>
+                        ${method.showApplications ? method.showApplications.map(app => `<span class="tag">${app}</span>`).join('') : ''}
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('visibleCount').textContent = filteredMethods.length;
+            document.getElementById('totalCount').textContent = methods.length;
+        }
+
+        function filterMethods() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredMethods = methods.filter(method => {
+                // Search filter
+                const matchesSearch = !searchTerm ||
+                    method.title.toLowerCase().includes(searchTerm) ||
+                    method.description.toLowerCase().includes(searchTerm) ||
+                    method.dataTypes.some(type => type.includes(searchTerm)) ||
+                    method.hardware.some(hw => hw.toLowerCase().includes(searchTerm)) ||
+                    (method.scenarios && method.scenarios.some(scenario => scenario.toLowerCase().includes(searchTerm))) ||
+                    (method.implementations && method.implementations.some(impl => impl.toLowerCase().includes(searchTerm))) ||
+                    (method.interactiveShows && method.interactiveShows.some(show => show.toLowerCase().includes(searchTerm))) ||
+                    method.technicalSpecs.some(spec => spec.toLowerCase().includes(searchTerm));
+
+                // Category filters
+                const matchesDataType = activeFilters.dataType.length === 0 ||
+                    activeFilters.dataType.some(filter => method.dataTypes.includes(filter));
+
+                const matchesPrivacy = activeFilters.privacy.length === 0 ||
+                    activeFilters.privacy.includes(method.privacy);
+
+                const matchesParticipation = activeFilters.participation.length === 0 ||
+                    activeFilters.participation.includes(method.participation);
+
+                const matchesTechnology = activeFilters.technology.length === 0 ||
+                    activeFilters.technology.includes(method.technology);
+
+                const matchesImplementation = activeFilters.implementation.length === 0 ||
+                    activeFilters.implementation.includes(method.implementation);
+
+                const matchesShow = activeFilters.show.length === 0 ||
+                    (method.showApplications && activeFilters.show.some(filter => method.showApplications.includes(filter)));
+
+                return matchesSearch && matchesDataType && matchesPrivacy &&
+                       matchesParticipation && matchesTechnology && matchesImplementation && matchesShow;
+            });
+
+            renderMethods();
+        }
+
+        function clearFilters() {
+            // Clear search
+            document.getElementById('searchInput').value = '';
+
+            // Clear all active filters
+            activeFilters = {
+                dataType: [],
+                privacy: [],
+                participation: [],
+                technology: [],
+                implementation: [],
+                show: []
+            };
+
+            // Remove active classes
+            document.querySelectorAll('.filter-tag.active').forEach(tag => {
+                tag.classList.remove('active');
+            });
+
+            filterMethods();
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterMethods);
+
+        // Filter tag click handlers
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const filterValue = this.dataset.filter;
+                const filterGroup = this.parentElement.parentElement;
+                const groupId = filterGroup.querySelector('h3').textContent.toLowerCase()
+                    .replace(' ', '').replace('required', '').replace('é', 'e').replace('è', 'e');
+
+                let filterKey;
+                switch(groupId) {
+                    case 'typededonnees': filterKey = 'dataType'; break;
+                    case 'niveaudeconfidentialite': filterKey = 'privacy'; break;
+                    case 'participationrequise': filterKey = 'participation'; break;
+                    case 'typedetechnologie': filterKey = 'technology'; break;
+                    case 'implementation': filterKey = 'implementation'; break;
+                    case 'applicationsspectacle': filterKey = 'show'; break;
+                }
+
+                this.classList.toggle('active');
+
+                if (this.classList.contains('active')) {
+                    if (!activeFilters[filterKey].includes(filterValue)) {
+                        activeFilters[filterKey].push(filterValue);
+                    }
+                } else {
+                    activeFilters[filterKey] = activeFilters[filterKey].filter(f => f !== filterValue);
+                }
+
+                filterMethods();
+            });
+        });
+
+        // Initial render
+        renderMethods();
+    </script>
+</body>
+</html>

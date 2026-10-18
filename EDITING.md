@@ -396,9 +396,8 @@ dark theme, the two blocks after it are the light theme (keep them identical).
 
 ## Publishing
 
-The site is published on GitHub Pages automatically: **every push to the `main`
-branch rebuilds and publishes it** (`.github/workflows/deploy.yml`), usually in
-1–2 minutes. Check progress in the repo's *Actions* tab on GitHub.
+**Every push to `main` is built and published automatically** to
+https://livecodingstrasbourg.github.io in 1–2 minutes (`.github/workflows/deploy.yml`).
 
 ```sh
 npm run build          # check it builds locally first
@@ -407,8 +406,8 @@ git commit -m "Add Shadok workshop 21 Oct"
 git push
 ```
 
-You can also edit a file directly on github.com (pencil icon) and commit: the
-site republishes the same way.
+Step-by-step recipes, editing on github.com, the switch from the old site and
+how to undo a change are in **[update.md](update.md)**.
 
 ---
 

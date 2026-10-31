@@ -147,6 +147,7 @@ photos:                                                 # optional – gallery a
   - "/images/chaos-labs/cl12-01.webp"
   - "/images/chaos-labs/cl12-02.webp"
 video_url: "https://www.youtube.com/embed/VIDEO_ID"     # optional – embedded video
+teaser: "/videos/2026-11-04-teaser-8bit.mp4"         # optional – video file (mp4) played on the event page
 ---
 ```
 
@@ -158,6 +159,10 @@ Details:
   it becomes clickable and opens a pop-up with the bio and links. Matching
   ignores case, spaces and anything in parentheses, so
   `Crash Server (Strasbourg, FR)` still matches `Crash Server`.
+- **`teaser`** is for a video *file* (e.g. a square teaser): put the `.mp4` in
+  `public/videos/` (H.264, ideally under ~15 MB — export a "web" version) and
+  write its path starting with `/videos/`. It shows with play controls under the
+  description. For YouTube, use `video_url` instead.
 - **No `cover_image`?** A random pattern is generated from the title. That's fine.
 - **`video_url`** must be the **embed** form of a YouTube link:
   `https://www.youtube.com/watch?v=Ercyh2hE0HE` → `https://www.youtube.com/embed/Ercyh2hE0HE`.

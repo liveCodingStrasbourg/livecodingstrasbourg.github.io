@@ -9,6 +9,7 @@ subtitle: "Thème : le 8 bit"
 subtitle_en: "Theme: 8 bit"
 description: "Atelier TOPLAP Strasbourg au Shadok, de 18h à 22h. Explorez le livecoding et l'art numérique : création de musique et de visuels en temps réel avec différents environnements de programmation. Thème du jour : le 8 bit. Prix libre. Apportez votre ordinateur portable et un casque si vous en avez un. Aucune expérience préalable nécessaire."
 description_en: "TOPLAP Strasbourg workshop at Le Shadok, 6pm to 10pm. Explore live coding and digital art: real-time music and visuals with various programming environments. Today's theme: 8 bit. Pay what you want. Bring your laptop and headphones if you have them. No prior experience needed."
+teaser: "/videos/2026-11-04-teaser-8bit.mp4"
 participants: []
 links:
   - label: "Mobilizon"

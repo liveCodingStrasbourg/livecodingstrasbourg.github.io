@@ -46,6 +46,10 @@ const dateStr = new Date(data.date).toLocaleDateString('en-GB', {
 
   <p style="line-height:1.7">{desc}</p>
 
+  {data.teaser && (
+    <video class="event-teaser" src={data.teaser} controls playsinline preload="metadata"></video>
+  )}
+
   {data.participants?.length > 0 && (
     <div style="margin-top:1.2rem">
       <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem">

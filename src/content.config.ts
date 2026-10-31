@@ -23,6 +23,7 @@ const agenda = defineCollection({
     cover_image: z.string().optional(),
     photos: z.array(z.string()).default([]),
     video_url: z.string().optional(),
+    teaser: z.string().optional(),
   }),
 });
 

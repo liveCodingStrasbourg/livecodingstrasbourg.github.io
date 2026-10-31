@@ -4,6 +4,8 @@ collective: true
 tools:
   - FoxDot
   - SuperCollider
-links: []
+links:
+  - label: "Site"
+    url: "https://svdk.fr"
 bio: ""
 ---

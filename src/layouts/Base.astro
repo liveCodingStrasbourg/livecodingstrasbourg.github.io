@@ -104,6 +104,15 @@ const navLinks = [
     </p>
   </footer>
   <script is:inline>
+    // Moving teaser thumbnails stay still for people who ask for less motion.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('video[data-autoplay-thumb]').forEach(v => {
+        v.removeAttribute('autoplay');
+        v.pause();
+      });
+    }
+  </script>
+  <script is:inline>
     (() => {
       const btn = document.querySelector('.theme-toggle');
       if (!btn) return;

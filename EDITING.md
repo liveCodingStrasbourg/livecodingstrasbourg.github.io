@@ -162,7 +162,9 @@ Details:
 - **`teaser`** is for a video *file* (e.g. a square teaser): put the `.mp4` in
   `public/videos/` (H.264, ideally under ~15 MB — export a "web" version) and
   write its path starting with `/videos/`. It shows with play controls under the
-  description. For YouTube, use `video_url` instead.
+  description, and plays muted in a loop as the event's thumbnail on the agenda
+  (and on the homepage when it's the next event), instead of `cover_image`.
+  For YouTube, use `video_url` instead.
 - **No `cover_image`?** A random pattern is generated from the title. That's fine.
 - **`video_url`** must be the **embed** form of a YouTube link:
   `https://www.youtube.com/watch?v=Ercyh2hE0HE` → `https://www.youtube.com/embed/Ercyh2hE0HE`.

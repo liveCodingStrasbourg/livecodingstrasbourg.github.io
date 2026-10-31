@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { getLangFromUrl, useTranslations } from '../i18n';
 import { getCollection } from 'astro:content';
+import EventCover from '../components/EventCover.astro';
 import GeneratedCover from '../components/GeneratedCover.astro';
 import FriseHeading from '../components/FriseHeading.astro';
 
@@ -52,11 +53,7 @@ function renderCard(ev: any) {
         const { title, subtitle, desc, dateStr } = renderCard(ev);
         return (
           <a href={`/agenda/${ev.id}`} class="card">
-            {ev.data.cover_image ? (
-              <img src={ev.data.cover_image} alt={title} style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-bottom:1px solid var(--border)" />
-            ) : (
-              <GeneratedCover seed={ev.data.title} ratio="16/9" />
-            )}
+            <EventCover event={ev} alt={title} />
             <div class="card__body">
               <div class="card__meta">
                 {dateStr}
@@ -84,11 +81,7 @@ function renderCard(ev: any) {
           const { title, subtitle, dateStr } = renderCard(ev);
           return (
             <a href={`/agenda/${ev.id}`} class="card" style="opacity:0.72">
-              {ev.data.cover_image ? (
-                <img src={ev.data.cover_image} alt={title} style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-bottom:1px solid var(--border)" />
-              ) : (
-                <GeneratedCover seed={ev.data.title} ratio="16/9" />
-              )}
+              <EventCover event={ev} alt={title} />
               <div class="card__body">
                 <div class="card__meta">
                   {dateStr}{ev.data.location ? ` — ${ev.data.location}` : ''}

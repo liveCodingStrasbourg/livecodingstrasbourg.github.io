@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import GeneratedCover from '../../components/GeneratedCover.astro';
+import EventCover from '../../components/EventCover.astro';
 import FriseHeading from '../../components/FriseHeading.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
@@ -40,11 +41,7 @@ function eventDate(ev: (typeof upcoming)[number]) {
 
   {next && (
     <a href={`/en/agenda/${next.id}`} class="next-event">
-      {next.data.cover_image ? (
-        <img src={next.data.cover_image} alt={eventTitle(next)} class="next-event__cover" />
-      ) : (
-        <GeneratedCover seed={next.data.title} ratio="21/7" />
-      )}
+      <EventCover event={next} alt={eventTitle(next)} class="next-event__cover" ratio="21/7" />
       <div class="next-event__body">
         <div class="next-event__eyebrow">Next event</div>
         <div class="next-event__title">{eventTitle(next)}</div>

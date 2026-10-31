@@ -1,0 +1,32 @@
+---
+import GeneratedCover from './GeneratedCover.astro';
+
+interface Props {
+  event: { data: { title: string; teaser?: string; cover_image?: string } };
+  alt: string;
+  class?: string;
+  ratio?: string;
+}
+
+// Teaser video first (muted loop as a moving thumbnail), then poster, then a
+// generated pattern seeded by the title.
+const { event, alt, class: className = 'event-thumb', ratio = '16/9' } = Astro.props;
+const { teaser, cover_image, title } = event.data;
+---
+{teaser ? (
+  <video
+    class={className}
+    src={teaser}
+    muted
+    autoplay
+    loop
+    playsinline
+    preload="metadata"
+    aria-label={alt}
+    data-autoplay-thumb
+  ></video>
+) : cover_image ? (
+  <img src={cover_image} alt={alt} class={className} loading="lazy" />
+) : (
+  <GeneratedCover seed={title} ratio={ratio} />
+)}

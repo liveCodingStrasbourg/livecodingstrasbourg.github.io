@@ -1130,6 +1130,15 @@ a.card:hover .card__title { color: var(--accent); }
   border-color: var(--accent);
 }
 
+.event-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border);
+  background: #000;
+}
+
 .next-event__cover {
   width: 100%;
   aspect-ratio: 21 / 7;

@@ -157,24 +157,21 @@ img {
 
 .site-header__top {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
 
 .site-title {
-  position: relative;
-  display: inline-block;
-  font-size: 1.1rem;
-  font-weight: bold;
-  text-decoration: none;
-  color: var(--fg);
-  letter-spacing: 0.05em;
+  display: block;
+  line-height: 0;
 }
 
-.site-title span {
-  color: var(--accent);
+.site-title__logo {
+  display: block;
+  width: 88px;
+  height: auto;
 }
 
 .lang-switch {
@@ -732,44 +729,6 @@ a.card:hover .card__title { color: var(--accent); }
 
   .photo-grid img {
     transition: border-color 0.15s ease;
-  }
-
-  /* Subtle idle RGB-split glitch on the wordmark. Hard-edged (no blur/glow),
-     compositor-only props (clip-path + transform), asleep 97% of the loop. */
-  .site-title::before,
-  .site-title::after {
-    content: attr(data-text);
-    position: absolute;
-    inset: 0;
-    background: var(--bg);
-    white-space: nowrap;
-    clip-path: inset(0 0 100% 0);
-    pointer-events: none;
-  }
-
-  .site-title::before {
-    color: var(--accent2);
-    animation: glitch-slice-a 4s steps(1) infinite;
-  }
-
-  .site-title::after {
-    color: var(--accent);
-    animation: glitch-slice-b 4s steps(1) infinite;
-  }
-
-  @keyframes glitch-slice-a {
-    0% { clip-path: inset(10% 0 65% 0); transform: translate(-3px, 0); }
-    3% { clip-path: inset(55% 0 15% 0); transform: translate(3px, 0); }
-    6% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 0); }
-    9%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0, 0); }
-  }
-
-  @keyframes glitch-slice-b {
-    0% { clip-path: inset(0 0 100% 0); transform: translate(0, 0); }
-    1% { clip-path: inset(45% 0 30% 0); transform: translate(3px, 0); }
-    4% { clip-path: inset(5% 0 80% 0); transform: translate(-3px, 0); }
-    7% { clip-path: inset(70% 0 5% 0); transform: translate(2px, 0); }
-    10%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0, 0); }
   }
 }
 

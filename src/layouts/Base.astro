@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import ToplapLogo from '../components/ToplapLogo.astro';
 import { getLangFromUrl, useTranslations, getLocalePath, languages } from '../i18n';
 
 interface Props {
@@ -70,8 +71,8 @@ const navLinks = [
 <body>
   <header class="site-header">
     <div class="site-header__top">
-      <a href={getLocalePath(lang, '/')} class="site-title" data-text="LiveCodingStrasbourg">
-        LiveCoding<span>Strasbourg</span>
+      <a href={getLocalePath(lang, '/')} class="site-title" aria-label={lang === 'fr' ? 'TOPLAP Strasbourg — accueil' : 'TOPLAP Strasbourg — home'}>
+        <ToplapLogo class="site-title__logo" />
       </a>
       <div class="site-header__actions">
         <button

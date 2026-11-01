@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://livecodingstrasbourg.github.io',
   base: '/',
-  integrations: [sitemap({ filter: (page) => !page.includes('/lab/') })],
+  integrations: [sitemap()],
   build: {
     format: 'directory',
   },

@@ -29,7 +29,7 @@ const sorted = allProjects.sort((a, b) => a.data.title.localeCompare(b.data.titl
           {project.data.links?.length > 0 && (
             <div style="margin-top:0.5rem;font-size:0.82rem">
               {project.data.links.map((link: {label: string, url: string}) => (
-                <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
+                <a href={link.url} target={link.url.startsWith("/") ? undefined : "_blank"} rel={link.url.startsWith("/") ? undefined : "noopener noreferrer"} style="margin-right:0.6rem">
                   {link.label}
                 </a>
               ))}

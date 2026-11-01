@@ -1,0 +1,99 @@
+---
+import Base from '../../../layouts/Base.astro';
+---
+<Base title="Coded cadavre exquis" description="Add a line of Strudel to the piece and pass the link on.">
+  <p style="font-size:0.82rem;margin-bottom:1.2rem">
+    <a href="/en/projects">← Projects</a>
+  </p>
+
+  <div class="page-header">
+    <h1>Coded cadavre exquis</h1>
+    <p style="color:var(--muted)">
+      A piece that only exists in the links people pass on. Listen, add a line of
+      <a href="https://strudel.cc" target="_blank" rel="noopener noreferrer">Strudel</a>,
+      then send the link to someone else. Every link is its own version of the piece:
+      nobody can erase yours. (The player below is in French: ▶ Jouer = play, Ajouter = add.)
+    </p>
+  </div>
+
+  <!-- The player runs sandboxed (opaque origin): code from a shared link cannot touch this page. -->
+  <iframe
+    id="cx-frame"
+    class="cx-frame"
+    title="Cadavre exquis player"
+    sandbox="allow-scripts"
+    allow="autoplay"
+  ></iframe>
+
+  <div class="cx-share" id="cx-share" hidden>
+    <p>Your line is in the piece. Send this link to the next person:</p>
+    <input id="cx-link" readonly />
+    <button type="button" id="cx-copy">Copy link</button>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const frame = document.getElementById('cx-frame');
+      const theme = () => document.documentElement.dataset.theme
+        ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      const hash = /^#p=[A-Za-z0-9_-]+$/.test(location.hash) ? location.hash : '';
+      frame.src = `/lab/cadavre-app.html?theme=${theme()}${hash}`;
+
+      addEventListener('message', e => {
+        if (e.source !== frame.contentWindow || typeof e.data !== 'object' || !e.data) return;
+        const { type, value } = e.data;
+        if (type === 'height' && Number.isFinite(value)) {
+          frame.style.height = Math.min(Math.max(value, 200), 4000) + 'px';
+        }
+        if (type === 'hash' && typeof value === 'string' && /^[A-Za-z0-9_-]{1,6000}$/.test(value)) {
+          history.replaceState(null, '', '#p=' + value);
+          document.getElementById('cx-link').value = location.href;
+          document.getElementById('cx-share').hidden = false;
+        }
+      });
+
+      document.getElementById('cx-copy').addEventListener('click', async e => {
+        const link = document.getElementById('cx-link');
+        try {
+          await navigator.clipboard.writeText(link.value);
+          e.currentTarget.textContent = 'Copied ✓';
+        } catch {
+          link.select();
+        }
+      });
+    })();
+  </script>
+</Base>
+
+<style>
+  .cx-frame {
+    display: block;
+    width: 100%;
+    height: 520px;
+    border: none;
+  }
+  .cx-share {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+  }
+  .cx-share input {
+    display: block;
+    width: 100%;
+    margin: 0.3rem 0 0.5rem;
+    font: inherit;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.5rem;
+  }
+  .cx-share button {
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+  }
+  .cx-share button:hover { border-color: var(--accent); color: var(--accent); }
+</style>

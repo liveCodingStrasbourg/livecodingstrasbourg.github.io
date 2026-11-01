@@ -294,9 +294,13 @@ Tips:
   from GIMP / Squoosh (squoosh.app).
 - Covers are cropped to 16:9 on the agenda cards; the full poster is shown on
   the event page.
-- The homepage logo is `public/images/toplap-strasbourg-logo.webp`; the image
-  used when the site is shared on social media is `public/images/livecoding-stras.webp`.
-  Replace the file (same name) to change them.
+- The homepage logo is drawn from `src/components/ToplapLogo.astro` (generated
+  from the designer's `TOPLAP-logo-couleur.svg`). The downloadable logo files
+  are in `public/downloads/logo/`.
+- The browser-tab icon is `public/favicon.svg` (+ `favicon.ico`,
+  `apple-touch-icon.png`); the image used when the site is shared on social
+  media is `public/images/og-toplap-strasbourg.png` (1200×630). Replace a file
+  (same name) to change it.
 
 ---
 

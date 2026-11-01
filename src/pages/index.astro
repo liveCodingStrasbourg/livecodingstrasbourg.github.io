@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import GeneratedCover from '../components/GeneratedCover.astro';
 import EventCover from '../components/EventCover.astro';
+import ToplapLogo from '../components/ToplapLogo.astro';
 import FriseHeading from '../components/FriseHeading.astro';
 import { getLangFromUrl, useTranslations } from '../i18n';
 import { getCollection } from 'astro:content';
@@ -31,7 +32,7 @@ function eventDate(ev: (typeof upcoming)[number]) {
 ---
 <Base>
   <div class="home-hero">
-    <img src="/images/toplap-strasbourg-logo.webp" alt="TOPLAP Strasbourg" class="home-logo" />
+    <ToplapLogo class="home-logo" />
     <p class="home-hero__tagline">{t('site.tagline')}</p>
     <div class="home-hero__cta">
       <a href="/agenda">{lang === 'fr' ? '→ Prochains évènements' : '→ Upcoming events'}</a>

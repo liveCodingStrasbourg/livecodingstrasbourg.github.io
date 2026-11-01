@@ -1,0 +1,273 @@
+---
+// Projection / performer side of the Chaos Lab live room (audience: /lab/live).
+// Joins every shard room, draws all phones as ghosts, accumulates their trails
+// into a "memory" image that can be saved as the evening's trace, conducts the
+// choir, and publishes crowd values for the live coder:
+//   - window.crowd + BroadcastChannel('toplap-crowd') (same-origin pages)
+//   - optional WebSocket to a local OSC bridge (tools/crowd-bridge)
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>TOPLAP Strasbourg — Scène</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #000; color: #e8e8e0; font: 15px/1.5 'Courier New', Courier, monospace; overflow: hidden; }
+    canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    .join { position: fixed; right: 1.2rem; bottom: 1.2rem; text-align: center; background: #000; padding: 0.8rem; border: 1px solid #333; }
+    .join svg { display: block; width: 180px; height: 180px; background: #fff; }
+    .join__url { font-size: 0.85rem; color: #FFED00; margin-top: 0.4rem; }
+    .join__wifi { font-size: 0.8rem; color: #ccc; margin-top: 0.2rem; white-space: pre-line; }
+    .count { position: fixed; left: 1.2rem; bottom: 1.2rem; font-size: 1.1rem; color: #FFED00; }
+    .panel { position: fixed; top: 0; left: 0; width: min(360px, 100%); max-height: 100%; overflow: auto; background: rgba(10,10,10,0.92); border-right: 1px solid #333; padding: 1rem; font-size: 0.85rem; }
+    .panel[hidden] { display: none; }
+    .panel h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: #ff3c00; margin: 1.2rem 0 0.4rem; }
+    .panel h2:first-child { margin-top: 0; }
+    .panel label { display: block; color: #999; margin: 0.4rem 0; }
+    .panel input, .panel textarea { display: block; width: 100%; font: inherit; color: #e8e8e0; background: #141414; border: 1px solid #2a2a2a; padding: 0.35rem 0.45rem; margin-top: 0.2rem; }
+    .panel button { font: inherit; color: #e8e8e0; background: #141414; border: 1px solid #2a2a2a; padding: 0.3rem 0.7rem; cursor: pointer; margin: 0.2rem 0.3rem 0.2rem 0; }
+    .panel button:hover { border-color: #c8ff00; color: #c8ff00; }
+    .panel .hint { color: #777; font-size: 0.75rem; }
+    .values { font-size: 0.8rem; color: #c8ff00; white-space: pre; }
+    .toggle { position: fixed; top: 0.6rem; right: 0.6rem; font: inherit; font-size: 0.75rem; color: #666; background: none; border: 1px solid #333; padding: 0.2rem 0.5rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <canvas id="memory"></canvas>
+  <canvas id="live"></canvas>
+  <div class="count" id="count"></div>
+  <div class="join" id="join" hidden>
+    <div id="qr"></div>
+    <div class="join__url" id="join-url"></div>
+    <div class="join__wifi" id="join-wifi"></div>
+  </div>
+  <button type="button" class="toggle" id="toggle">panneau (P)</button>
+
+  <aside class="panel" id="panel">
+    <h2>Salle</h2>
+    <label>Nom de la salle (une par soirée)
+      <input id="room" maxlength="40" placeholder="chaos-lab-13" />
+    </label>
+    <label>Wifi à afficher (facultatif)
+      <textarea id="wifi" rows="2" placeholder="wifi : Shadok-public&#10;mdp : …"></textarea>
+    </label>
+    <button type="button" id="open">Ouvrir la salle</button>
+    <p class="hint">Le public scanne le QR code. La salle n'existe que tant que des gens sont connectés.</p>
+
+    <h2>Valeurs du public</h2>
+    <div class="values" id="values">—</div>
+    <label><input type="checkbox" id="osc" style="display:inline;width:auto" /> Envoyer au pont OSC (ws://127.0.0.1:57321)</label>
+    <p class="hint">Aussi disponibles dans <code>window.crowd</code> et sur le canal <code>toplap-crowd</code>. Pont : <code>tools/crowd-bridge</code>.</p>
+
+    <h2>Chœur</h2>
+    <label>Accord (notes ou numéros MIDI)
+      <input id="chord" value="c3 eb3 g3 bb3 d4" />
+    </label>
+    <label>Volume <input type="range" id="choir-gain" min="0" max="1" step="0.05" value="0.7" /></label>
+    <button type="button" id="choir-on">Chœur ON</button>
+    <button type="button" id="choir-off">OFF</button>
+    <p class="hint">Chaque téléphone reçoit une note de l'accord. Changez l'accord et rappuyez sur ON.</p>
+
+    <h2>Trace</h2>
+    <label>Titre sur l'image
+      <input id="trace-title" maxlength="60" placeholder="Chaos Lab XIII — Shadok" />
+    </label>
+    <button type="button" id="capture">Capturer la trace (PNG)</button>
+    <button type="button" id="clear">Effacer la mémoire</button>
+    <button type="button" id="fs">Plein écran (F)</button>
+  </aside>
+
+  <script is:inline type="module">
+    import { joinRoom } from 'https://esm.run/trystero@0.26.0';
+    import qrcode from 'https://esm.run/qrcode-generator@2.0.4';
+
+    const APP = { appId: 'toplap-strasbourg-live' };
+    const SHARDS = 8;
+    const $ = id => document.getElementById(id);
+    const mem = $('memory'), live = $('live');
+    const mctx = mem.getContext('2d'), lctx = live.getContext('2d');
+    const phones = new Map();       // `${shard}:${peerId}` -> {x, y, tx, ty, e, seen, shard, peerId, hue}
+    const actions = [];             // per shard: {ch, scene}
+    let rooms = [], ws = null, choir = null;
+    const crowdChannel = new BroadcastChannel('toplap-crowd');
+
+    const resize = () => {
+      for (const c of [mem, live]) {
+        const keep = c === mem && c.width ? c.toDataURL() : null;
+        c.width = innerWidth * devicePixelRatio;
+        c.height = innerHeight * devicePixelRatio;
+        if (keep) { const img = new Image(); img.onload = () => mctx.drawImage(img, 0, 0, c.width, c.height); img.src = keep; }
+      }
+    };
+    addEventListener('resize', resize);
+    resize();
+
+    // --- room ------------------------------------------------------------------------
+    const fromHash = decodeURIComponent(location.hash.slice(1)).replace(/[^\w-]/g, '').slice(0, 40);
+    if (fromHash) $('room').value = fromHash;
+    try { $('wifi').value = localStorage.getItem('scene-wifi') ?? ''; } catch {}
+
+    const showJoin = room => {
+      const url = `${location.origin}/lab/live#${room}`;
+      const qr = qrcode(0, 'M');
+      qr.addData(url);
+      qr.make();
+      $('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+      $('join-url').textContent = url.replace(/^https?:\/\//, '');
+      $('join-wifi').textContent = $('wifi').value;
+      $('join').hidden = false;
+    };
+
+    $('open').addEventListener('click', () => {
+      const room = $('room').value.replace(/[^\w-]/g, '').slice(0, 40) || 'live';
+      $('room').value = room;
+      history.replaceState(null, '', '#' + room);
+      try { localStorage.setItem('scene-wifi', $('wifi').value); } catch {}
+      rooms.forEach(r => r.leave());
+      rooms = []; actions.length = 0; phones.clear();
+      for (let s = 0; s < SHARDS; s++) {
+        const r = joinRoom(APP, `${room}-${s}`);
+        const st = r.makeAction('st');
+        const ch = r.makeAction('ch');
+        const scene = r.makeAction('scene');
+        st.onMessage = (d, { peerId }) => {
+          if (!Array.isArray(d) || d.length !== 5 || !d.every(n => typeof n === 'number' && n >= -1 && n <= 1)) return;
+          const key = `${s}:${peerId}`;
+          const p = phones.get(key) ?? { shard: s, peerId, hue: Math.random() * 360 };
+          const [x, y, tx, ty, e] = d;
+          if (p.x != null) {
+            // remember the path: the evening's trace
+            mctx.globalAlpha = 0.08 + e * 0.25;
+            mctx.fillStyle = e > 0.4 ? '#FFED00' : '#e8e8e0';
+            const c = 8 * devicePixelRatio;
+            mctx.fillRect(Math.floor(x * mem.width / c) * c, Math.floor(y * mem.height / c) * c, c, c);
+            mctx.globalAlpha = 1;
+          }
+          Object.assign(p, { x, y, tx, ty, e, seen: performance.now() });
+          if (!phones.has(key)) { phones.set(key, p); if (choir) assignChoir(); }
+        };
+        r.onPeerJoin = peerId => { scene.send(1, { target: peerId }); };
+        r.onPeerLeave = peerId => { phones.delete(`${s}:${peerId}`); };
+        rooms.push(r);
+        actions.push({ ch, scene });
+      }
+      showJoin(room);
+    });
+
+    // --- choir ---------------------------------------------------------------------------
+    const NOTE = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, b: 11 };
+    const parseChord = str => str.trim().split(/[\s,]+/).map(t => {
+      if (/^\d+$/.test(t)) return Number(t);
+      const m = t.toLowerCase().match(/^([a-g])(#|b)?(-?\d)$/);
+      if (!m) return null;
+      return 12 * (Number(m[3]) + 1) + NOTE[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+    }).filter(n => Number.isInteger(n) && n >= 24 && n <= 96);
+
+    const assignChoir = () => {
+      if (!choir) return;
+      const list = [...phones.values()].sort((a, b) => a.peerId.localeCompare(b.peerId));
+      list.forEach((p, i) => {
+        const n = choir.notes[i % choir.notes.length] + 12 * (Math.floor(i / choir.notes.length) % 2);
+        actions[p.shard]?.ch.send({ n, g: choir.gain }, { target: p.peerId });
+      });
+    };
+    $('choir-on').addEventListener('click', () => {
+      const notes = parseChord($('chord').value);
+      if (!notes.length) return;
+      choir = { notes, gain: Number($('choir-gain').value) };
+      assignChoir();
+    });
+    $('choir-off').addEventListener('click', () => {
+      choir = null;
+      actions.forEach(a => a.ch.send({ n: null, g: 0 }));
+    });
+
+    // --- crowd values ---------------------------------------------------------------------
+    $('osc').addEventListener('change', e => {
+      ws?.close(); ws = null;
+      if (e.target.checked) {
+        ws = new WebSocket('ws://127.0.0.1:57321');
+        ws.onerror = () => { $('osc').checked = false; alert('Pont OSC injoignable sur ws://127.0.0.1:57321'); };
+      }
+    });
+
+    const crowd = () => {
+      const now = performance.now();
+      for (const [k, p] of phones) if (now - p.seen > 5000) phones.delete(k);
+      const list = [...phones.values()];
+      const n = list.length;
+      const avg = f => n ? list.reduce((s, p) => s + f(p), 0) / n : 0;
+      const tilted = list.filter(p => p.tx >= 0);
+      const tavg = f => tilted.length ? tilted.reduce((s, p) => s + f(p), 0) / tilted.length : 0.5;
+      return {
+        count: n,
+        x: avg(p => p.x), y: avg(p => p.y),
+        tiltX: tavg(p => p.tx), tiltY: tavg(p => p.ty),
+        energy: avg(p => p.e),
+        spread: n ? Math.sqrt(avg(p => (p.x - avg(q => q.x)) ** 2 + (p.y - avg(q => q.y)) ** 2)) : 0,
+      };
+    };
+
+    setInterval(() => {
+      const c = crowd();
+      window.crowd = c;
+      crowdChannel.postMessage(c);
+      if (ws?.readyState === 1) ws.send(JSON.stringify(c));
+      $('values').textContent = Object.entries(c).map(([k, v]) => `${k.padEnd(7)} ${typeof v === 'number' && !Number.isInteger(v) ? v.toFixed(3) : v}`).join('\n');
+      $('count').textContent = c.count ? `${c.count} fantôme${c.count > 1 ? 's' : ''}` : '';
+    }, 100);
+
+    // --- drawing -------------------------------------------------------------------------------
+    const draw = () => {
+      const w = live.width, h = live.height, c = 12 * devicePixelRatio;
+      lctx.clearRect(0, 0, w, h);
+      for (const p of phones.values()) {
+        if (p.x == null) continue;
+        const s = c * (2 + Math.round(p.e * 4));
+        lctx.fillStyle = `hsl(${p.hue} 100% 70%)`;
+        lctx.fillRect(Math.floor(p.x * w / c) * c - s / 2, Math.floor(p.y * h / c) * c - s / 2, s, s);
+      }
+      requestAnimationFrame(draw);
+    };
+    requestAnimationFrame(draw);
+
+    // --- trace capture ----------------------------------------------------------------------------
+    $('capture').addEventListener('click', () => {
+      const out = document.createElement('canvas');
+      out.width = mem.width; out.height = mem.height;
+      const o = out.getContext('2d');
+      o.fillStyle = '#000';
+      o.fillRect(0, 0, out.width, out.height);
+      o.drawImage(mem, 0, 0);
+      const pad = 24 * devicePixelRatio;
+      o.fillStyle = '#FFED00';
+      o.font = `bold ${22 * devicePixelRatio}px "Courier New", monospace`;
+      o.fillText($('trace-title').value || `TOPLAP Strasbourg — ${$('room').value || 'live'}`, pad, out.height - pad - 26 * devicePixelRatio);
+      o.fillStyle = '#e8e8e0';
+      o.font = `${16 * devicePixelRatio}px "Courier New", monospace`;
+      o.fillText(new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · livecodingstrasbourg.github.io', pad, out.height - pad);
+      const a = document.createElement('a');
+      a.download = `trace-${$('room').value || 'live'}-${new Date().toISOString().slice(0, 10)}.png`;
+      a.href = out.toDataURL('image/png');
+      a.click();
+    });
+    $('clear').addEventListener('click', () => mctx.clearRect(0, 0, mem.width, mem.height));
+
+    // --- keys ---------------------------------------------------------------------------------------
+    const togglePanel = () => { $('panel').hidden = !$('panel').hidden; };
+    const fullscreen = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    $('toggle').addEventListener('click', togglePanel);
+    $('fs').addEventListener('click', fullscreen);
+    addEventListener('keydown', e => {
+      if (e.target.matches('input, textarea')) return;
+      if (e.key === 'p' || e.key === 'P') togglePanel();
+      if (e.key === 'f' || e.key === 'F') fullscreen();
+    });
+    addEventListener('pagehide', () => rooms.forEach(r => r.leave()));
+  </script>
+</body>
+</html>

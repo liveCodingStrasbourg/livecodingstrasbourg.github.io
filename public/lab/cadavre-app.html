@@ -4,11 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex" />
-<title>Cadavre exquis codé — lecteur</title>
+<title>Cadavre exquis — lecteur</title>
 <!--
   Runs inside <iframe sandbox="allow-scripts"> on /lab/cadavre: opaque origin,
   so code coming from a shared link cannot reach the site, its storage or DOM.
   It only talks to the parent through postMessage (new link hash, height).
+
+  Link payload (#p=base64url(JSON)):
+    v2: {v: 2, m: 'strudel' | 'hydra' | 'texte', t: 'title', l: [[name, line], ...]}
+    v1 (legacy): [[name, line], ...]  → strudel, no title
 -->
 <style>
   :root { --bg: #0a0a0a; --fg: #e8e8e0; --muted: #999; --border: #2a2a2a; --surface: #141414; --accent: #c8ff00; }
@@ -16,21 +20,28 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 'Courier New', Courier, monospace; }
   body { padding: 2px; }
+  h2 { font-size: 1rem; margin: 0 0 0.2rem; }
+  .mode { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.8rem; }
   ol { margin: 0 0 1rem 1.4rem; padding: 0; font-size: 0.85rem; }
+  ol.poem { list-style: none; margin-left: 0; font-size: 1rem; }
   li { margin: 0.2rem 0; overflow-wrap: anywhere; }
-  .by { color: var(--muted); }
+  .by { color: var(--muted); font-size: 0.8rem; }
   .row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin: 0.6rem 0; }
   button { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--surface); border: 1px solid var(--border); padding: 0.35rem 0.8rem; cursor: pointer; }
   button:hover { border-color: var(--accent); color: var(--accent); }
   .status { font-size: 0.8rem; color: var(--muted); }
   label { display: block; font-size: 0.8rem; color: var(--muted); margin: 0.6rem 0; }
   input { display: block; width: 100%; margin-top: 0.25rem; font: inherit; font-size: 0.9rem; color: var(--fg); background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 0.5rem; }
+  canvas { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; border: 1px solid var(--border); }
   details { margin-top: 1.2rem; font-size: 0.85rem; }
   summary { cursor: pointer; }
   code { font-family: inherit; }
 </style>
 </head>
 <body>
+  <h2 id="title" hidden></h2>
+  <div class="mode" id="mode"></div>
+  <canvas id="hydra" width="1280" height="720" hidden></canvas>
   <ol id="lines"></ol>
   <div class="row">
     <button type="button" id="play">▶ Jouer</button>
@@ -39,8 +50,8 @@
   </div>
 
   <form id="form">
-    <label>Votre ligne
-      <input id="code" maxlength="140" autocomplete="off" spellcheck="false" placeholder='note("c3 eb3 g3").s("sawtooth").lpf(800)' required />
+    <label><span id="line-label">Votre ligne</span>
+      <input id="code" maxlength="140" autocomplete="off" spellcheck="false" required />
     </label>
     <label>Pseudo (facultatif)
       <input id="name" maxlength="20" autocomplete="off" />
@@ -52,36 +63,69 @@
   </form>
 
   <details>
-    <summary>Quelques idées de lignes</summary>
-    <ul>
-      <li><code>s("bd*2 [~ sd] bd sd")</code> — une batterie</li>
-      <li><code>s("hh*8").gain(.4)</code> — des charleys</li>
-      <li><code>note("c2 ~ eb2 g1").s("sawtooth").lpf(400)</code> — une basse</li>
-      <li><code>note("&lt;c4 eb4 g4 bb4&gt;*4").s("triangle").room(.5)</code> — une mélodie</li>
-      <li><code>s("cp").euclid(3,8).delay(.3)</code> — un rythme euclidien</li>
-    </ul>
-    <p>Une ligne = une expression Strudel (pas de <code>;</code>). Toutes les lignes jouent ensemble.</p>
+    <summary>Comment ça marche ?</summary>
+    <div id="help"></div>
   </details>
 
-  <script src="https://unpkg.com/@strudel/web@1.3.0"></script>
   <script>
     (() => {
       const MAX_LINES = 24;
-      const SEED = [['', 's("bd*2 [~ sd] bd sd")']];
-      // Second line of defence (the sandbox is the first): keep lines musical.
+      // Second line of defence (the sandbox is the first): keep lines artistic.
       const FORBIDDEN = /\b(window|document|globalThis|self|top|parent|location|localStorage|sessionStorage|indexedDB|cookie|fetch|XMLHttpRequest|WebSocket|import|eval|Function|constructor|prototype|__proto__|navigator|alert|open|postMessage)\b|=>|`/;
+
+      const MODES = {
+        strudel: {
+          label: 'Son · Strudel',
+          seed: 's("bd*2 [~ sd] bd sd")',
+          lineLabel: 'Votre ligne (une expression Strudel)',
+          placeholder: 'note("c3 eb3 g3").s("sawtooth").lpf(800)',
+          help: `<p>Une ligne = une expression Strudel (pas de <code>;</code>). Toutes les lignes jouent ensemble.</p>
+            <ul>
+              <li><code>s("hh*8").gain(.4)</code> — des charleys</li>
+              <li><code>note("c2 ~ eb2 g1").s("sawtooth").lpf(400)</code> — une basse</li>
+              <li><code>note("&lt;c4 eb4 g4 bb4&gt;*4").s("triangle").room(.5)</code> — une mélodie</li>
+              <li><code>s("cp").euclid(3,8).delay(.3)</code> — un rythme euclidien</li>
+            </ul>`,
+          check: code => FORBIDDEN.test(code) ? 'Cette ligne contient un mot réservé : restez dans la musique.' : '',
+        },
+        hydra: {
+          label: 'Image · Hydra',
+          seed: 'osc(20, 0.1, 0.8)',
+          lineLabel: 'Votre transformation (commence par un point)',
+          placeholder: '.kaleid(4)',
+          help: `<p>La première ligne est la source ; chaque personne ajoute une transformation à la chaîne,
+            qui commence par un point. L'image finale est la somme de tous les gestes.</p>
+            <ul>
+              <li><code>.rotate(0.2, 0.05)</code> — faire tourner</li>
+              <li><code>.kaleid(5)</code> — kaléidoscope</li>
+              <li><code>.modulate(noise(3), 0.2)</code> — déformer</li>
+              <li><code>.color(1, 0.4, 0.8)</code> — teinter</li>
+              <li><code>.diff(shape(4).repeat(3,3))</code> — mélanger une forme</li>
+            </ul>`,
+          check: code => !/^\.[a-zA-Z]\w*\(.*\)$/.test(code) ? 'Une transformation commence par un point, ex. .kaleid(4)'
+            : FORBIDDEN.test(code) ? 'Cette ligne contient un mot réservé : restez dans l’image.' : '',
+        },
+        texte: {
+          label: 'Texte',
+          seed: 'Au début il y avait un oscillateur,',
+          lineLabel: 'Votre vers',
+          placeholder: 'qui rêvait de devenir un orage.',
+          help: `<p>Un poème écrit à plusieurs : chaque personne ne voit que ce qui précède et ajoute un vers.
+            <em>Lire</em> le fait dire à voix haute par le navigateur.</p>`,
+          check: () => '',
+        },
+      };
 
       const $ = id => document.getElementById(id);
       const status = msg => { $('status').textContent = msg; };
-      const params = new URLSearchParams(location.search);
-      if (params.get('theme') === 'light') document.documentElement.dataset.theme = 'light';
+      if (new URLSearchParams(location.search).get('theme') === 'light') document.documentElement.dataset.theme = 'light';
 
       const toParent = msg => parent.postMessage(msg, '*');
       const reportHeight = () => toParent({ type: 'height', value: document.documentElement.scrollHeight });
       new ResizeObserver(reportHeight).observe(document.body);
 
-      const encode = lines => {
-        const bytes = new TextEncoder().encode(JSON.stringify(lines));
+      const encode = obj => {
+        const bytes = new TextEncoder().encode(JSON.stringify(obj));
         let bin = '';
         bytes.forEach(b => { bin += String.fromCharCode(b); });
         return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -91,34 +135,55 @@
         return JSON.parse(new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))));
       };
 
-      const clean = code => code.trim().replace(/[;,\s]+$/, '');
-      const checkLine = code => {
+      const clean = s => s.trim().replace(/[;,\s]+$/, '');
+      const checkLine = (mode, code, isSeed = false) => {
         if (!code) return 'Ligne vide.';
         if (code.length > 140) return 'Ligne trop longue (140 caractères max).';
-        if (FORBIDDEN.test(code)) return 'Cette ligne contient un mot réservé : restez dans la musique.';
-        return '';
+        if (isSeed && mode !== 'texte') return FORBIDDEN.test(code) ? 'Source refusée.' : '';
+        return MODES[mode].check(code);
       };
 
-      let lines = SEED;
+      // --- read the link ---------------------------------------------------
+      let mode = 'strudel', title = '', lines = [['', MODES.strudel.seed]];
       try {
         const m = location.hash.match(/^#p=([A-Za-z0-9_-]+)$/);
         if (m) {
-          const parsed = decode(m[1]);
-          if (Array.isArray(parsed)) {
-            lines = parsed
-              .filter(l => Array.isArray(l) && typeof l[1] === 'string' && !checkLine(clean(l[1])))
+          let data = decode(m[1]);
+          if (Array.isArray(data)) data = { v: 1, m: 'strudel', l: data };
+          if (data && MODES[data.m] && Array.isArray(data.l)) {
+            mode = data.m;
+            title = String(data.t || '').slice(0, 60);
+            lines = data.l
+              .filter((l, i) => Array.isArray(l) && typeof l[1] === 'string' && !checkLine(mode, mode === 'texte' ? l[1].trim() : clean(l[1]), i === 0))
               .slice(0, MAX_LINES)
-              .map(([n, c]) => [String(n || '').slice(0, 20), clean(c)]);
+              .map(([n, c]) => [String(n || '').slice(0, 20), mode === 'texte' ? c.trim() : clean(c)]);
+            if (!lines.length) lines = [['', MODES[mode].seed]];
           }
         }
       } catch {
         status('Lien illisible : on repart de zéro.');
       }
 
+      const M = MODES[mode];
+      $('mode').textContent = M.label;
+      if (title) { $('title').textContent = title; $('title').hidden = false; }
+      $('line-label').textContent = M.lineLabel;
+      $('code').placeholder = M.placeholder;
+      $('help').innerHTML = M.help;
+      if (mode === 'texte') {
+        $('lines').className = 'poem';
+        $('play').textContent = '🔊 Lire';
+        $('try').hidden = true;
+      }
+      if (mode === 'hydra') {
+        $('hydra').hidden = false;
+        $('play').textContent = '▶ Voir';
+      }
+
       const render = () => {
         $('lines').replaceChildren(...lines.map(([name, code]) => {
           const li = document.createElement('li');
-          const c = document.createElement('code');
+          const c = document.createElement(mode === 'texte' ? 'span' : 'code');
           c.textContent = code;
           li.append(c);
           if (name) {
@@ -130,26 +195,59 @@
           return li;
         }));
         if (lines.length >= MAX_LINES) {
-          status(`Morceau complet (${MAX_LINES} lignes). Écoutez-le !`);
+          status(`Complet (${MAX_LINES} lignes).`);
           $('form').hidden = true;
         }
         reportHeight();
       };
 
-      const toCode = ls => `stack(\n${ls.map(([, c]) => '  ' + c).join(',\n')}\n)`;
-
-      let ready = null;
-      const init = () => {
-        ready ??= initStrudel({ prebake: () => strudel.samples('github:tidalcycles/dirt-samples') });
-        return ready;
+      // --- players (libraries load on first use) ------------------------------
+      const LIBS = {
+        strudel: 'https://unpkg.com/@strudel/web@1.3.0',
+        hydra: 'https://unpkg.com/hydra-synth@1.4.0/dist/hydra-synth.js',
+      };
+      const loaded = {};
+      const load = name => loaded[name] ??= new Promise((ok, fail) => {
+        const s = document.createElement('script');
+        s.src = LIBS[name];
+        s.onload = ok;
+        s.onerror = () => fail(new Error('chargement de ' + name + ' impossible'));
+        document.head.append(s);
+      });
+      let strudelReady = null, hydra = null;
+      const players = {
+        async strudel(ls) {
+          await load('strudel');
+          strudelReady ??= initStrudel({ prebake: () => strudel.samples('github:tidalcycles/dirt-samples') });
+          await strudelReady;
+          await strudel.evaluate(`stack(\n${ls.map(([, c]) => '  ' + c).join(',\n')}\n)`);
+        },
+        async hydra(ls) {
+          await load('hydra');
+          hydra ??= new Hydra({ canvas: $('hydra'), detectAudio: false, makeGlobal: true });
+          const code = ls.map(([, c]) => c).join('\n  ') + '\n  .out()';
+          // Run inside the sandbox only; lines were checked against FORBIDDEN.
+          (0, eval)(code);
+        },
+        async texte(ls) {
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(ls.map(([, c]) => c).join('\n'));
+          u.lang = 'fr-FR';
+          u.rate = 0.9;
+          speechSynthesis.speak(u);
+        },
+      };
+      const stops = {
+        strudel: () => { if (strudelReady) strudel.hush(); },
+        hydra: () => { if (hydra) solid(0, 0, 0).out(); },
+        texte: () => speechSynthesis.cancel(),
       };
 
-      const play = async ls => {
+      const run = async ls => {
         status('Chargement…');
         try {
-          await init();
-          await strudel.evaluate(toCode(ls));
-          status('▶ en cours');
+          await players[mode](ls);
+          status(mode === 'texte' ? '🔊 lecture' : '▶ en cours');
           return true;
         } catch (e) {
           status('Erreur : ' + (e?.message ?? e));
@@ -158,24 +256,26 @@
       };
 
       const pending = () => {
-        const code = clean($('code').value);
-        const err = checkLine(code);
+        const raw = $('code').value;
+        const code = mode === 'texte' ? raw.trim() : clean(raw);
+        const err = checkLine(mode, code);
         if (err) { status(err); return null; }
         return [$('name').value.trim().slice(0, 20), code];
       };
 
-      $('play').addEventListener('click', () => play(lines));
-      $('stop').addEventListener('click', () => { if (ready) strudel.hush(); status('■ arrêté'); });
-      $('try').addEventListener('click', () => { const l = pending(); if (l) play([...lines, l]); });
+      $('play').addEventListener('click', () => run(lines));
+      $('stop').addEventListener('click', () => { stops[mode](); status('■ arrêté'); });
+      $('try').addEventListener('click', () => { const l = pending(); if (l) run([...lines, l]); });
       $('form').addEventListener('submit', async e => {
         e.preventDefault();
         const line = pending();
         if (!line) return;
-        if (!(await play([...lines, line]))) return;   // only pass on lines that play
+        // Code lines are only passed on if they actually run.
+        if (mode !== 'texte' && !(await run([...lines, line]))) return;
         lines = [...lines, line];
         $('code').value = '';
         render();
-        toParent({ type: 'hash', value: encode(lines) });
+        toParent({ type: 'hash', value: encode({ v: 2, m: mode, t: title, l: lines }) });
       });
 
       render();

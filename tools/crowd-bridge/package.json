@@ -1,0 +1,12 @@
+{
+  "name": "crowd-bridge",
+  "private": true,
+  "type": "module",
+  "description": "Forwards crowd values from /lab/scene (WebSocket) to OSC (UDP).",
+  "scripts": {
+    "start": "node bridge.mjs"
+  },
+  "dependencies": {
+    "ws": "8.18.3"
+  }
+}

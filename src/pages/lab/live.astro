@@ -1,0 +1,165 @@
+---
+// Audience side of the Chaos Lab live room. Phones join one of SHARDS small
+// rooms at random (Trystero is full-mesh, so small rooms keep phones light);
+// the projection page (/lab/scene) joins all of them.
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="robots" content="noindex" />
+  <title>TOPLAP Strasbourg — Live</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #000; color: #e8e8e0; font: 16px/1.5 'Courier New', Courier, monospace; overflow: hidden; }
+    #pad { position: fixed; inset: 0; width: 100%; height: 100%; touch-action: none; display: block; }
+    .hud { position: fixed; left: 0; right: 0; top: 0; padding: 0.8rem 1rem; font-size: 0.8rem; color: #999; pointer-events: none; }
+    .note { position: fixed; left: 0; right: 0; bottom: 1.2rem; text-align: center; font-size: 2.6rem; font-weight: bold; color: #FFED00; pointer-events: none; }
+    .intro { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2rem; padding: 1.5rem; text-align: center; background: #000; }
+    .intro h1 { font-size: 1.3rem; color: #FFED00; margin: 0; }
+    .intro p { margin: 0; max-width: 28rem; color: #ccc; font-size: 0.9rem; }
+    .intro button { font: inherit; font-size: 1.1rem; color: #000; background: #FFED00; border: none; padding: 0.8rem 2rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <canvas id="pad"></canvas>
+  <div class="hud" id="hud"></div>
+  <div class="note" id="note"></div>
+
+  <div class="intro" id="intro">
+    <h1 id="room-title">TOPLAP Strasbourg · Live</h1>
+    <p>Votre téléphone devient un fantôme sur l'écran. Glissez le doigt, inclinez le téléphone : vous jouez avec le set. Montez le son de votre téléphone, il fait peut-être partie du chœur.</p>
+    <p lang="en" style="color:#888">Your phone becomes a ghost on the big screen. Slide, tilt: you play with the set. Turn your volume up, you might be part of the choir.</p>
+    <button type="button" id="join">Entrer · Join</button>
+  </div>
+
+  <script is:inline type="module">
+    import { joinRoom, selfId } from 'https://esm.run/trystero@0.26.0';
+
+    const APP = { appId: 'toplap-strasbourg-live' };
+    const SHARDS = 8;
+    const room = (decodeURIComponent(location.hash.slice(1)) || 'live').replace(/[^\w-]/g, '').slice(0, 40) || 'live';
+    const shard = Math.floor(Math.random() * SHARDS);
+    const NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    document.getElementById('room-title').textContent = 'TOPLAP Strasbourg · ' + room;
+    const pad = document.getElementById('pad');
+    const ctx = pad.getContext('2d');
+    const hud = document.getElementById('hud');
+    const noteEl = document.getElementById('note');
+
+    const state = { x: 0.5, y: 0.5, tx: -1, ty: -1, energy: 0, trail: [] };
+    let send = null, audio = null, voice = null, choirNote = null, sceneHere = false;
+
+    const resize = () => { pad.width = innerWidth * devicePixelRatio; pad.height = innerHeight * devicePixelRatio; };
+    addEventListener('resize', resize);
+    resize();
+
+    const status = () => {
+      hud.textContent = `${room} · ${sceneHere ? 'connecté à la scène ✓' : 'recherche de la scène…'}`;
+    };
+
+    // --- input -----------------------------------------------------------------
+    const onPointer = e => {
+      const x = e.clientX / innerWidth, y = e.clientY / innerHeight;
+      state.energy = Math.min(1, state.energy + Math.hypot(x - state.x, y - state.y) * 5);
+      state.x = x; state.y = y;
+      state.trail.push({ x, y, life: 1 });
+      if (state.trail.length > 30) state.trail.shift();
+    };
+    pad.addEventListener('pointermove', onPointer);
+    pad.addEventListener('pointerdown', onPointer);
+
+    const onTilt = e => {
+      if (e.gamma == null || e.beta == null) return;
+      state.tx = Math.min(1, Math.max(0, (e.gamma + 45) / 90));
+      state.ty = Math.min(1, Math.max(0, e.beta / 90));
+    };
+
+    // --- choir voice --------------------------------------------------------------
+    const setVoice = (note, gain) => {
+      if (!audio) return;
+      const t = audio.currentTime;
+      if (!voice) {
+        const osc = audio.createOscillator();
+        const lfo = audio.createOscillator();
+        const lfoGain = audio.createGain();
+        const g = audio.createGain();
+        osc.type = 'triangle';
+        lfo.frequency.value = 5;
+        lfoGain.gain.value = 3;
+        lfo.connect(lfoGain).connect(osc.frequency);
+        g.gain.value = 0;
+        osc.connect(g).connect(audio.destination);
+        osc.start(); lfo.start();
+        voice = { osc, g };
+      }
+      if (note == null) {
+        voice.g.gain.setTargetAtTime(0, t, 0.3);
+        choirNote = null;
+        noteEl.textContent = '';
+        return;
+      }
+      voice.osc.frequency.setTargetAtTime(440 * 2 ** ((note - 69) / 12), t, 0.05);
+      voice.g.gain.setTargetAtTime(0.25 * gain, t, 0.3);
+      choirNote = note;
+      noteEl.textContent = NAMES[note % 12] + Math.floor(note / 12 - 1);
+    };
+
+    // --- drawing -----------------------------------------------------------------
+    const draw = () => {
+      const w = pad.width, h = pad.height, c = 14 * devicePixelRatio;
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(0, 0, w, h);
+      state.energy *= 0.95;
+      const pulse = choirNote != null ? 0.5 + 0.5 * Math.sin(performance.now() / 200) : 0;
+      for (const p of state.trail) {
+        p.life *= 0.94;
+        ctx.globalAlpha = p.life * 0.6;
+        ctx.fillStyle = '#FFED00';
+        ctx.fillRect(Math.floor(p.x * w / c) * c, Math.floor(p.y * h / c) * c, c, c);
+      }
+      ctx.globalAlpha = 1;
+      const s = c * (3 + Math.round(state.energy * 3 + pulse * 2));
+      ctx.fillRect(Math.floor(state.x * w / c) * c - s / 2, Math.floor(state.y * h / c) * c - s / 2, s, s);
+      requestAnimationFrame(draw);
+    };
+
+    // --- join ------------------------------------------------------------------------
+    document.getElementById('join').addEventListener('click', async () => {
+      document.getElementById('intro').hidden = true;
+      audio = new AudioContext();
+      try {
+        if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
+          if (await DeviceOrientationEvent.requestPermission() === 'granted') addEventListener('deviceorientation', onTilt);
+        } else {
+          addEventListener('deviceorientation', onTilt);
+        }
+      } catch {}
+
+      const r = joinRoom(APP, `${room}-${shard}`);
+      const st = r.makeAction('st');
+      const ch = r.makeAction('ch');
+      const hello = r.makeAction('scene');
+      send = st.send;
+      hello.onMessage = () => { sceneHere = true; status(); };
+      ch.onMessage = data => {
+        if (data && (data.n === null || (Number.isInteger(data.n) && data.n >= 24 && data.n <= 96))) {
+          setVoice(data.n, Math.min(1, Math.max(0, Number(data.g) || 0)));
+        }
+      };
+      r.onPeerLeave = () => {};
+      addEventListener('pagehide', () => r.leave());
+
+      setInterval(() => {
+        send([state.x, state.y, state.tx, state.ty, Math.round(state.energy * 100) / 100]);
+      }, 70);
+      status();
+      requestAnimationFrame(draw);
+    });
+  </script>
+</body>
+</html>

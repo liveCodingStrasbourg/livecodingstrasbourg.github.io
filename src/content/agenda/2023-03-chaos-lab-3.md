@@ -9,6 +9,7 @@ video_url: "https://www.youtube.com/embed/Ercyh2hE0HE"
 links:
   - label: "YouTube (live)"
     url: "https://www.youtube.com/watch?v=Ercyh2hE0HE"
+cover_image: "/images/chaos-labs/cl3-cover.webp"
 description: "Troisième édition au Local. Session live filmée et disponible sur YouTube."
 description_en: "Third edition at Le Local. Live session filmed and available on YouTube."
 ---

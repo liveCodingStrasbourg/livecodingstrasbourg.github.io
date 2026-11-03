@@ -1156,6 +1156,11 @@ a.card:hover .card__title { color: var(--accent); }
   background: #000;
 }
 
+/* Phone clips are vertical: keep the stage and projection in the crop. */
+.event-thumb--clip {
+  object-position: 50% 62%;
+}
+
 .next-event__cover {
   width: 100%;
   aspect-ratio: 21 / 7;

@@ -5,6 +5,9 @@ on:
     # new-site only builds (as a check); only main publishes
     branches: [main, new-site]
   workflow_dispatch:
+  schedule:
+    # Nightly rebuild just after midnight in Strasbourg, so finished events move to the past list
+    - cron: '15 23 * * *'
 
 permissions:
   contents: read

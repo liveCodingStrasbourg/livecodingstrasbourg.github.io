@@ -109,9 +109,13 @@ already shared — add a redirect if it was public, see [Links](#links)).
 One file per event in `src/content/agenda/`. Name it `YYYY-MM-DD-short-name.md`
 so files stay in date order.
 
-**Upcoming vs past is automatic**: events dated today or later appear under
-"À venir" and on the homepage (the next 4), older ones move to the past list.
-Nothing to do when an event is over.
+**Upcoming vs past is automatic**: events appear under "À venir" and on the
+homepage (the next 4) through the end of their day, Strasbourg time, then move to
+the past list. The site rebuilds every night just after midnight to make that
+happen, so there's nothing to do when an event is over.
+
+**Agenda thumbnail**: the card uses, in this order, `teaser`, the first of `clips`,
+`cover_image`, or a generated pattern.
 
 The quickest way to add one: **copy an existing similar event**, rename it,
 change the fields.

@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
+import { isUpcoming } from '../../lib/events';
 import EventCover from '../../components/EventCover.astro';
 import GeneratedCover from '../../components/GeneratedCover.astro';
 import FriseHeading from '../../components/FriseHeading.astro';
@@ -10,14 +11,13 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const allEvents = await getCollection('agenda');
-const now = new Date();
 
 const upcoming = allEvents
-  .filter(e => new Date(e.data.date) >= now)
+  .filter(e => isUpcoming(e.data.date))
   .sort((a, b) => new Date(a.data.date).getTime() - new Date(b.data.date).getTime());
 
 const past = allEvents
-  .filter(e => new Date(e.data.date) < now)
+  .filter(e => !isUpcoming(e.data.date))
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
 const typeLabel: Record<string, string> = {

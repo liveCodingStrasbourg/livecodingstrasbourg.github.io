@@ -2,16 +2,17 @@
 import GeneratedCover from './GeneratedCover.astro';
 
 interface Props {
-  event: { data: { title: string; teaser?: string; cover_image?: string } };
+  event: { data: { title: string; teaser?: string; clips?: string[]; cover_image?: string } };
   alt: string;
   class?: string;
   ratio?: string;
 }
 
-// Teaser video first (muted loop as a moving thumbnail), then poster, then a
-// generated pattern seeded by the title.
+// Teaser video first (muted loop as a moving thumbnail), then the event's first
+// mini clip (plays only while on screen), then poster, then a generated pattern.
 const { event, alt, class: className = 'event-thumb', ratio = '16/9' } = Astro.props;
-const { teaser, cover_image, title } = event.data;
+const { teaser, clips, cover_image, title } = event.data;
+const clip = clips?.[0];
 ---
 {teaser ? (
   <video
@@ -24,6 +25,18 @@ const { teaser, cover_image, title } = event.data;
     preload="metadata"
     aria-label={alt}
     data-autoplay-thumb
+  ></video>
+) : clip ? (
+  <video
+    class:list={[className, 'event-thumb--clip']}
+    src={`/videos/clips/${clip}.mp4`}
+    poster={`/videos/clips/${clip}.webp`}
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-label={alt}
+    data-clip
   ></video>
 ) : cover_image ? (
   <img src={cover_image} alt={alt} class={className} loading="lazy" />

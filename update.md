@@ -79,7 +79,7 @@ npm run dev              # 2. local preview at http://localhost:4321
 4. Check it on http://localhost:4321/agenda.
 
 It appears on the homepage, in "À venir" and in the RSS feed automatically,
-and moves to the past events by itself the day after.
+and moves to the past events by itself the night after (nightly rebuild).
 
 ### Announce a workshop theme
 

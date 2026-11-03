@@ -106,6 +106,29 @@ const dateStr = new Date(data.date).toLocaleDateString('en-GB', {
     </>
   )}
 
+  {data.clips?.length > 0 && (
+    <>
+      <hr />
+      <div style="font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">
+        Clips
+      </div>
+      <div class="clip-grid">
+        {data.clips.map((name: string) => (
+          <video
+            src={`/videos/clips/${name}.mp4`}
+            poster={`/videos/clips/${name}.webp`}
+            muted
+            loop
+            playsinline
+            controls
+            preload="none"
+            data-clip
+          ></video>
+        ))}
+      </div>
+    </>
+  )}
+
   {data.photos?.length > 0 && (
     <>
       <hr />
@@ -118,5 +141,8 @@ const dateStr = new Date(data.date).toLocaleDateString('en-GB', {
         ))}
       </div>
     </>
+  )}
+  {data.credits && (
+    <p style="font-size:0.78rem;color:var(--muted);margin-top:1rem">Images : {data.credits}</p>
   )}
 </Base>

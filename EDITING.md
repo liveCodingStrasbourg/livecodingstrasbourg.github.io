@@ -165,6 +165,10 @@ Details:
   description, and plays muted in a loop as the event's thumbnail on the agenda
   (and on the homepage when it's the next event), instead of `cover_image`.
   For YouTube, use `video_url` instead.
+- **`clips`** is a list of short videos shown in a grid on the event page, playing
+  muted while on screen. Put `name.mp4` (about 8 s, 720 px) and a poster `name.webp`
+  in `public/videos/clips/`, and list just the name: `  - cl8-1`.
+- **`credits`** shows "Images : …" at the bottom of the event page.
 - **No `cover_image`?** A random pattern is generated from the title. That's fine.
 - **`video_url`** must be the **embed** form of a YouTube link:
   `https://www.youtube.com/watch?v=Ercyh2hE0HE` → `https://www.youtube.com/embed/Ercyh2hE0HE`.

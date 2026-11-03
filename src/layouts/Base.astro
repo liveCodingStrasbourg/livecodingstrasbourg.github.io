@@ -109,6 +109,20 @@ const navLinks = [
     </p>
   </footer>
   <script is:inline>
+    // Mini clips play (muted) only while on screen; never for people asking for less motion.
+    (() => {
+      const clips = document.querySelectorAll('video[data-clip]');
+      if (!clips.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const seen = new IntersectionObserver(entries => {
+        for (const { target, isIntersecting } of entries) {
+          if (isIntersecting) target.play().catch(() => {});
+          else target.pause();
+        }
+      }, { threshold: 0.4 });
+      clips.forEach(v => seen.observe(v));
+    })();
+  </script>
+  <script is:inline>
     // Moving teaser thumbnails stay still for people who ask for less motion.
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.querySelectorAll('video[data-autoplay-thumb]').forEach(v => {

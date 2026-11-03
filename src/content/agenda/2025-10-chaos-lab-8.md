@@ -7,7 +7,7 @@ participants:
   - Crash Server
   - Randy Edgewood
   - Alt+F4
-  - Crisper
+  - Crispr
 tools:
   - Mercury
   - Sonic Pi
@@ -23,6 +23,11 @@ photos:
   - "/images/chaos-labs/cl8-03.webp"
   - "/images/chaos-labs/cl8-04.webp"
   - "/images/chaos-labs/cl8-05.webp"
+clips:
+  - cl8-1
+  - cl8-2
+  - cl8-3
+  - cl8-4
 description: "Grand retour du Chaos Lab à la Perestroïka pour une huitième édition. Soirée 100% live : code, machines, synthés."
 description_en: "Grand return of Chaos Lab to Perestroïka for the eighth edition. 100% live night: code, machines, synths."
 ---

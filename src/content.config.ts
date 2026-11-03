@@ -24,6 +24,8 @@ const agenda = defineCollection({
     photos: z.array(z.string()).default([]),
     video_url: z.string().optional(),
     teaser: z.string().optional(),
+    clips: z.array(z.string()).default([]),
+    credits: z.string().optional(),
   }),
 });
 

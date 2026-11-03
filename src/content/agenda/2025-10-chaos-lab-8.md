@@ -16,6 +16,13 @@ tools:
 links:
   - label: "Crash Server"
     url: "https://crashserver.fr/events/chaos-lab-VII-15-oct-2025/"
+cover_image: "/images/chaos-labs/cl8-cover.webp"
+photos:
+  - "/images/chaos-labs/cl8-01.webp"
+  - "/images/chaos-labs/cl8-02.webp"
+  - "/images/chaos-labs/cl8-03.webp"
+  - "/images/chaos-labs/cl8-04.webp"
+  - "/images/chaos-labs/cl8-05.webp"
 description: "Grand retour du Chaos Lab à la Perestroïka pour une huitième édition. Soirée 100% live : code, machines, synthés."
 description_en: "Grand return of Chaos Lab to Perestroïka for the eighth edition. 100% live night: code, machines, synths."
 ---

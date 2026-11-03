@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+const i18n = "{\"alone\": \"Personne d’autre ici pour l’instant.\", \"one\": \"1 autre fantôme ici.\", \"many\": \"{n} autres fantômes ici.\", \"you\": \"vous\", \"room\": \"Salle privée : {name} (partagez l’adresse de cette page)\"}";
 ---
 <Base title="Fantômes" description="Les visiteurs présents en même temps se voient et jouent ensemble.">
   <p style="font-size:0.82rem;margin-bottom:1.2rem">
@@ -8,149 +9,32 @@ import Base from '../../layouts/Base.astro';
 
   <div class="page-header">
     <h1>Fantômes</h1>
-    <p style="color:var(--muted)">
-      Chaque personne sur cette page en ce moment est un pixel. Bougez : votre pixel chante,
-      et vous entendez les autres. Personne n'est enregistré — quand vous partez, votre trace disparaît.
-    </p>
+    <p style="color:var(--muted)">Chaque personne sur cette page en ce moment est un pixel. Bougez : votre pixel joue sur une horloge partagée, et vous entendez les autres. Personne n'est enregistré — quand vous partez, votre trace disparaît.</p>
   </div>
 
-  <div class="gh">
-    <canvas class="gh__canvas" id="gh-canvas"></canvas>
-    <button type="button" class="gh__enter" id="gh-enter">Entrer</button>
+  <div id="gh-root" data-i18n={i18n}>
+    <p class="gh__room" id="gh-room"></p>
+    <div class="gh">
+      <canvas class="gh__canvas" id="gh-canvas"></canvas>
+      <button type="button" class="gh__enter" id="gh-enter">Entrer</button>
+    </div>
+    <p class="gh__count" id="gh-count"></p>
+    <form class="gh__say" id="gh-say" hidden>
+      <input id="gh-text" maxlength="80" autocomplete="off" placeholder="Un mot, 80 caractères (disparaît après 8 s)" />
+      <button type="submit">Dire</button>
+    </form>
+    <ul class="gh__log" id="gh-log" aria-live="polite"></ul>
+    <div class="gh__tools">
+      <label>Instrument
+        <select id="gh-instrument"><option value="0">Triangle</option><option value="1">Carré</option><option value="2">Scie</option><option value="3">Sinus</option></select>
+      </label>
+      <button type="button" id="gh-new-room">Créer une salle privée</button>
+    </div>
   </div>
-  <p class="gh__count" id="gh-count"></p>
-  <p style="font-size:0.8rem;color:var(--muted)">
-    Seul·e ? Ouvrez cette page dans un autre onglet ou sur votre téléphone.
-    Connexion directe entre navigateurs (WebRTC, via des relais publics Nostr) : aucun serveur TOPLAP, rien n'est stocké.
-  </p>
 
-  <script is:inline type="module">
-    import { joinRoom, selfId } from 'https://esm.run/trystero@0.26.0';
+  <p style="font-size:0.8rem;color:var(--muted)">Seul·e ? Ouvrez cette page dans un autre onglet ou sur votre téléphone. Connexion directe entre navigateurs (WebRTC, via des relais publics Nostr) : aucun serveur TOPLAP, rien n'est stocké. Soyez gentil·les : les mots s'affichent chez tout le monde.</p>
 
-    const CELL = 10;                         // pixel grid, like the logo
-    const SCALE = [0, 2, 4, 7, 9];           // pentatonic
-    const canvas = document.getElementById('gh-canvas');
-    const ctx = canvas.getContext('2d');
-    const countEl = document.getElementById('gh-count');
-    const ghosts = new Map();                // peerId -> {x, y, energy, trail, voice}
-    let audio = null;
-    let room = null;
-    let move = null;
-
-    const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-
-    const resize = () => {
-      const r = canvas.getBoundingClientRect();
-      canvas.width = Math.round(r.width * devicePixelRatio);
-      canvas.height = Math.round(r.height * devicePixelRatio);
-    };
-    addEventListener('resize', resize);
-    resize();
-
-    const pitch = x => {
-      const step = Math.min(9, Math.floor(x * 10));
-      const midi = 48 + 12 * Math.floor(step / 5) + SCALE[step % 5];
-      return 440 * 2 ** ((midi - 69) / 12);
-    };
-
-    const makeVoice = (isSelf) => {
-      const osc = audio.createOscillator();
-      const filter = audio.createBiquadFilter();
-      const gain = audio.createGain();
-      osc.type = isSelf ? 'triangle' : 'sine';
-      filter.type = 'lowpass';
-      gain.gain.value = 0;
-      osc.connect(filter).connect(gain).connect(audio.destination);
-      osc.start();
-      return { osc, filter, gain, stop: () => { gain.gain.setTargetAtTime(0, audio.currentTime, 0.1); setTimeout(() => osc.stop(), 500); } };
-    };
-
-    const ghost = (id, isSelf = false) => {
-      if (!ghosts.has(id)) {
-        ghosts.set(id, { x: 0.5, y: 0.5, energy: 0, trail: [], isSelf, voice: audio ? makeVoice(isSelf) : null });
-      }
-      return ghosts.get(id);
-    };
-
-    const place = (g, x, y) => {
-      const dist = Math.hypot(x - g.x, y - g.y);
-      g.energy = Math.min(1, g.energy + dist * 6);
-      g.x = x; g.y = y;
-      g.trail.push({ x, y, life: 1 });
-      if (g.trail.length > 24) g.trail.shift();
-      if (g.voice) {
-        const t = audio.currentTime;
-        g.voice.osc.frequency.setTargetAtTime(pitch(x), t, 0.03);
-        g.voice.filter.frequency.setTargetAtTime(300 + (1 - y) * 3000, t, 0.05);
-      }
-    };
-
-    const updateCount = () => {
-      const others = ghosts.size - 1;
-      countEl.textContent = !room ? ''
-        : others <= 0 ? 'Personne d’autre ici pour l’instant.'
-        : others === 1 ? '1 autre fantôme ici.'
-        : `${others} autres fantômes ici.`;
-    };
-
-    const draw = () => {
-      const w = canvas.width, h = canvas.height, c = CELL * devicePixelRatio;
-      ctx.clearRect(0, 0, w, h);
-      const ink = css('--fg') || '#fff';
-      for (const g of ghosts.values()) {
-        g.energy *= 0.94;
-        if (g.voice) g.voice.gain.gain.setTargetAtTime((g.isSelf ? 0.12 : 0.07) * g.energy, audio.currentTime, 0.05);
-        for (const p of g.trail) {
-          p.life *= 0.93;
-          ctx.globalAlpha = p.life * 0.5;
-          ctx.fillStyle = g.isSelf ? '#FFED00' : ink;
-          ctx.fillRect(Math.floor(p.x * w / c) * c, Math.floor(p.y * h / c) * c, c, c);
-        }
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = g.isSelf ? '#FFED00' : ink;
-        const s = c * (2 + Math.round(g.energy * 2));
-        ctx.fillRect(Math.floor(g.x * w / c) * c - s / 2, Math.floor(g.y * h / c) * c - s / 2, s, s);
-      }
-      requestAnimationFrame(draw);
-    };
-    requestAnimationFrame(draw);
-
-    let last = 0;
-    const onPointer = e => {
-      if (!room) return;
-      const r = canvas.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-      const y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
-      place(ghost(selfId, true), x, y);
-      const now = performance.now();
-      if (now - last > 50) { last = now; move.send([x, y]); }
-    };
-    canvas.addEventListener('pointermove', onPointer);
-    canvas.addEventListener('pointerdown', onPointer);
-
-    document.getElementById('gh-enter').addEventListener('click', e => {
-      e.currentTarget.hidden = true;
-      audio = new AudioContext();
-      for (const [id, g] of ghosts) g.voice ??= makeVoice(id === selfId);
-      ghost(selfId, true);
-      room = joinRoom({ appId: 'toplap-strasbourg-site' }, 'fantomes');
-      move = room.makeAction('move');
-      move.onMessage = (data, { peerId }) => {
-        if (Array.isArray(data) && data.length === 2 && data.every(n => typeof n === 'number' && n >= 0 && n <= 1)) {
-          place(ghost(peerId), data[0], data[1]);
-        }
-      };
-      room.onPeerJoin = peerId => { ghost(peerId); updateCount(); };
-      room.onPeerLeave = peerId => {
-        ghosts.get(peerId)?.voice?.stop();
-        ghosts.delete(peerId);
-        updateCount();
-      };
-      updateCount();
-    });
-
-    addEventListener('pagehide', () => room?.leave());
-  </script>
+  <script is:inline type="module" src="/lab/fantomes.js"></script>
 </Base>
 
 <style>
@@ -182,5 +66,29 @@ import Base from '../../layouts/Base.astro';
     padding: 0.6rem 1.4rem;
     cursor: pointer;
   }
+  .gh__room { font-size: 0.85rem; color: var(--accent); }
   .gh__count { font-size: 0.85rem; margin-top: 0.6rem; }
+  .gh__say { display: flex; gap: 0.5rem; margin: 0.6rem 0; }
+  .gh__say[hidden] { display: none; }
+  .gh__say input, .gh__tools select {
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.5rem;
+  }
+  .gh__say input { flex: 1; min-width: 0; }
+  .gh__say button, .gh__tools button {
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--fg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+  }
+  .gh__say button:hover, .gh__tools button:hover { border-color: var(--accent); color: var(--accent); }
+  .gh__log { list-style: none; margin: 0.4rem 0; padding: 0; font-size: 0.85rem; min-height: 1.4rem; }
+  .gh__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0.8rem 0; font-size: 0.85rem; color: var(--muted); }
 </style>

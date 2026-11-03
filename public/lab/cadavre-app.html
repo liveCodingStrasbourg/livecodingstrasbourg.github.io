@@ -6,18 +6,20 @@
 <meta name="robots" content="noindex" />
 <title>Cadavre exquis — lecteur</title>
 <!--
-  Runs inside <iframe sandbox="allow-scripts"> on /lab/cadavre: opaque origin,
+  Runs inside <iframe sandbox="allow-scripts allow-forms"> on /lab/cadavre: opaque origin,
   so code coming from a shared link cannot reach the site, its storage or DOM.
   It only talks to the parent through postMessage (new link hash, height).
 
   Link payload (#p=base64url(JSON)):
-    v2: {v: 2, m: 'strudel' | 'hydra' | 'texte', t: 'title', l: [[name, line], ...]}
+    v2: {v: 2, m: 'strudel' | 'hydra' | 'texte' | 'pixels', t: 'title', l: [[name, line], ...]}
+    pixels line: 'col,row:' + 16 palette digits (one 4×4 cell of a 6×6 image)
     v1 (legacy): [[name, line], ...]  → strudel, no title
 -->
 <style>
   :root { --bg: #0a0a0a; --fg: #e8e8e0; --muted: #999; --border: #2a2a2a; --surface: #141414; --accent: #c8ff00; }
   :root[data-theme="light"] { --bg: #f4f2ea; --fg: #1c1c1a; --muted: #5f5f5a; --border: #d4d1c5; --surface: #ebe8de; --accent: #4a7000; }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 'Courier New', Courier, monospace; }
   body { padding: 2px; }
   h2 { font-size: 1rem; margin: 0 0 0.2rem; }
@@ -25,6 +27,15 @@
   ol { margin: 0 0 1rem 1.4rem; padding: 0; font-size: 0.85rem; }
   ol.poem { list-style: none; margin-left: 0; font-size: 1rem; }
   li { margin: 0.2rem 0; overflow-wrap: anywhere; }
+  li.current { color: var(--accent); }
+  li.current code { color: var(--accent); }
+  #pixels { width: min(100%, 480px); aspect-ratio: 1; image-rendering: pixelated; cursor: pointer; margin-bottom: 0.6rem; }
+  .editor { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; margin: 0.6rem 0; }
+  .cell-grid { display: grid; grid-template-columns: repeat(4, 44px); gap: 2px; }
+  .cell-grid button { width: 44px; height: 44px; padding: 0; border: 1px solid var(--border); }
+  .palette { display: grid; grid-template-columns: repeat(4, 32px); gap: 4px; }
+  .palette button { width: 32px; height: 32px; padding: 0; border: 2px solid var(--border); }
+  .palette button.on { border-color: var(--accent); outline: 2px solid var(--accent); }
   .by { color: var(--muted); font-size: 0.8rem; }
   .row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin: 0.6rem 0; }
   button { font: inherit; font-size: 0.85rem; color: var(--fg); background: var(--surface); border: 1px solid var(--border); padding: 0.35rem 0.8rem; cursor: pointer; }
@@ -42,17 +53,26 @@
   <h2 id="title" hidden></h2>
   <div class="mode" id="mode"></div>
   <canvas id="hydra" width="1280" height="720" hidden></canvas>
+  <canvas id="pixels" width="240" height="240" hidden></canvas>
   <ol id="lines"></ol>
   <div class="row">
     <button type="button" id="play">▶ Jouer</button>
     <button type="button" id="stop">■ Stop</button>
+    <button type="button" id="replay">⏮ Rejouer la construction</button>
     <span class="status" id="status"></span>
   </div>
 
   <form id="form">
-    <label><span id="line-label">Votre ligne</span>
+    <label id="code-field"><span id="line-label">Votre ligne</span>
       <input id="code" maxlength="140" autocomplete="off" spellcheck="false" required />
     </label>
+    <div id="editor" hidden>
+      <p class="status" id="editor-hint">Cliquez une case libre sur l'image, puis dessinez.</p>
+      <div class="editor">
+        <div class="cell-grid" id="cell-grid"></div>
+        <div class="palette" id="palette"></div>
+      </div>
+    </div>
     <label>Pseudo (facultatif)
       <input id="name" maxlength="20" autocomplete="off" />
     </label>
@@ -69,7 +89,9 @@
 
   <script>
     (() => {
-      const MAX_LINES = 24;
+      const GRID = 6;
+      const PALETTE = ['#000000', '#ffffff', '#FFED00', '#ff3c00', '#ff2079', '#00b8d4', '#6f9a4e', '#7b2ff7'];
+      const CELL_RE = /^[0-5],[0-5]:[0-7]{16}$/;
       // Second line of defence (the sandbox is the first): keep lines artistic.
       const FORBIDDEN = /\b(window|document|globalThis|self|top|parent|location|localStorage|sessionStorage|indexedDB|cookie|fetch|XMLHttpRequest|WebSocket|import|eval|Function|constructor|prototype|__proto__|navigator|alert|open|postMessage)\b|=>|`/;
 
@@ -114,6 +136,15 @@
             <em>Lire</em> le fait dire à voix haute par le navigateur.</p>`,
           check: () => '',
         },
+        pixels: {
+          label: 'Pixels',
+          seed: '2,2:0220222222220220',
+          lineLabel: '',
+          placeholder: '',
+          help: `<p>Une image de 6×6 cases, chaque personne en dessine une (4×4 pixels) à côté de ce qui existe déjà,
+            sans toucher aux autres. Cliquez une case libre, dessinez, passez le relais.</p>`,
+          check: code => CELL_RE.test(code) ? '' : 'Case invalide.',
+        },
       };
 
       const $ = id => document.getElementById(id);
@@ -139,7 +170,7 @@
       const checkLine = (mode, code, isSeed = false) => {
         if (!code) return 'Ligne vide.';
         if (code.length > 140) return 'Ligne trop longue (140 caractères max).';
-        if (isSeed && mode !== 'texte') return FORBIDDEN.test(code) ? 'Source refusée.' : '';
+        if (isSeed && mode !== 'texte' && mode !== 'pixels') return FORBIDDEN.test(code) ? 'Source refusée.' : '';
         return MODES[mode].check(code);
       };
 
@@ -155,8 +186,12 @@
             title = String(data.t || '').slice(0, 60);
             lines = data.l
               .filter((l, i) => Array.isArray(l) && typeof l[1] === 'string' && !checkLine(mode, mode === 'texte' ? l[1].trim() : clean(l[1]), i === 0))
-              .slice(0, MAX_LINES)
+              .slice(0, GRID * GRID)
               .map(([n, c]) => [String(n || '').slice(0, 20), mode === 'texte' ? c.trim() : clean(c)]);
+            if (mode === 'pixels') {
+              const taken = new Set();
+              lines = lines.filter(([, c]) => { const k = c.split(':')[0]; if (taken.has(k)) return false; taken.add(k); return true; });
+            }
             if (!lines.length) lines = [['', MODES[mode].seed]];
           }
         }
@@ -165,11 +200,14 @@
       }
 
       const M = MODES[mode];
+      const MAX_LINES = mode === 'pixels' ? GRID * GRID : 24;
+      const STEP_MS = { strudel: 8000, hydra: 4000, texte: 3000, pixels: 500 }[mode];
       $('mode').textContent = M.label;
       if (title) { $('title').textContent = title; $('title').hidden = false; }
       $('line-label').textContent = M.lineLabel;
       $('code').placeholder = M.placeholder;
       $('help').innerHTML = M.help;
+      if (mode === 'pixels') $('try').hidden = true;
       if (mode === 'texte') {
         $('lines').className = 'poem';
         $('play').textContent = '🔊 Lire';
@@ -179,12 +217,86 @@
         $('hydra').hidden = false;
         $('play').textContent = '▶ Voir';
       }
+      if (mode === 'pixels') {
+        $('pixels').hidden = false;
+        $('editor').hidden = false;
+        $('code-field').hidden = true;
+        $('code').required = false;
+        $('play').hidden = true;
+        $('stop').hidden = true;
+      }
+
+      // --- pixel mode: one shared canvas, one 4×4 editor ------------------------
+      const cellPx = 240 / (GRID * 4) | 0;
+      let selected = null, drawing = new Array(16).fill(2), ink = 2;
+      const drawCell = (ctx, cx, cy, digits) => {
+        [...digits].forEach((d, i) => {
+          ctx.fillStyle = PALETTE[+d];
+          ctx.fillRect((cx * 4 + i % 4) * cellPx, (cy * 4 + (i / 4 | 0)) * cellPx, cellPx, cellPx);
+        });
+      };
+      const drawPixels = (ls = lines) => {
+        const ctx = $('pixels').getContext('2d');
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillRect(0, 0, 240, 240);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= GRID; i++) {
+          ctx.beginPath(); ctx.moveTo(i * 40 + .5, 0); ctx.lineTo(i * 40 + .5, 240); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(0, i * 40 + .5); ctx.lineTo(240, i * 40 + .5); ctx.stroke();
+        }
+        for (const [, c] of ls) {
+          const [pos, digits] = c.split(':');
+          const [cx, cy] = pos.split(',').map(Number);
+          drawCell(ctx, cx, cy, digits);
+        }
+        if (selected) {
+          drawCell(ctx, selected[0], selected[1], drawing.join(''));
+          ctx.strokeStyle = '#FFED00';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(selected[0] * 40 + 1, selected[1] * 40 + 1, 38, 38);
+        }
+      };
+      const taken = (cx, cy) => lines.some(([, c]) => c.startsWith(`${cx},${cy}:`));
+      if (mode === 'pixels') {
+        PALETTE.forEach((color, i) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.style.background = color;
+          b.setAttribute('aria-label', 'couleur ' + (i + 1));
+          b.className = i === ink ? 'on' : '';
+          b.addEventListener('click', () => {
+            ink = i;
+            [...$('palette').children].forEach((x, k) => { x.className = k === ink ? 'on' : ''; });
+          });
+          $('palette').append(b);
+        });
+        const paintGrid = () => [...$('cell-grid').children].forEach((b, i) => { b.style.background = PALETTE[drawing[i]]; });
+        for (let i = 0; i < 16; i++) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.setAttribute('aria-label', 'pixel ' + (i + 1));
+          b.addEventListener('click', () => { drawing[i] = ink; paintGrid(); drawPixels(); });
+          $('cell-grid').append(b);
+        }
+        paintGrid();
+        $('pixels').addEventListener('click', e => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const cx = Math.min(GRID - 1, Math.floor((e.clientX - r.left) / r.width * GRID));
+          const cy = Math.min(GRID - 1, Math.floor((e.clientY - r.top) / r.height * GRID));
+          if (taken(cx, cy)) { status('Cette case est déjà dessinée : choisissez-en une libre.'); return; }
+          selected = [cx, cy];
+          status('');
+          drawPixels();
+        });
+      }
 
       const render = () => {
+        if (mode === 'pixels') drawPixels();
         $('lines').replaceChildren(...lines.map(([name, code]) => {
           const li = document.createElement('li');
           const c = document.createElement(mode === 'texte' ? 'span' : 'code');
-          c.textContent = code;
+          c.textContent = mode === 'pixels' ? 'case ' + code.split(':')[0].replace(',', '×') : code;
           li.append(c);
           if (name) {
             const s = document.createElement('span');
@@ -216,6 +328,7 @@
       });
       let strudelReady = null, hydra = null;
       const players = {
+        async pixels() { drawPixels(); },
         async strudel(ls) {
           await load('strudel');
           strudelReady ??= initStrudel({ prebake: () => strudel.samples('github:tidalcycles/dirt-samples') });
@@ -238,6 +351,7 @@
         },
       };
       const stops = {
+        pixels: () => {},
         strudel: () => { if (strudelReady) strudel.hush(); },
         hydra: () => { if (hydra) solid(0, 0, 0).out(); },
         texte: () => speechSynthesis.cancel(),
@@ -255,7 +369,30 @@
         }
       };
 
+      // --- replay: the piece grows again, one line at a time ---------------------
+      let replayTimer = null;
+      const stopReplay = () => {
+        clearTimeout(replayTimer);
+        replayTimer = null;
+        [...$('lines').children].forEach(li => li.classList.remove('current'));
+      };
+      const replayStep = async i => {
+        const part = lines.slice(0, i);
+        [...$('lines').children].forEach((li, k) => li.classList.toggle('current', k === i - 1));
+        if (mode === 'pixels') drawPixels(part);
+        else if (mode === 'texte') await players.texte(part.slice(-1));
+        else await run(part);
+        status(`⏮ ${i} / ${lines.length}`);
+        if (i < lines.length) replayTimer = setTimeout(() => replayStep(i + 1), STEP_MS);
+        else replayTimer = setTimeout(() => { stopReplay(); if (mode === 'pixels') drawPixels(); }, STEP_MS);
+      };
+      $('replay').addEventListener('click', () => { stopReplay(); replayStep(1); });
+
       const pending = () => {
+        if (mode === 'pixels') {
+          if (!selected) { status('Choisissez d’abord une case libre sur l’image.'); return null; }
+          return [$('name').value.trim().slice(0, 20), `${selected[0]},${selected[1]}:${drawing.join('')}`];
+        }
         const raw = $('code').value;
         const code = mode === 'texte' ? raw.trim() : clean(raw);
         const err = checkLine(mode, code);
@@ -263,17 +400,18 @@
         return [$('name').value.trim().slice(0, 20), code];
       };
 
-      $('play').addEventListener('click', () => run(lines));
-      $('stop').addEventListener('click', () => { stops[mode](); status('■ arrêté'); });
-      $('try').addEventListener('click', () => { const l = pending(); if (l) run([...lines, l]); });
+      $('play').addEventListener('click', () => { stopReplay(); run(lines); });
+      $('stop').addEventListener('click', () => { stopReplay(); stops[mode](); status('■ arrêté'); });
+      $('try').addEventListener('click', () => { const l = pending(); if (l && mode !== 'pixels') { stopReplay(); run([...lines, l]); } });
       $('form').addEventListener('submit', async e => {
         e.preventDefault();
         const line = pending();
         if (!line) return;
         // Code lines are only passed on if they actually run.
-        if (mode !== 'texte' && !(await run([...lines, line]))) return;
+        if (mode !== 'texte' && mode !== 'pixels' && !(await run([...lines, line]))) return;
         lines = [...lines, line];
         $('code').value = '';
+        selected = null;
         render();
         toParent({ type: 'hash', value: encode({ v: 2, m: mode, t: title, l: lines }) });
       });

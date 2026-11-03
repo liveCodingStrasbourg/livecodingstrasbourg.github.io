@@ -252,21 +252,13 @@ img {
 }
 
 .chaos-grid {
-  columns: 2 320px;
-  column-gap: 1.2rem;
-}
-
-@media (min-width: 900px) {
-  .chaos-grid { columns: 3 320px; }
-}
-
-@media (min-width: 1300px) {
-  .chaos-grid { columns: 4 320px; }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: 1.2rem;
 }
 
 .chaos-grid .card {
-  break-inside: avoid;
-  margin-bottom: 1.2rem;
+  margin-bottom: 0;
   padding: 0;
   overflow: hidden;
 }

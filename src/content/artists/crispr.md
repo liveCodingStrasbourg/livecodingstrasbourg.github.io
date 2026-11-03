@@ -1,6 +1,7 @@
 ---
 name: "Crispr"
 collective: true
+image: "/images/artists/crispr.webp"
 tools: []
 links: []
 bio: "Muni de mathématiques, d'algorithmes et d'un compilateur C++, Crispr projette des univers propulsés à la musique. Fin analyste de fréquences sonores, le compilateur disparaît pour ne laisser qu'une œuvre d'art audio-réactive, fluide et personnelle."

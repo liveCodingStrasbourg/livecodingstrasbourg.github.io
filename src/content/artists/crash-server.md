@@ -1,6 +1,7 @@
 ---
 slug: crash-server
 collective: true
+image: "/images/artists/crash-server.webp"
 name: "Crash Server"
 tools:
   - FoxDot

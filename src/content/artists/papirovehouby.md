@@ -3,8 +3,7 @@ slug: papirovehouby
 collective: true
 name: "PapiroveHouby"
 tools:
-  - SuperCollider
-  - TidalCycles
+  - Sonic Pi
 links:
   - label: "SoundCloud"
     url: "https://soundcloud.com/ph-livecoding"

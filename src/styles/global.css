@@ -488,6 +488,7 @@ a.card:hover .card__title { color: var(--accent); }
   width: 100%;
   aspect-ratio: 4/3;
   object-fit: cover;
+  object-position: 50% 20%;
   display: block;
 }
 

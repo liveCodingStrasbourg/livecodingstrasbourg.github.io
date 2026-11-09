@@ -42,6 +42,19 @@ const sorted = artists
                 ))}
               </div>
             )}
+            {artist.data.videos?.length > 0 && (
+              <div class="artist-card__videos">
+                {artist.data.videos.map((name: string) => (
+                  <video
+                    src={`/videos/artists/${name}.mp4`}
+                    poster={`/videos/artists/${name}.webp`}
+                    controls
+                    playsinline
+                    preload="none"
+                  ></video>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       );

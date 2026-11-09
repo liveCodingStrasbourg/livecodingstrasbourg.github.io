@@ -486,6 +486,20 @@ a.tag--link:hover {
 
 .artist-card:hover { border-color: var(--accent); }
 
+.artist-card__videos {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.artist-card__videos video {
+  width: 100%;
+  max-height: 420px;
+  display: block;
+  background: #000;
+  border: 1px solid var(--border);
+}
+
 .artist-card__cover {
   width: 100%;
   aspect-ratio: 4/3;

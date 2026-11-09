@@ -39,6 +39,7 @@ const artists = defineCollection({
     links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
     bio: z.string().optional(),
     bio_en: z.string().optional(),
+    videos: z.array(z.string()).default([]),
   }),
 });
 

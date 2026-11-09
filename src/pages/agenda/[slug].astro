@@ -10,6 +10,11 @@ export async function getStaticPaths() {
 }
 
 const lang = getLangFromUrl(Astro.url);
+
+// Event tools link to their Resources entry when one exists (matched by name).
+const toolKey = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
+const toolUrls = new Map((await getCollection('tools')).map(t => [toolKey(t.data.name), t.data.url]));
+const toolUrl = (name: string) => toolUrls.get(toolKey(name));
 const t = useTranslations(lang);
 const { event } = Astro.props;
 const { data } = event;
@@ -71,7 +76,12 @@ const dateStr = new Date(data.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' :
         {lang === 'fr' ? 'Outils' : 'Tools'}
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:0.35rem">
-        {data.tools.map((tool: string) => <span class="tag">{tool}</span>)}
+        {data.tools.map((tool: string) => {
+          const url = toolUrl(tool);
+          return url
+            ? <a href={url} target="_blank" rel="noopener noreferrer" class="tag tag--link">{tool} ↗</a>
+            : <span class="tag">{tool}</span>;
+        })}
       </div>
     </div>
   )}

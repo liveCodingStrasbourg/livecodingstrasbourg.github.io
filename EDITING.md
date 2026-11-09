@@ -169,6 +169,8 @@ Details:
   description, and plays muted in a loop as the event's thumbnail on the agenda
   (and on the homepage when it's the next event), instead of `cover_image`.
   For YouTube, use `video_url` instead.
+- **`tools`**: a tool links to its website when it has the same name as an
+  entry on the Resources page (`src/content/tools/`); otherwise it's plain text.
 - **`clips`** is a list of short videos shown in a grid on the event page, playing
   muted while on screen. Put `name.mp4` (about 8 s, 720 px) and a poster `name.webp`
   in `public/videos/clips/`, and list just the name: `  - cl8-1`.

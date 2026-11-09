@@ -319,6 +319,16 @@ a.card:hover .card__title { color: var(--accent); }
   margin-right: 0.3rem;
 }
 
+a.tag--link {
+  text-decoration: none;
+  color: var(--fg);
+}
+
+a.tag--link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ── Page header ── */
 .page-header {
   margin-bottom: 1.6rem;

@@ -25,6 +25,7 @@ const agenda = defineCollection({
     video_url: z.string().optional(),
     teaser: z.string().optional(),
     clips: z.array(z.string()).default([]),
+    short: z.string().regex(/^[a-z0-9-]+$/).optional(),
     credits: z.string().optional(),
   }),
 });

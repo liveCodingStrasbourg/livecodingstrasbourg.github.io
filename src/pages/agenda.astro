@@ -41,6 +41,11 @@ function renderCard(ev: any) {
 <Base title={t('agenda.title')}>
   <div class="page-header">
     <h1>{t('agenda.title')}</h1>
+    <p class="agenda-subscribe">
+      <a href="webcal://livecodingstrasbourg.github.io/agenda.ics">📅 S'abonner au calendrier</a>
+      · <a href="/agenda.ics" download>fichier .ics</a>
+      <span>Google Agenda, Apple, Thunderbird, téléphone : les nouveaux évènements arrivent tout seuls.</span>
+    </p>
   </div>
 
   <FriseHeading label={lang === 'fr' ? 'À venir' : 'Upcoming'} />

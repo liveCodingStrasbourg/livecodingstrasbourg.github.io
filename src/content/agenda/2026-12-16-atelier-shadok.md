@@ -1,6 +1,7 @@
 ---
 title: "Atelier livecoding au Shadok"
 title_en: "Live coding workshop at Le Shadok"
+short: "atelier-shadok-decembre"
 date: 2026-12-16
 time_start: "18h"
 time_end: "22h"

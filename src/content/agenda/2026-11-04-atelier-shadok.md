@@ -1,6 +1,7 @@
 ---
 title: "Atelier livecoding au Shadok"
 title_en: "Live coding workshop at Le Shadok"
+short: "atelier-8bit"
 date: 2026-11-04
 time_start: "18h"
 time_end: "22h"

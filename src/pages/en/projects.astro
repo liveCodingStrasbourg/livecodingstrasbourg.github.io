@@ -19,7 +19,7 @@ const sorted = allProjects.sort((a, b) => a.data.title.localeCompare(b.data.titl
     {sorted.map(project => {
       const desc = project.data.description_en ?? project.data.description;
       return (
-        <div class="card">
+        <div class="card" id={project.id}>
           <div class="card__title">{project.data.title}</div>
           {project.data.period && <div class="card__meta">{project.data.period}</div>}
           <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 0.5rem;line-height:1.4">{desc}</p>

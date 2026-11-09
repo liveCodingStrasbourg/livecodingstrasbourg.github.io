@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
 import ArtistName from '../../components/ArtistName.astro';
+import { shortLinkFor } from '../../lib/shortlinks';
 
 export async function getStaticPaths() {
   const events = await getCollection('agenda');
@@ -25,8 +26,13 @@ const desc = lang === 'en' && data.description_en ? data.description_en : data.d
 const dateStr = new Date(data.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {
   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
 });
+const short = await shortLinkFor(event.id);
+
+// Shared-link preview: this event's own text and picture.
+const shareDesc = desc.length > 160 ? desc.slice(0, 157).replace(/\s+\S*$/, '') + '…' : desc;
+const shareImage = data.cover_image ?? data.photos?.[0] ?? (data.clips?.[0] ? `/videos/clips/${data.clips[0]}.webp` : undefined);
 ---
-<Base title={title}>
+<Base title={title} description={shareDesc} image={shareImage}>
   <p style="font-size:0.82rem;margin-bottom:1.2rem">
     <a href="/agenda">← {t('nav.agenda')}</a>
   </p>
@@ -44,6 +50,10 @@ const dateStr = new Date(data.date).toLocaleDateString(lang === 'fr' ? 'fr-FR' :
     <h1>{title}</h1>
     {subtitle && <p style="color:var(--accent2);margin:0.3rem 0 0">{subtitle}</p>}
   </div>
+
+  {short && (
+    <div class="event-short">Lien court : <a href={`/${short}`}>livecodingstrasbourg.github.io/{short}</a></div>
+  )}
 
   {data.location && (
     <div style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem">📍 {data.location}</div>

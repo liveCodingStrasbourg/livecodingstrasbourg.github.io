@@ -171,6 +171,10 @@ Details:
   For YouTube, use `video_url` instead.
 - **`tools`**: a tool links to its website when it has the same name as an
   entry on the Resources page (`src/content/tools/`); otherwise it's plain text.
+- **`short`**: short address for flyers, e.g. `short: "chaos-lab-13"` gives
+  livecodingstrasbourg.github.io/chaos-lab-13. Without it, an event gets one
+  automatically from its file name minus the date, when that name is unique
+  (so the four `…-atelier-shadok` files need a `short:`). Lowercase, digits and dashes.
 - **`clips`** is a list of short videos shown in a grid on the event page, playing
   muted while on screen. Put `name.mp4` (about 8 s, 720 px) and a poster `name.webp`
   in `public/videos/clips/`, and list just the name: `  - cl8-1`.

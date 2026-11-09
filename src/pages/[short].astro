@@ -1,0 +1,23 @@
+---
+import { shortLinks } from '../lib/shortlinks';
+
+export async function getStaticPaths() {
+  return [...(await shortLinks())].map(([short, id]) => ({ params: { short }, props: { id } }));
+}
+
+const target = `/agenda/${Astro.props.id}/`;
+---
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content={`0; url=${target}`} />
+  <link rel="canonical" href={new URL(target, Astro.site ?? Astro.url).toString()} />
+  <title>TOPLAP Strasbourg</title>
+  <script is:inline define:vars={{ target }}>location.replace(target);</script>
+</head>
+<body>
+  <a href={target}>{target}</a>
+</body>
+</html>

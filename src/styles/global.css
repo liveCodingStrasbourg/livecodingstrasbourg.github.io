@@ -598,6 +598,85 @@ a.tag--link:hover {
   border-color: var(--accent);
 }
 
+/* ── Header search ── */
+.site-search {
+  position: relative;
+  margin-left: auto;
+}
+
+.site-search input {
+  font: inherit;
+  font-size: 0.8rem;
+  width: 12rem;
+  max-width: 100%;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.45rem;
+}
+
+.site-search input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+.site-search__results {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 50;
+  width: min(26rem, 92vw);
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.site-search__results a {
+  display: block;
+  padding: 0.4rem 0.7rem;
+  text-decoration: none;
+  color: var(--fg);
+  font-size: 0.85rem;
+}
+
+.site-search__results li.is-active a,
+.site-search__results a:hover { background: var(--surface); color: var(--accent); }
+
+.site-search__kind {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.site-search__empty { padding: 0.4rem 0.7rem; font-size: 0.85rem; color: var(--muted); }
+
+@media (max-width: 600px) {
+  .site-search { margin-left: 0; width: 100%; margin-top: 0.4rem; }
+  .site-search input { width: 100%; }
+  .site-search__results { left: 0; right: auto; width: 100%; }
+}
+
+/* ── Event short link (for flyers) ── */
+.event-short {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+
+/* ── Agenda: calendar subscription ── */
+.agenda-subscribe {
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+.agenda-subscribe span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 /* ── Event mini clips ── */
 .clip-grid {
   display: grid;

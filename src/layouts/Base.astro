@@ -8,11 +8,13 @@ interface Props {
   description?: string;
   image?: string;
   noindex?: boolean;
+  /** Page in the other language; false when there is none (hides the switch). */
+  alternate?: string | false;
 }
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
-const { title, description, image, noindex } = Astro.props;
+const { title, description, image, noindex, alternate } = Astro.props;
 
 const pageTitle = title ? `${title} — LiveCoding Strasbourg` : 'LiveCoding Strasbourg';
 const pageDesc = description ?? t('site.tagline');
@@ -22,8 +24,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toStri
 const otherLang = lang === 'fr' ? 'en' : 'fr';
 const otherLangLabel = languages[otherLang];
 const currentPath = Astro.url.pathname;
-let altPath: string;
-if (lang === 'fr') {
+let altPath: string | false;
+if (alternate !== undefined) {
+  altPath = alternate;
+} else if (lang === 'fr') {
   altPath = `/en${currentPath}`;
 } else {
   altPath = currentPath.replace(/^\/en/, '') || '/';
@@ -53,7 +57,8 @@ const navLinks = [
   <meta name="description" content={pageDesc} />
   <link rel="canonical" href={canonicalURL} />
   {noindex && <meta name="robots" content="noindex" />}
-  <link rel="alternate" hreflang={otherLang} href={altPath} />
+  {altPath && <link rel="alternate" hreflang={otherLang} href={altPath} />}
+  <link rel="alternate" type="text/calendar" title="TOPLAP Strasbourg — Agenda" href="/agenda.ics" />
   <link rel="alternate" type="application/rss+xml" title="TOPLAP Strasbourg — Agenda" href="/rss.xml" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -86,7 +91,7 @@ const navLinks = [
           <span class="theme-toggle__to-light">{lang === 'fr' ? 'Clair' : 'Light'}</span>
           <span class="theme-toggle__to-dark">{lang === 'fr' ? 'Sombre' : 'Dark'}</span>
         </button>
-        <a href={altPath} class="lang-switch">{otherLangLabel}</a>
+        {altPath && <a href={altPath} class="lang-switch">{otherLangLabel}</a>}
       </div>
     </div>
     <nav class="site-nav" aria-label="Navigation principale">
@@ -95,6 +100,18 @@ const navLinks = [
           {label}
         </a>
       ))}
+      <form class="site-search" role="search" action={lang === 'fr' ? '/agenda/' : '/en/agenda/'} onsubmit="return false">
+        <input
+          type="search"
+          id="site-search-input"
+          placeholder={lang === 'fr' ? 'Rechercher…' : 'Search…'}
+          aria-label={lang === 'fr' ? 'Rechercher sur le site' : 'Search the site'}
+          autocomplete="off"
+          data-lang={lang}
+          data-empty={lang === 'fr' ? 'Aucun résultat' : 'No results'}
+        />
+        <ul class="site-search__results" id="site-search-results" role="listbox" hidden></ul>
+      </form>
     </nav>
   </header>
 
@@ -108,6 +125,74 @@ const navLinks = [
       &nbsp;·&nbsp; <a href="/rss.xml">RSS</a>
     </p>
   </footer>
+  <script is:inline>
+    // Header search: loads /search.json on first focus, matches every word (accents ignored).
+    (() => {
+      const input = document.getElementById('site-search-input');
+      const list = document.getElementById('site-search-results');
+      if (!input || !list) return;
+      const en = input.dataset.lang === 'en';
+      const KIND = en
+        ? { event: 'Event', artist: 'Artist', tool: 'Tool', project: 'Project', page: 'Page' }
+        : { event: 'Agenda', artist: 'Artiste', tool: 'Outil', project: 'Projet', page: 'Page' };
+      const norm = s => (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      let index = null, active = -1, shown = [];
+      const load = () => index ??= fetch('/search.json').then(r => r.json()).then(entries => entries.map(e => {
+        const t = en ? (e.te || e.t) : e.t, d = en ? (e.de || e.d) : e.d;
+        return { ...e, title: t, text: d, url: en ? (e.ue || e.u) : e.u, hay: norm(`${t} ${e.t} ${e.te || ''} ${e.s || ''} ${d}`), head: norm(`${t} ${e.t} ${e.s || ''}`) };
+      })).catch(() => []);
+      const render = () => {
+        list.replaceChildren(...(shown.length ? shown : [null]).map((e, i) => {
+          const li = document.createElement('li');
+          if (!e) { li.className = 'site-search__empty'; li.textContent = input.dataset.empty; return li; }
+          li.setAttribute('role', 'option');
+          if (i === active) li.className = 'is-active';
+          const a = document.createElement('a');
+          a.href = e.url;
+          if (/^https?:/.test(e.url)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+          const kind = document.createElement('span');
+          kind.className = 'site-search__kind';
+          kind.textContent = KIND[e.k] + (e.y ? ' · ' + new Date(e.y).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+          const title = document.createElement('span');
+          title.className = 'site-search__title';
+          title.textContent = e.title;
+          a.append(kind, title);
+          li.append(a);
+          return li;
+        }));
+        list.hidden = false;
+      };
+      const search = async () => {
+        const words = norm(input.value).split(/[\s_-]+/).filter(Boolean);
+        if (!words.length) { list.hidden = true; shown = []; return; }
+        const entries = await load();
+        shown = entries
+          .filter(e => words.every(w => e.hay.includes(w)))
+          .map(e => ({ e, score: words.filter(w => e.head.includes(w)).length * 10 + (e.k === 'event' ? 1 : 2) }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 8)
+          .map(x => x.e);
+        active = -1;
+        render();
+      };
+      input.addEventListener('focus', load, { once: true });
+      input.addEventListener('input', search);
+      input.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          if (!shown.length) return;
+          e.preventDefault();
+          active = (active + (e.key === 'ArrowDown' ? 1 : -1) + shown.length) % shown.length;
+          render();
+        } else if (e.key === 'Enter') {
+          const pick = shown[Math.max(active, 0)];
+          if (pick) { e.preventDefault(); list.querySelectorAll('a')[Math.max(active, 0)]?.click(); }
+        } else if (e.key === 'Escape') {
+          list.hidden = true; input.blur();
+        }
+      });
+      document.addEventListener('click', e => { if (!e.target.closest('.site-search')) list.hidden = true; });
+    })();
+  </script>
   <script is:inline>
     // Mini clips play (muted) only while on screen; never for people asking for less motion.
     (() => {

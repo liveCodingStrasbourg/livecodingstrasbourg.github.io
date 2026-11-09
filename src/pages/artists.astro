@@ -21,7 +21,7 @@ const sorted = artists
     {sorted.map(artist => {
       const bio = lang === 'en' && artist.data.bio_en ? artist.data.bio_en : artist.data.bio;
       return (
-        <div class="artist-card">
+        <div class="artist-card" id={artist.id}>
           {artist.data.image ? (
             <img src={artist.data.image} alt={artist.data.name} class="artist-card__cover" loading="lazy" />
           ) : (

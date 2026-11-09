@@ -1,0 +1,83 @@
+---
+// Dedicated artist page (FR and EN routes share it): /artists/<id>/ and /en/artists/<id>/.
+import Base from '../layouts/Base.astro';
+import GeneratedCover from './GeneratedCover.astro';
+import { getCollection } from 'astro:content';
+import { artistKey } from '../lib/artists';
+
+interface Props { artist: any; lang: 'fr' | 'en' }
+const { artist, lang } = Astro.props;
+const d = artist.data;
+const en = lang === 'en';
+const bio = en && d.bio_en ? d.bio_en : d.bio;
+const base = en ? '/en' : '';
+
+const toolKey = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
+const toolUrls = new Map((await getCollection('tools')).map(t => [toolKey(t.data.name), t.data.url]));
+
+const events = (await getCollection('agenda'))
+  .filter(e => e.data.participants?.some((p: string) => artistKey(p) === artistKey(d.name)))
+  .sort((a, b) => +b.data.date - +a.data.date);
+const fmt = (date: Date) => date.toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base title={d.name} description={bio || d.name} image={d.image ?? (d.videos?.[0] ? `/videos/artists/${d.videos[0]}.webp` : undefined)}>
+  <p style="font-size:0.82rem;margin-bottom:1.2rem">
+    <a href={`${base}/artists/`}>← {en ? 'Artists' : 'Artistes'}</a>
+  </p>
+
+  <div class="artist-page">
+    <div class="artist-page__cover">
+      {d.image ? <img src={d.image} alt={d.name} /> : <GeneratedCover seed={d.name} />}
+    </div>
+    <div>
+      <div class="page-header" style="margin-bottom:0.6rem">
+        <h1>{d.name}</h1>
+      </div>
+      {bio && <p style="line-height:1.7">{bio}</p>}
+      {d.tools?.length > 0 && (
+        <div style="margin-top:0.8rem">
+          {d.tools.map((tool: string) => {
+            const url = toolUrls.get(toolKey(tool));
+            return url
+              ? <a href={url} target="_blank" rel="noopener noreferrer" class="tag tag--link">{tool} ↗</a>
+              : <span class="tag">{tool}</span>;
+          })}
+        </div>
+      )}
+      {d.links?.length > 0 && (
+        <div class="event-links" style="margin-top:1rem">
+          {d.links.map((l: { label: string; url: string }) => (
+            <a href={l.url} target="_blank" rel="noopener noreferrer" class="event-link">↗ {l.label}</a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+
+  {d.videos?.length > 0 && (
+    <>
+      <hr />
+      <div class="section-label">{en ? 'Videos' : 'Vidéos'}</div>
+      <div class="artist-videos">
+        {d.videos.map((name: string) => (
+          <video src={`/videos/artists/${name}.mp4`} poster={`/videos/artists/${name}.webp`} controls playsinline preload="none"></video>
+        ))}
+      </div>
+    </>
+  )}
+
+  {events.length > 0 && (
+    <>
+      <hr />
+      <div class="section-label">{en ? 'With TOPLAP Strasbourg' : 'Avec TOPLAP Strasbourg'}</div>
+      <ul class="artist-events">
+        {events.map(e => (
+          <li>
+            <span class="artist-events__date">{fmt(e.data.date)}</span>
+            <a href={`${base}/agenda/${e.id}/`}>{en && e.data.title_en ? e.data.title_en : e.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</Base>

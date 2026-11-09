@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n';
 import { getCollection } from 'astro:content';
 import GeneratedCover from '../../components/GeneratedCover.astro';
+import { hasArtistPage, artistPagePath } from '../../lib/artists';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -20,15 +21,24 @@ const sorted = artists
   <div class="artist-grid">
     {sorted.map(artist => {
       const bio = artist.data.bio_en ?? artist.data.bio;
+      const page = hasArtistPage(artist) ? artistPagePath(artist.id, 'en') : undefined;
       return (
-        <div class="artist-card" id={artist.id}>
-          {artist.data.image ? (
+        <div class:list={['artist-card', { 'artist-card--page': page }]} id={artist.id}>
+          {page ? (
+            <a href={page} class="artist-card__cover-link" aria-label={artist.data.name}>
+              {artist.data.image ? (
+                <img src={artist.data.image} alt="" class="artist-card__cover" loading="lazy" />
+              ) : (
+                <GeneratedCover seed={artist.data.name} />
+              )}
+            </a>
+          ) : artist.data.image ? (
             <img src={artist.data.image} alt={artist.data.name} class="artist-card__cover" loading="lazy" />
           ) : (
             <GeneratedCover seed={artist.data.name} />
           )}
           <div class="artist-card__body">
-            <div class="artist-card__name">{artist.data.name}</div>
+            <div class="artist-card__name">{page ? <a href={page}>{artist.data.name} →</a> : artist.data.name}</div>
             <div class="artist-card__bio">{bio}</div>
             <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted)">
               {artist.data.tools?.join(', ')}
@@ -39,19 +49,6 @@ const sorted = artists
                   <a href={link.url} target="_blank" rel="noopener noreferrer" style="margin-right:0.6rem">
                     {link.label}
                   </a>
-                ))}
-              </div>
-            )}
-            {artist.data.videos?.length > 0 && (
-              <div class="artist-card__videos">
-                {artist.data.videos.map((name: string) => (
-                  <video
-                    src={`/videos/artists/${name}.mp4`}
-                    poster={`/videos/artists/${name}.webp`}
-                    controls
-                    playsinline
-                    preload="none"
-                  ></video>
                 ))}
               </div>
             )}

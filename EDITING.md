@@ -215,8 +215,9 @@ bio_en: "English bio…"                # optional
 ---
 ```
 
-- **`videos`**: list of video names shown with play controls on the artist's
-  card. Put `name.mp4` (720p, H.264) and a poster `name.webp` in
+- **`videos`**: list of video names. An artist with videos gets a dedicated
+  page (`/artists/<file-name>/`): the card becomes clickable and the videos are
+  shown there, not on the card. Without videos, the card stays plain. Put `name.mp4` (720p, H.264) and a poster `name.webp` in
   `public/videos/artists/`, and list just the name: `  - sac-a-dos-1`.
 - **`collective: true`** → the artist is shown on the **Artists page** (members
   of the TOPLAP Strasbourg community).

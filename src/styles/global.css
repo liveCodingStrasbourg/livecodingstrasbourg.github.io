@@ -484,20 +484,78 @@ a.tag--link:hover {
   overflow: hidden;
 }
 
-.artist-card:hover { border-color: var(--accent); }
+.artist-card--page:hover { border-color: var(--accent); }
 
-.artist-card__videos {
-  display: grid;
-  gap: 0.5rem;
-  margin-top: 0.7rem;
+.artist-card__cover-link { display: block; }
+
+.artist-popover__page {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
 }
 
-.artist-card__videos video {
+/* ── Dedicated artist page ── */
+.artist-page {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.artist-page__cover img,
+.artist-page__cover .generated-cover {
   width: 100%;
-  max-height: 420px;
+  display: block;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .artist-page { grid-template-columns: 1fr; }
+}
+
+.section-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+}
+
+.artist-videos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: flex-start;
+}
+
+/* Same height for every video: landscape ones get their full width. */
+.artist-videos video {
+  height: min(420px, 60vh);
+  width: auto;
+  max-width: 100%;
   display: block;
   background: #000;
   border: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .artist-videos video { height: auto; width: 100%; max-height: 80vh; }
+}
+
+.artist-events {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.artist-events li { padding: 0.25rem 0; }
+
+.artist-events__date {
+  display: inline-block;
+  min-width: 11rem;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .artist-card__cover {

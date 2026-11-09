@@ -33,13 +33,14 @@ export async function GET() {
     const d = a.data;
     // Community members have a card on the Artists page; guests link to their latest event.
     const latest = sorted.find(e => e.data.participants?.some((p: string) => key(p) === key(d.name)));
-    const u = d.collective ? `/artists/#${a.id}` : latest && `/agenda/${latest.id}/`;
+    const page = (d.videos?.length ?? 0) > 0;
+    const u = page ? `/artists/${a.id}/` : d.collective ? `/artists/#${a.id}` : latest && `/agenda/${latest.id}/`;
     if (!u) continue;
     entries.push({
       k: 'artist', t: d.name,
       d: short([d.bio, d.tools?.join(', ')].filter(Boolean).join(' · '), 300),
       de: d.bio_en ? short([d.bio_en, d.tools?.join(', ')].filter(Boolean).join(' · '), 300) : undefined,
-      u, ue: d.collective ? `/en/artists/#${a.id}` : `/en${u}`,
+      u, ue: page ? `/en/artists/${a.id}/` : d.collective ? `/en/artists/#${a.id}` : `/en${u}`,
     });
   }
 

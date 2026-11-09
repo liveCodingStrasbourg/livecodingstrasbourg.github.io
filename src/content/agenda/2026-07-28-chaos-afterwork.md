@@ -9,6 +9,21 @@ location: "Perestroika (dans le caveau), Strasbourg"
 tags:
   - Tous publics
   - Prix libre
+photos:
+  - "/images/chaos-labs/afterwork-01.webp"
+  - "/images/chaos-labs/afterwork-02.webp"
+  - "/images/chaos-labs/afterwork-03.webp"
+  - "/images/chaos-labs/afterwork-04.webp"
+  - "/images/chaos-labs/afterwork-05.webp"
+clips:
+  - noisk8-2
+  - noisk8-1
+  - noisk8-3
+  - noisk8-5
+  - noisk8-4
+  - noisk8-6
+tools:
+  - FoxDot
 description: "Un format un peu spécial pour l'été : un afterwork / jam avec le livecodeur Noisk8 qui nous vient de Medellín (Colombie) pour une jam session avec Crash Server et toutes les personnes qui veulent se joindre à nous pour improviser en livecoding. Entre atelier, apéro et jam, venez découvrir le livecoding et l'art génératif dans une ambiance conviviale et décontractée, que vous soyez débutant ou expérimenté."
 description_en: "A slightly special summer format: an afterwork / jam with live coder Noisk8, visiting from Medellín (Colombia), for a jam session with Crash Server and anyone who wants to join in and improvise live coding. Part workshop, part apéro, part jam — come discover live coding and generative art in a friendly, relaxed atmosphere, whether you're a beginner or experienced."
 participants:

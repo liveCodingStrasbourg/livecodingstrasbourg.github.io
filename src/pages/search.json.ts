@@ -55,7 +55,7 @@ export async function GET() {
   entries.push(
     { k: 'page', t: 'Charte TOPLAP Strasbourg', te: 'TOPLAP Strasbourg charter', d: 'Valeurs et règles de vie : ouverture, partage, expérimentation, communauté, consentement.', de: 'Values and ground rules: openness, sharing, experimentation, community, consent.', u: '/ressources/charte/', ue: '/en/ressources/charte/' },
     { k: 'page', t: 'Introduction au live coding (cours)', d: 'Support de cours : définitions, histoire, outils, scène strasbourgeoise, glitch art, feedback, Pure Data, culture libre. PDF.', u: '/ressources/cours-live-coding/' },
-    { k: 'page', t: 'Contact', d: 'Email, Discord, Mobilizon, Instagram, YouTube.', u: '/contact/', ue: '/en/contact/' },
+    { k: 'page', t: 'Contact', d: 'Email, Discord, Signal, Mobilizon, Instagram, YouTube.', u: '/contact/', ue: '/en/contact/' },
     { k: 'page', t: 'Médias — logo à télécharger', te: 'Media — logo downloads', d: 'Photos, vidéos et logo TOPLAP Strasbourg (SVG, PNG).', de: 'Photos, videos and the TOPLAP Strasbourg logo (SVG, PNG).', u: '/media/', ue: '/en/media/' },
     { k: 'page', t: 'Calendrier (.ics)', te: 'Calendar (.ics)', d: "S'abonner à l'agenda dans son calendrier.", de: 'Subscribe to the agenda in your calendar.', u: '/agenda/', ue: '/en/agenda/' },
   );
